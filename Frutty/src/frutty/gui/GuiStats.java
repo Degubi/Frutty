@@ -52,16 +52,10 @@ public class GuiStats extends JPanel implements ActionListener{
 		}
 	}
 	
-	/**
-	 * Stat gui megnyitása
-	 */
 	public static void openStatsGui() {
 		GuiHelper.newFrame(new GuiStats(), JFrame.DISPOSE_ON_CLOSE, 240, 180).setVisible(true);
 	}
 	
-	/**
-	 * Statok mentése
-	 */
 	public static void saveStats() {
 		try(PrintWriter output = new PrintWriter("stats.prop")){
 			output.print(topScore);
