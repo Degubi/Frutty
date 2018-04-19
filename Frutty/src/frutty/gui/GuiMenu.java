@@ -77,7 +77,6 @@ public class GuiMenu extends JPanel implements ActionListener{
 		}
 	}
 	
-	//Handlebuttons
 	@Override
 	public void actionPerformed(ActionEvent event) {
 		switch(event.getActionCommand()) {

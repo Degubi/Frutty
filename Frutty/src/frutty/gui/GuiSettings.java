@@ -15,9 +15,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-/**
- * Beállítások Gui Class fájlja
- */
 public class GuiSettings extends JPanel implements ActionListener{
 	private static final Properties settings = new Properties();
 	
@@ -78,17 +75,10 @@ public class GuiSettings extends JPanel implements ActionListener{
 		return Boolean.parseBoolean(settings.getProperty("enableDebug"));
 	}
 	
-	/**
-	 * Difficulty lekérése a beállításokból
-	 * @return Difficulty szint
-	 */
 	public static int getDifficulty() {
 		return Integer.parseInt(settings.getProperty("difficulty"));
 	}
 	
-	/**
-	 * Beállítások betöltésére szolgáló függvény, try-ba ha van file, catch-be ha nincs
-	 */
 	public static void loadSettings() {
 		try(FileInputStream fis = new FileInputStream("settings.cfg")){
 			settings.load(fis);
@@ -101,16 +91,12 @@ public class GuiSettings extends JPanel implements ActionListener{
 		}
 	}
 	
-	/**
-	 * Beállítások gui meghívására szolgáló függvény
-	 */
 	public static void showGuiSettings() {
 		loadSettings();
 		GuiHelper.newFrame(new GuiSettings(), "Tutty Frutty Options", JFrame.DISPOSE_ON_CLOSE, 480, 360)
 				 .setVisible(true);
 	}
 	
-	//Handle buttons
 	@Override
 	public void actionPerformed(ActionEvent event) {
 		if(easyButton.isSelected()) {

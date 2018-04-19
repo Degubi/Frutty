@@ -5,9 +5,6 @@ import java.awt.Graphics;
 import frutty.map.Map;
 import frutty.map.MapZone;
 
-/**
- * A normál zóna class-a, a rendereléshez a textúrát a jelenlegi Map object textures tömbjébõl kapja.
- */
 public class MapZoneNormal extends MapZone{
 	public MapZoneNormal(int xPos, int yPos, int zoneIndex) {
 		super(xPos, yPos, zoneIndex);

@@ -5,9 +5,6 @@ import java.awt.Graphics;
 
 import frutty.map.MapZone;
 
-/**
- * Spawner zóna class, static block-ban van 1 elõre cachelt Color tömb a framenkénti szín object gyártás elkerülése érdekében.
- */
 public class MapZoneSpawner extends MapZone{
 	private static final Color[] colorCache = new Color[32];
 	private boolean decrease = false;
@@ -24,9 +21,6 @@ public class MapZoneSpawner extends MapZone{
 		super(xPos, yPos, zoneIndex);
 	}
 
-	/**
-	 * Oda vissza halad a elõre cachelt Color object tömbben
-	 */
 	@Override
 	public void draw(Graphics graphics) {
 		if(arrayIndexer == 24) {

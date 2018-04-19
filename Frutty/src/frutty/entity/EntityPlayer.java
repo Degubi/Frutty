@@ -16,9 +16,6 @@ import frutty.map.zones.MapZoneNormal;
 import frutty.map.zones.MapZoneSpawner;
 import frutty.stuff.EnumFruit;
 
-/**
- * Játékos class, a mozgás itt kezelõdik le, illetve a labdadobás is. + render
- */
 public class EntityPlayer extends Entity implements KeyListener, MouseListener{
 	private static final BufferedImage[] textures = {loadTexture("player/side.png"), loadTexture("player/front.png"), loadTexture("player/back.png")};
 	
@@ -41,12 +38,6 @@ public class EntityPlayer extends Entity implements KeyListener, MouseListener{
 		}
 	}
 
-	/**
-	 * Ellenõrzés a játékos által lépendõ zónára hogy arra léphet e egyáltalán.
-	 * @param x Y koordináta
-	 * @param y X koordináta
-	 * @return True ha a zóna szabad, egyébként false
-	 */
 	private static boolean isFree(int x, int y) {
 		for(MapZone zone : Map.currentMap.zones) {
 			if(zone.posX == x && zone.posY == y && (zone instanceof MapZoneSpawner || (zone instanceof MapZoneFruit && ((MapZoneFruit)zone).fruitType == EnumFruit.APPLE))) {
@@ -113,7 +104,6 @@ public class EntityPlayer extends Entity implements KeyListener, MouseListener{
 			graphics.drawImage(textures[textureIndex], posX, posY, null);
 		}
 	}
-
 	
 	public void update(int ticks) {}
 	public void mouseClicked(MouseEvent e) {}

@@ -8,9 +8,6 @@ import frutty.map.Map;
 import frutty.map.MapZone;
 import frutty.stuff.EnumFacing;
 
-/**
- * Az ellenséges NPC-k class fájlja, az update függvény márc. 28 óta "érthetõbb és olvashatóbb"
- */
 public class EntityEnemy extends Entity{
 	private static final BufferedImage[] textures = {loadTexture("enemy/side.png"), loadTexture("enemy/front.png"), loadTexture("enemy/back.png")};
 	

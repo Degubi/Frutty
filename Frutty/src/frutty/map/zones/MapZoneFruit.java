@@ -8,17 +8,10 @@ import frutty.map.MapZone;
 import frutty.stuff.EnumFruit;
 import frutty.stuff.ITickable;
 
-/**
- * Gyümölcs zóna class, ez kezeli a physics EntityApple létrehozást is az update() függvényben
- */
 public class MapZoneFruit extends MapZone implements ITickable{
 	public final EnumFruit fruitType;
 	private int counter;  //Kell azért hogy so-so ugyanakkor essen le az alma
 	
-	/**
-	 * 1 db plusz paraméter
-	 * @param type Gyümölcs type
-	 */
 	public MapZoneFruit(int xPos, int yPos, EnumFruit type, int zoneIndex) {
 		super(xPos, yPos, zoneIndex);
 		fruitType = type;
@@ -45,9 +38,6 @@ public class MapZoneFruit extends MapZone implements ITickable{
 		}
 	}
 	
-	/**
-	 * Update függvény, GuiIngame-ben hívódik be
-	 */
 	@Override
 	public void update() {
 		if(notified){

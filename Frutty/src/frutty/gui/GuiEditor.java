@@ -17,10 +17,6 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-/**
- * Edit gui class fájlja, dev textúrákat betölti inicializáláskor
- * Map formátum: int Width -> int Height -> int playerPosX -> int playerPosY -> String texture -> char[] zónák
- */
 public class GuiEditor extends JPanel implements MouseListener{
 	private final JButton[] zoneButtons;
 	private final GuiProperties properties;
@@ -32,16 +28,6 @@ public class GuiEditor extends JPanel implements MouseListener{
 	private static final ImageIcon spawnerTexture = new ImageIcon(GuiMenu.class.getResource("/textures/dev/spawner.png"));
 	private static final ImageIcon playerTexture = new ImageIcon(GuiMenu.class.getResource("/textures/dev/player.png"));
 
-	/**
-	 * Ez a konstructor hívódik meg mindig amikor megnyílik az editor, gombokat lekezeli, illetve a property táblát inicializálja
-	 * @param butt Gombok lista ha van, egyébként null
-	 * @param mapWidth Map hossza
-	 * @param mapHeight Map magassága
-	 * @param playerPosX Játékos X koordinátája
-	 * @param playerPosY Játékos Y koordinátája
-	 * @param fileName A map neve
-	 * @param textureName A map által használt textúra neve
-	 */
 	private GuiEditor(List<JButton> butt, int mapWidth, int mapHeight, int playerPosX, int playerPosY, String fileName, String textureName) {
 		properties = new GuiProperties(fileName, textureName, mapWidth, mapHeight, playerPosX, playerPosY);
 		zoneButtons = new JButton[mapWidth * mapHeight];
@@ -73,9 +59,6 @@ public class GuiEditor extends JPanel implements MouseListener{
 		}
 	}
 	
-	/**
-	 * Editor megnyitására static függvény, 2 módja van: új map és importálás
-	 */
 	public static void openEditor() {
 		//0: New map, 1: Import
 		int test = JOptionPane.showOptionDialog(null, "Create new map or import", "Frutty map Editor", JOptionPane.YES_NO_CANCEL_OPTION, 1, null, new String[] {"New", "Import", "Cancel"}, null);

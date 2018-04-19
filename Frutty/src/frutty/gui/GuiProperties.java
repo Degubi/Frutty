@@ -10,10 +10,6 @@ import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
-/**
- * Editorbeli kis Properties gui class fájlja
- */
-@SuppressWarnings("boxing")  //Nem tudunk neki mit csinálni :( Majd 1x ha lesznek valuetype-ok.. #izi warning offolás 2018
 public class GuiProperties extends JPanel{
 	private final PropertyTableModel table = new PropertyTableModel();
 	
@@ -68,9 +64,6 @@ public class GuiProperties extends JPanel{
 		table.setValueAt(button.getY(), 5, 1);
 	}
 	
-	/**
-	 * Custom table model a Properties guiba, kell hogy bizonyos mezõk ne legyenek módosíthatóak
-	 */
 	private static final class PropertyTableModel extends DefaultTableModel{
 		
 		@Override
@@ -87,9 +80,6 @@ public class GuiProperties extends JPanel{
 		}
 	}
 	
-	/**
-	 * Custom cella renderer a Properties guiba, kell hogy bizonyos mezõk kilegyenek szürkítve (nem módosíthatóak)
-	 */
 	private static final class CustomCellRenderer extends DefaultTableCellRenderer{
 		
 		@Override

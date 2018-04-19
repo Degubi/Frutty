@@ -54,9 +54,6 @@ public class EntityBall extends Entity{
 		}
 	}
 	
-	/**
-	 * A labda elég bugos update logikája..
-	 */
 	@Override
 	public void update(int ticks) {
 		if(ticks % 15 == 0) {

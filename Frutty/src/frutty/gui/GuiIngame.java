@@ -22,9 +22,6 @@ import frutty.map.zones.MapZoneFruit;
 import frutty.stuff.EnumFruit;
 import frutty.stuff.ITickable;
 
-/**
- * A fõ gui, ingame elementek és updatelések lekezelése folyik itt.
- */
 public class GuiIngame extends JPanel implements Runnable, ActionListener{
 	//Idõzíthetõ Thread, Timer helyett van, ugyanis az java9-ben deprecated lett, ez lényegében ugyan az, nem kell kézzel írt Threaded csinálni
 	private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
@@ -77,9 +74,6 @@ public class GuiIngame extends JPanel implements Runnable, ActionListener{
 		graphics.drawString("Top score: " + GuiStats.topScore, Map.currentMap.width + 90, 80);
 	}
 	
-	/**
-	 * Fõ update függvény, itt frissül az összes entity, illetve a render függvény újrahívása is itt történik.
-	 */
 	@Override
 	public void run() {
 		if(!paused) {

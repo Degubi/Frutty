@@ -8,9 +8,6 @@ import frutty.gui.GuiStats;
 import frutty.map.Map;
 import frutty.map.MapZone;
 
-/**
- * Physics alma class fájlja
- */
 public class EntityApple extends Entity{
 	public static final BufferedImage cherryTexture = loadTexture("cherry.png");
 	public static final BufferedImage appleTexture = loadTexture("apple.png");
@@ -24,10 +21,7 @@ public class EntityApple extends Entity{
 	public void render(Graphics graphics) {
 		graphics.drawImage(appleTexture, posX, posY, null);
 	}
-	
-	/**
-	 * Zuhanás logika, ellenség esetén pont adás, játékos esetén game over
-	 */
+
 	public void update(int ticks) {
 		if(MapZone.isEmpty(posX, posY + 64)) {
 			if(sleepCounter == 0) {

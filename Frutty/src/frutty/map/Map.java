@@ -27,9 +27,6 @@ import frutty.map.zones.MapZoneNormal;
 import frutty.map.zones.MapZoneSpawner;
 import frutty.stuff.EnumFruit;
 
-/**
- * Map class, nem a legszebb de kb a leghasznosabb. Sok static függvény mentéskezelésre és mapkezelésre, illetve tartalmazza a currentMap static fieldet is
- */
 public class Map implements Serializable{
 	private static final long serialVersionUID = -5083163189200818535L;
 	public static Map currentMap;
@@ -44,14 +41,6 @@ public class Map implements Serializable{
 	
 	public static final BufferedImage[] textures = new BufferedImage[5];  //Static így nem menti le a serializálás
 	
-	/**
-	 * Constructor a Map object létrehozására, labda hozzáadás, textúrabetöltés, játékos hozzáadása.
-	 * @param mapWidth Map hossza
-	 * @param mapHeight Map magasság
-	 * @param playerPosX Játékos X koordinátája
-	 * @param playerPosY Játékos Y koordinátája
-	 * @param textureName Textúra név a normál zóna használatára
-	 */
 	private Map(int mapWidth, int mapHeight, int playerPosX, int playerPosY, boolean isMulti, String textureName) {
 		zones = new MapZone[(mapWidth / 64 + 1) * (mapHeight / 64 + 1)];
 		width = mapWidth;
@@ -68,10 +57,6 @@ public class Map implements Serializable{
 		loadTexture(textureName);
 	}
 	
-	/**
-	 * Textúra betöltésére szolgáló függvény. Alap textúra 1x, majd 4 másik sötétített változat generálása
-	 * @param textureName Textúra neve
-	 */
 	private static void loadTexture(String textureName) {
 		printDebug("Started loading texture " + textureName);
 		try{
@@ -83,22 +68,9 @@ public class Map implements Serializable{
 		}catch (IOException e) {}
 	}
 	
-	/**
-	 * Új BufferedImage object készítése sötétíve
-	 * @param image Reference kép
-	 * @return Új kép
-	 */
 	private static BufferedImage copyDarkened(BufferedImage image) {
-		// Új BufferedImage kell, mivel ha a setRGB módosítja a paraméter képét, akkor a tömbben fent az összes ugyan az lesz... (Ezért nem módosítjuk a pointert ami a kép objectre mutat)
-		// Használjunk teljesen új BufferedImage-t, nem kell átmásolni a dolgokat az eredetibõl... (márc. 26)
-		
 		BufferedImage toReturn = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
 		
-		// Bit operátoros megoldás szintén márc. 26, -16500 object, 5 MB-al kevesebb ram használat map betöltéskor
-		// Bit operatorok: '&' -> közös bitek, '|' -> ahol 1-es az a bit megtartása, '<<' && '>>' -> bit shiftelés balra/jobbra
-		// Régi kód (2 color object (64 * 64 * 4 db inkább) eloptimalizálása)
-		
-		//toReturn.setRGB(x, y, new Color(image.getRGB(x, y)).darker().getRGB());
 		for(int x = 0; x < 64; ++x) {
 			for(int y = 0; y < 64; ++y) {
 				int startColor = image.getRGB(x, y);
@@ -111,21 +83,12 @@ public class Map implements Serializable{
 		return toReturn;
 	}
 	
-	/**
-	 * Debug üzenet írása a konzolba ha a debug engedélyezve van
-	 * @param msg Üzenet
-	 */
 	private static void printDebug(String msg) {
 		if(GuiSettings.isDebugEnabled()) {
 			System.out.println(msg);
 		}
 	}
 	
-	/**
-	 * Map generálásra szolgáló függvény. Hát, random zóna generálás, arra jön rá 2 loop ami a játékos spawnt és a mob spawnert csinálja
-	 * @param width Map hossza
-	 * @param height Map magassága
-	 */
 	public static void generateMap(int width, int height, boolean isMultiplayer) {
 		printDebug("Generating map...");
 		Random rand = GuiIngame.rand;
@@ -215,10 +178,6 @@ public class Map implements Serializable{
 		printDebug("Generated map with size: " + width + "x" + height);
 	}
 	
-	/**
-	 * Map betöltés, Map object létrehozás, enemies tömb inicializálás, koordinátakezelés, minden
-	 * @param name Map neve
-	 */
 	public static void loadMap(String name, boolean isMultiplayer) {
 		printDebug("Loading map...");
 		try(ObjectInputStream input = new ObjectInputStream(new FileInputStream("./maps/" + name + ".deg"))){
@@ -263,11 +222,6 @@ public class Map implements Serializable{
 		printDebug("Map loaded with name: " + name);
 	}
 	
-	/**
-	 * Mentés fájl létrehozás (Serializáció itt)
-	 * @param fileName Mentés neve
-	 * @return True ha létrejött a mentés
-	 */
 	public static boolean createSave(String fileName) {
 		if(fileName != null) {
 			try(ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream("./saves/" + fileName + ".sav"))){
@@ -280,10 +234,6 @@ public class Map implements Serializable{
 		return false;
 	}
 	
-	/**
-	 * Mentés fájl betöltés (Serializáció itt is)
-	 * @param fileName Mentés neve
-	 */
 	public static void loadSave(String fileName) {
 		if(fileName != null) {
 			try(ObjectInputStream input = new ObjectInputStream(new FileInputStream("./saves/" + fileName))){
@@ -295,11 +245,6 @@ public class Map implements Serializable{
 		}
 	}
 	
-	/**
-	 * Map méretének olvasása map fájlból (az elsö 2 int a map formátumban a szélesség és magasság), menübe kell
-	 * @param fileName Map neve
-	 * @return Map mérete String-ben
-	 */
 	public static String loadMapSize(String fileName) {
 		try(ObjectInputStream input = new ObjectInputStream(new FileInputStream("./maps/" + fileName + ".deg"))){
 			return input.readInt() + "x" + input.readInt();
@@ -307,12 +252,6 @@ public class Map implements Serializable{
 		return null;
 	}
 	
-	/**
-	 * Függvény koordináta szerinti zóna lekérésre
-	 * @param x X koordináta
-	 * @param y Y koordináta
-	 * @return A MapZónát ha van egyébként null
-	 */
 	public static MapZone getZoneAtPos(int x, int y) {
 		for(MapZone zone : currentMap.zones) {
 			if(zone.posX == x && zone.posY == y) {
@@ -322,12 +261,6 @@ public class Map implements Serializable{
 		return null;
 	}
 	
-	/**
-	 * Normál ellenség pozíciócheckolós függvény
-	 * @param x X koordináta
-	 * @param y Y koordináta
-	 * @return Ha van akkor az enemy-t else null
-	 */
 	public static EntityEnemy getEnemyAtPos(int x, int y) {
 		for(EntityEnemy enemy : currentMap.enemies) {
 			if(enemy.posY == y && enemy.posX == x) {
@@ -337,13 +270,6 @@ public class Map implements Serializable{
 		return null;
 	}
 	
-	/**
-	 * Kis pozíció hackelõs dolog, hogy a labda so-so müködöképesnek nevezhetõ legyen. 
-	 * @param x X koordináta
-	 * @param y Y koordináta
-	 * @param entity Labda instance
-	 * @return Ha van ott enemy a akkor az enemy-t ha nincs akkor null
-	 */
 	public static EntityEnemy getEnemyPredictedAtPos(int x, int y, EntityBall entity) {
 		for(EntityEnemy enemy : currentMap.enemies) {
 			if((enemy.posY == y && enemy.posX == x) || (enemy.posY == y - entity.motionY && enemy.posX == x - entity.motionX)) {

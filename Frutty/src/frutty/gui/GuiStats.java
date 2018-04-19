@@ -13,24 +13,15 @@ import javax.swing.JPanel;
 
 import frutty.map.Map;
 
-/**
- * A stat gui class fájlja
- */
 public class GuiStats extends JPanel implements ActionListener{
 	public static int topScore, enemyCount, zoneCount; 
 	
-	/**
-	 * Reset gomb hozzáadása és layout nullázása
-	 */
 	public GuiStats() {
 		setLayout(null);
 		
 		add(GuiHelper.newButton("Reset", 70, 100, this));
 	}
 	
-	/**
-	 * Statok betöltésére szolgáló függvény
-	 */
 	public static void loadStats() {
 		try(Scanner input = new Scanner(new File("stats.prop"))){
 			String[] split = input.nextLine().split(" ");
@@ -42,9 +33,6 @@ public class GuiStats extends JPanel implements ActionListener{
 		}
 	}
 	
-	/**
-	 * Pontok összehasonlítása, illetve mentés ha a jelenlegi pont nagyobb mint az eddigi rekord
-	 */
 	public static void compareScores() {
 		if(Map.currentMap.score > topScore) {
 			topScore = Map.currentMap.score;
