@@ -1,3 +1,5 @@
+package frutty;
+
 import java.io.File;
 
 import frutty.gui.GuiMenu;
