@@ -108,7 +108,7 @@ public class GuiMenu extends JPanel implements ActionListener{
 				mapSizeField.setText(Map.loadMapSize((String) mapList.getSelectedItem()));
 			}break;
 			
-		case "Editor": GuiEditor.openEditor(); break;
+		case "Editor": GuiEditor.openEditor(); ((JFrame)getTopLevelAncestor()).dispose(); break;
 		case "Stats": GuiStats.openStatsGui(); break;
 			
 		default : //Load

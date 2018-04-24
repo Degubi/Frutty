@@ -134,9 +134,14 @@ public class GuiEditor extends JPanel implements MouseListener{
 				 	case "d": button.setActionCommand("a"); button.setIcon(appleTexture); break;
 				 	case "a": button.setActionCommand("c"); button.setIcon(cherryTexture); break;
 				 	case "c": button.setActionCommand("s"); button.setIcon(spawnerTexture); break;
-				 	case "s": button.setActionCommand("p"); properties.setPlayerPos(button); button.setIcon(playerTexture); break;
+				 	case "s": if(event.isControlDown()) {
+				 		button.setActionCommand("p"); properties.setPlayerPos(button); button.setIcon(playerTexture);
+				 	}else{
+				 		button.setActionCommand("n"); button.setIcon(normalTexture);
+				 	}
+				 	break;
 				 	case "p": button.setActionCommand("n"); button.setIcon(normalTexture); break;
-				 	case "Exit": ((JFrame)getTopLevelAncestor()).dispose(); break;
+				 	case "Exit": ((JFrame)getTopLevelAncestor()).dispose(); GuiMenu.showMenu(); break;
 				 	case "Clear":
 				 		
 				 	for(JButton localButton : zoneButtons) {
@@ -166,10 +171,17 @@ public class GuiEditor extends JPanel implements MouseListener{
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
+				 	
+				 	JOptionPane.showMessageDialog(null, "Map saved as: " + properties.getMapName());
 				}
 			}else if(event.getButton() == MouseEvent.BUTTON3) {    //Right click
 				switch(button.getActionCommand().charAt(0)) {
-				 	case 'n': button.setActionCommand("p"); properties.setPlayerPos(button); button.setIcon(playerTexture); break;
+					case 'n': if(event.isControlDown()) {
+						button.setActionCommand("p"); properties.setPlayerPos(button); button.setIcon(playerTexture);
+					}else {
+						button.setActionCommand("s"); button.setIcon(spawnerTexture);
+					}
+					break;
 				 	case 'd': button.setActionCommand("n"); button.setIcon(normalTexture); break;
 				 	case 'a': button.setActionCommand("d"); button.setIcon(dugTexture); break;
 				 	case 'c': button.setActionCommand("a"); button.setIcon(appleTexture); break;

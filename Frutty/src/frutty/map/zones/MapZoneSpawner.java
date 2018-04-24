@@ -8,7 +8,7 @@ import frutty.map.MapZone;
 public class MapZoneSpawner extends MapZone{
 	private static final Color[] colorCache = new Color[32];
 	private boolean decrease = false;
-	private int arrayIndexer = 0;
+	private int colorIndexer = 0;
 	
 	//Csak jó lesz az a static init block a null check-os constructor helyett... :|
 	static {
@@ -23,13 +23,13 @@ public class MapZoneSpawner extends MapZone{
 
 	@Override
 	public void draw(Graphics graphics) {
-		if(arrayIndexer == 24) {
+		if(colorIndexer == 31) {
 			decrease = true;
 		}
-		if(arrayIndexer == 0) {
+		if(colorIndexer == 0) {
 			decrease = false;
 		}
-		graphics.setColor(colorCache[decrease ? --arrayIndexer : ++arrayIndexer]);
+		graphics.setColor(colorCache[decrease ? --colorIndexer : ++colorIndexer]);
 		graphics.fillRect(posX, posY, 64, 64);
 	}
 }

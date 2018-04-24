@@ -44,7 +44,7 @@ public class MapZoneFruit extends MapZone implements ITickable{
 			if(counter > 1) {
 				Map.setZoneEmptyAt(zoneIndex);
 				Map.currentMap.entities.add(new EntityApple(posX, posY));
-			}else {
+			}else{
 				++counter;
 			}
 		}
