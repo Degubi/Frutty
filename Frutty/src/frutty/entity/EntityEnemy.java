@@ -32,23 +32,9 @@ public class EntityEnemy extends Entity{
 	}
 
 	private void setFacing(EnumFacing facing) {
-		if(facing == EnumFacing.DOWN) {
-			motionX = 0;
-			motionY = 64;
-			textureIndex = 1;
-		}else if(facing == EnumFacing.UP) {
-			motionX = 0;
-			motionY = -64;
-			textureIndex = 2;
-		}else if(facing == EnumFacing.LEFT) {
-			motionX = -64;
-			motionY = 0;
-			textureIndex = 3;
-		}else{
-			motionX = 64;
-			motionY = 0;
-			textureIndex = 0;
-		}
+		motionX = facing.xOffset;
+		motionY = facing.yOffset;
+		textureIndex = facing.textureIndex;
 	}
 	
 	@Override

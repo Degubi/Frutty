@@ -49,7 +49,7 @@ public class Map implements Serializable{
 		
 		if(isMulti) {
 			players = new EntityPlayer[]{new EntityPlayer(playerPosX, playerPosY, true), new EntityPlayer(playerPosX, playerPosY + 64, false)};
-		}else {
+		}else{
 			players = new EntityPlayer[]{new EntityPlayer(playerPosX, playerPosY, true)};
 		}
 		

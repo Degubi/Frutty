@@ -20,38 +20,23 @@ public class EntityBall extends Entity{
 		graphics.fillOval(posX + 16, posY + 16, 16, 16);
 	}
 
-	public void activate(int x, int y, int facing) {
-		active = true;
-		posX = x;
-		posY = y;
-		if(facing == 2) {
-			motionY = -64;
-		}else if(facing == 1) {
-			motionY = 64;
-		}else if(facing == 3) {
-			motionX = -64;
-		}else {
-			motionX = 64;
+	public void activate(int x, int y, EnumFacing facing) {
+		if(!active) {
+			active = true;
+			posX = x;
+			posY = y;
+			
+			setFacing(facing);
+			
+			posX += motionX;
+			posY += motionY;
 		}
-		posX += motionX;
-		posY += motionY;
 	}
 	
 	
-	protected void setFacing(EnumFacing facing) {
-		if(facing == EnumFacing.DOWN) {
-			motionX = 0;
-			motionY = 64;
-		}else if(facing == EnumFacing.UP) {
-			motionX = 0;
-			motionY = -64;
-		}else if(facing == EnumFacing.LEFT) {
-			motionX = -64;
-			motionY = 0;
-		}else{
-			motionX = 64;
-			motionY = 0;
-		}
+	private void setFacing(EnumFacing facing) {
+		motionX = facing.xOffset;
+		motionY = facing.yOffset;
 	}
 	
 	@Override
@@ -64,7 +49,6 @@ public class EntityBall extends Entity{
 				++GuiStats.enemyCount;
 				Map.currentMap.score += 100;
 			}
-			
 			
 			for(EntityPlayer player : Map.getPlayers())
 				if(posY == player.posY && posX == player.posX) {

@@ -125,7 +125,7 @@ public class GuiEditor extends JPanel implements MouseListener{
 	}
 
 	@Override
-	public void mouseClicked(MouseEvent event) {
+	public void mousePressed(MouseEvent event) {
 		if(event.getComponent() instanceof JButton) {
 			JButton button = (JButton) event.getComponent();
 			if(event.getButton() == MouseEvent.BUTTON1) {   //Left click
@@ -193,7 +193,7 @@ public class GuiEditor extends JPanel implements MouseListener{
 		}
 	}
 	
-	public void mousePressed(MouseEvent event) {}
+	public void mouseClicked(MouseEvent event) {}
 	public void mouseReleased(MouseEvent event) {}
 	public void mouseEntered(MouseEvent event) {}
 	public void mouseExited(MouseEvent event) {}
