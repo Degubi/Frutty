@@ -15,7 +15,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-public class GuiSettings extends JPanel implements ActionListener{
+public final class GuiSettings extends JPanel implements ActionListener{
 	private static final Properties settings = new Properties();
 	
 	private final JRadioButton easyButton = new JRadioButton("Easy"), normalButton = new JRadioButton("Normal"), hardButton = new JRadioButton("Hard");
@@ -93,8 +93,7 @@ public class GuiSettings extends JPanel implements ActionListener{
 	
 	public static void showGuiSettings() {
 		loadSettings();
-		GuiHelper.newFrame(new GuiSettings(), "Tutty Frutty Options", JFrame.DISPOSE_ON_CLOSE, 480, 360)
-				 .setVisible(true);
+		GuiHelper.showNewFrame(new GuiSettings(), "Tutty Frutty Options", JFrame.DISPOSE_ON_CLOSE, 480, 360);
 	}
 	
 	@Override

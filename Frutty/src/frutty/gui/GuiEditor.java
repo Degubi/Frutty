@@ -74,9 +74,8 @@ public class GuiEditor extends JPanel implements MouseListener{
 					JOptionPane.showMessageDialog(null, "Map size is very big, things may go offscreen!");
 				}
 				
-				GuiHelper.newFrame(new GuiEditor(null, mapWidth, mapHeight, 0, 0, "filename.deg", "normal"), 
-						"Frutty Map Editor", JFrame.DISPOSE_ON_CLOSE, bigWidth + 156, bigHeight + 32)
-						.setVisible(true);
+				GuiHelper.showNewFrame(new GuiEditor(null, mapWidth, mapHeight, 0, 0, "filename.deg", "normal"), 
+						"Frutty Map Editor", JFrame.DISPOSE_ON_CLOSE, bigWidth + 156, bigHeight + 32);
 			}
 		}else if(test == 1) {
 			String[] fileNames = new File("./maps/").list();
@@ -113,9 +112,8 @@ public class GuiEditor extends JPanel implements MouseListener{
 						}
 					}
 					
-					GuiHelper.newFrame(new GuiEditor(butt, mapWidth, mapHeight, playerPosX, playerPosY, fileName, textureName), 
-							"Frutty Map Editor", JFrame.DISPOSE_ON_CLOSE, mapWidth * 64 + 156, mapHeight * 64 + 32)
-							.setVisible(true);
+					GuiHelper.showNewFrame(new GuiEditor(butt, mapWidth, mapHeight, playerPosX, playerPosY, fileName, textureName), 
+							"Frutty Map Editor", JFrame.DISPOSE_ON_CLOSE, mapWidth * 64 + 156, mapHeight * 64 + 32);
 					
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -150,7 +148,7 @@ public class GuiEditor extends JPanel implements MouseListener{
 				 	} break;
 				 	
 				 	case "Properties": 
-				 		GuiHelper.newFrame(properties, "Map Properties", JFrame.DISPOSE_ON_CLOSE, 350, 200).setVisible(true); break;
+				 		GuiHelper.showNewFrame(properties, "Map Properties", JFrame.DISPOSE_ON_CLOSE, 350, 200); break;
 				 	
 				 	default:
 				 	try(ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream("./maps/" + properties.getMapName()))){
@@ -193,8 +191,8 @@ public class GuiEditor extends JPanel implements MouseListener{
 		}
 	}
 	
-	public void mouseClicked(MouseEvent event) {}
-	public void mouseReleased(MouseEvent event) {}
-	public void mouseEntered(MouseEvent event) {}
-	public void mouseExited(MouseEvent event) {}
+	@Override public void mouseClicked(MouseEvent event) {}
+	@Override public void mouseReleased(MouseEvent event) {}
+	@Override public void mouseEntered(MouseEvent event) {}
+	@Override public void mouseExited(MouseEvent event) {}
 }

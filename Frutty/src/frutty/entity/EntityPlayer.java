@@ -114,11 +114,11 @@ public class EntityPlayer extends Entity implements KeyListener, MouseListener{
 		}
 	}
 	
-	public void update(int ticks) {}
-	public void mouseClicked(MouseEvent e) {}
-	public void mousePressed(MouseEvent e) {}
-	public void mouseEntered(MouseEvent e) {}
-	public void mouseExited(MouseEvent e) {}
-	public void keyTyped(KeyEvent e) {}
-	public void keyReleased(KeyEvent e) {}
+	@Override public void update(int ticks) {}
+	@Override public void mouseClicked(MouseEvent e) {}
+	@Override public void mousePressed(MouseEvent e) {}
+	@Override public void mouseEntered(MouseEvent e) {}
+	@Override public void mouseExited(MouseEvent e) {}
+	@Override public void keyTyped(KeyEvent e) {}
+	@Override public void keyReleased(KeyEvent e) {}
 }

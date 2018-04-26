@@ -18,16 +18,18 @@ public class EntityApple extends Entity{
 		super(x, y);
 	}
 	
+	@Override
 	public void render(Graphics graphics) {
 		graphics.drawImage(appleTexture, posX, posY, null);
 	}
 
+	@Override
 	public void update(int ticks) {
 		if(MapZone.isEmpty(posX, posY + 64)) {
 			if(sleepCounter == 0) {
 				posY += 64;
 				
-				for(EntityPlayer players : Map.currentMap.getPlayers()) {
+				for(EntityPlayer players : Map.currentMap.players) {
 					if(posY == players.posY && posX == players.posX) {
 						GuiIngame.showMessageAndClose("Game over!");
 					}

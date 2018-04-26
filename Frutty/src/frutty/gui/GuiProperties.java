@@ -10,7 +10,8 @@ import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
-public class GuiProperties extends JPanel{
+@SuppressWarnings("boxing") 
+public final class GuiProperties extends JPanel{
 	private final PropertyTableModel table = new PropertyTableModel();
 	
 	public GuiProperties(String mapName, String textureName, int width, int height, int playerPosX, int playerPosY) {

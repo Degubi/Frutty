@@ -1,10 +1,10 @@
 package frutty.gui;
 
 import java.awt.Color;
+import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Random;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -22,10 +22,8 @@ import frutty.map.zones.MapZoneFruit;
 import frutty.stuff.EnumFruit;
 import frutty.stuff.ITickable;
 
-public class GuiIngame extends JPanel implements Runnable, ActionListener{
-	//Idõzíthetõ Thread, Timer helyett van, ugyanis az java9-ben deprecated lett, ez lényegében ugyan az, nem kell kézzel írt Threaded csinálni
+public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 	private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-	public static final Random rand = new Random();  //Main-be nem lehet tenni a default package miatt
 	
 	static GuiIngame ingameGui;
 	
@@ -47,7 +45,7 @@ public class GuiIngame extends JPanel implements Runnable, ActionListener{
 			drawZones.draw(graphics);
 		}
 		
-		for(EntityPlayer players : Map.getPlayers())
+		for(EntityPlayer players : Map.currentMap.players)
 			players.render(graphics);
 		
 		for(Entity entity : Map.currentMap.entities) {
@@ -112,12 +110,20 @@ public class GuiIngame extends JPanel implements Runnable, ActionListener{
 	}
 	
 	public static void showIngame() {
-		JFrame ingameFrame = GuiHelper.newFrame(ingameGui = new GuiIngame(), JFrame.EXIT_ON_CLOSE, Map.currentMap.width + 288, Map.currentMap.height + 96);
-		for(EntityPlayer players : Map.getPlayers()) {
-			ingameFrame.addKeyListener(players);
-			ingameFrame.addMouseListener(players);
-		}
-		ingameFrame.setVisible(true);
+		EventQueue.invokeLater(() -> {
+			JFrame ingameFrame = new JFrame("Tutty Frutty");
+			ingameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			ingameFrame.setResizable(false);
+			ingameFrame.setBounds(0, 0, Map.currentMap.width + 288, Map.currentMap.height + 96);
+			ingameFrame.setLocationRelativeTo(null);
+			ingameFrame.setContentPane(ingameGui = new GuiIngame());
+			ingameFrame.setFocusable(true);
+			for(EntityPlayer players : Map.currentMap.players) {
+				ingameFrame.addKeyListener(players);
+				ingameFrame.addMouseListener(players);
+			}
+			ingameFrame.setVisible(true);
+		});
 	}
 	
 	@Override

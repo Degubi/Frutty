@@ -3,6 +3,7 @@ package frutty.entity;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
+import frutty.Main;
 import frutty.gui.GuiIngame;
 import frutty.map.Map;
 import frutty.map.MapZone;
@@ -16,7 +17,7 @@ public class EntityEnemy extends Entity{
 	public EntityEnemy(int x, int y) {
 		super(x, y);
 		
-		int rng = GuiIngame.rand.nextInt(4);
+		int rng = Main.rand.nextInt(4);
 		if(rng == 0) {
 			setFacing(EnumFacing.DOWN);
 		}else if(rng == 1) {
@@ -49,7 +50,7 @@ public class EntityEnemy extends Entity{
 	@Override
 	public void update(int ticks) {
 		if(ticks % 20 == 0) {
-			for(EntityPlayer player : Map.getPlayers()) {
+			for(EntityPlayer player : Map.currentMap.players) {
 				if((posY + motionY == player.posY && posX + motionX == player.posX) || (posX == player.posX && posY == player.posY)) {
 					GuiIngame.showMessageAndClose("Game over!");
 				}
@@ -57,7 +58,7 @@ public class EntityEnemy extends Entity{
 			
 			int nextPosX = posX + motionX, nextPosY = posY + motionY;
 			if(!MapZone.isEmpty(nextPosX, nextPosY)) {
-				for(int rotat = motionY == 64 ? 1 : 3; ; rotat = rand.nextInt(4)) {
+				for(int rotat = motionY == 64 ? 1 : 3; ; rotat = Main.rand.nextInt(4)) {
 					if(rotat == 0 && MapZone.isEmpty(posX + 64, posY)) {
 						setFacing(EnumFacing.RIGHT);
 						break;

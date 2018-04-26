@@ -10,6 +10,7 @@ import frutty.stuff.ITickable;
 
 public class MapZoneFruit extends MapZone implements ITickable{
 	public final EnumFruit fruitType;
+	public boolean notified;  //Sima mapzone file-bol, nem kell mindegyiknek
 	private int counter;  //Kell azért hogy so-so ugyanakkor essen le az alma
 	
 	public MapZoneFruit(int xPos, int yPos, EnumFruit type, int zoneIndex) {

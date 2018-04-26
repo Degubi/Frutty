@@ -3,17 +3,18 @@ package frutty.gui;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Scanner;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import frutty.map.Map;
 
-public class GuiStats extends JPanel implements ActionListener{
+public final class GuiStats extends JPanel implements ActionListener{
 	public static int topScore, enemyCount, zoneCount; 
 	
 	public GuiStats() {
@@ -23,12 +24,12 @@ public class GuiStats extends JPanel implements ActionListener{
 	}
 	
 	public static void loadStats() {
-		try(Scanner input = new Scanner(new File("stats.prop"))){
-			String[] split = input.nextLine().split(" ");
+		try(BufferedReader input = new BufferedReader(new FileReader("stats.prop"))){
+			String[] split = input.readLine().split(" ");
 			topScore = Integer.parseInt(split[0]);
 			enemyCount = Integer.parseInt(split[1]);
 			zoneCount = Integer.parseInt(split[2]);
-		} catch (FileNotFoundException e2) {
+		} catch (IOException e2) {
 			saveStats();
 		}
 	}
@@ -41,7 +42,7 @@ public class GuiStats extends JPanel implements ActionListener{
 	}
 	
 	public static void openStatsGui() {
-		GuiHelper.newFrame(new GuiStats(), JFrame.DISPOSE_ON_CLOSE, 240, 180).setVisible(true);
+		GuiHelper.showNewFrame(new GuiStats(), "Tutty Frutty", JFrame.DISPOSE_ON_CLOSE, 240, 180);
 	}
 	
 	public static void saveStats() {

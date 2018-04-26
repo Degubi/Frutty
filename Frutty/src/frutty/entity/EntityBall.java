@@ -3,6 +3,7 @@ package frutty.entity;
 import java.awt.Color;
 import java.awt.Graphics;
 
+import frutty.Main;
 import frutty.gui.GuiStats;
 import frutty.map.Map;
 import frutty.map.MapZone;
@@ -50,13 +51,13 @@ public class EntityBall extends Entity{
 				Map.currentMap.score += 100;
 			}
 			
-			for(EntityPlayer player : Map.getPlayers())
+			for(EntityPlayer player : Map.currentMap.players)
 				if(posY == player.posY && posX == player.posX) {
 					active = false;
 				}
 			
 			if(!MapZone.isEmpty(posX + motionX, posY + motionY)) {
-				for(int rotat = motionY == 64 ? 1 : 3; ; rotat = rand.nextInt(4)) {
+				for(int rotat = motionY == 64 ? 1 : 3; ; rotat = Main.rand.nextInt(4)) {
 					if(rotat == 0 && MapZone.isEmpty(posX + 64, posY)) {
 						setFacing(EnumFacing.RIGHT);
 						break;

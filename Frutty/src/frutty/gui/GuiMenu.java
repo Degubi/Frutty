@@ -5,7 +5,6 @@ import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.Arrays;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -16,7 +15,7 @@ import javax.swing.JTextField;
 
 import frutty.map.Map;
 
-public class GuiMenu extends JPanel implements ActionListener{
+public final class GuiMenu extends JPanel implements ActionListener{
 	private final JComboBox<String> mapList = new JComboBox<>();
 	private final JTextField mapSizeField = new JTextField("8x8");
 	private final JCheckBox multiBox = new JCheckBox("Coop mode");
@@ -39,9 +38,9 @@ public class GuiMenu extends JPanel implements ActionListener{
 		mapList.setActionCommand("MapSelector");
 		mapList.setBounds(250, 20, 100, 30);
 		
-		Arrays.stream(new File("./maps/").list())
-			  .map(k -> k.substring(0, k.length() - 4))  //Substring, .deg eltakarítás
-			  .forEach(mapList::addItem);
+		String[] maps = new File("./maps/").list();
+		for(String map : maps)
+			mapList.addItem(map.substring(0, map.length() - 4));   //Substring, .deg eltakarítás
 		
 		mapList.addItem("Generate");  //Legeslegrosszabb esetben is tudunk generálni mapot
 		
@@ -53,7 +52,7 @@ public class GuiMenu extends JPanel implements ActionListener{
 	}
 	
 	public static void showMenu() {
-		GuiHelper.newFrame(new GuiMenu(), JFrame.EXIT_ON_CLOSE, 480, 360).setVisible(true);
+		GuiHelper.showNewFrame(new GuiMenu(), "Tutty Frutty", JFrame.EXIT_ON_CLOSE, 480, 360);
 	}
 	
 	@Override

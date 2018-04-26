@@ -5,11 +5,11 @@ import java.io.Serializable;
 
 import frutty.gui.GuiStats;
 import frutty.map.zones.MapZoneEmpty;
+import frutty.map.zones.MapZoneFruit;
 
 public abstract class MapZone implements Serializable{
 	private static final long serialVersionUID = 392316063689927131L;
 	
-	protected boolean notified;
 	public final int posX, posY, zoneIndex;
 	
 	public MapZone(int xPos, int yPos, int index) {
@@ -27,8 +27,8 @@ public abstract class MapZone implements Serializable{
 		Map.setZoneEmptyAt(zoneIndex);
 		MapZone up = Map.getZoneAtPos(posX, posY - 64);
 		++GuiStats.zoneCount;
-		if(up != null) {
-			up.notified = true;
+		if(up != null && up instanceof MapZoneFruit) {
+			((MapZoneFruit)up).notified = true;
 		}
 	}
 

@@ -13,12 +13,12 @@ import java.util.Random;
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 
+import frutty.Main;
 import frutty.entity.Entity;
 import frutty.entity.EntityBall;
 import frutty.entity.EntityEnemy;
 import frutty.entity.EntityPlayer;
 import frutty.gui.GuiHelper;
-import frutty.gui.GuiIngame;
 import frutty.gui.GuiMenu;
 import frutty.gui.GuiSettings;
 import frutty.map.zones.MapZoneEmpty;
@@ -31,7 +31,7 @@ public class Map implements Serializable{
 	private static final long serialVersionUID = -5083163189200818535L;
 	public static Map currentMap;
 	
-	private final EntityPlayer[] players;
+	public final EntityPlayer[] players;
 	public final MapZone[] zones;
 	public final ArrayList<Entity> entities = new ArrayList<>(); 
 	public EntityEnemy[] enemies;
@@ -91,7 +91,7 @@ public class Map implements Serializable{
 	
 	public static void generateMap(int width, int height, boolean isMultiplayer) {
 		printDebug("Generating map...");
-		Random rand = GuiIngame.rand;
+		Random rand = Main.rand;
 		int bigWidth = width * 64, bigHeight = height * 64;
 		
 		currentMap = new Map(bigWidth - 64, bigHeight - 64, 0, 0, isMultiplayer, "normal");
@@ -277,10 +277,6 @@ public class Map implements Serializable{
 			}
 		}
 		return null;
-	}
-	
-	public static EntityPlayer[] getPlayers() {
-		return currentMap.players;
 	}
 	
 	public static EntityBall getBall() {
