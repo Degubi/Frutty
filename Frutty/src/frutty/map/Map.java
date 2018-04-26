@@ -69,15 +69,14 @@ public class Map implements Serializable{
 	}
 	
 	private static BufferedImage copyDarkened(BufferedImage image) {
-		BufferedImage toReturn = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
+		BufferedImage toReturn = new BufferedImage(16, 16, BufferedImage.TYPE_INT_RGB);
 		
-		for(int x = 0; x < 64; ++x) {
-			for(int y = 0; y < 64; ++y) {
+		for(int x = 0; x < 16; ++x) {
+			for(int y = 0; y < 16; ++y) {
 				int startColor = image.getRGB(x, y);
-				toReturn.setRGB(x, y, ((255 & 0xFF) << 24) |  //Alpha
-		                (((int) ((startColor >> 16 & 0xFF) * 0.7F) & 0xFF) << 16) |  //Red
-		                (((int) ((startColor >> 8 & 0xFF) * 0.7F) & 0xFF) << 8) |  //Green
-		                (((int) ((startColor & 0xFF) * 0.7F) & 0xFF) << 0));  //Blúú
+				toReturn.setRGB(x, y, (int) ((startColor >> 16 & 0xFF) * 0.65F) << 16 |  //Red
+		                			  (int) ((startColor >> 8 & 0xFF) * 0.65F) << 8 |  //Green
+		                			  (int) ((startColor & 0xFF) * 0.65F));  //Blúú
 			}
 		}
 		return toReturn;
