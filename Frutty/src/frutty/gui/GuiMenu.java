@@ -13,6 +13,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import frutty.Main;
 import frutty.map.Map;
 
 public final class GuiMenu extends JPanel implements ActionListener{
@@ -21,22 +22,27 @@ public final class GuiMenu extends JPanel implements ActionListener{
 	private final JCheckBox multiBox = new JCheckBox("Coop mode");
 	private boolean loading = false;
 	
-	public GuiMenu() {
+	private int loadCount;
+	private static GuiMenu instance;
+	
+	public GuiMenu(int load) {
 		setLayout(null);
 		
-		mapSizeField.setBounds(420, 20, 40, 30);
-		multiBox.setBounds(240, 100, 90, 30);
+		loadCount = load;
+		
+		mapSizeField.setBounds(400, 20, 40, 30);
+		multiBox.setBounds(225, 100, 90, 30);
 		
 		add(GuiHelper.newButton("Play", 20, 20, this));
 		add(GuiHelper.newButton("Exit", 180, 280, this));
-		add(GuiHelper.newButton("Settings", 20, 140, this));
-		add(GuiHelper.newButton("Load", 20, 80, this));
-		add(GuiHelper.newButton("Editor", 300, 150, this));
+		add(GuiHelper.newButton("Settings", 20, 170, this));
+		add(GuiHelper.newButton("Load", 20, 70, this));
+		add(GuiHelper.newButton("Editor", 310, 200, this));
 		add(GuiHelper.newButton("Stats", 20, 220, this));
 		
 		mapList.addActionListener(this);
 		mapList.setActionCommand("MapSelector");
-		mapList.setBounds(250, 20, 100, 30);
+		mapList.setBounds(230, 20, 100, 30);
 		
 		String[] maps = new File("./maps/").list();
 		for(String map : maps)
@@ -52,7 +58,12 @@ public final class GuiMenu extends JPanel implements ActionListener{
 	}
 	
 	public static void showMenu() {
-		GuiHelper.showNewFrame(new GuiMenu(), "Tutty Frutty", JFrame.EXIT_ON_CLOSE, 480, 360);
+		GuiHelper.showNewFrame(instance = new GuiMenu(instance == null ? 0 : 100), "Tutty Frutty", JFrame.EXIT_ON_CLOSE, 480, 360);
+	}
+	
+	public static void refreshMenu() {
+		instance.loadCount += 25;
+		instance.repaint();
 	}
 	
 	@Override
@@ -63,8 +74,9 @@ public final class GuiMenu extends JPanel implements ActionListener{
 		
 		graphics.setColor(Color.DARK_GRAY);
 		graphics.setFont(GuiHelper.thiccFont);
-		graphics.drawString(GuiHelper.recommendedMapSizeString, 250, 80);
-		graphics.drawString("MapSize:", 360, 40);
+		graphics.drawString(GuiHelper.recommendedMapSizeString, 230, 80);
+		graphics.drawString("MapSize:", 340, 40);
+		graphics.drawString("Loading count: " + loadCount, 340, 300);
 		
 		if(loading) {
 			graphics.setColor(Color.DARK_GRAY);
@@ -104,7 +116,7 @@ public final class GuiMenu extends JPanel implements ActionListener{
 				mapSizeField.setText("8x8");
 			}else{
 				mapSizeField.setEditable(false);
-				mapSizeField.setText(Map.loadMapSize((String) mapList.getSelectedItem()));
+				mapSizeField.setText(Main.loadMapSize((String) mapList.getSelectedItem()));
 			}break;
 			
 		case "Editor": GuiEditor.openEditor(); ((JFrame)getTopLevelAncestor()).dispose(); break;

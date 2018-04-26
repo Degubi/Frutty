@@ -13,6 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import frutty.Main;
 import frutty.entity.Entity;
 import frutty.entity.EntityEnemy;
 import frutty.entity.EntityPlayer;
@@ -110,6 +111,10 @@ public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 	}
 	
 	public static void showIngame() {
+		try {
+			Main.loadThread.join();
+		} catch (InterruptedException e) {}
+		
 		EventQueue.invokeLater(() -> {
 			JFrame ingameFrame = new JFrame("Tutty Frutty");
 			ingameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

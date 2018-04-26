@@ -53,7 +53,7 @@ public final class GuiSettings extends JPanel implements ActionListener{
 		normalButton.setOpaque(false);
 		debugBox.setOpaque(false);
 		
-		add(GuiHelper.newButton("Save", 180, 300, this));
+		add(GuiHelper.newButton("Save", 180, 280, this));
 		add(easyButton);
 		add(normalButton);
 		add(hardButton);

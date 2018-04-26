@@ -244,13 +244,6 @@ public class Map implements Serializable{
 		}
 	}
 	
-	public static String loadMapSize(String fileName) {
-		try(ObjectInputStream input = new ObjectInputStream(new FileInputStream("./maps/" + fileName + ".deg"))){
-			return input.readInt() + "x" + input.readInt();
-		} catch (IOException e) {}
-		return null;
-	}
-	
 	public static MapZone getZoneAtPos(int x, int y) {
 		for(MapZone zone : currentMap.zones) {
 			if(zone.posX == x && zone.posY == y) {
