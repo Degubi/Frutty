@@ -41,16 +41,17 @@ public class Map implements Serializable{
 	
 	public static final BufferedImage[] textures = new BufferedImage[5];  //Static így nem menti le a serializálás
 	
-	private Map(int mapWidth, int mapHeight, int playerPosX, int playerPosY, boolean isMulti, String textureName) {
-		zones = new MapZone[(mapWidth / 64 + 1) * (mapHeight / 64 + 1)];
-		width = mapWidth;
-		height = mapHeight;
+	//0: width, 1: height, 2: p1X, 3: p1Y, 4: p2X, 5: p2Y
+	private Map(String textureName, boolean isMulti, int... data) {
+		zones = new MapZone[(data[0] / 64) * (data[1] / 64)];
+		width = data[0] - 64;
+		height = data[1] - 64;
 		texture = textureName;
 		
 		if(isMulti) {
-			players = new EntityPlayer[]{new EntityPlayer(playerPosX, playerPosY, true), new EntityPlayer(playerPosX, playerPosY + 64, false)};
+			players = new EntityPlayer[]{new EntityPlayer(data[2], data[3], true), new EntityPlayer(data[4], data[5], false)};
 		}else{
-			players = new EntityPlayer[]{new EntityPlayer(playerPosX, playerPosY, true)};
+			players = new EntityPlayer[]{new EntityPlayer(data[2], data[3], true)};
 		}
 		
 		entities.add(new EntityBall());
@@ -93,7 +94,7 @@ public class Map implements Serializable{
 		Random rand = Main.rand;
 		int bigWidth = width * 64, bigHeight = height * 64;
 		
-		currentMap = new Map(bigWidth - 64, bigHeight - 64, 0, 0, isMultiplayer, "normal");
+		currentMap = new Map("normal", isMultiplayer, bigWidth, bigHeight, 0, 0, 0, 0);
 		
 		for(int x = 0; x < bigWidth; x += 64) {
 			for(int y = 0, rng = rand.nextInt(10); y < bigHeight; y += 64, rng = rand.nextInt(10)) {
@@ -112,16 +113,16 @@ public class Map implements Serializable{
 			}
 		}
 		
-		boolean spawnerSet = false;
+		int loopState = 0;
 		
 		outerLoop:
 		for(int x = rand.nextInt(width) * 64, y = rand.nextInt(height) * 64; ;x = rand.nextInt(width) * 64, y = rand.nextInt(height) * 64) {
 			for(int k = 0; k < currentMap.zoneIndex; ++k) {
 				MapZone zone = currentMap.zones[k];
 				if(zone.posX == x && zone.posY == y && zone instanceof MapZoneEmpty) {  //Üres zóna keresés
-					if(!spawnerSet) {
+					if(loopState == 0) {
 						currentMap.zones[k] = new MapZoneSpawner(x, y, currentMap.zoneIndex);
-						spawnerSet = true;
+						loopState = 1;
 						
 						for(int ycheck = zone.posY + 64; ycheck < bigWidth; ycheck += 64) {
 							MapZone toSet = Map.getZoneAtPos(zone.posX, ycheck);
@@ -152,7 +153,7 @@ public class Map implements Serializable{
 							enemyCount += currentMap.zoneIndex < 70 ? 1 : currentMap.zoneIndex / 70;
 						}else if(difficulty == 1) {
 							enemyCount += currentMap.zoneIndex / 50;
-						}else {
+						}else{
 							enemyCount += currentMap.zoneIndex / 30;
 						}
 						currentMap.enemies = new EntityEnemy[enemyCount];
@@ -160,12 +161,19 @@ public class Map implements Serializable{
 						for(int l = 0; l < enemyCount; ++l) {
 							currentMap.enemies[l] = new EntityEnemy(x, y);
 						}
-						continue;
+						continue outerLoop;
+					}else if(loopState == 1) {
+						currentMap.players[0].posX = x;
+						currentMap.players[0].posY = y;
+						loopState = 2;
+						
+						if(isMultiplayer) continue outerLoop;
+						break outerLoop;
+					}else{
+						currentMap.players[1].posX = x;
+						currentMap.players[1].posY = y;
+						break outerLoop;
 					}
-					currentMap.players[0].posX = x;
-					currentMap.players[0].posY = y;
-					
-					break outerLoop;
 				}
 			}
 		}
@@ -180,39 +188,37 @@ public class Map implements Serializable{
 	public static void loadMap(String name, boolean isMultiplayer) {
 		printDebug("Loading map...");
 		try(ObjectInputStream input = new ObjectInputStream(new FileInputStream("./maps/" + name + ".deg"))){
-			int width = input.readInt() * 64, height = input.readInt() * 64;
-			int spawnerX = 0, spawnerY = 0;
+			int width, height;
 			
-			currentMap = new Map(width - 64, height - 64, input.readInt(), input.readInt(), isMultiplayer, input.readUTF());
+			currentMap = new Map(input.readUTF(), isMultiplayer, width = input.readInt() * 64, height = input.readInt() * 64, input.readInt(), input.readInt(), input.readInt(), input.readInt());
 			
 			for(int y = 0; y < height; y += 64) {
 				for(int x = 0; x < width; x += 64) {
 					switch(input.readChar()) {
 						case 'd': currentMap.zones[currentMap.zoneIndex] = new MapZoneEmpty(x, y, currentMap.zoneIndex++); break;
-						case 's': currentMap.zones[currentMap.zoneIndex] = new MapZoneSpawner(x, y, currentMap.zoneIndex++); spawnerX = x; spawnerY = y; break;
 						case 'a': currentMap.zones[currentMap.zoneIndex] = new MapZoneFruit(x, y, EnumFruit.APPLE, currentMap.zoneIndex++); break;
 						case 'c': currentMap.zones[currentMap.zoneIndex] = new MapZoneFruit(x, y, EnumFruit.CHERRY, currentMap.zoneIndex++); ++currentMap.pickCount; break;
-						default:  currentMap.zones[currentMap.zoneIndex] = new MapZoneNormal(x, y, currentMap.zoneIndex++);
+						case 's': currentMap.zones[currentMap.zoneIndex] = new MapZoneSpawner(x, y, currentMap.zoneIndex++);
+						
+						int difficulty = GuiSettings.getDifficulty(), enemyCount = 0;
+						if(difficulty == 0) {
+							enemyCount += currentMap.zoneIndex < 70 ? 1 : currentMap.zoneIndex / 70;
+						}else if(difficulty == 1) {
+							enemyCount += currentMap.zoneIndex / 50;
+						}else{
+							enemyCount += currentMap.zoneIndex / 30;
+						}
+						
+						currentMap.enemies = new EntityEnemy[enemyCount];
+						for(int k = 0; k < enemyCount; ++k) {
+							currentMap.enemies[k] = new EntityEnemy(x, y);
+						}break;
+						
+						default: currentMap.zones[currentMap.zoneIndex] = new MapZoneNormal(x, y, currentMap.zoneIndex++);
 					}
 				}
 			}
-			
-			int difficulty = GuiSettings.getDifficulty(), enemyCount = 0;
-			if(difficulty == 0) {
-				enemyCount += currentMap.zoneIndex < 70 ? 1 : currentMap.zoneIndex / 70;
-			}else if(difficulty == 1) {
-				enemyCount += currentMap.zoneIndex / 50;
-			}else {
-				enemyCount += currentMap.zoneIndex / 30;
-			}
-			
-			currentMap.enemies = new EntityEnemy[enemyCount];
-			for(int k = 0; k < enemyCount; ++k) {
-				currentMap.enemies[k] = new EntityEnemy(spawnerX, spawnerY);
-			}
-		}catch (IOException e) {
-			e.printStackTrace();
-		}
+		}catch(IOException e){}
 		
 		if(currentMap.height / 64 + 1 > GuiHelper.recommendedMaxMapHeight || currentMap.width / 64 + 1 > GuiHelper.recommendedMaxMapWidth) {
 			JOptionPane.showMessageDialog(null, "Warning: map size is bigger than the recommended max map size!");

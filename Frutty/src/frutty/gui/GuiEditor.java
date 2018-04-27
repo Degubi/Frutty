@@ -21,27 +21,28 @@ public class GuiEditor extends JPanel implements MouseListener{
 	private final JButton[] zoneButtons;
 	private final GuiProperties properties;
 	
-	private static final ImageIcon normalTexture = new ImageIcon(GuiMenu.class.getResource("/textures/map/normal.png"));
+	private static final ImageIcon normalTexture = new ImageIcon(GuiMenu.class.getResource("/textures/dev/normal.png"));
 	private static final ImageIcon cherryTexture = new ImageIcon(GuiMenu.class.getResource("/textures/dev/cherry.png"));
 	private static final ImageIcon appleTexture = new ImageIcon(GuiMenu.class.getResource("/textures/dev/apple.png"));
 	private static final ImageIcon dugTexture = new ImageIcon(GuiMenu.class.getResource("/textures/dev/dug.png"));
 	private static final ImageIcon spawnerTexture = new ImageIcon(GuiMenu.class.getResource("/textures/dev/spawner.png"));
-	private static final ImageIcon playerTexture = new ImageIcon(GuiMenu.class.getResource("/textures/dev/player.png"));
-
-	private GuiEditor(List<JButton> butt, int mapWidth, int mapHeight, int playerPosX, int playerPosY, String fileName, String textureName) {
-		properties = new GuiProperties(fileName, textureName, mapWidth, mapHeight, playerPosX, playerPosY);
-		zoneButtons = new JButton[mapWidth * mapHeight];
+	private static final ImageIcon player1Texture = new ImageIcon(GuiMenu.class.getResource("/textures/dev/player1.png"));
+	private static final ImageIcon player2Texture = new ImageIcon(GuiMenu.class.getResource("/textures/dev/player2.png"));
+	
+	private GuiEditor(List<JButton> butt, String fileName, String textureName, int... data) {
+		properties = new GuiProperties(fileName, textureName, data);
+		zoneButtons = new JButton[data[0] * data[1]];
 		setLayout(null);
 		
-		int posX = mapWidth * 64 + 12, posY = mapHeight * 64, buttonIndexer = 0;
+		int posX = data[0] * 64 + 12, posY = data[1] * 64, buttonIndexer = 0;
 		add(GuiHelper.newButton("Save", posX, posY - 100, this));
 		add(GuiHelper.newButton("Exit", posX, posY - 50, this));
 		add(GuiHelper.newButton("Clear", posX, 300, this));
 		add(GuiHelper.newButton("Properties", posX, 100, this));
 		
 		if(butt == null) {
-			for(int y = 0, yPos = 0; y < mapHeight; ++y, yPos += 64) {
-				for(int x = 0, xPos = 0; x < mapWidth; ++x, xPos += 64) {
+			for(int y = 0, yPos = 0; y < data[0]; ++y, yPos += 64) {
+				for(int x = 0, xPos = 0; x < data[1]; ++x, xPos += 64) {
 					JButton button = new JButton(normalTexture);
 					button.setActionCommand("n");
 					button.addMouseListener(this);
@@ -74,7 +75,7 @@ public class GuiEditor extends JPanel implements MouseListener{
 					JOptionPane.showMessageDialog(null, "Map size is very big, things may go offscreen!");
 				}
 				
-				GuiHelper.showNewFrame(new GuiEditor(null, mapWidth, mapHeight, 0, 0, "filename.deg", "normal"), 
+				GuiHelper.showNewFrame(new GuiEditor(null, "filename.deg", "normal", mapWidth, mapHeight, 0, 0, 0, 0), 
 						"Frutty Map Editor", JFrame.DISPOSE_ON_CLOSE, bigWidth + 156, bigHeight + 32);
 			}
 		}else if(test == 1) {
@@ -83,10 +84,11 @@ public class GuiEditor extends JPanel implements MouseListener{
 			
 			if(fileName != null && !fileName.isEmpty()) {
 				try(ObjectInputStream input = new ObjectInputStream(new FileInputStream("./maps/" + fileName))){
-					int mapWidth = input.readInt(), mapHeight = input.readInt();
-					int playerPosX = input.readInt(), playerPosY = input.readInt();
-					ArrayList<JButton> butt = new ArrayList<>();
 					String textureName = input.readUTF();
+					int mapWidth = input.readInt(), mapHeight = input.readInt();
+					int player1PosX = input.readInt(), player1PosY = input.readInt();
+					int player2PosX = input.readInt(), player2PosY = input.readInt();
+					ArrayList<JButton> butt = new ArrayList<>();
 					
 					for(int y = 0; y < mapHeight; ++y) {
 						for(int x = 0; x < mapWidth; ++x) {
@@ -100,19 +102,23 @@ public class GuiEditor extends JPanel implements MouseListener{
 								case 's': button.setIcon(spawnerTexture); break;
 								default: button.setIcon(normalTexture);
 							}
-							
 							button.setActionCommand(String.valueOf(read));
 							button.setBounds(x * 64, y * 64, 64, 64);
 							
-							if(button.getX() == playerPosX && button.getY() == playerPosY) {
+							if(button.getX() == player1PosX && button.getY() == player1PosY) {
 								button.setActionCommand("p");
-								button.setIcon(playerTexture);
+								button.setIcon(player1Texture);
+							}
+							
+							if(button.getX() == player2PosX && button.getY() == player2PosY) {
+								button.setActionCommand("x");
+								button.setIcon(player2Texture);
 							}
 							butt.add(button);
 						}
 					}
 					
-					GuiHelper.showNewFrame(new GuiEditor(butt, mapWidth, mapHeight, playerPosX, playerPosY, fileName, textureName), 
+					GuiHelper.showNewFrame(new GuiEditor(butt, fileName, textureName, mapWidth, mapHeight, player1PosX, player1PosY, player2PosX, player2PosY), 
 							"Frutty Map Editor", JFrame.DISPOSE_ON_CLOSE, mapWidth * 64 + 156, mapHeight * 64 + 32);
 					
 				} catch (IOException e) {
@@ -132,8 +138,11 @@ public class GuiEditor extends JPanel implements MouseListener{
 				 	case "d": button.setActionCommand("a"); button.setIcon(appleTexture); break;
 				 	case "a": button.setActionCommand("c"); button.setIcon(cherryTexture); break;
 				 	case "c": button.setActionCommand("s"); button.setIcon(spawnerTexture); break;
-				 	case "s": if(event.isControlDown()) {
-				 		button.setActionCommand("p"); properties.setPlayerPos(button); button.setIcon(playerTexture);
+				 	case "s": 
+				 	if(event.isControlDown()) {
+				 		button.setActionCommand("p"); properties.setPlayer1Pos(button); button.setIcon(player1Texture);
+				 	}else if(event.isShiftDown()) {
+				 		button.setActionCommand("x"); properties.setPlayer2Pos(button); button.setIcon(player2Texture);
 				 	}else{
 				 		button.setActionCommand("n"); button.setIcon(normalTexture);
 				 	}
@@ -148,21 +157,23 @@ public class GuiEditor extends JPanel implements MouseListener{
 				 	} break;
 				 	
 				 	case "Properties": 
-				 		GuiHelper.showNewFrame(properties, "Map Properties", JFrame.DISPOSE_ON_CLOSE, 350, 200); break;
+				 		GuiHelper.showNewFrame(properties, "Map Properties", JFrame.DISPOSE_ON_CLOSE, 350, 250); break;
 				 	
 				 	default:
 				 	try(ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream("./maps/" + properties.getMapName()))){
+				 		output.writeUTF(properties.getMapTextureName());
 				 		output.writeInt(properties.getMapWidth());
 				 		output.writeInt(properties.getMapHeight());
-				 		output.writeInt(properties.getPlayerPosX());
-				 		output.writeInt(properties.getPlayerPosY());
-				 		output.writeUTF(properties.getMapTextureName());
+				 		output.writeInt(properties.getPlayer1PosX());
+				 		output.writeInt(properties.getPlayer1PosY());
+				 		output.writeInt(properties.getPlayer2PosX());
+				 		output.writeInt(properties.getPlayer2PosY());
 
 				 		for(JButton writeButton : zoneButtons) {
 				 			char toWrite = writeButton.getActionCommand().charAt(0);
-				 			if(toWrite == 'p') {
+				 			if(toWrite == 'p' || toWrite == 'x') {
 				 				output.writeChar('d');
-				 			}else {
+				 			}else{
 				 				output.writeChar(toWrite);
 				 			}
 				 		}
@@ -174,8 +185,11 @@ public class GuiEditor extends JPanel implements MouseListener{
 				}
 			}else if(event.getButton() == MouseEvent.BUTTON3) {    //Right click
 				switch(button.getActionCommand().charAt(0)) {
-					case 'n': if(event.isControlDown()) {
-						button.setActionCommand("p"); properties.setPlayerPos(button); button.setIcon(playerTexture);
+					case 'n': 
+					if(event.isControlDown()) {
+						button.setActionCommand("p"); properties.setPlayer1Pos(button); button.setIcon(player1Texture);
+					}else if(event.isShiftDown()) {
+						button.setActionCommand("x"); properties.setPlayer2Pos(button); button.setIcon(player2Texture);
 					}else {
 						button.setActionCommand("s"); button.setIcon(spawnerTexture);
 					}
@@ -185,6 +199,7 @@ public class GuiEditor extends JPanel implements MouseListener{
 				 	case 'c': button.setActionCommand("a"); button.setIcon(appleTexture); break;
 				 	case 's': button.setActionCommand("c"); button.setIcon(cherryTexture); break;
 				 	case 'p': button.setActionCommand("s"); button.setIcon(spawnerTexture); break;
+				 	case 'x': button.setActionCommand("s"); button.setIcon(spawnerTexture); break;
 				 	default: ;
 				}
 			}

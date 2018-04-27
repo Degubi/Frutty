@@ -72,35 +72,43 @@ public class EntityPlayer extends Entity implements KeyListener, MouseListener{
 	@Override
 	public void keyPressed(KeyEvent event) {
 		if(System.currentTimeMillis() - lastPressTime > 100L) {
+			boolean moved = false;
+			
 			if(event.getKeyCode() == upKey && posY > 0 && isFree(posX, posY - 64)) {
 				setFacing(EnumFacing.UP);
+				moved = true;
 			}else if(event.getKeyCode() == downKey && posY < Map.currentMap.height && isFree(posX, posY + 64)) {
 				setFacing(EnumFacing.DOWN);
+				moved = true;
 			}else if(event.getKeyCode() == leftKey && posX > 0 && isFree(posX - 64, posY)) {
 				setFacing(EnumFacing.LEFT);
+				moved = true;
 			}else if(event.getKeyCode() == rightKey && posX < Map.currentMap.width && isFree(posX + 64, posY)) {
 				setFacing(EnumFacing.RIGHT);
+				moved = true;
 			}
 			
-			MapZone currentZone = Map.getZoneAtPos(posX, posY);
-			if(currentZone instanceof MapZoneNormal) {
-				currentZone.onBreak();
-			}else if(currentZone instanceof MapZoneFruit) {
-				Map.currentMap.score += 50;
-				currentZone.onBreak();
-						
-				if(--Map.currentMap.pickCount == 0) {  //Main loopból kiszedve, nem kell framenként nézni
-					GuiIngame.showMessageAndClose("You won!");
-					GuiStats.compareScores();
+			if(moved) {
+				MapZone currentZone = Map.getZoneAtPos(posX, posY);
+				if(currentZone instanceof MapZoneNormal) {
+					currentZone.onBreak();
+				}else if(currentZone instanceof MapZoneFruit) {
+					Map.currentMap.score += 50;
+					currentZone.onBreak();
+							
+					if(--Map.currentMap.pickCount == 0) {
+						GuiIngame.showMessageAndClose("You won!");
+						GuiStats.compareScores();
+					}
 				}
+				lastPressTime = System.currentTimeMillis();
 			}
-			lastPressTime = System.currentTimeMillis();
 		}
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent event) {
-		if(isFirstPlayer && MapZone.isEmpty(posX + currentFacing.xOffset, posY + currentFacing.yOffset)) {
+		if(isFirstPlayer && event.getX() < Map.currentMap.width + 64 && MapZone.isEmpty(posX + currentFacing.xOffset, posY + currentFacing.yOffset)) {
 			Map.getBall().activate(posX, posY, currentFacing);
 		}
 	}

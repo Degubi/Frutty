@@ -54,6 +54,7 @@ public class Main {
 	
 	public static String loadMapSize(String fileName) {
 		try(ObjectInputStream input = new ObjectInputStream(new FileInputStream("./maps/" + fileName + ".deg"))){
+			input.readUTF();
 			return input.readInt() + "x" + input.readInt();
 		} catch (IOException e) {}
 		return null;

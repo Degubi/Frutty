@@ -14,25 +14,32 @@ import javax.swing.table.DefaultTableModel;
 public final class GuiProperties extends JPanel{
 	private final PropertyTableModel table = new PropertyTableModel();
 	
-	public GuiProperties(String mapName, String textureName, int width, int height, int playerPosX, int playerPosY) {
+	//0: width, 1: height, 2: p1X, 3: p1Y, 4: p2X, 5: p2Y
+	public GuiProperties(String mapName, String textureName, int[] data) {
 		setLayout(null);
 		
 		JTable jTable = new JTable(table);
 		jTable.setBorder(new LineBorder(Color.GRAY, 1, true));
-		jTable.setBounds(20, 20, 300, 100);
+		jTable.setBounds(20, 20, 300, 130);
 		
 		jTable.setValueAt("Map Name", 0, 0);
 		jTable.setValueAt(mapName, 0, 1);
 		jTable.setValueAt("Texture", 1, 0);
 		jTable.setValueAt(textureName, 1, 1);
 		jTable.setValueAt("Map Width", 2, 0);
-		jTable.setValueAt(width, 2, 1);
+		jTable.setValueAt(data[0], 2, 1);
 		jTable.setValueAt("Map Height", 3, 0);
-		jTable.setValueAt(height, 3, 1);
-		jTable.setValueAt("Player Pos X", 4, 0);
-		jTable.setValueAt(playerPosX, 4, 1);
-		jTable.setValueAt("Player Pos Y", 5, 0);
-		jTable.setValueAt(playerPosY, 5, 1);
+		jTable.setValueAt(data[1], 3, 1);
+		
+		jTable.setValueAt("Player1 Pos X", 4, 0);
+		jTable.setValueAt(data[2], 4, 1);
+		jTable.setValueAt("Player1 Pos Y", 5, 0);
+		jTable.setValueAt(data[3], 5, 1);
+		
+		jTable.setValueAt("Player2 Pos X", 6, 0);
+		jTable.setValueAt(data[4], 6, 1);
+		jTable.setValueAt("Player2 Pos Y", 7, 0);
+		jTable.setValueAt(data[5], 7, 1);
 		
 		CustomCellRenderer render = new CustomCellRenderer();
 		jTable.getColumnModel().getColumn(1).setCellRenderer(render);
@@ -53,23 +60,34 @@ public final class GuiProperties extends JPanel{
 	public int getMapHeight() {
 		return (int) table.getValueAt(3, 1);
 	}
-	public int getPlayerPosX() {
+	public int getPlayer1PosX() {
 		return (int) table.getValueAt(4, 1);
 	}
-	public int getPlayerPosY() {
+	public int getPlayer1PosY() {
 		return (int) table.getValueAt(5, 1);
 	}
+	public int getPlayer2PosX() {
+		return (int) table.getValueAt(6, 1);
+	}
+	public int getPlayer2PosY() {
+		return (int) table.getValueAt(7, 1);
+	}
 	
-	public void setPlayerPos(JButton button) {
+	public void setPlayer1Pos(JButton button) {
 		table.setValueAt(button.getX(), 4, 1);
 		table.setValueAt(button.getY(), 5, 1);
+	}
+	
+	public void setPlayer2Pos(JButton button) {
+		table.setValueAt(button.getX(), 6, 1);
+		table.setValueAt(button.getY(), 7, 1);
 	}
 	
 	private static final class PropertyTableModel extends DefaultTableModel{
 		
 		@Override
 		public int getRowCount() {
-			return 6;
+			return 8;
 		}
 		@Override
 		public int getColumnCount() {
@@ -77,7 +95,8 @@ public final class GuiProperties extends JPanel{
 		}
 		@Override
 		public boolean isCellEditable(int rowIndex, int columnIndex) {
-			return columnIndex != 0 && rowIndex != 2 && rowIndex != 3 && rowIndex != 4 && rowIndex != 5;
+			return true;
+			//return columnIndex != 0 && rowIndex != 2 && rowIndex != 3 && rowIndex != 4 && rowIndex != 5;
 		}
 	}
 	
