@@ -190,11 +190,11 @@ public class Map implements Serializable{
 		try(ObjectInputStream input = new ObjectInputStream(new FileInputStream("./maps/" + name + ".deg"))){
 			int width, height;
 			
-			currentMap = new Map(input.readUTF(), isMultiplayer, width = input.readInt() * 64, height = input.readInt() * 64, input.readInt(), input.readInt(), input.readInt(), input.readInt());
+			currentMap = new Map(input.readUTF(), isMultiplayer, width = input.readShort() * 64, height = input.readShort() * 64, input.readShort(), input.readShort(), input.readShort(), input.readShort());
 			
 			for(int y = 0; y < height; y += 64) {
 				for(int x = 0; x < width; x += 64) {
-					switch(input.readChar()) {
+					switch((char)input.readByte()) {
 						case 'd': currentMap.zones[currentMap.zoneIndex] = new MapZoneEmpty(x, y, currentMap.zoneIndex++); break;
 						case 'a': currentMap.zones[currentMap.zoneIndex] = new MapZoneFruit(x, y, EnumFruit.APPLE, currentMap.zoneIndex++); break;
 						case 'c': currentMap.zones[currentMap.zoneIndex] = new MapZoneFruit(x, y, EnumFruit.CHERRY, currentMap.zoneIndex++); ++currentMap.pickCount; break;

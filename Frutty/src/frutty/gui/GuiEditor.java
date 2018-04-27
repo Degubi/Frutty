@@ -85,15 +85,15 @@ public class GuiEditor extends JPanel implements MouseListener{
 			if(fileName != null && !fileName.isEmpty()) {
 				try(ObjectInputStream input = new ObjectInputStream(new FileInputStream("./maps/" + fileName))){
 					String textureName = input.readUTF();
-					int mapWidth = input.readInt(), mapHeight = input.readInt();
-					int player1PosX = input.readInt(), player1PosY = input.readInt();
-					int player2PosX = input.readInt(), player2PosY = input.readInt();
+					int mapWidth = input.readShort(), mapHeight = input.readShort();
+					int player1PosX = input.readShort(), player1PosY = input.readShort();
+					int player2PosX = input.readShort(), player2PosY = input.readShort();
 					ArrayList<JButton> butt = new ArrayList<>();
 					
 					for(int y = 0; y < mapHeight; ++y) {
 						for(int x = 0; x < mapWidth; ++x) {
 							JButton button = new JButton();
-							char read = input.readChar();
+							char read = (char) input.readByte();
 							
 							switch(read) {
 								case 'c': button.setIcon(cherryTexture); break;
@@ -162,19 +162,19 @@ public class GuiEditor extends JPanel implements MouseListener{
 				 	default:
 				 	try(ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream("./maps/" + properties.getMapName()))){
 				 		output.writeUTF(properties.getMapTextureName());
-				 		output.writeInt(properties.getMapWidth());
-				 		output.writeInt(properties.getMapHeight());
-				 		output.writeInt(properties.getPlayer1PosX());
-				 		output.writeInt(properties.getPlayer1PosY());
-				 		output.writeInt(properties.getPlayer2PosX());
-				 		output.writeInt(properties.getPlayer2PosY());
+				 		output.writeShort(properties.getMapWidth());
+				 		output.writeShort(properties.getMapHeight());
+				 		output.writeShort(properties.getPlayer1PosX());
+				 		output.writeShort(properties.getPlayer1PosY());
+				 		output.writeShort(properties.getPlayer2PosX());
+				 		output.writeShort(properties.getPlayer2PosY());
 
 				 		for(JButton writeButton : zoneButtons) {
 				 			char toWrite = writeButton.getActionCommand().charAt(0);
 				 			if(toWrite == 'p' || toWrite == 'x') {
-				 				output.writeChar('d');
+				 				output.writeByte('d');
 				 			}else{
-				 				output.writeChar(toWrite);
+				 				output.writeByte(toWrite);
 				 			}
 				 		}
 					} catch (IOException e) {
