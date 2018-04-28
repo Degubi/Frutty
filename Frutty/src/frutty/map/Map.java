@@ -37,50 +37,33 @@ public class Map implements Serializable{
 	public EntityEnemy[] enemies;
 	public final int width, height;
 	public int pickCount, score, zoneIndex, ticks;
-	private final String texture;
-	
-	public static final BufferedImage[] textures = new BufferedImage[5];  //Static így nem menti le a serializálás
+	public transient BufferedImage texture;
+	public final String textureStr;
 	
 	//0: width, 1: height, 2: p1X, 3: p1Y, 4: p2X, 5: p2Y
 	private Map(String textureName, boolean isMulti, int... data) {
 		zones = new MapZone[(data[0] / 64) * (data[1] / 64)];
 		width = data[0] - 64;
 		height = data[1] - 64;
-		texture = textureName;
+		textureStr = textureName;
+		texture = loadTexture(textureName);
 		
 		if(isMulti) {
 			players = new EntityPlayer[]{new EntityPlayer(data[2], data[3], true), new EntityPlayer(data[4], data[5], false)};
 		}else{
 			players = new EntityPlayer[]{new EntityPlayer(data[2], data[3], true)};
 		}
-		
 		entities.add(new EntityBall());
-		loadTexture(textureName);
 	}
 	
-	private static void loadTexture(String textureName) {
+	private static BufferedImage loadTexture(String textureName) {
 		printDebug("Started loading texture " + textureName);
 		try{
-			textures[0] = ImageIO.read(GuiMenu.class.getResource("/textures/map/" + textureName + ".png"));
-			for(int k = 1; k < 5; ++k) {
-				textures[k] = copyDarkened(textures[k - 1]);
-			}
 			printDebug(textureName + " loaded");
-		}catch (IOException e) {}
-	}
-	
-	private static BufferedImage copyDarkened(BufferedImage image) {
-		BufferedImage toReturn = new BufferedImage(16, 16, BufferedImage.TYPE_INT_RGB);
-		
-		for(int x = 0; x < 16; ++x) {
-			for(int y = 0; y < 16; ++y) {
-				int startColor = image.getRGB(x, y);
-				toReturn.setRGB(x, y, (int) ((startColor >> 16 & 0xFF) * 0.65F) << 16 |  //Red
-		                			  (int) ((startColor >> 8 & 0xFF) * 0.65F) << 8 |  //Green
-		                			  (int) ((startColor & 0xFF) * 0.65F));  //Blúú
-			}
+			return ImageIO.read(GuiMenu.class.getResource("/textures/map/" + textureName + ".png"));
+		}catch (IOException e) {
+			return null;
 		}
-		return toReturn;
 	}
 	
 	private static void printDebug(String msg) {
@@ -243,7 +226,7 @@ public class Map implements Serializable{
 		if(fileName != null) {
 			try(ObjectInputStream input = new ObjectInputStream(new FileInputStream("./saves/" + fileName))){
 				currentMap = (Map) input.readObject();
-				loadTexture(currentMap.texture);
+				currentMap.texture = loadTexture(currentMap.textureStr);
 			} catch (ClassNotFoundException | IOException e) {
 				e.printStackTrace();
 			}

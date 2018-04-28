@@ -17,15 +17,11 @@ public class EntityEnemy extends Entity{
 	public EntityEnemy(int x, int y) {
 		super(x, y);
 		
-		int rng = Main.rand.nextInt(4);
-		if(rng == 0) {
-			setFacing(EnumFacing.DOWN);
-		}else if(rng == 1) {
-			setFacing(EnumFacing.RIGHT);
-		}else if(rng == 2) {
-			setFacing(EnumFacing.LEFT);
-		}else{
-			setFacing(EnumFacing.UP);
+		switch(Main.rand.nextInt(4)) {
+			case 0: setFacing(EnumFacing.DOWN); break;
+			case 1: setFacing(EnumFacing.RIGHT); break;
+			case 2: setFacing(EnumFacing.LEFT); break;
+			default: setFacing(EnumFacing.UP);
 		}
 		
 		renderPosX = x - motionX / 2;
@@ -56,8 +52,7 @@ public class EntityEnemy extends Entity{
 				}
 			}
 			
-			int nextPosX = posX + motionX, nextPosY = posY + motionY;
-			if(!MapZone.isEmpty(nextPosX, nextPosY)) {
+			if(!MapZone.isEmpty(posX + motionX, posY + motionY)) {
 				for(int rotat = motionY == 64 ? 1 : 3; ; rotat = Main.rand.nextInt(4)) {
 					if(rotat == 0 && MapZone.isEmpty(posX + 64, posY)) {
 						setFacing(EnumFacing.RIGHT);

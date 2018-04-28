@@ -7,15 +7,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 
-import frutty.gui.GuiIngame;
-import frutty.gui.GuiStats;
 import frutty.map.Map;
 import frutty.map.MapZone;
-import frutty.map.zones.MapZoneFruit;
-import frutty.map.zones.MapZoneNormal;
-import frutty.map.zones.MapZoneSpawner;
 import frutty.stuff.EnumFacing;
-import frutty.stuff.EnumFruit;
 
 public class EntityPlayer extends Entity implements KeyListener, MouseListener{
 	private static final BufferedImage[] textures = {loadTexture("player/side.png"), loadTexture("player/front.png"), loadTexture("player/back.png")};
@@ -25,12 +19,12 @@ public class EntityPlayer extends Entity implements KeyListener, MouseListener{
 	private EnumFacing currentFacing;
 	
 	private final int leftKey, rightKey, upKey, downKey;
-	private final boolean isFirstPlayer;
+	private final boolean canShootBall;
 	
 	public EntityPlayer(int x, int y, boolean isFirst) {
 		super(x, y);
 		
-		isFirstPlayer = isFirst;
+		canShootBall = isFirst;
 		
 		if(isFirst) {
 			leftKey = KeyEvent.VK_LEFT;
@@ -48,10 +42,8 @@ public class EntityPlayer extends Entity implements KeyListener, MouseListener{
 	}
 
 	private static boolean isFree(int x, int y) {
-		for(MapZone zone : Map.currentMap.zones) {
-			if(zone.posX == x && zone.posY == y && (zone instanceof MapZoneSpawner || (zone instanceof MapZoneFruit && ((MapZoneFruit)zone).fruitType == EnumFruit.APPLE))) {
-				return false;
-			}
+		if(!Map.getZoneAtPos(x, y).isPassable()) {
+			return false;
 		}
 		
 		for(Entity entities : Map.currentMap.entities) {
@@ -67,48 +59,29 @@ public class EntityPlayer extends Entity implements KeyListener, MouseListener{
 		posX += facing.xOffset;
 		posY += facing.yOffset;
 		textureIndex = facing.textureIndex;
+		
+		Map.getZoneAtPos(posX, posY).onBreak();
+		lastPressTime = System.currentTimeMillis();
 	}
 	
 	@Override
 	public void keyPressed(KeyEvent event) {
 		if(System.currentTimeMillis() - lastPressTime > 100L) {
-			boolean moved = false;
-			
 			if(event.getKeyCode() == upKey && posY > 0 && isFree(posX, posY - 64)) {
 				setFacing(EnumFacing.UP);
-				moved = true;
 			}else if(event.getKeyCode() == downKey && posY < Map.currentMap.height && isFree(posX, posY + 64)) {
 				setFacing(EnumFacing.DOWN);
-				moved = true;
 			}else if(event.getKeyCode() == leftKey && posX > 0 && isFree(posX - 64, posY)) {
 				setFacing(EnumFacing.LEFT);
-				moved = true;
 			}else if(event.getKeyCode() == rightKey && posX < Map.currentMap.width && isFree(posX + 64, posY)) {
 				setFacing(EnumFacing.RIGHT);
-				moved = true;
-			}
-			
-			if(moved) {
-				MapZone currentZone = Map.getZoneAtPos(posX, posY);
-				if(currentZone instanceof MapZoneNormal) {
-					currentZone.onBreak();
-				}else if(currentZone instanceof MapZoneFruit) {
-					Map.currentMap.score += 50;
-					currentZone.onBreak();
-							
-					if(--Map.currentMap.pickCount == 0) {
-						GuiIngame.showMessageAndClose("You won!");
-						GuiStats.compareScores();
-					}
-				}
-				lastPressTime = System.currentTimeMillis();
 			}
 		}
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent event) {
-		if(isFirstPlayer && event.getX() < Map.currentMap.width + 64 && MapZone.isEmpty(posX + currentFacing.xOffset, posY + currentFacing.yOffset)) {
+		if(canShootBall && event.getX() < Map.currentMap.width + 64 && MapZone.isEmpty(posX + currentFacing.xOffset, posY + currentFacing.yOffset)) {
 			Map.getBall().activate(posX, posY, currentFacing);
 		}
 	}

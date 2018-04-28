@@ -32,4 +32,9 @@ public class MapZoneSpawner extends MapZone{
 		graphics.setColor(colorCache[decrease ? --colorIndexer : ++colorIndexer]);
 		graphics.fillRect(posX, posY, 64, 64);
 	}
+
+	@Override
+	public boolean isPassable() {
+		return false;
+	}
 }

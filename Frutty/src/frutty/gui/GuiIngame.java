@@ -29,6 +29,7 @@ public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 	static GuiIngame ingameGui;
 	
 	private boolean paused = false;
+	private boolean renderEdge = false;
 	
 	public GuiIngame() {
 		setLayout(null);
@@ -64,7 +65,6 @@ public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 		graphics.setColor(Color.GRAY);
 		for(int k = 0; k < 20; ++k) {
 			graphics.drawLine(Map.currentMap.width + 64 + k, 0, Map.currentMap.width + 64 + k, Map.currentMap.height + 83);
-			graphics.drawLine(0, Map.currentMap.height + 64 + k, Map.currentMap.width + 64, Map.currentMap.height + 64 + k);
 		}
 		
 		graphics.setColor(Color.BLACK);
@@ -119,7 +119,7 @@ public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 			JFrame ingameFrame = new JFrame("Tutty Frutty");
 			ingameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			ingameFrame.setResizable(false);
-			ingameFrame.setBounds(0, 0, Map.currentMap.width + 288, Map.currentMap.height + 96);
+			ingameFrame.setBounds(0, 0, Map.currentMap.width + 288, Map.currentMap.height + 100);
 			ingameFrame.setLocationRelativeTo(null);
 			ingameFrame.setContentPane(ingameGui = new GuiIngame());
 			ingameFrame.setFocusable(true);

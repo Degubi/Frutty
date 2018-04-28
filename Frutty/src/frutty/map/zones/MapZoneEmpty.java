@@ -15,4 +15,9 @@ public class MapZoneEmpty extends MapZone{
 		graphics.setColor(Color.BLACK);
 		graphics.fillRect(posX, posY, 64, 64);
 	}
+
+	@Override
+	public boolean isPassable() {
+		return true;
+	}
 }

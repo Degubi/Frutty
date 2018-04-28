@@ -3,6 +3,8 @@ package frutty.map.zones;
 import java.awt.Graphics;
 
 import frutty.entity.EntityApple;
+import frutty.gui.GuiIngame;
+import frutty.gui.GuiStats;
 import frutty.map.Map;
 import frutty.map.MapZone;
 import frutty.stuff.EnumFruit;
@@ -19,24 +21,31 @@ public class MapZoneFruit extends MapZone implements ITickable{
 	}
 
 	@Override
-	public void draw(Graphics graphics) {
-		if(posY < 100) {
-			graphics.drawImage(Map.currentMap.textures[0], posX, posY, 64, 64, null);
-		}else if(posY > 100 && posY < 300) {
-			graphics.drawImage(Map.currentMap.textures[1], posX, posY, 64, 64, null);
-		}else if(posY > 300 && posY < 400) {
-			graphics.drawImage(Map.currentMap.textures[2], posX, posY, 64, 64, null);
-		}else if(posY > 400 && posY < 600) {
-			graphics.drawImage(Map.currentMap.textures[3], posX, posY, 64, 64, null);
-		}else{
-			graphics.drawImage(Map.currentMap.textures[4], posX, posY, 64, 64, null);
+	public void onBreak() {
+		Map.setZoneEmptyAt(zoneIndex);
+		MapZone up = Map.getZoneAtPos(posX, posY - 64);
+		++GuiStats.zoneCount;
+		if(up != null && up instanceof MapZoneFruit) {
+			((MapZoneFruit)up).notified = true;
 		}
+		
+		Map.currentMap.score += 50;
+		if(--Map.currentMap.pickCount == 0) {
+			GuiIngame.showMessageAndClose("You won!");
+			GuiStats.compareScores();
+		}
+	}
+	
+	@Override
+	public void draw(Graphics graphics) {
+		graphics.drawImage(Map.currentMap.texture, posX, posY, 64, 64, null);
 		
 		if(fruitType == EnumFruit.APPLE) {
 			graphics.drawImage(EntityApple.appleTexture, posX, posY, null);
 		}else if(fruitType == EnumFruit.CHERRY) {
 			graphics.drawImage(EntityApple.cherryTexture, posX, posY, null);
 		}
+		renderDepth(graphics);
 	}
 	
 	@Override
@@ -49,5 +58,10 @@ public class MapZoneFruit extends MapZone implements ITickable{
 				++counter;
 			}
 		}
+	}
+
+	@Override
+	public boolean isPassable() {
+		return fruitType == EnumFruit.CHERRY;
 	}
 }
