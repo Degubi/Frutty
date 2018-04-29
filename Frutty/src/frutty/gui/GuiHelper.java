@@ -38,6 +38,7 @@ public final class GuiHelper {
 	public static JButton newButton(String text, int x, int y, ActionListener listener) {
 		JButton butt = new JButton(text);
 		butt.setBounds(x, y, 120, 30);
+		butt.setMnemonic(100);
 		butt.addActionListener(listener);
 		return butt;
 	}
@@ -45,6 +46,7 @@ public final class GuiHelper {
 	public static JButton newButton(String text, int x, int y, MouseListener listener) {
 		JButton butt = new JButton(text);
 		butt.setBounds(x, y, 120, 30);
+		butt.setMnemonic(100);
 		butt.addMouseListener(listener);
 		return butt;
 	}

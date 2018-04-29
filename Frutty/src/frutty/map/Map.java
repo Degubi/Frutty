@@ -177,11 +177,11 @@ public class Map implements Serializable{
 			
 			for(int y = 0; y < height; y += 64) {
 				for(int x = 0; x < width; x += 64) {
-					switch((char)input.readByte()) {
-						case 'd': currentMap.zones[currentMap.zoneIndex] = new MapZoneEmpty(x, y, currentMap.zoneIndex++); break;
-						case 'a': currentMap.zones[currentMap.zoneIndex] = new MapZoneFruit(x, y, EnumFruit.APPLE, currentMap.zoneIndex++); break;
-						case 'c': currentMap.zones[currentMap.zoneIndex] = new MapZoneFruit(x, y, EnumFruit.CHERRY, currentMap.zoneIndex++); ++currentMap.pickCount; break;
-						case 's': currentMap.zones[currentMap.zoneIndex] = new MapZoneSpawner(x, y, currentMap.zoneIndex++);
+					switch(input.readByte()) {
+						case 0: currentMap.zones[currentMap.zoneIndex] = new MapZoneNormal(x, y, currentMap.zoneIndex++); break;
+						case 2: currentMap.zones[currentMap.zoneIndex] = new MapZoneFruit(x, y, EnumFruit.APPLE, currentMap.zoneIndex++); break;
+						case 3: currentMap.zones[currentMap.zoneIndex] = new MapZoneFruit(x, y, EnumFruit.CHERRY, currentMap.zoneIndex++); ++currentMap.pickCount; break;
+						case 4: currentMap.zones[currentMap.zoneIndex] = new MapZoneSpawner(x, y, currentMap.zoneIndex++);
 						
 						int difficulty = GuiSettings.getDifficulty(), enemyCount = 0;
 						if(difficulty == 0) {
@@ -196,8 +196,7 @@ public class Map implements Serializable{
 						for(int k = 0; k < enemyCount; ++k) {
 							currentMap.enemies[k] = new EntityEnemy(x, y);
 						}break;
-						
-						default: currentMap.zones[currentMap.zoneIndex] = new MapZoneNormal(x, y, currentMap.zoneIndex++);
+						default: currentMap.zones[currentMap.zoneIndex] = new MapZoneEmpty(x, y, currentMap.zoneIndex++);
 					}
 				}
 			}
