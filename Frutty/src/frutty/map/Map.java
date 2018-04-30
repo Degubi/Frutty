@@ -19,6 +19,7 @@ import frutty.entity.EntityBall;
 import frutty.entity.EntityEnemy;
 import frutty.entity.EntityPlayer;
 import frutty.gui.GuiHelper;
+import frutty.gui.GuiIngame;
 import frutty.gui.GuiMenu;
 import frutty.gui.GuiSettings;
 import frutty.map.zones.MapZoneEmpty;
@@ -34,19 +35,30 @@ public class Map implements Serializable{
 	public final EntityPlayer[] players;
 	public final MapZone[] zones;
 	public final ArrayList<Entity> entities = new ArrayList<>(); 
-	public EntityEnemy[] enemies;
+	public final EntityEnemy[] enemies;
 	public final int width, height;
 	public int pickCount, score, zoneIndex, ticks;
-	public transient BufferedImage texture;
 	public final String textureStr;
 	
 	//0: width, 1: height, 2: p1X, 3: p1Y, 4: p2X, 5: p2Y
 	private Map(String textureName, boolean isMulti, int... data) {
-		zones = new MapZone[(data[0] / 64) * (data[1] / 64)];
+		int zoneCount = (data[0] / 64) * (data[1] / 64);
+		zones = new MapZone[zoneCount];
 		width = data[0] - 64;
 		height = data[1] - 64;
 		textureStr = textureName;
-		texture = loadTexture(textureName);
+		GuiIngame.texture = loadTexture(textureName);
+		
+		int difficulty = GuiSettings.getDifficulty(), enemyCount = 0;
+		if(difficulty == 0) {
+			enemyCount += zoneCount < 70 ? 1 : zoneCount / 70;
+		}else if(difficulty == 1) {
+			enemyCount += zoneCount / 50;
+		}else{
+			enemyCount += zoneCount / 30;
+		}
+		
+		enemies = new EntityEnemy[enemyCount];
 		
 		if(isMulti) {
 			players = new EntityPlayer[]{new EntityPlayer(data[2], data[3], true), new EntityPlayer(data[4], data[5], false)};
@@ -56,7 +68,7 @@ public class Map implements Serializable{
 		entities.add(new EntityBall());
 	}
 	
-	private static BufferedImage loadTexture(String textureName) {
+	static BufferedImage loadTexture(String textureName) {
 		printDebug("Started loading texture " + textureName);
 		try{
 			printDebug(textureName + " loaded");
@@ -131,17 +143,7 @@ public class Map implements Serializable{
 								Map.setZoneEmptyAt(toSet.zoneIndex);
 						}
 						
-						int difficulty = GuiSettings.getDifficulty(), enemyCount = 0;
-						if(difficulty == 0) {
-							enemyCount += currentMap.zoneIndex < 70 ? 1 : currentMap.zoneIndex / 70;
-						}else if(difficulty == 1) {
-							enemyCount += currentMap.zoneIndex / 50;
-						}else{
-							enemyCount += currentMap.zoneIndex / 30;
-						}
-						currentMap.enemies = new EntityEnemy[enemyCount];
-						
-						for(int l = 0; l < enemyCount; ++l) {
+						for(int l = 0; l < currentMap.enemies.length; ++l) {
 							currentMap.enemies[l] = new EntityEnemy(x, y);
 						}
 						continue outerLoop;
@@ -183,19 +185,9 @@ public class Map implements Serializable{
 						case 3: currentMap.zones[currentMap.zoneIndex] = new MapZoneFruit(x, y, EnumFruit.CHERRY, currentMap.zoneIndex++); ++currentMap.pickCount; break;
 						case 4: currentMap.zones[currentMap.zoneIndex] = new MapZoneSpawner(x, y, currentMap.zoneIndex++);
 						
-						int difficulty = GuiSettings.getDifficulty(), enemyCount = 0;
-						if(difficulty == 0) {
-							enemyCount += currentMap.zoneIndex < 70 ? 1 : currentMap.zoneIndex / 70;
-						}else if(difficulty == 1) {
-							enemyCount += currentMap.zoneIndex / 50;
-						}else{
-							enemyCount += currentMap.zoneIndex / 30;
-						}
-						
-						currentMap.enemies = new EntityEnemy[enemyCount];
-						for(int k = 0; k < enemyCount; ++k) {
-							currentMap.enemies[k] = new EntityEnemy(x, y);
-						}break;
+						for(int k = 0; k < currentMap.enemies.length; ++k)
+							currentMap.enemies[k] = new EntityEnemy(x, y); break;
+							
 						default: currentMap.zones[currentMap.zoneIndex] = new MapZoneEmpty(x, y, currentMap.zoneIndex++);
 					}
 				}
@@ -221,11 +213,47 @@ public class Map implements Serializable{
 		return false;
 	}
 	
+	public static MapZone[] loadBackground() {
+		try(ObjectInputStream input = new ObjectInputStream(new FileInputStream("./maps/background.deg"))){
+			GuiIngame.texture = Map.loadTexture(input.readUTF());
+			int width = input.readShort(), height = input.readShort();
+			
+			int bigWidth = width * 64, bigHeigth = height * 64;
+			input.readShort(); input.readShort(); input.readShort(); input.readShort();
+			
+			int zoneIndex = 0;
+			MapZone[] zonee = new MapZone[width * height + 1];
+			
+			for(int y = 0; y < bigHeigth; y += 64) {
+				for(int x = 0; x < bigWidth; x += 64) {
+					switch(input.readByte()) {
+						case 0: zonee[zoneIndex] = new MapZoneNormal(x, y, zoneIndex++); break;
+						case 2: zonee[zoneIndex] = new MapZoneFruit(x, y, EnumFruit.APPLE, zoneIndex++); break;
+						case 3: zonee[zoneIndex] = new MapZoneFruit(x, y, EnumFruit.CHERRY, zoneIndex++); break;
+						case 4: zonee[zoneIndex] = new MapZoneSpawner(x, y, zoneIndex++);
+						default: zonee[zoneIndex] = new MapZoneEmpty(x, y, zoneIndex++);
+					}
+				}
+			}
+			return zonee;
+		}catch(IOException e){
+			return null;
+		}
+	}
+	
+	public static String loadMapSize(String fileName) {
+		try(ObjectInputStream input = new ObjectInputStream(new FileInputStream("./maps/" + fileName + ".deg"))){
+			input.readUTF();
+			return input.readShort() + "x" + input.readShort();
+		} catch (IOException e) {}
+		return null;
+	}
+	
 	public static void loadSave(String fileName) {
 		if(fileName != null) {
 			try(ObjectInputStream input = new ObjectInputStream(new FileInputStream("./saves/" + fileName))){
 				currentMap = (Map) input.readObject();
-				currentMap.texture = loadTexture(currentMap.textureStr);
+				GuiIngame.texture = loadTexture(currentMap.textureStr);
 			} catch (ClassNotFoundException | IOException e) {
 				e.printStackTrace();
 			}

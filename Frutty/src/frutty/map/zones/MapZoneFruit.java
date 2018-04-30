@@ -38,7 +38,7 @@ public class MapZoneFruit extends MapZone implements ITickable{
 	
 	@Override
 	public void draw(Graphics graphics) {
-		graphics.drawImage(Map.currentMap.texture, posX, posY, 64, 64, null);
+		graphics.drawImage(GuiIngame.texture, posX, posY, 64, 64, null);
 		
 		if(fruitType == EnumFruit.APPLE) {
 			graphics.drawImage(EntityApple.appleTexture, posX, posY, null);

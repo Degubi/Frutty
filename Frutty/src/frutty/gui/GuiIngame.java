@@ -5,6 +5,7 @@ import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -30,6 +31,7 @@ public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 	
 	private boolean paused = false;
 	private boolean renderEdge = false;
+	public static BufferedImage texture;
 	
 	public GuiIngame() {
 		setLayout(null);

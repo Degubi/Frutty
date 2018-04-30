@@ -2,6 +2,7 @@ package frutty.map.zones;
 
 import java.awt.Graphics;
 
+import frutty.gui.GuiIngame;
 import frutty.gui.GuiStats;
 import frutty.map.Map;
 import frutty.map.MapZone;
@@ -23,7 +24,7 @@ public class MapZoneNormal extends MapZone{
 	
 	@Override
 	public void draw(Graphics graphics) {
-		graphics.drawImage(Map.currentMap.texture, posX, posY, 64, 64, null);
+		graphics.drawImage(GuiIngame.texture, posX, posY, 64, 64, null);
 		renderDepth(graphics);
 	}
 
