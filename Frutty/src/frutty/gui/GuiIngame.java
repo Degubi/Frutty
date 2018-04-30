@@ -25,7 +25,7 @@ import frutty.stuff.EnumFruit;
 import frutty.stuff.ITickable;
 
 public final class GuiIngame extends JPanel implements Runnable, ActionListener{
-	private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+	private final ScheduledExecutorService thread = Executors.newSingleThreadScheduledExecutor();
 	
 	static GuiIngame ingameGui;
 	
@@ -38,7 +38,7 @@ public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 		
 		add(GuiHelper.newButton("Exit", Map.currentMap.width + 110, Map.currentMap.height - 50, this));
 		add(GuiHelper.newButton("Save", Map.currentMap.width + 110, Map.currentMap.height - 100, this));
-		executor.scheduleAtFixedRate(this, 20, 20, TimeUnit.MILLISECONDS);
+		thread.scheduleAtFixedRate(this, 20, 20, TimeUnit.MILLISECONDS);
 	}
 	
 	@Override
@@ -105,7 +105,7 @@ public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 	}
 	
 	public static void showMessageAndClose(String message) {
-		ingameGui.executor.shutdown();
+		ingameGui.thread.shutdown();
 		JOptionPane.showMessageDialog(null, message, "Frutty", JOptionPane.PLAIN_MESSAGE);
 		GuiStats.saveStats();
 		GuiMenu.showMenu();
@@ -136,7 +136,7 @@ public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent event) {
 		if(event.getActionCommand().equals("Exit")) {
-			ingameGui.executor.shutdown();
+			ingameGui.thread.shutdown();
 			if(JOptionPane.showConfirmDialog(null, "Save current status?", "Save?", JOptionPane.YES_NO_OPTION, 1) == 0) {
 				Map.createSave(JOptionPane.showInputDialog("Enter save name!"));
 			}
@@ -147,7 +147,7 @@ public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 		}else{  //Save
 			paused = true;
 			if(Map.createSave(JOptionPane.showInputDialog("Enter save name!"))) {
-				ingameGui.executor.shutdown();
+				ingameGui.thread.shutdown();
 				GuiMenu.showMenu();
 				((JFrame)getTopLevelAncestor()).dispose();
 			}else{

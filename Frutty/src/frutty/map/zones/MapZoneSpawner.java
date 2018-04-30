@@ -3,6 +3,8 @@ package frutty.map.zones;
 import java.awt.Color;
 import java.awt.Graphics;
 
+import javax.swing.plaf.synth.SynthSpinnerUI;
+
 import frutty.map.MapZone;
 
 public class MapZoneSpawner extends MapZone{

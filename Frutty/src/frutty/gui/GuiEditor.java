@@ -20,8 +20,8 @@ public class GuiEditor extends JPanel implements MouseListener{
 	private final ArrayList<JButton> zoneButtons = new ArrayList<>();
 	private final GuiProperties properties;
 	
-	private GuiEditor(String fileName, String textureName, int... data) {
-		properties = new GuiProperties(fileName, textureName, data);
+	private GuiEditor(String fileName, boolean isBackground, String textureName, int... data) {
+		properties = new GuiProperties(fileName, textureName, isBackground, data);
 		setLayout(null);
 		
 		add(GuiHelper.newButton("Save", data[0] * 64 + 12, data[1] * 64 - 100, this));
@@ -44,7 +44,7 @@ public class GuiEditor extends JPanel implements MouseListener{
 					JOptionPane.showMessageDialog(null, "Map size is very big, things may go offscreen!");
 				}
 				
-				GuiEditor editor = new GuiEditor("filename.deg", "normal", mapWidth, mapHeight, 0, 0, 0, 0);
+				GuiEditor editor = new GuiEditor("filename.deg", false, "normal", mapWidth, mapHeight, 0, 0, 0, 0);
 				editor.setEmptyData(bigWidth, bigHeight);
 				
 				GuiHelper.showNewFrame(editor, "Frutty Map Editor", JFrame.DISPOSE_ON_CLOSE, bigWidth + 156, bigHeight + 32);
@@ -60,7 +60,7 @@ public class GuiEditor extends JPanel implements MouseListener{
 					int player1PosX = input.readShort(), player1PosY = input.readShort();
 					int player2PosX = input.readShort(), player2PosY = input.readShort();
 					
-					GuiEditor editor = new GuiEditor(fileName, textureName, mapWidth, mapHeight, player1PosX, player1PosY, player2PosX, player2PosY);
+					GuiEditor editor = new GuiEditor(fileName, fileName.startsWith("background"), textureName, mapWidth, mapHeight, player1PosX, player1PosY, player2PosX, player2PosY);
 					
 					for(int y = 0; y < mapHeight; ++y) {
 						for(int x = 0; x < mapWidth; ++x) {
@@ -126,11 +126,13 @@ public class GuiEditor extends JPanel implements MouseListener{
 				 		output.writeUTF(properties.getMapTextureName());
 				 		output.writeShort(properties.getMapWidth());
 				 		output.writeShort(properties.getMapHeight());
-				 		output.writeShort(properties.getPlayer1PosX());
-				 		output.writeShort(properties.getPlayer1PosY());
-				 		output.writeShort(properties.getPlayer2PosX());
-				 		output.writeShort(properties.getPlayer2PosY());
-
+				 		
+					 	if(!properties.isBackgroundMap()) {
+					 		output.writeShort(properties.getPlayer1PosX());
+					 		output.writeShort(properties.getPlayer1PosY());
+					 		output.writeShort(properties.getPlayer2PosX());
+					 		output.writeShort(properties.getPlayer2PosY());
+				 		}
 				 		for(JButton writeButton : zoneButtons) {
 				 			output.writeByte(writeButton.getMnemonic());
 				 		}

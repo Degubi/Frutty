@@ -214,23 +214,17 @@ public class Map implements Serializable{
 	}
 	
 	public static MapZone[] loadBackground() {
-		try(ObjectInputStream input = new ObjectInputStream(new FileInputStream("./maps/background.deg"))){
+		try(ObjectInputStream input = new ObjectInputStream(new FileInputStream("./maps/background" + Main.rand.nextInt(3) + ".deg"))){
 			GuiIngame.texture = Map.loadTexture(input.readUTF());
-			int width = input.readShort(), height = input.readShort();
+			int width = input.readShort() * 64, height = input.readShort() * 64, zoneIndex = 0;;
+			MapZone[] zonee = new MapZone[(width / 64) * (height / 64)];
 			
-			int bigWidth = width * 64, bigHeigth = height * 64;
-			input.readShort(); input.readShort(); input.readShort(); input.readShort();
-			
-			int zoneIndex = 0;
-			MapZone[] zonee = new MapZone[width * height + 1];
-			
-			for(int y = 0; y < bigHeigth; y += 64) {
-				for(int x = 0; x < bigWidth; x += 64) {
+			for(int y = 0; y < height; y += 64) {
+				for(int x = 0; x < width; x += 64) {
 					switch(input.readByte()) {
 						case 0: zonee[zoneIndex] = new MapZoneNormal(x, y, zoneIndex++); break;
 						case 2: zonee[zoneIndex] = new MapZoneFruit(x, y, EnumFruit.APPLE, zoneIndex++); break;
 						case 3: zonee[zoneIndex] = new MapZoneFruit(x, y, EnumFruit.CHERRY, zoneIndex++); break;
-						case 4: zonee[zoneIndex] = new MapZoneSpawner(x, y, zoneIndex++);
 						default: zonee[zoneIndex] = new MapZoneEmpty(x, y, zoneIndex++);
 					}
 				}
