@@ -1,5 +1,6 @@
 package frutty.gui;
 
+import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
@@ -85,11 +86,37 @@ public class GuiEditor extends JPanel implements MouseListener{
 			GuiMenu.showMenu();
 		}
 	}
+	
+	@Override
+	protected void paintComponent(Graphics graphics) {
+		super.paintComponent(graphics);
+		
+		graphics.drawString("Alt: Spawner", properties.getMapWidth() * 64 + 25, 400);
+		graphics.drawString("CTRL: Player1", properties.getMapWidth() * 64 + 25, 440);
+		graphics.drawString("Shift: Player2", properties.getMapWidth() * 64 + 25, 480);
+		
+		System.out.println("DRAW");
+	}
 
 	@Override
 	public void mousePressed(MouseEvent event) {
 		if(event.getComponent() instanceof JButton) {
 			JButton button = (JButton) event.getComponent();
+			
+			boolean isAnyDown = false;
+			if(event.isShiftDown()) {
+				button.setMnemonic(5); properties.setPlayer1Pos(button); button.setIcon(player1Texture);
+				isAnyDown = true;
+			}
+			if(event.isControlDown()) {
+				button.setMnemonic(6); properties.setPlayer2Pos(button); button.setIcon(player2Texture);
+				isAnyDown = true;
+			}
+			if(event.isAltDown()) {
+				button.setMnemonic(4); button.setIcon(spawnerTexture);
+				isAnyDown = true;
+			}
+			
 			if(event.getButton() == MouseEvent.BUTTON1) {
 				String command = button.getActionCommand();
 				
@@ -98,18 +125,12 @@ public class GuiEditor extends JPanel implements MouseListener{
 					 	case 0: button.setMnemonic(1); button.setIcon(dugTexture); break;
 					 	case 1: button.setMnemonic(2); button.setIcon(appleTexture); break;
 					 	case 2: button.setMnemonic(3); button.setIcon(cherryTexture); break;
-					 	case 3: button.setMnemonic(4); button.setIcon(spawnerTexture); break;
-					 	case 4:
-					 		
-					 	if(event.isControlDown()) {
-					 		button.setMnemonic(5); properties.setPlayer1Pos(button); button.setIcon(player1Texture);
-					 	}else if(event.isShiftDown()) {
-					 		button.setMnemonic(6); properties.setPlayer2Pos(button); button.setIcon(player2Texture);
-					 	}else{
-					 		button.setMnemonic(0); button.setIcon(normalTexture);
-					 	}
-					 	break;
-					 	case 5: case 6: button.setMnemonic(0); button.setIcon(normalTexture); break;
+					 	case 3: button.setMnemonic(0); button.setIcon(normalTexture); break;
+					 	case 4: case 5: case 6: 
+					 		if(!isAnyDown) {
+					 			button.setMnemonic(0); button.setIcon(normalTexture);
+					 		}
+					 		break;
 				 	}
 					
 				}else if(command.equals("Exit")) {
@@ -143,20 +164,15 @@ public class GuiEditor extends JPanel implements MouseListener{
 				}
 			}else if(event.getButton() == MouseEvent.BUTTON3) {    //Right click
 				switch(button.getMnemonic()) {
-					case 0: 
-					if(event.isControlDown()) {
-						button.setMnemonic(5); properties.setPlayer1Pos(button); button.setIcon(player1Texture);
-					}else if(event.isShiftDown()) {
-						button.setMnemonic(6); properties.setPlayer2Pos(button); button.setIcon(player2Texture);
-					}else {
-						button.setMnemonic(4); button.setIcon(spawnerTexture);
-					}
-					break;
+					case 0: button.setMnemonic(3); button.setIcon(cherryTexture); break;
 				 	case 1: button.setMnemonic(0); button.setIcon(normalTexture); break;
 				 	case 2: button.setMnemonic(1); button.setIcon(dugTexture); break;
 				 	case 3: button.setMnemonic(2); button.setIcon(appleTexture); break;
-				 	case 4: button.setMnemonic(3); button.setIcon(cherryTexture); break;
-				 	case 5: case 6: button.setMnemonic(4); button.setIcon(spawnerTexture); break;
+				 	case 4: case 5: case 6: 
+				 		if(!isAnyDown) {
+				 			button.setMnemonic(0); button.setIcon(normalTexture);
+				 		}
+				 		break;
 				}
 			}
 		}
