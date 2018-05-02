@@ -8,6 +8,8 @@ import java.io.Serializable;
 import javax.imageio.ImageIO;
 
 import frutty.gui.GuiIngame;
+import frutty.map.MapZone;
+import frutty.stuff.EnumFacing;
 
 public abstract class Entity implements Serializable{
 	private static final long serialVersionUID = 2876462867774051456L;
@@ -19,6 +21,15 @@ public abstract class Entity implements Serializable{
 	public Entity(int x, int y) {
 		posX = x;
 		posY = y;
+	}
+	
+	protected EnumFacing findFreeFacing() {
+		for(EnumFacing randomFacing = EnumFacing.randomFacing(); ; randomFacing = EnumFacing.randomFacing()) {
+			if(MapZone.isEmpty(posX + randomFacing.xOffset, posY + randomFacing.yOffset)) {
+				return randomFacing;
+			}
+			continue;
+		}
 	}
 	
 	protected static BufferedImage loadTexture(String path) {

@@ -19,13 +19,11 @@ public final class GuiSettings extends JPanel implements ActionListener{
 	private static final Properties settings = new Properties();
 	
 	private final JRadioButton easyButton = new JRadioButton("Easy"), normalButton = new JRadioButton("Normal"), hardButton = new JRadioButton("Hard");
-	private final JCheckBox debugBox = new JCheckBox("Enable debug");
+	private final JCheckBox godMode = GuiHelper.newCheckBox("Enable God Mode", 200, 250, isGodEnabled());
+	private final JCheckBox debugBox = GuiHelper.newCheckBox("Enable Debug", 200, 200, isDebugEnabled());
 	
 	public GuiSettings() {
 		setLayout(null);
-		
-		debugBox.setBounds(200, 200, 120, 30);
-		debugBox.setSelected(isDebugEnabled());
 		
 		easyButton.setBounds(200, 20, 70, 30);
 		normalButton.setBounds(200, 60, 80, 30);
@@ -51,13 +49,13 @@ public final class GuiSettings extends JPanel implements ActionListener{
 		easyButton.setOpaque(false);
 		hardButton.setOpaque(false);
 		normalButton.setOpaque(false);
-		debugBox.setOpaque(false);
 		
 		add(GuiHelper.newButton("Save", 180, 280, this));
 		add(easyButton);
 		add(normalButton);
 		add(hardButton);
 		add(debugBox);
+		add(godMode);
 	}
 	
 	@Override
@@ -79,6 +77,10 @@ public final class GuiSettings extends JPanel implements ActionListener{
 		return Integer.parseInt(settings.getProperty("difficulty"));
 	}
 	
+	public static boolean isGodEnabled() {
+		return Boolean.parseBoolean(settings.getProperty("god"));
+	}
+	
 	public static void loadSettings() {
 		try(FileInputStream fis = new FileInputStream("settings.cfg")){
 			settings.load(fis);
@@ -86,6 +88,7 @@ public final class GuiSettings extends JPanel implements ActionListener{
 			try(FileOutputStream fos = new FileOutputStream("settings.cfg")){
 				settings.put("difficulty", "0");
 				settings.put("enableDebug", "false");
+				settings.put("god", "false");
 				settings.store(fos, "");
 			} catch (IOException e1) {}
 		}
@@ -109,6 +112,7 @@ public final class GuiSettings extends JPanel implements ActionListener{
 		}
 		
 		settings.setProperty("enableDebug", String.valueOf(debugBox.isSelected()));
+		settings.setProperty("god", String.valueOf(godMode.isSelected()));
 		
 		if(event.getActionCommand().equals("Save")) {
 			try(FileOutputStream output = new FileOutputStream("settings.cfg")){

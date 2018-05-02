@@ -16,8 +16,8 @@ import javax.swing.JPanel;
 
 import frutty.Main;
 import frutty.entity.Entity;
-import frutty.entity.EntityEnemy;
 import frutty.entity.EntityPlayer;
+import frutty.entity.enemies.EntityAbstractEnemy;
 import frutty.map.Map;
 import frutty.map.MapZone;
 import frutty.map.zones.MapZoneFruit;
@@ -30,7 +30,6 @@ public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 	static GuiIngame ingameGui;
 	
 	private boolean paused = false;
-	private boolean renderEdge = false;
 	public static BufferedImage texture;
 	
 	public GuiIngame() {
@@ -58,7 +57,7 @@ public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 			}
 		}
 		
-		for(EntityEnemy enemies : Map.currentMap.enemies) {
+		for(EntityAbstractEnemy enemies : Map.currentMap.enemies) {
 			if(enemies.active) {
 				enemies.render(graphics);
 			}
@@ -87,7 +86,7 @@ public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 						entities.update(Map.currentMap.ticks);
 					}
 				}
-				for(EntityEnemy monsters : Map.currentMap.enemies) {
+				for(EntityAbstractEnemy monsters : Map.currentMap.enemies) {
 					if(monsters.active) {
 						monsters.update(Map.currentMap.ticks);
 					}

@@ -19,7 +19,7 @@ import frutty.map.MapZone;
 public final class GuiMenu extends JPanel implements ActionListener{
 	private final JComboBox<String> mapList = new JComboBox<>();
 	private final JTextField mapSizeField = new JTextField("8x8");
-	private final JCheckBox coopBox = new JCheckBox("Coop mode");
+	private final JCheckBox coopBox = GuiHelper.newCheckBox("Coop mode", 445, 130, false);
 	private static final Color grayened = new Color(0, 0, 0, 128);
 	private final MapZone[] background;
 	private boolean loading = false;
@@ -35,8 +35,6 @@ public final class GuiMenu extends JPanel implements ActionListener{
 		
 		mapSizeField.setBounds(500, 20, 60, 30);
 		
-		coopBox.setBounds(445, 130, 90, 30);
-		coopBox.setOpaque(false);
 		coopBox.setForeground(Color.WHITE);
 		
 		add(GuiHelper.newMenuButton("New Game", 700, 20, this));

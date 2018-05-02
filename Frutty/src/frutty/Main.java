@@ -18,16 +18,13 @@ public class Main {
 			GuiSettings.loadSettings();
 			GuiMenu.refreshMenu();
 			
-			//tryWait();
 			GuiStats.loadStats();
 			new File("./saves/").mkdir();
 			GuiMenu.refreshMenu();
 			
-			//tryWait();
 			loadClass("frutty.entity.EntityPlayer");
 			GuiMenu.refreshMenu();
 			
-			//tryWait();
 			loadClass("frutty.entity.EntityEnemy");
 			GuiMenu.refreshMenu();
 		}, "Main Initializer Thread");
@@ -38,11 +35,5 @@ public class Main {
 		try { 
 			Class.forName(cName);
 		} catch (ClassNotFoundException e) {}
-	}
-	
-	private static void tryWait() {
-		try {
-			Thread.currentThread().sleep(3000);
-		} catch (InterruptedException e) {}
 	}
 }

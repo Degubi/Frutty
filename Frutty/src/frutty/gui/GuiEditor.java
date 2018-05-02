@@ -41,12 +41,22 @@ public class GuiEditor extends JPanel implements MouseListener{
 				int mapWidth = Integer.parseInt(mapSizeString[0]), bigWidth = mapWidth * 64;
 				int mapHeight = Integer.parseInt(mapSizeString[1]), bigHeight = mapHeight * 64;
 				
-				if(bigHeight > GuiHelper.screen.height || bigWidth > GuiHelper.screen.width) {
+				if(mapHeight > GuiHelper.recommendedMaxMapHeight || mapWidth > GuiHelper.recommendedMaxMapWidth) {
 					JOptionPane.showMessageDialog(null, "Map size is very big, things may go offscreen!");
 				}
 				
 				GuiEditor editor = new GuiEditor("filename.deg", false, "normal", mapWidth, mapHeight, 0, 0, 0, 0);
-				editor.setEmptyData(bigWidth, bigHeight);
+				
+				for(int yPos = 0; yPos < bigHeight; yPos += 64) {
+					for(int xPos = 0; xPos < bigWidth; xPos += 64) {
+						JButton button = new JButton(GuiEditor.normalTexture);
+						button.setMnemonic(0);
+						button.addMouseListener(editor);
+						button.setBounds(xPos, yPos, 64, 64);
+						editor.zoneButtons.add(button);
+						editor.add(button);
+					}
+				}
 				
 				GuiHelper.showNewFrame(editor, "Frutty Map Editor", JFrame.DISPOSE_ON_CLOSE, bigWidth + 156, bigHeight + 32);
 			}
@@ -58,10 +68,13 @@ public class GuiEditor extends JPanel implements MouseListener{
 				try(ObjectInputStream input = new ObjectInputStream(new FileInputStream("./maps/" + fileName))){
 					String textureName = input.readUTF();
 					int mapWidth = input.readShort(), mapHeight = input.readShort();
-					int player1PosX = input.readShort(), player1PosY = input.readShort();
-					int player2PosX = input.readShort(), player2PosY = input.readShort();
+					GuiEditor editor;
 					
-					GuiEditor editor = new GuiEditor(fileName, fileName.startsWith("background"), textureName, mapWidth, mapHeight, player1PosX, player1PosY, player2PosX, player2PosY);
+					if(fileName.startsWith("background")) {
+						editor = new GuiEditor(fileName, true, textureName, mapWidth, mapHeight, 0, 0, 0, 0);
+					}else{
+						editor = new GuiEditor(fileName, false, textureName, mapWidth, mapHeight, input.readShort(), input.readShort(), input.readShort(), input.readShort());
+					}
 					
 					for(int y = 0; y < mapHeight; ++y) {
 						for(int x = 0; x < mapWidth; ++x) {
@@ -94,8 +107,6 @@ public class GuiEditor extends JPanel implements MouseListener{
 		graphics.drawString("Alt: Spawner", properties.getMapWidth() * 64 + 25, 400);
 		graphics.drawString("CTRL: Player1", properties.getMapWidth() * 64 + 25, 440);
 		graphics.drawString("Shift: Player2", properties.getMapWidth() * 64 + 25, 480);
-		
-		System.out.println("DRAW");
 	}
 
 	@Override
@@ -105,11 +116,11 @@ public class GuiEditor extends JPanel implements MouseListener{
 			
 			boolean isAnyDown = false;
 			if(event.isShiftDown()) {
-				button.setMnemonic(5); properties.setPlayer1Pos(button); button.setIcon(player1Texture);
+				button.setMnemonic(5); properties.setPlayer1Pos(button.getX(), button.getY()); button.setIcon(player1Texture);
 				isAnyDown = true;
 			}
 			if(event.isControlDown()) {
-				button.setMnemonic(6); properties.setPlayer2Pos(button); button.setIcon(player2Texture);
+				button.setMnemonic(6); properties.setPlayer2Pos(button.getX(), button.getY()); button.setIcon(player2Texture);
 				isAnyDown = true;
 			}
 			if(event.isAltDown()) {
@@ -174,19 +185,6 @@ public class GuiEditor extends JPanel implements MouseListener{
 				 		}
 				 		break;
 				}
-			}
-		}
-	}
-	
-	private void setEmptyData(int width, int height) {
-		for(int yPos = 0; yPos < height; yPos += 64) {
-			for(int xPos = 0; xPos < width; xPos += 64) {
-				JButton button = new JButton(normalTexture);
-				button.setMnemonic(0);
-				button.addMouseListener(this);
-				button.setBounds(xPos, yPos, 64, 64);
-				zoneButtons.add(button);
-				add(button);
 			}
 		}
 	}

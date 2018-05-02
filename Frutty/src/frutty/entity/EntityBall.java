@@ -3,7 +3,7 @@ package frutty.entity;
 import java.awt.Color;
 import java.awt.Graphics;
 
-import frutty.Main;
+import frutty.entity.enemies.EntityAbstractEnemy;
 import frutty.gui.GuiStats;
 import frutty.map.Map;
 import frutty.map.MapZone;
@@ -34,7 +34,6 @@ public class EntityBall extends Entity{
 		}
 	}
 	
-	
 	private void setFacing(EnumFacing facing) {
 		motionX = facing.xOffset;
 		motionY = facing.yOffset;
@@ -43,7 +42,7 @@ public class EntityBall extends Entity{
 	@Override
 	public void update(int ticks) {
 		if(ticks % 15 == 0) {
-			EntityEnemy enemy = Map.getEnemyPredictedAtPos(posX, posY, this);
+			EntityAbstractEnemy enemy = Map.getEnemyPredictedAtPos(posX, posY, this);
 			if(enemy != null) {
 				enemy.active = false;
 				active = false;
@@ -57,22 +56,9 @@ public class EntityBall extends Entity{
 				}
 			
 			if(!MapZone.isEmpty(posX + motionX, posY + motionY)) {
-				for(int rotat = motionY == 64 ? 1 : 3; ; rotat = Main.rand.nextInt(4)) {
-					if(rotat == 0 && MapZone.isEmpty(posX + 64, posY)) {
-						setFacing(EnumFacing.RIGHT);
-						break;
-					}else if(rotat == 1 && MapZone.isEmpty(posX - 64, posY)) {
-						setFacing(EnumFacing.LEFT);
-						break;
-					}else if(rotat == 2 && MapZone.isEmpty(posX, posY + 64)) {
-						setFacing(EnumFacing.DOWN);
-						break;
-					}else if(rotat == 3 && MapZone.isEmpty(posX, posY - 64)){
-						setFacing(EnumFacing.UP);
-						break;
-					}
-				}
+				setFacing(findFreeFacing());
 			}
+			
 			posX += motionX;
 			posY += motionY;
 		}

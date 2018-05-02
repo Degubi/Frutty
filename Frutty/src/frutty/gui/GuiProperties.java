@@ -3,7 +3,6 @@ package frutty.gui;
 import java.awt.Color;
 import java.awt.Component;
 
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.border.LineBorder;
@@ -83,14 +82,14 @@ public final class GuiProperties extends JPanel{
 		return (int) table.getValueAt(8, 1);
 	}
 	
-	public void setPlayer1Pos(JButton button) {
-		table.setValueAt(button.getX(), 4, 1);
-		table.setValueAt(button.getY(), 5, 1);
+	public void setPlayer1Pos(int x, int y) {
+		table.setValueAt(x, 4, 1);
+		table.setValueAt(y, 5, 1);
 	}
 	
-	public void setPlayer2Pos(JButton button) {
-		table.setValueAt(button.getX(), 6, 1);
-		table.setValueAt(button.getY(), 7, 1);
+	public void setPlayer2Pos(int x, int y) {
+		table.setValueAt(x, 6, 1);
+		table.setValueAt(y, 7, 1);
 	}
 	
 	private static final class PropertyTableModel extends DefaultTableModel{

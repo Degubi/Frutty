@@ -3,6 +3,7 @@ package frutty.entity;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
+import frutty.entity.enemies.EntityAbstractEnemy;
 import frutty.gui.GuiIngame;
 import frutty.gui.GuiStats;
 import frutty.map.Map;
@@ -35,7 +36,7 @@ public class EntityApple extends Entity{
 					}
 				}
 				
-				EntityEnemy enemy = Map.getEnemyAtPos(posX, posY);
+				EntityAbstractEnemy enemy = Map.getEnemyAtPos(posX, posY);
 				if(enemy != null) {
 					enemy.active = false;
 					++GuiStats.enemyCount;
