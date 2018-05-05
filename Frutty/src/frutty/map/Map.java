@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
-import javax.swing.JOptionPane;
 
 import frutty.Main;
 import frutty.entity.Entity;
@@ -23,7 +22,7 @@ import frutty.entity.enemies.EntityNormalEnemy;
 import frutty.gui.GuiHelper;
 import frutty.gui.GuiIngame;
 import frutty.gui.GuiMenu;
-import frutty.gui.GuiSettings;
+import frutty.gui.GuiSettings.Settings;
 import frutty.map.zones.MapZoneEmpty;
 import frutty.map.zones.MapZoneFruit;
 import frutty.map.zones.MapZoneNormal;
@@ -42,7 +41,6 @@ public final class Map implements Serializable{
 	public int pickCount, score, ticks;
 	public final String textureStr;
 	
-	//0: width, 1: height, 2: p1X, 3: p1Y, 4: p2X, 5: p2Y
 	private Map(String textureName, boolean isMulti, int w, int h, int p1X, int p1Y, int p2X, int p2Y) {
 		int zoneCount = (w / 64) * (h / 64);
 		zones = new MapZone[zoneCount];
@@ -51,10 +49,10 @@ public final class Map implements Serializable{
 		textureStr = textureName;
 		GuiIngame.texture = loadTexture(textureName);
 		
-		int difficulty = GuiSettings.getDifficulty(), enemyCount = 0;
-		if(difficulty == 0) {
+		int enemyCount = 0;
+		if(Settings.difficulty == 0) {
 			enemyCount += zoneCount < 70 ? 1 : zoneCount / 70;
-		}else if(difficulty == 1) {
+		}else if(Settings.difficulty == 1) {
 			enemyCount += zoneCount / 50;
 		}else{
 			enemyCount += zoneCount / 30;
@@ -71,29 +69,14 @@ public final class Map implements Serializable{
 	}
 	
 	private static BufferedImage loadTexture(String textureName) {
-		printDebug("Started loading texture " + textureName);
 		try{
-			printDebug(textureName + " loaded");
 			return ImageIO.read(GuiMenu.class.getResource("/textures/map/" + textureName + ".png"));
 		}catch (IOException e) {
 			return null;
 		}
 	}
-	
-	private static void printDebug(String msg) {
-		if(GuiSettings.isDebugEnabled()) {
-			System.out.println(msg);
-		}
-	}
-	
-	private static void sizeCheck() {
-		if(currentMap.height / 64 + 1 > GuiHelper.recommendedMaxMapHeight || currentMap.width / 64 + 1 > GuiHelper.recommendedMaxMapWidth) {
-			JOptionPane.showMessageDialog(null, "Warning: map size is bigger than the recommended max map size!");
-		}
-	}
-	
+
 	public static void generateMap(int width, int height, boolean isMultiplayer) {
-		printDebug("Generating map...");
 		Random rand = Main.rand;
 		int bigWidth = width * 64, bigHeight = height * 64, zoneIndex = 0;
 		
@@ -161,12 +144,11 @@ public final class Map implements Serializable{
 				}
 			}
 		}
-		sizeCheck();
-		printDebug("Generated map with size: " + width + "x" + height);
+		
+		GuiHelper.mapSizeCheck(currentMap.height / 64 + 1, currentMap.width / 64 + 1);
 	}
 	
 	public static void loadMap(String name, boolean isMultiplayer) {
-		printDebug("Loading map...");
 		try(ObjectInputStream input = new ObjectInputStream(new FileInputStream("./maps/" + name + ".deg"))){
 			int width, height, zoneIndex = 0;
 			
@@ -189,8 +171,7 @@ public final class Map implements Serializable{
 			}
 		}catch(IOException e){}
 		
-		sizeCheck();
-		printDebug("Map loaded with name: " + name);
+		GuiHelper.mapSizeCheck(currentMap.height / 64 + 1, currentMap.width / 64 + 1);
 	}
 	
 	public static boolean createSave(String fileName) {

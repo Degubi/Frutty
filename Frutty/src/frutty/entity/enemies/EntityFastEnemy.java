@@ -4,7 +4,7 @@ import java.awt.image.BufferedImage;
 
 import frutty.entity.EntityPlayer;
 import frutty.gui.GuiIngame;
-import frutty.gui.GuiSettings;
+import frutty.gui.GuiSettings.Settings;
 import frutty.map.Map;
 import frutty.map.MapZone;
 
@@ -20,7 +20,7 @@ public class EntityFastEnemy extends EntityAbstractEnemy{
 		if(ticks % 20 == 0) {
 			for(EntityPlayer player : Map.currentMap.players) {
 				if((posY + motionY == player.posY && posX + motionX == player.posX) || (posX == player.posX && posY == player.posY)) {
-					if(!GuiSettings.isGodEnabled()) {
+					if(!Settings.godEnabled) {
 						GuiIngame.showMessageAndClose("Game over!");
 					}else{
 						active = false;

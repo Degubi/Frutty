@@ -41,9 +41,7 @@ public class GuiEditor extends JPanel implements MouseListener{
 				int mapWidth = Integer.parseInt(mapSizeString[0]), bigWidth = mapWidth * 64;
 				int mapHeight = Integer.parseInt(mapSizeString[1]), bigHeight = mapHeight * 64;
 				
-				if(mapHeight > GuiHelper.recommendedMaxMapHeight || mapWidth > GuiHelper.recommendedMaxMapWidth) {
-					JOptionPane.showMessageDialog(null, "Map size is very big, things may go offscreen!");
-				}
+				GuiHelper.mapSizeCheck(mapWidth, mapHeight);
 				
 				GuiEditor editor = new GuiEditor("filename.deg", false, "normal", mapWidth, mapHeight, 0, 0, 0, 0);
 				

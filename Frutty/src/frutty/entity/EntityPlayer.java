@@ -7,6 +7,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 
+import frutty.gui.GuiSettings.Settings;
 import frutty.map.Map;
 import frutty.map.MapZone;
 import frutty.stuff.EnumFacing;
@@ -26,16 +27,16 @@ public class EntityPlayer extends Entity implements KeyListener, MouseListener{
 		
 		canShootBall = isFirst;
 		
-		if(isFirst) {
+		if(isFirst){
 			leftKey = KeyEvent.VK_LEFT;
 			rightKey = KeyEvent.VK_RIGHT;
 			upKey = KeyEvent.VK_UP;
 			downKey = KeyEvent.VK_DOWN;
 		}else{
-			leftKey = KeyEvent.VK_A;
-			rightKey = KeyEvent.VK_D;
-			upKey = KeyEvent.VK_W;
-			downKey = KeyEvent.VK_S;
+			leftKey = Settings.leftKey;
+			rightKey = Settings.rightKey;
+			upKey = Settings.upKey;
+			downKey = Settings.downKey;
 		}
 		
 		currentFacing = EnumFacing.RIGHT;

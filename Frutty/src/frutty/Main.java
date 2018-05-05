@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.Random;
 
 import frutty.gui.GuiMenu;
-import frutty.gui.GuiSettings;
+import frutty.gui.GuiSettings.Settings;
 import frutty.gui.GuiStats;
 
 public class Main {
@@ -15,7 +15,7 @@ public class Main {
 		GuiMenu.showMenu();
 		
 		loadThread = new Thread(() -> {
-			GuiSettings.loadSettings();
+			Settings.loadSettings();
 			GuiMenu.refreshMenu();
 			
 			GuiStats.loadStats();

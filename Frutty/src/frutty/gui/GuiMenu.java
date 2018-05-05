@@ -34,6 +34,7 @@ public final class GuiMenu extends JPanel implements ActionListener{
 		loadCount = load;
 		
 		mapSizeField.setBounds(500, 20, 60, 30);
+		mapSizeField.setHorizontalAlignment(JTextField.CENTER);
 		
 		coopBox.setForeground(Color.WHITE);
 		
