@@ -25,7 +25,8 @@ public class Main {
 			loadClass("frutty.entity.EntityPlayer");
 			GuiMenu.refreshMenu();
 			
-			loadClass("frutty.entity.EntityEnemy");
+			loadClass("frutty.entity.enemies.EntityFastEnemy");
+			loadClass("frutty.entity.enemies.EntityNormalEnemy");
 			GuiMenu.refreshMenu();
 		}, "Main Initializer Thread");
 		loadThread.start();

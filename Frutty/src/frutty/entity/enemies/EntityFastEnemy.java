@@ -32,13 +32,10 @@ public class EntityFastEnemy extends EntityAbstractEnemy{
 			if(!MapZone.isEmpty(posX + motionX, posY + motionY)) {
 				setFacing(findFreeFacing());
 			}
-			
-			posX += motionX;
-			posY += motionY;
-			
 		}if(ticks % 10 == 0) {
-			renderPosX += motionX / 2;
-			renderPosY += motionY / 2;
+			posX += motionX / 2;
+			posY += motionY / 2;
+			animSwitch = !animSwitch;
 		}
 	}
 

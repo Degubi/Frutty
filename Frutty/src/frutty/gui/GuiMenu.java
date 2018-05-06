@@ -22,7 +22,6 @@ public final class GuiMenu extends JPanel implements ActionListener{
 	private final JCheckBox coopBox = GuiHelper.newCheckBox("Coop mode", 445, 130, false);
 	private static final Color grayened = new Color(0, 0, 0, 128);
 	private final MapZone[] background;
-	private boolean loading = false;
 	
 	private int loadCount;
 	private static GuiMenu instance;
@@ -92,15 +91,6 @@ public final class GuiMenu extends JPanel implements ActionListener{
 		if(loadCount != 100) {
 			graphics.drawString("Loading: " + loadCount + "%", 380, 500);
 		}
-		
-		if(loading) {
-			graphics.setColor(Color.DARK_GRAY);
-			graphics.fillRect(145, 120, 150, 60);
-			graphics.setColor(Color.BLACK);
-			graphics.drawRect(144, 119, 151, 61);
-			graphics.setFont(GuiHelper.thiccFont);
-			graphics.drawString("Loading...", 195, 150);
-		}
 	}
 	
 	@Override
@@ -108,20 +98,15 @@ public final class GuiMenu extends JPanel implements ActionListener{
 		switch(event.getActionCommand()) {
 		
 		case "New Game":
-			loading = true;
-			repaint();
-			new Thread(() -> {   //Off main thread indítás, máskülönben a loading szöveg nem jelenik meg a thread blokkolás miatt
-				String mapName = ((String)mapList.getSelectedItem()).toLowerCase();
-				if(mapName.equals("generate")) {
-					String[] mapSizeSplit = mapSizeField.getText().split("x");
-					Map.generateMap(Integer.parseInt(mapSizeSplit[0]), Integer.parseInt(mapSizeSplit[1]), coopBox.isSelected());
-				}else{
-					Map.loadMap(mapName, coopBox.isSelected());
-				}
-				GuiIngame.showIngame();
-				((JFrame)getTopLevelAncestor()).dispose();
-			}).start();
-			break;
+			String mapName = ((String)mapList.getSelectedItem()).toLowerCase();
+			if(mapName.equals("generate")) {
+				String[] mapSizeSplit = mapSizeField.getText().split("x");
+				Map.generateMap(Integer.parseInt(mapSizeSplit[0]), Integer.parseInt(mapSizeSplit[1]), coopBox.isSelected());
+			}else{
+				Map.loadMap(mapName, coopBox.isSelected());
+			}
+			GuiIngame.showIngame();
+			((JFrame)getTopLevelAncestor()).dispose(); break;
 			
 		case "Exit": System.exit(0); break;
 		case "Settings": GuiSettings.showGuiSettings(); break;
@@ -137,7 +122,7 @@ public final class GuiMenu extends JPanel implements ActionListener{
 		case "Editor": GuiEditor.openEditor(); ((JFrame)getTopLevelAncestor()).dispose(); break;
 		case "Stats": GuiStats.openStatsGui(); break;
 			
-		default : //Load
+		default: //Load
 			String[] allMapNames = new File("./saves/").list();
 			if(allMapNames.length > 0) {
 				String inputMapName = (String) JOptionPane.showInputDialog(this, "Chose map file!", "Saves", JOptionPane.QUESTION_MESSAGE, null, allMapNames, allMapNames[0]);
@@ -146,7 +131,7 @@ public final class GuiMenu extends JPanel implements ActionListener{
 					GuiIngame.showIngame();
 					((JFrame)getTopLevelAncestor()).dispose();
 				}
-			}else {
+			}else{
 				JOptionPane.showMessageDialog(this, "No saves found in saves directory");
 			}
 		}
