@@ -3,8 +3,6 @@ package frutty.entity;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
-import frutty.entity.enemies.EntityAbstractEnemy;
-import frutty.gui.GuiIngame;
 import frutty.gui.GuiStats;
 import frutty.map.Map;
 import frutty.map.MapZone;
@@ -30,13 +28,9 @@ public class EntityApple extends Entity{
 			if(sleepCounter == 0) {
 				posY += 64;
 				
-				for(EntityPlayer players : Map.currentMap.players) {
-					if(posY == players.posY && posX == players.posX) {
-						GuiIngame.showMessageAndClose("Game over!");
-					}
-				}
+				checkPlayer(false);
 				
-				EntityAbstractEnemy enemy = Map.getEnemyAtPos(posX, posY);
+				EntityEnemy enemy = Map.getEnemyAtPos(posX, posY);
 				if(enemy != null) {
 					enemy.active = false;
 					++GuiStats.enemyCount;

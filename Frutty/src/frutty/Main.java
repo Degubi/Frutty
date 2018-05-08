@@ -3,38 +3,30 @@ package frutty;
 import java.io.File;
 import java.util.Random;
 
+import frutty.entity.EntityEnemy;
+import frutty.entity.EntityPlayer;
 import frutty.gui.GuiMenu;
 import frutty.gui.GuiSettings.Settings;
 import frutty.gui.GuiStats;
 
-public class Main {
+public final class Main {
 	public static final Random rand = new Random();
 	public static Thread loadThread; 
 	
-	public static void main(String[] args) {
+	public static void main(String[] args){
 		GuiMenu.showMenu();
 		
 		loadThread = new Thread(() -> {
 			Settings.loadSettings();
-			GuiMenu.refreshMenu();
-			
 			GuiStats.loadStats();
 			new File("./saves/").mkdir();
-			GuiMenu.refreshMenu();
 			
-			loadClass("frutty.entity.EntityPlayer");
-			GuiMenu.refreshMenu();
+			try {
+				Class.forName(EntityPlayer.class.getName());
+				Class.forName(EntityEnemy.class.getName());
+			} catch (ClassNotFoundException e) {}
 			
-			loadClass("frutty.entity.enemies.EntityFastEnemy");
-			loadClass("frutty.entity.enemies.EntityNormalEnemy");
-			GuiMenu.refreshMenu();
 		}, "Main Initializer Thread");
 		loadThread.start();
-	}
-	
-	private static void loadClass(String cName) {
-		try { 
-			Class.forName(cName);
-		} catch (ClassNotFoundException e) {}
 	}
 }

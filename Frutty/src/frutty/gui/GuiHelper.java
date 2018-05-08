@@ -34,11 +34,11 @@ public final class GuiHelper {
 	public static void showNewFrame(JPanel panel, String name, int closeOperation, int width, int height) {
 		EventQueue.invokeLater(() -> {
 			JFrame returnFrame = new JFrame(name);
+			returnFrame.setContentPane(panel);
 			returnFrame.setDefaultCloseOperation(closeOperation);
 			returnFrame.setResizable(false);
 			returnFrame.setBounds(0, 0, width, height);
 			returnFrame.setLocationRelativeTo(null);
-			returnFrame.setContentPane(panel);
 			returnFrame.setFocusable(true);
 			returnFrame.setVisible(true);
 		});

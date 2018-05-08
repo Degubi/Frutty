@@ -15,10 +15,8 @@ import javax.imageio.ImageIO;
 import frutty.Main;
 import frutty.entity.Entity;
 import frutty.entity.EntityBall;
+import frutty.entity.EntityEnemy;
 import frutty.entity.EntityPlayer;
-import frutty.entity.enemies.EntityAbstractEnemy;
-import frutty.entity.enemies.EntityFastEnemy;
-import frutty.entity.enemies.EntityNormalEnemy;
 import frutty.gui.GuiHelper;
 import frutty.gui.GuiIngame;
 import frutty.gui.GuiMenu;
@@ -36,7 +34,7 @@ public final class Map implements Serializable{
 	public final EntityPlayer[] players;
 	public final MapZone[] zones;
 	public final ArrayList<Entity> entities = new ArrayList<>(); 
-	public final EntityAbstractEnemy[] enemies;
+	public final EntityEnemy[] enemies;
 	public final int width, height;
 	public int pickCount, score, ticks;
 	public final String textureStr;
@@ -58,7 +56,7 @@ public final class Map implements Serializable{
 			enemyCount += zoneCount / 30;
 		}
 		
-		enemies = new EntityAbstractEnemy[enemyCount];
+		enemies = new EntityEnemy[enemyCount];
 		
 		if(isMulti) {
 			players = new EntityPlayer[]{new EntityPlayer(p1X, p1Y, true), new EntityPlayer(p2X, p2Y, false)};
@@ -125,7 +123,7 @@ public final class Map implements Serializable{
 						}
 						
 						for(int l = 0; l < currentMap.enemies.length; ++l) {
-							currentMap.enemies[l] = new EntityNormalEnemy(x, y);
+							currentMap.enemies[l] = new EntityEnemy(x, y);
 						}
 						
 						continue outerLoop;
@@ -163,7 +161,7 @@ public final class Map implements Serializable{
 						case 4: currentMap.zones[zoneIndex] = new MapZoneSpawner(x, y, zoneIndex++);
 						
 						for(int k = 0, rng = Main.rand.nextInt(2); k < currentMap.enemies.length; ++k, rng = Main.rand.nextInt(2))
-							currentMap.enemies[k] = rng == 0 ? new EntityFastEnemy(x, y) : new EntityNormalEnemy(x, y); break;
+							currentMap.enemies[k] = new EntityEnemy(x, y); break;
 							
 						default: currentMap.zones[zoneIndex] = new MapZoneEmpty(x, y, zoneIndex++);
 					}
@@ -236,8 +234,12 @@ public final class Map implements Serializable{
 		return null;
 	}
 	
-	public static EntityAbstractEnemy getEnemyAtPos(int x, int y) {
-		for(EntityAbstractEnemy enemy : currentMap.enemies) {
+	public static MapZone getZoneAtIndex(int index) {
+		return currentMap.zones[index];
+	}
+	
+	public static EntityEnemy getEnemyAtPos(int x, int y) {
+		for(EntityEnemy enemy : currentMap.enemies) {
 			if(enemy.posY == y && enemy.posX == x) {
 				return enemy;
 			}
@@ -245,8 +247,8 @@ public final class Map implements Serializable{
 		return null;
 	}
 	
-	public static EntityAbstractEnemy getEnemyPredictedAtPos(int x, int y, EntityBall entity) {
-		for(EntityAbstractEnemy enemy : currentMap.enemies) {
+	public static EntityEnemy getEnemyPredictedAtPos(int x, int y, EntityBall entity) {
+		for(EntityEnemy enemy : currentMap.enemies) {
 			if((enemy.posY == y && enemy.posX == x) || (enemy.posY == y - entity.motionY && enemy.posX == x - entity.motionX)) {
 				return enemy;
 			}

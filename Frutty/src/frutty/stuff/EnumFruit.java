@@ -1,6 +1,6 @@
 package frutty.stuff;
 
-public enum EnumFruit {
+public enum EnumFruit{
 	APPLE,
 	CHERRY;
 }

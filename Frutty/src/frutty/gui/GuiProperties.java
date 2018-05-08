@@ -44,8 +44,6 @@ public final class GuiProperties extends JPanel{
 		jTable.setValueAt("Player2 Pos Y", 8, 0);
 		jTable.setValueAt(data[5], 8, 1);
 		
-		
-		
 		CustomCellRenderer render = new CustomCellRenderer();
 		jTable.getColumnModel().getColumn(1).setCellRenderer(render);
 		jTable.getColumnModel().getColumn(0).setCellRenderer(render);

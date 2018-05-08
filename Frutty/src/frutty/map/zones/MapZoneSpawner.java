@@ -5,7 +5,7 @@ import java.awt.Graphics;
 
 import frutty.map.MapZone;
 
-public class MapZoneSpawner extends MapZone{
+public final class MapZoneSpawner extends MapZone{
 	private static final Color[] colorCache = new Color[32];
 	private boolean decrease = false;
 	private int colorIndexer = 0;

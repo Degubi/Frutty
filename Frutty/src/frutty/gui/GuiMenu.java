@@ -23,14 +23,10 @@ public final class GuiMenu extends JPanel implements ActionListener{
 	private static final Color grayened = new Color(0, 0, 0, 128);
 	private final MapZone[] background;
 	
-	private int loadCount;
-	private static GuiMenu instance;
-	
-	public GuiMenu(int load) {
+	public GuiMenu() {
 		setLayout(null);
 		
 		background = Map.loadBackground();
-		loadCount = load;
 		
 		mapSizeField.setBounds(500, 20, 60, 30);
 		mapSizeField.setHorizontalAlignment(JTextField.CENTER);
@@ -65,12 +61,7 @@ public final class GuiMenu extends JPanel implements ActionListener{
 	}
 	
 	public static void showMenu() {
-		GuiHelper.showNewFrame(instance = new GuiMenu(instance == null ? 0 : 100), "Tutty Frutty", JFrame.EXIT_ON_CLOSE, 910, 675);
-	}
-	
-	public static void refreshMenu() {
-		instance.loadCount += 25;
-		instance.repaint();
+		GuiHelper.showNewFrame(new GuiMenu(), "Tutty Frutty", JFrame.EXIT_ON_CLOSE, 910, 675);
 	}
 	
 	@Override
@@ -87,10 +78,6 @@ public final class GuiMenu extends JPanel implements ActionListener{
 		graphics.setFont(GuiHelper.thiccFont);
 		graphics.drawString(GuiHelper.recommendedMapSizeString, 330, 80);
 		graphics.drawString("Size:", 455, 40);
-		
-		if(loadCount != 100) {
-			graphics.drawString("Loading: " + loadCount + "%", 380, 500);
-		}
 	}
 	
 	@Override

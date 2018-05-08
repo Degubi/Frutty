@@ -16,13 +16,12 @@ import javax.swing.JPanel;
 
 import frutty.Main;
 import frutty.entity.Entity;
+import frutty.entity.EntityEnemy;
 import frutty.entity.EntityPlayer;
-import frutty.entity.enemies.EntityAbstractEnemy;
 import frutty.map.Map;
 import frutty.map.MapZone;
 import frutty.map.zones.MapZoneFruit;
 import frutty.stuff.EnumFruit;
-import frutty.stuff.ITickable;
 
 public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 	private final ScheduledExecutorService thread = Executors.newSingleThreadScheduledExecutor();
@@ -57,7 +56,7 @@ public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 			}
 		}
 		
-		for(EntityAbstractEnemy enemies : Map.currentMap.enemies) {
+		for(EntityEnemy enemies : Map.currentMap.enemies) {
 			if(enemies.active) {
 				enemies.render(graphics);
 			}
@@ -86,7 +85,7 @@ public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 						entities.update(Map.currentMap.ticks);
 					}
 				}
-				for(EntityAbstractEnemy monsters : Map.currentMap.enemies) {
+				for(EntityEnemy monsters : Map.currentMap.enemies) {
 					if(monsters.active) {
 						monsters.update(Map.currentMap.ticks);
 					}
@@ -94,8 +93,8 @@ public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 				
 				if(Map.currentMap.ticks % 20 == 0) {
 					for(MapZone zone : Map.currentMap.zones) {
-						if(zone instanceof ITickable && ((MapZoneFruit)zone).fruitType == EnumFruit.APPLE) {
-							((ITickable) zone).update();
+						if(zone instanceof MapZoneFruit && ((MapZoneFruit)zone).fruitType == EnumFruit.APPLE) {
+							((MapZoneFruit) zone).update();
 						}
 					}
 				}
@@ -106,9 +105,9 @@ public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 	public static void showMessageAndClose(String message) {
 		ingameGui.thread.shutdown();
 		JOptionPane.showMessageDialog(null, message, "Frutty", JOptionPane.PLAIN_MESSAGE);
-		GuiStats.saveStats();
 		GuiMenu.showMenu();
 		((JFrame)ingameGui.getTopLevelAncestor()).dispose();
+		GuiStats.saveStats();
 	}
 	
 	public static void showIngame() {

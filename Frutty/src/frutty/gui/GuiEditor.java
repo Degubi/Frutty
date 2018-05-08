@@ -17,12 +17,12 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-public class GuiEditor extends JPanel implements MouseListener{
+public final class GuiEditor extends JPanel implements MouseListener{
 	private final ArrayList<JButton> zoneButtons = new ArrayList<>();
-	private final GuiProperties properties;
+	private final GuiProperties mapProperties;
 	
 	private GuiEditor(String fileName, boolean isBackground, String textureName, int... data) {
-		properties = new GuiProperties(fileName, textureName, isBackground, data);
+		mapProperties = new GuiProperties(fileName, textureName, isBackground, data);
 		setLayout(null);
 		
 		add(GuiHelper.newButton("Save", data[0] * 64 + 12, data[1] * 64 - 100, this));
@@ -93,7 +93,7 @@ public class GuiEditor extends JPanel implements MouseListener{
 					e.printStackTrace();
 				}
 			}
-		}else {
+		}else{
 			GuiMenu.showMenu();
 		}
 	}
@@ -102,9 +102,9 @@ public class GuiEditor extends JPanel implements MouseListener{
 	protected void paintComponent(Graphics graphics) {
 		super.paintComponent(graphics);
 		
-		graphics.drawString("Alt: Spawner", properties.getMapWidth() * 64 + 25, 400);
-		graphics.drawString("CTRL: Player1", properties.getMapWidth() * 64 + 25, 440);
-		graphics.drawString("Shift: Player2", properties.getMapWidth() * 64 + 25, 480);
+		graphics.drawString("Alt: Spawner", mapProperties.getMapWidth() * 64 + 25, 400);
+		graphics.drawString("CTRL: Player1", mapProperties.getMapWidth() * 64 + 25, 440);
+		graphics.drawString("Shift: Player2", mapProperties.getMapWidth() * 64 + 25, 480);
 	}
 
 	@Override
@@ -114,11 +114,11 @@ public class GuiEditor extends JPanel implements MouseListener{
 			
 			boolean isAnyDown = false;
 			if(event.isShiftDown()) {
-				button.setMnemonic(5); properties.setPlayer1Pos(button.getX(), button.getY()); button.setIcon(player1Texture);
+				button.setMnemonic(5); mapProperties.setPlayer1Pos(button.getX(), button.getY()); button.setIcon(player1Texture);
 				isAnyDown = true;
 			}
 			if(event.isControlDown()) {
-				button.setMnemonic(6); properties.setPlayer2Pos(button.getX(), button.getY()); button.setIcon(player2Texture);
+				button.setMnemonic(6); mapProperties.setPlayer2Pos(button.getX(), button.getY()); button.setIcon(player2Texture);
 				isAnyDown = true;
 			}
 			if(event.isAltDown()) {
@@ -150,18 +150,18 @@ public class GuiEditor extends JPanel implements MouseListener{
 				 		localButton.setIcon(normalTexture);
 				 	}
 				}else if(command.equals("Properties")) {
-					GuiHelper.showNewFrame(properties, "Map Properties", JFrame.DISPOSE_ON_CLOSE, 350, 250);
+					GuiHelper.showNewFrame(mapProperties, "Map Properties", JFrame.DISPOSE_ON_CLOSE, 350, 250);
 				}else if(command.equals("Save")) {
-					try(ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream("./maps/" + properties.getMapName()))){
-				 		output.writeUTF(properties.getMapTextureName());
-				 		output.writeShort(properties.getMapWidth());
-				 		output.writeShort(properties.getMapHeight());
+					try(ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream("./maps/" + mapProperties.getMapName()))){
+				 		output.writeUTF(mapProperties.getMapTextureName());
+				 		output.writeShort(mapProperties.getMapWidth());
+				 		output.writeShort(mapProperties.getMapHeight());
 				 		
-					 	if(!properties.isBackgroundMap()) {
-					 		output.writeShort(properties.getPlayer1PosX());
-					 		output.writeShort(properties.getPlayer1PosY());
-					 		output.writeShort(properties.getPlayer2PosX());
-					 		output.writeShort(properties.getPlayer2PosY());
+					 	if(!mapProperties.isBackgroundMap()) {
+					 		output.writeShort(mapProperties.getPlayer1PosX());
+					 		output.writeShort(mapProperties.getPlayer1PosY());
+					 		output.writeShort(mapProperties.getPlayer2PosX());
+					 		output.writeShort(mapProperties.getPlayer2PosY());
 				 		}
 				 		for(JButton writeButton : zoneButtons) {
 				 			output.writeByte(writeButton.getMnemonic());
@@ -169,7 +169,7 @@ public class GuiEditor extends JPanel implements MouseListener{
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
-				 	JOptionPane.showMessageDialog(null, "Map saved as: " + properties.getMapName());
+				 	JOptionPane.showMessageDialog(null, "Map saved as: " + mapProperties.getMapName());
 				}
 			}else if(event.getButton() == MouseEvent.BUTTON3) {    //Right click
 				switch(button.getMnemonic()) {

@@ -13,12 +13,14 @@ public abstract class MapZone implements Serializable{
 	public final int posX, posY, zoneIndex;
 	
 	public MapZone(int xPos, int yPos, int index) {
+		System.out.println("MAKE" + index);
 		posX = xPos;
 		posY = yPos;
 		zoneIndex = index;
 	}
 	
-	protected final void renderDepth(Graphics graphics) {
+	/** Super.draw(graphics)- et ha kell depth render*/
+	public void draw(Graphics graphics) {
 		graphics.setColor(blak);
 		
 		switch(posY / 100) {   //Tableswitch, o1-es teljesítmény érdekében
@@ -43,5 +45,4 @@ public abstract class MapZone implements Serializable{
 	
 	public void onBreak() {}
 	public abstract boolean isPassable();
-	public abstract void draw(Graphics graphics);
 }

@@ -5,7 +5,7 @@ import java.awt.Graphics;
 
 import frutty.map.MapZone;
 
-public class MapZoneEmpty extends MapZone{
+public final class MapZoneEmpty extends MapZone{
 	public MapZoneEmpty(int xPos, int yPos, int zoneIndex) {
 		super(xPos, yPos, zoneIndex);
 	}

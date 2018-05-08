@@ -8,9 +8,12 @@ import java.io.Serializable;
 import javax.imageio.ImageIO;
 
 import frutty.gui.GuiIngame;
+import frutty.gui.GuiSettings.Settings;
+import frutty.map.Map;
 import frutty.map.MapZone;
 import frutty.stuff.EnumFacing;
 
+//Coord to index: posX / 64 + (posY / 64 * (Map.currentMap.width + 64 / 64))
 public abstract class Entity implements Serializable{
 	private static final long serialVersionUID = 2876462867774051456L;
 	
@@ -32,10 +35,23 @@ public abstract class Entity implements Serializable{
 		}
 	}
 	
+	protected void checkPlayer(boolean checkInterp) {
+		for(EntityPlayer player : Map.currentMap.players) {
+			if((posX == player.posX && posY == player.posY) || checkInterp && ((posY + motionY == player.posY && posX + motionX == player.posX))) {
+				if(!Settings.godEnabled) {
+					GuiIngame.showMessageAndClose("Game over!");
+				}else{
+					active = false;
+					Map.currentMap.score += 100;
+				}
+			}
+		}
+	}
+	
 	protected static BufferedImage loadTexture(String path) {
-		try {
+		try{
 			return ImageIO.read(GuiIngame.class.getResource("/textures/" + path));
-		} catch (IOException e) {
+		}catch(IOException e){
 			System.err.println("Can't find texture: " + path + ", returning null. Have fun :)");
 			return null;
 		}

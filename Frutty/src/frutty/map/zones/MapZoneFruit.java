@@ -8,12 +8,11 @@ import frutty.gui.GuiStats;
 import frutty.map.Map;
 import frutty.map.MapZone;
 import frutty.stuff.EnumFruit;
-import frutty.stuff.ITickable;
 
-public class MapZoneFruit extends MapZone implements ITickable{
+public final class MapZoneFruit extends MapZone{
 	public final EnumFruit fruitType;
-	public boolean notified;  //Sima mapzone file-bol, nem kell mindegyiknek
-	private int counter;  //Kell azért hogy so-so ugyanakkor essen le az alma
+	public boolean notified;
+	private int counter;
 	
 	public MapZoneFruit(int xPos, int yPos, EnumFruit type, int zoneIndex) {
 		super(xPos, yPos, zoneIndex);
@@ -45,10 +44,9 @@ public class MapZoneFruit extends MapZone implements ITickable{
 		}else if(fruitType == EnumFruit.CHERRY) {
 			graphics.drawImage(EntityApple.cherryTexture, posX, posY, null);
 		}
-		renderDepth(graphics);
+		super.draw(graphics);
 	}
 	
-	@Override
 	public void update() {
 		if(notified){
 			if(counter > 1) {

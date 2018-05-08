@@ -3,7 +3,6 @@ package frutty.entity;
 import java.awt.Color;
 import java.awt.Graphics;
 
-import frutty.entity.enemies.EntityAbstractEnemy;
 import frutty.gui.GuiStats;
 import frutty.map.Map;
 import frutty.map.MapZone;
@@ -27,22 +26,18 @@ public class EntityBall extends Entity{
 			posX = x;
 			posY = y;
 			
-			setFacing(facing);
+			motionX = facing.xOffset;
+			motionY = facing.yOffset;
 			
 			posX += motionX;
 			posY += motionY;
 		}
 	}
 	
-	private void setFacing(EnumFacing facing) {
-		motionX = facing.xOffset;
-		motionY = facing.yOffset;
-	}
-	
 	@Override
 	public void update(int ticks) {
 		if(ticks % 15 == 0) {
-			EntityAbstractEnemy enemy = Map.getEnemyPredictedAtPos(posX, posY, this);
+			EntityEnemy enemy = Map.getEnemyPredictedAtPos(posX, posY, this);
 			if(enemy != null) {
 				enemy.active = false;
 				active = false;
@@ -50,13 +45,16 @@ public class EntityBall extends Entity{
 				Map.currentMap.score += 100;
 			}
 			
-			for(EntityPlayer player : Map.currentMap.players)
+			for(EntityPlayer player : Map.currentMap.players) {
 				if(posY == player.posY && posX == player.posX) {
 					active = false;
 				}
+			}
 			
 			if(!MapZone.isEmpty(posX + motionX, posY + motionY)) {
-				setFacing(findFreeFacing());
+				EnumFacing facing = findFreeFacing();
+				motionX = facing.xOffset;
+				motionY = facing.yOffset;
 			}
 			
 			posX += motionX;

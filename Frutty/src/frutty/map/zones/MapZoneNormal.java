@@ -7,7 +7,7 @@ import frutty.gui.GuiStats;
 import frutty.map.Map;
 import frutty.map.MapZone;
 
-public class MapZoneNormal extends MapZone{
+public final class MapZoneNormal extends MapZone{
 	public MapZoneNormal(int xPos, int yPos, int zoneIndex) {
 		super(xPos, yPos, zoneIndex);
 	}
@@ -25,7 +25,7 @@ public class MapZoneNormal extends MapZone{
 	@Override
 	public void draw(Graphics graphics) {
 		graphics.drawImage(GuiIngame.texture, posX, posY, 64, 64, null);
-		renderDepth(graphics);
+		super.draw(graphics);
 	}
 
 	@Override
