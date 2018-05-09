@@ -13,7 +13,6 @@ public abstract class MapZone implements Serializable{
 	public final int posX, posY, zoneIndex;
 	
 	public MapZone(int xPos, int yPos, int index) {
-		System.out.println("MAKE" + index);
 		posX = xPos;
 		posY = yPos;
 		zoneIndex = index;

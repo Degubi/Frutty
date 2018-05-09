@@ -61,7 +61,6 @@ public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 				enemies.render(graphics);
 			}
 		}
-		
 		graphics.setColor(Color.GRAY);
 		for(int k = 0; k < 20; ++k) {
 			graphics.drawLine(Map.currentMap.width + 64 + k, 0, Map.currentMap.width + 64 + k, Map.currentMap.height + 83);

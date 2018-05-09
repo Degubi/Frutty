@@ -13,7 +13,7 @@ import frutty.map.Map;
 import frutty.map.MapZone;
 import frutty.stuff.EnumFacing;
 
-//Coord to index: posX / 64 + (posY / 64 * (Map.currentMap.width + 64 / 64))
+//Coord to index: posX / 64 + (posY / 64 * ((Map.currentMap.width + 64) / 64))
 public abstract class Entity implements Serializable{
 	private static final long serialVersionUID = 2876462867774051456L;
 	
