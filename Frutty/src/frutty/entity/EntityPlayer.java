@@ -59,6 +59,8 @@ public final class EntityPlayer extends Entity implements KeyListener, MouseList
 		currentFacing = facing;
 		posX += facing.xOffset;
 		posY += facing.yOffset;
+		serverPosX += facing.xOffset;
+		serverPosY += facing.yOffset;
 		textureIndex = facing.textureIndex;
 		
 		Map.getZoneAtPos(posX, posY).onBreak();
@@ -94,6 +96,7 @@ public final class EntityPlayer extends Entity implements KeyListener, MouseList
 		}else{
 			graphics.drawImage(textures[textureIndex], posX, posY, null);
 		}
+		super.render(graphics);
 	}
 	
 	@Override public void update(int ticks) {}

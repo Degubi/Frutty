@@ -112,9 +112,7 @@ public final class GuiMenu extends JPanel implements ActionListener{
 		default: //Load
 			String[] allMapNames = new File("./saves/").list();
 			if(allMapNames.length > 0) {
-				String inputMapName = (String) JOptionPane.showInputDialog(this, "Chose map file!", "Saves", JOptionPane.QUESTION_MESSAGE, null, allMapNames, allMapNames[0]);
-				if(inputMapName != null) {
-					Map.loadSave(inputMapName);
+				if(Map.loadSave((String) JOptionPane.showInputDialog(this, "Chose map file!", "Saves", JOptionPane.QUESTION_MESSAGE, null, allMapNames, allMapNames[0]))) {
 					GuiIngame.showIngame();
 					((JFrame)getTopLevelAncestor()).dispose();
 				}

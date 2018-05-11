@@ -25,6 +25,8 @@ import javax.swing.text.DocumentFilter;
 public final class GuiSettings extends JPanel implements ActionListener{
 	private final JRadioButton easyButton = new JRadioButton("Easy"), normalButton = new JRadioButton("Normal"), hardButton = new JRadioButton("Hard");
 	private final JCheckBox godMode = GuiHelper.newCheckBox("Enable God Mode", 400, 400, Settings.godEnabled);
+	private final JCheckBox enemiesDisabled = GuiHelper.newCheckBox("Disable enemies", 400, 370, Settings.disableEnemies);
+	private final JCheckBox showCollisionBoxes = GuiHelper.newCheckBox("Debug Collisions", 400, 340, Settings.debugCollisions);
 	private final JTextField upKey = newTextField(Settings.upKey, 100, 245), downKey = newTextField(Settings.downKey, 100, 275);
 	private final JTextField leftKey = newTextField(Settings.leftKey, 100, 305), rightKey = newTextField(Settings.rightKey, 100, 335);
 	
@@ -65,6 +67,8 @@ public final class GuiSettings extends JPanel implements ActionListener{
 		add(normalButton);
 		add(hardButton);
 		add(godMode);
+		add(enemiesDisabled);
+		add(showCollisionBoxes);
 		add(upKey);
 		add(downKey);
 		add(leftKey);
@@ -112,7 +116,9 @@ public final class GuiSettings extends JPanel implements ActionListener{
 			Settings.difficulty = 2;
 		}
 		
+		Settings.debugCollisions = showCollisionBoxes.isSelected();
 		Settings.godEnabled = godMode.isSelected();
+		Settings.disableEnemies = enemiesDisabled.isSelected();
 		Settings.upKey = upKey.getText().charAt(0);
 		Settings.downKey = downKey.getText().charAt(0);
 		Settings.leftKey = leftKey.getText().charAt(0);
@@ -138,7 +144,7 @@ public final class GuiSettings extends JPanel implements ActionListener{
 	
 	public static final class Settings{
 		public static int difficulty, upKey, downKey, leftKey, rightKey;
-		public static boolean godEnabled;
+		public static boolean godEnabled, disableEnemies, debugCollisions;
 		
 		public static void loadSettings() {
 			try(BufferedReader input = new BufferedReader(new FileReader("settings.cfg"))){
@@ -149,6 +155,8 @@ public final class GuiSettings extends JPanel implements ActionListener{
 				downKey = Integer.parseInt(data[3]);
 				leftKey = Integer.parseInt(data[4]);
 				rightKey = Integer.parseInt(data[5]);
+				disableEnemies = Boolean.parseBoolean(data[6]);
+				debugCollisions = Boolean.parseBoolean(data[7]);
 			} catch (IOException e) {
 				try(PrintWriter output = new PrintWriter("settings.cfg")){
 					output.print(0);
@@ -162,6 +170,10 @@ public final class GuiSettings extends JPanel implements ActionListener{
 					output.print((int)'A');
 					output.print(' ');
 					output.print((int)'D');
+					output.print(' ');
+					output.print(false);
+					output.print(' ');
+					output.print(false);
 				} catch (FileNotFoundException ex) {}
 			}
 		}
@@ -180,6 +192,9 @@ public final class GuiSettings extends JPanel implements ActionListener{
 				output.print(' ');
 				output.print(rightKey);
 				output.print(' ');
+				output.print(disableEnemies);
+				output.print(' ');
+				output.print(debugCollisions);
 			} catch (FileNotFoundException e) {}
 		}
 	}

@@ -2,6 +2,7 @@ package frutty.map;
 
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -9,6 +10,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.function.Consumer;
 
 import javax.imageio.ImageIO;
 
@@ -37,7 +39,7 @@ public final class Map implements Serializable{
 	public final EntityEnemy[] enemies;
 	public final int width, height;
 	public int pickCount, score, ticks;
-	public final String textureStr;
+	private final String textureStr;
 	
 	private Map(String textureName, boolean isMulti, int w, int h, int p1X, int p1Y, int p2X, int p2Y) {
 		int zoneCount = (w / 64) * (h / 64);
@@ -48,12 +50,15 @@ public final class Map implements Serializable{
 		GuiIngame.texture = loadTexture(textureName);
 		
 		int enemyCount = 0;
-		if(Settings.difficulty == 0) {
-			enemyCount += zoneCount < 70 ? 1 : zoneCount / 70;
-		}else if(Settings.difficulty == 1) {
-			enemyCount += zoneCount / 50;
-		}else{
-			enemyCount += zoneCount / 30;
+		
+		if(!Settings.disableEnemies) {
+			if(Settings.difficulty == 0) {
+				enemyCount += zoneCount < 70 ? 1 : zoneCount / 70;
+			}else if(Settings.difficulty == 1) {
+				enemyCount += zoneCount / 50;
+			}else{
+				enemyCount += zoneCount / 30;
+			}
 		}
 		
 		enemies = new EntityEnemy[enemyCount];
@@ -143,7 +148,7 @@ public final class Map implements Serializable{
 			}
 		}
 		
-		GuiHelper.mapSizeCheck(currentMap.height / 64 + 1, currentMap.width / 64 + 1);
+		GuiHelper.mapSizeCheck(currentMap.width / 64 + 1, currentMap.height / 64 + 1);
 	}
 	
 	public static void loadMap(String name, boolean isMultiplayer) {
@@ -169,7 +174,7 @@ public final class Map implements Serializable{
 			}
 		}catch(IOException e){}
 		
-		GuiHelper.mapSizeCheck(currentMap.height / 64 + 1, currentMap.width / 64 + 1);
+		GuiHelper.mapSizeCheck(currentMap.width / 64 + 1, currentMap.height / 64 + 1);
 	}
 	
 	public static boolean createSave(String fileName) {
@@ -177,9 +182,7 @@ public final class Map implements Serializable{
 			try(ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream("./saves/" + fileName + ".sav"))){
 				output.writeObject(Map.currentMap);
 				return true;
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			} catch (IOException e) {}
 		}
 		return false;
 	}
@@ -187,7 +190,7 @@ public final class Map implements Serializable{
 	public static MapZone[] loadBackground() {
 		try(ObjectInputStream input = new ObjectInputStream(new FileInputStream("./maps/background" + Main.rand.nextInt(3) + ".deg"))){
 			GuiIngame.texture = Map.loadTexture(input.readUTF());
-			int width = input.readShort() * 64, height = input.readShort() * 64, zoneIndex = 0;;
+			int width = input.readShort() * 64, height = input.readShort() * 64, zoneIndex = 0;
 			MapZone[] zonee = new MapZone[(width / 64) * (height / 64)];
 			
 			for(int y = 0; y < height; y += 64) {
@@ -211,18 +214,18 @@ public final class Map implements Serializable{
 			input.readUTF();
 			return input.readShort() + "x" + input.readShort();
 		} catch (IOException e) {}
-		return null;
+		return "";
 	}
 	
-	public static void loadSave(String fileName) {
+	public static boolean loadSave(String fileName) {
 		if(fileName != null) {
 			try(ObjectInputStream input = new ObjectInputStream(new FileInputStream("./saves/" + fileName))){
 				currentMap = (Map) input.readObject();
 				GuiIngame.texture = loadTexture(currentMap.textureStr);
-			} catch (ClassNotFoundException | IOException e) {
-				e.printStackTrace();
-			}
+				return true;
+			} catch (ClassNotFoundException | IOException e) {}
 		}
+		return false;
 	}
 	
 	public static MapZone getZoneAtPos(int x, int y) {
@@ -236,15 +239,6 @@ public final class Map implements Serializable{
 	
 	public static MapZone getZoneAtIndex(int index) {
 		return currentMap.zones[index];
-	}
-	
-	public static EntityEnemy getEnemyAtPos(int x, int y) {
-		for(EntityEnemy enemy : currentMap.enemies) {
-			if(enemy.posY == y && enemy.posX == x) {
-				return enemy;
-			}
-		}
-		return null;
 	}
 	
 	public static EntityEnemy getEnemyPredictedAtPos(int x, int y, EntityBall entity) {

@@ -17,7 +17,8 @@ public class EntityBall extends Entity{
 	@Override
 	public void render(Graphics graphics) {
 		graphics.setColor(Color.WHITE);
-		graphics.fillOval(posX + 16, posY + 16, 16, 16);
+		graphics.fillOval(posX + 24, posY + 24, 16, 16);
+		super.render(graphics);
 	}
 
 	public void activate(int x, int y, EnumFacing facing) {
@@ -25,12 +26,15 @@ public class EntityBall extends Entity{
 			active = true;
 			posX = x;
 			posY = y;
+			serverPosX = x;
+			serverPosY = y;
 			
 			motionX = facing.xOffset;
 			motionY = facing.yOffset;
 			
 			posX += motionX;
 			posY += motionY;
+			
 		}
 	}
 	
@@ -59,6 +63,8 @@ public class EntityBall extends Entity{
 			
 			posX += motionX;
 			posY += motionY;
+			serverPosX = posX;
+			serverPosY = posY;
 		}
 	}
 }

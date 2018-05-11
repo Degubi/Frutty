@@ -81,13 +81,13 @@ public final class GuiProperties extends JPanel{
 	}
 	
 	public void setPlayer1Pos(int x, int y) {
-		table.setValueAt(x, 4, 1);
-		table.setValueAt(y, 5, 1);
+		table.setValueAt(x, 5, 1);
+		table.setValueAt(y, 6, 1);
 	}
 	
 	public void setPlayer2Pos(int x, int y) {
-		table.setValueAt(x, 6, 1);
-		table.setValueAt(y, 7, 1);
+		table.setValueAt(x, 7, 1);
+		table.setValueAt(y, 8, 1);
 	}
 	
 	private static final class PropertyTableModel extends DefaultTableModel{

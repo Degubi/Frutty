@@ -1,5 +1,6 @@
 package frutty.entity;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
@@ -20,41 +21,50 @@ public final class EntityEnemy extends Entity {
 		super(x, y);
 		
 		if(Main.rand.nextBoolean()) {
-			moveTick = 10; updateTick = 20;
+			moveTick = 1; updateTick = 16;
 		}else{
-			moveTick = 15; updateTick = 30;
+			moveTick = 2; updateTick = 32;
 		}
+		
+		serverPosX = x;
+		serverPosY = y;
 	}
 
 	@Override
 	public void render(Graphics graphics) {
 		if(textureIndex == 3) {
-			graphics.drawImage(moveTick == 10 ? fastTextures[0] : normalTextures[0], posX + 64, posY, -64, 64, null);
+			graphics.drawImage(moveTick == 1 ? fastTextures[0] : normalTextures[0], posX + 64, posY, -64, 64, null);
 		}else{
 			if(animSwitch || textureIndex == 0) {
-				graphics.drawImage(moveTick == 10 ? fastTextures[textureIndex] : normalTextures[textureIndex], posX, posY, 64, 64, null);
+				graphics.drawImage(moveTick == 1 ? fastTextures[textureIndex] : normalTextures[textureIndex], posX, posY, 64, 64, null);
 			}else{
-				graphics.drawImage(moveTick == 10 ? fastTextures[textureIndex] : normalTextures[textureIndex], posX + 64, posY, -64, 64, null);
+				graphics.drawImage(moveTick == 1 ? fastTextures[textureIndex] : normalTextures[textureIndex], posX + 64, posY, -64, 64, null);
 			}
 		}
+		
+		super.render(graphics);
 	}
 
 	@Override
 	public void update(int ticks) {
-		if(ticks % updateTick == 0) {
-			checkPlayer(true);
-			
-			if(!MapZone.isEmpty(posX + motionX, posY + motionY)) {
-				EnumFacing facing = findFreeFacing();
-				motionX = facing.xOffset;
-				motionY = facing.yOffset;
-				textureIndex = facing.textureIndex;
+		if(ticks % moveTick == 0) {
+			if(ticks % updateTick == 0) {
+				checkPlayer(true);
+				animSwitch = !animSwitch;
+				
+				if(!MapZone.isEmpty(posX + motionX, posY + motionY)) {
+					EnumFacing facing = findFreeFacing();
+					motionX = facing.xOffset;
+					motionY = facing.yOffset;
+					textureIndex = facing.textureIndex;
+				}
+				
+				serverPosX += motionX;
+				serverPosY += motionY;
 			}
-			
-		}if(ticks % moveTick == 0) {
-			posX += motionX / 2;
-			posY += motionY / 2;
-			animSwitch = !animSwitch;
+		
+		posX += motionX / 16;
+		posY += motionY / 16;
 		}
 	}
 }

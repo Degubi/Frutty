@@ -1,5 +1,6 @@
 package frutty.entity;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -18,12 +19,14 @@ public abstract class Entity implements Serializable{
 	private static final long serialVersionUID = 2876462867774051456L;
 	
 	public boolean active = true;
-	public int posX, posY, motionX, motionY;
+	public int posX, posY, serverPosX, serverPosY, motionX, motionY;
 	
 	public Entity() {}
 	public Entity(int x, int y) {
 		posX = x;
 		posY = y;
+		serverPosX = x;
+		serverPosY = y;
 	}
 	
 	protected EnumFacing findFreeFacing() {
@@ -37,7 +40,8 @@ public abstract class Entity implements Serializable{
 	
 	protected void checkPlayer(boolean checkInterp) {
 		for(EntityPlayer player : Map.currentMap.players) {
-			if((posX == player.posX && posY == player.posY) || checkInterp && ((posY + motionY == player.posY && posX + motionX == player.posX))) {
+			if((serverPosX == player.serverPosX && serverPosY == player.serverPosY) || checkInterp 
+					&& ((serverPosY + motionY == player.serverPosY && serverPosX + motionX == player.serverPosX))) {
 				if(!Settings.godEnabled) {
 					GuiIngame.showMessageAndClose("Game over!");
 				}else{
@@ -57,6 +61,10 @@ public abstract class Entity implements Serializable{
 		}
 	}
 	
-	public abstract void render(Graphics graphics);
+	public void render(Graphics graphics) {
+		graphics.setColor(Color.WHITE);
+		graphics.drawRect(serverPosX, serverPosY, 64, 64);
+	}
+	
 	public abstract void update(int ticks);
 }

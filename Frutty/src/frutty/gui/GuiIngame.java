@@ -61,7 +61,7 @@ public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 				enemies.render(graphics);
 			}
 		}
-		graphics.setColor(Color.GRAY);
+		graphics.setColor(Color.DARK_GRAY);
 		for(int k = 0; k < 20; ++k) {
 			graphics.drawLine(Map.currentMap.width + 64 + k, 0, Map.currentMap.width + 64 + k, Map.currentMap.height + 83);
 		}
@@ -78,23 +78,26 @@ public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 			repaint();
 			++Map.currentMap.ticks;
 			
-			if(Map.currentMap.ticks % 5 == 0) {
-				for(Entity entities : Map.currentMap.entities) {
-					if(entities.active) {
-						entities.update(Map.currentMap.ticks);
-					}
+			for(Entity entity : Map.currentMap.players) {
+				entity.update(Map.currentMap.ticks);
+			}
+			
+			for(EntityEnemy monsters : Map.currentMap.enemies) {
+				if(monsters.active) {
+					monsters.update(Map.currentMap.ticks);
 				}
-				for(EntityEnemy monsters : Map.currentMap.enemies) {
-					if(monsters.active) {
-						monsters.update(Map.currentMap.ticks);
-					}
+			}
+			
+			for(Entity entities : Map.currentMap.entities) {
+				if(entities.active) {
+					entities.update(Map.currentMap.ticks);
 				}
-				
-				if(Map.currentMap.ticks % 20 == 0) {
-					for(MapZone zone : Map.currentMap.zones) {
-						if(zone instanceof MapZoneFruit && ((MapZoneFruit)zone).fruitType == EnumFruit.APPLE) {
-							((MapZoneFruit) zone).update();
-						}
+			}
+			
+			if(Map.currentMap.ticks % 20 == 0) {
+				for(MapZone zone : Map.currentMap.zones) {
+					if(zone instanceof MapZoneFruit && ((MapZoneFruit)zone).fruitType == EnumFruit.APPLE) {
+						((MapZoneFruit) zone).update();
 					}
 				}
 			}
@@ -110,10 +113,6 @@ public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 	}
 	
 	public static void showIngame() {
-		try {
-			Main.loadThread.join();
-		} catch (InterruptedException e) {}
-		
 		EventQueue.invokeLater(() -> {
 			JFrame ingameFrame = new JFrame("Tutty Frutty");
 			ingameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
