@@ -145,6 +145,7 @@ public final class GuiSettings extends JPanel implements ActionListener{
 	public static final class Settings{
 		public static int difficulty, upKey, downKey, leftKey, rightKey;
 		public static boolean godEnabled, disableEnemies, debugCollisions;
+		public static String lastMap = "Creepy";
 		
 		public static void loadSettings() {
 			try(BufferedReader input = new BufferedReader(new FileReader("settings.cfg"))){
@@ -157,6 +158,7 @@ public final class GuiSettings extends JPanel implements ActionListener{
 				rightKey = Integer.parseInt(data[5]);
 				disableEnemies = Boolean.parseBoolean(data[6]);
 				debugCollisions = Boolean.parseBoolean(data[7]);
+				lastMap = data[8];
 			} catch (IOException e) {
 				try(PrintWriter output = new PrintWriter("settings.cfg")){
 					output.print(0);
@@ -174,6 +176,8 @@ public final class GuiSettings extends JPanel implements ActionListener{
 					output.print(false);
 					output.print(' ');
 					output.print(false);
+					output.print(' ');
+					output.print("Creepy");
 				} catch (FileNotFoundException ex) {}
 			}
 		}
@@ -195,6 +199,8 @@ public final class GuiSettings extends JPanel implements ActionListener{
 				output.print(disableEnemies);
 				output.print(' ');
 				output.print(debugCollisions);
+				output.print(' ');
+				output.print(lastMap);
 			} catch (FileNotFoundException e) {}
 		}
 	}

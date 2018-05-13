@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.Arrays;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -13,6 +14,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import frutty.gui.GuiSettings.Settings;
 import frutty.map.Map;
 import frutty.map.MapZone;
 
@@ -56,6 +58,8 @@ public final class GuiMenu extends JPanel implements ActionListener{
 		mapList.addItem("Generate");  //Legeslegrosszabb esetben is tudunk generálni mapot
 		
 		add(mapSizeField);
+		
+		mapList.setSelectedItem(Settings.lastMap);
 		add(mapList);
 		add(coopBox);
 	}
@@ -85,8 +89,9 @@ public final class GuiMenu extends JPanel implements ActionListener{
 		switch(event.getActionCommand()) {
 		
 		case "New Game":
-			String mapName = ((String)mapList.getSelectedItem()).toLowerCase();
-			if(mapName.equals("generate")) {
+			String mapName = ((String)mapList.getSelectedItem());
+			Settings.lastMap = mapName;
+			if(mapName.equals("Generate")) {
 				String[] mapSizeSplit = mapSizeField.getText().split("x");
 				Map.generateMap(Integer.parseInt(mapSizeSplit[0]), Integer.parseInt(mapSizeSplit[1]), coopBox.isSelected());
 			}else{

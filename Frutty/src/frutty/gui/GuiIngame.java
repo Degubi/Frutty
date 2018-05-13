@@ -18,6 +18,7 @@ import frutty.Main;
 import frutty.entity.Entity;
 import frutty.entity.EntityEnemy;
 import frutty.entity.EntityPlayer;
+import frutty.gui.GuiSettings.Settings;
 import frutty.map.Map;
 import frutty.map.MapZone;
 import frutty.map.zones.MapZoneFruit;
@@ -138,6 +139,7 @@ public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 			}
 			GuiStats.saveStats();
 			GuiMenu.showMenu();
+			Settings.saveSettings();
 			((JFrame)getTopLevelAncestor()).dispose();
 			
 		}else{  //Save

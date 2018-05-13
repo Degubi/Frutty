@@ -62,8 +62,10 @@ public abstract class Entity implements Serializable{
 	}
 	
 	public void render(Graphics graphics) {
-		graphics.setColor(Color.WHITE);
-		graphics.drawRect(serverPosX, serverPosY, 64, 64);
+		if(Settings.debugCollisions) {
+			graphics.setColor(Color.WHITE);
+			graphics.drawRect(serverPosX, serverPosY, 64, 64);
+		}
 	}
 	
 	public abstract void update(int ticks);

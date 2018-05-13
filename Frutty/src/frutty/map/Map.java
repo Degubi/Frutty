@@ -135,6 +135,8 @@ public final class Map implements Serializable{
 					}else if(loopState == 1) {
 						currentMap.players[0].posX = x;
 						currentMap.players[0].posY = y;
+						currentMap.players[0].serverPosX = x;
+						currentMap.players[0].serverPosY = y;
 						loopState = 2;
 						
 						if(isMultiplayer) continue outerLoop;
@@ -142,6 +144,8 @@ public final class Map implements Serializable{
 					}else{
 						currentMap.players[1].posX = x;
 						currentMap.players[1].posY = y;
+						currentMap.players[1].serverPosX = x;
+						currentMap.players[1].serverPosY = y;
 						break outerLoop;
 					}
 				}
