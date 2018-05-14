@@ -207,12 +207,12 @@ public final class GuiEditor extends JPanel implements MouseListener{
 	@Override public void mouseEntered(MouseEvent event) {}
 	@Override public void mouseExited(MouseEvent event) {}
 	
-	private static final ImageIcon normalTexture = new ImageIcon(GuiMenu.class.getResource("/textures/dev/normal.png"));
-	private static final ImageIcon cherryTexture = new ImageIcon(GuiMenu.class.getResource("/textures/dev/cherry.png"));
-	private static final ImageIcon appleTexture = new ImageIcon(GuiMenu.class.getResource("/textures/dev/apple.png"));
-	private static final ImageIcon dugTexture = new ImageIcon(GuiMenu.class.getResource("/textures/dev/dug.png"));
-	private static final ImageIcon spawnerTexture = new ImageIcon(GuiMenu.class.getResource("/textures/dev/spawner.png"));
-	private static final ImageIcon player1Texture = new ImageIcon(GuiMenu.class.getResource("/textures/dev/player1.png"));
-	private static final ImageIcon player2Texture = new ImageIcon(GuiMenu.class.getResource("/textures/dev/player2.png"));
-	private static final ImageIcon chestTexture = new ImageIcon(GuiMenu.class.getResource("/textures/dev/chest.png"));
+	private static final ImageIcon normalTexture = new ImageIcon("./textures/dev/normal.png");
+	private static final ImageIcon cherryTexture = new ImageIcon("./textures/dev/cherry.png");
+	private static final ImageIcon appleTexture = new ImageIcon("./textures/dev/apple.png");
+	private static final ImageIcon dugTexture = new ImageIcon("./textures/dev/dug.png");
+	private static final ImageIcon spawnerTexture = new ImageIcon("./textures/dev/spawner.png");
+	private static final ImageIcon player1Texture = new ImageIcon("./textures/dev/player1.png");
+	private static final ImageIcon player2Texture = new ImageIcon("./textures/dev/player2.png");
+	private static final ImageIcon chestTexture = new ImageIcon("./textures/dev/chest.png");
 }

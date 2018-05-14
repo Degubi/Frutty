@@ -6,7 +6,6 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.net.URISyntaxException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -18,7 +17,6 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import frutty.gui.GuiHelper;
-import frutty.gui.GuiMenu;
 
 public final class GuiProperties extends JPanel implements ActionListener{
 	private final PropertyTableModel table = new PropertyTableModel();
@@ -65,12 +63,8 @@ public final class GuiProperties extends JPanel implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent event) {
 		if(event.getActionCommand().equals("Texture Selector")) {
-			try {
-				String[] textures =  new File(GuiMenu.class.getResource("/textures/map").toURI()).list();
-				GuiHelper.showNewFrame(new TextureSelector(textures, this), "Texture selector", JFrame.DISPOSE_ON_CLOSE, 200 + (textures.length - 1) * 128, 200);
-			} catch (URISyntaxException e) {
-				e.printStackTrace();
-			}
+			String[] textures = new File("./textures/map").list();
+			GuiHelper.showNewFrame(new TextureSelector(textures, this), "Texture selector", JFrame.DISPOSE_ON_CLOSE, 200 + (textures.length - 1) * 128, 200);
 		}
 	}
 	
@@ -174,7 +168,7 @@ public final class GuiProperties extends JPanel implements ActionListener{
 				int index2 = 0;
 				for(String texture : textures) {
 					if(!texture.equals("chest.png")) {
-						buttons[index2++].setIcon(new ImageIcon(new ImageIcon(GuiMenu.class.getResource("/textures/map/" + texture)).getImage().getScaledInstance(128, 128, Image.SCALE_DEFAULT)));
+						buttons[index2++].setIcon(new ImageIcon(new ImageIcon("./textures/map/" + texture).getImage().getScaledInstance(128, 128, Image.SCALE_DEFAULT)));
 					}
 				}
 			}).start();

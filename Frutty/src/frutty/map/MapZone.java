@@ -3,6 +3,7 @@ package frutty.map;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 
@@ -10,7 +11,6 @@ import javax.imageio.ImageIO;
 
 import frutty.Main;
 import frutty.entity.EntityPlayer;
-import frutty.gui.GuiIngame;
 import frutty.gui.GuiStats;
 import frutty.map.zones.MapZoneEmpty;
 import frutty.map.zones.MapZoneFruit;
@@ -29,7 +29,7 @@ public abstract class MapZone implements Serializable{
 	
 	protected static BufferedImage loadTexture(String path) {
 		try{
-			return ImageIO.read(GuiIngame.class.getResource("/textures/map/" + path));
+			return ImageIO.read(new File("./textures/map/" + path));
 		}catch(IOException e){
 			System.err.println("Can't find texture: " + path + ", returning null. Have fun :)");
 			return null;

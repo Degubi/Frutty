@@ -3,6 +3,7 @@ package frutty.entity;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 
@@ -54,7 +55,7 @@ public abstract class Entity implements Serializable{
 	
 	protected static BufferedImage loadTexture(String path) {
 		try{
-			return ImageIO.read(GuiIngame.class.getResource("/textures/" + path));
+			return ImageIO.read(new File("./textures/" + path));
 		}catch(IOException e){
 			System.err.println("Can't find texture: " + path + ", returning null. Have fun :)");
 			return null;

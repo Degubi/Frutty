@@ -1,6 +1,7 @@
 package frutty.map;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -19,7 +20,6 @@ import frutty.entity.EntityEnemy;
 import frutty.entity.EntityPlayer;
 import frutty.gui.GuiHelper;
 import frutty.gui.GuiIngame;
-import frutty.gui.GuiMenu;
 import frutty.gui.GuiSettings.Settings;
 import frutty.map.zones.MapZoneChest;
 import frutty.map.zones.MapZoneEmpty;
@@ -73,7 +73,7 @@ public final class Map implements Serializable{
 	
 	public static BufferedImage loadTexture(String textureName) {
 		try{
-			return ImageIO.read(GuiMenu.class.getResource("/textures/map/" + textureName + ".png"));
+			return ImageIO.read(new File("./textures/map/" + textureName + ".png"));
 		}catch (IOException e) {
 			return null;
 		}
