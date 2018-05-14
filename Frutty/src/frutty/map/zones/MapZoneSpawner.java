@@ -34,7 +34,7 @@ public final class MapZoneSpawner extends MapZone{
 	}
 
 	@Override
-	public boolean isPassable() {
+	public boolean isBreakable() {
 		return false;
 	}
 }

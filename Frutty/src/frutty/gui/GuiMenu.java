@@ -5,7 +5,6 @@ import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.util.Arrays;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -15,6 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import frutty.gui.GuiSettings.Settings;
+import frutty.gui.editor.GuiEditor;
 import frutty.map.Map;
 import frutty.map.MapZone;
 

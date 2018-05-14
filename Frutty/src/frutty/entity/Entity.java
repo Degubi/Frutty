@@ -42,11 +42,11 @@ public abstract class Entity implements Serializable{
 		for(EntityPlayer player : Map.currentMap.players) {
 			if((serverPosX == player.serverPosX && serverPosY == player.serverPosY) || checkInterp 
 					&& ((serverPosY + motionY == player.serverPosY && serverPosX + motionX == player.serverPosX))) {
-				if(!Settings.godEnabled) {
-					GuiIngame.showMessageAndClose("Game over!");
-				}else{
+				if(Settings.godEnabled || player.isInvicible()) {
 					active = false;
 					Map.currentMap.score += 100;
+				}else{
+					GuiIngame.showMessageAndClose("Game over!");
 				}
 			}
 		}

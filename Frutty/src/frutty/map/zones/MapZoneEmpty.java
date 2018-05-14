@@ -17,7 +17,7 @@ public final class MapZoneEmpty extends MapZone{
 	}
 
 	@Override
-	public boolean isPassable() {
+	public boolean isBreakable() {
 		return true;
 	}
 }

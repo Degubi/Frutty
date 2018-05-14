@@ -6,7 +6,11 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Iterator;
 
+import frutty.entity.effects.EntityEffect;
+import frutty.entity.effects.EntityEffectInvisible;
 import frutty.gui.GuiSettings.Settings;
 import frutty.map.Map;
 import frutty.map.MapZone;
@@ -14,6 +18,7 @@ import frutty.stuff.EnumFacing;
 
 public final class EntityPlayer extends Entity implements KeyListener, MouseListener{
 	private static final BufferedImage[] textures = {loadTexture("player/side.png"), loadTexture("player/front.png"), loadTexture("player/back.png")};
+	public final ArrayList<EntityEffect> entityEffects = new ArrayList<>();
 	
 	private int textureIndex;
 	private long lastPressTime;
@@ -43,7 +48,7 @@ public final class EntityPlayer extends Entity implements KeyListener, MouseList
 	}
 
 	private static boolean isFree(int x, int y) {
-		if(!Map.getZoneAtPos(x, y).isPassable()) {
+		if(!Map.getZoneAtPos(x, y).isBreakable()) {
 			return false;
 		}
 		
@@ -63,7 +68,7 @@ public final class EntityPlayer extends Entity implements KeyListener, MouseList
 		serverPosY += facing.yOffset;
 		textureIndex = facing.textureIndex;
 		
-		Map.getZoneAtPos(posX, posY).onBreak();
+		Map.getZoneAtPos(posX, posY).onBreak(this);
 		lastPressTime = System.currentTimeMillis();
 	}
 	
@@ -96,10 +101,29 @@ public final class EntityPlayer extends Entity implements KeyListener, MouseList
 		}else{
 			graphics.drawImage(textures[textureIndex], posX, posY, null);
 		}
+		
+		for(EntityEffect effects : entityEffects) {
+			effects.handleEffect(this, graphics);
+		}
 		super.render(graphics);
 	}
 	
-	@Override public void update(int ticks) {}
+	public boolean isInvicible() {
+		for(EntityEffect effects : entityEffects) {
+			if(effects instanceof EntityEffectInvisible) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	@Override 
+	public void update(int ticks) {
+		for(Iterator<EntityEffect> iterator = entityEffects.iterator(); iterator.hasNext();) {
+			iterator.next().update(iterator);
+		}
+	}
+	
 	@Override public void mouseClicked(MouseEvent e) {}
 	@Override public void mousePressed(MouseEvent e) {}
 	@Override public void mouseEntered(MouseEvent e) {}

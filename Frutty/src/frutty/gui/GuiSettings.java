@@ -27,6 +27,7 @@ public final class GuiSettings extends JPanel implements ActionListener{
 	private final JCheckBox godMode = GuiHelper.newCheckBox("Enable God Mode", 400, 400, Settings.godEnabled);
 	private final JCheckBox enemiesDisabled = GuiHelper.newCheckBox("Disable enemies", 400, 370, Settings.disableEnemies);
 	private final JCheckBox showCollisionBoxes = GuiHelper.newCheckBox("Debug Collisions", 400, 340, Settings.debugCollisions);
+	private final JCheckBox showDebug = GuiHelper.newCheckBox("Show Debug", 400, 310, Settings.showDebug);
 	private final JTextField upKey = newTextField(Settings.upKey, 100, 245), downKey = newTextField(Settings.downKey, 100, 275);
 	private final JTextField leftKey = newTextField(Settings.leftKey, 100, 305), rightKey = newTextField(Settings.rightKey, 100, 335);
 	
@@ -69,6 +70,7 @@ public final class GuiSettings extends JPanel implements ActionListener{
 		add(godMode);
 		add(enemiesDisabled);
 		add(showCollisionBoxes);
+		add(showDebug);
 		add(upKey);
 		add(downKey);
 		add(leftKey);
@@ -116,6 +118,7 @@ public final class GuiSettings extends JPanel implements ActionListener{
 			Settings.difficulty = 2;
 		}
 		
+		Settings.showDebug = showDebug.isSelected();
 		Settings.debugCollisions = showCollisionBoxes.isSelected();
 		Settings.godEnabled = godMode.isSelected();
 		Settings.disableEnemies = enemiesDisabled.isSelected();
@@ -144,7 +147,7 @@ public final class GuiSettings extends JPanel implements ActionListener{
 	
 	public static final class Settings{
 		public static int difficulty, upKey, downKey, leftKey, rightKey;
-		public static boolean godEnabled, disableEnemies, debugCollisions;
+		public static boolean godEnabled, disableEnemies, debugCollisions, showDebug;
 		public static String lastMap = "Creepy";
 		
 		public static void loadSettings() {
@@ -159,6 +162,7 @@ public final class GuiSettings extends JPanel implements ActionListener{
 				disableEnemies = Boolean.parseBoolean(data[6]);
 				debugCollisions = Boolean.parseBoolean(data[7]);
 				lastMap = data[8];
+				showDebug = Boolean.parseBoolean(data[9]);
 			} catch (IOException e) {
 				try(PrintWriter output = new PrintWriter("settings.cfg")){
 					output.print(0);
@@ -178,6 +182,8 @@ public final class GuiSettings extends JPanel implements ActionListener{
 					output.print(false);
 					output.print(' ');
 					output.print("Creepy");
+					output.print(' ');
+					output.print(false);
 				} catch (FileNotFoundException ex) {}
 			}
 		}
@@ -201,6 +207,8 @@ public final class GuiSettings extends JPanel implements ActionListener{
 				output.print(debugCollisions);
 				output.print(' ');
 				output.print(lastMap);
+				output.print(' ');
+				output.print(showDebug);
 			} catch (FileNotFoundException e) {}
 		}
 	}

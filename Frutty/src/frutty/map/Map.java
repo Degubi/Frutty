@@ -2,7 +2,6 @@ package frutty.map;
 
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -10,7 +9,6 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.function.Consumer;
 
 import javax.imageio.ImageIO;
 
@@ -23,6 +21,7 @@ import frutty.gui.GuiHelper;
 import frutty.gui.GuiIngame;
 import frutty.gui.GuiMenu;
 import frutty.gui.GuiSettings.Settings;
+import frutty.map.zones.MapZoneChest;
 import frutty.map.zones.MapZoneEmpty;
 import frutty.map.zones.MapZoneFruit;
 import frutty.map.zones.MapZoneNormal;
@@ -35,11 +34,12 @@ public final class Map implements Serializable{
 	
 	public final EntityPlayer[] players;
 	public final MapZone[] zones;
-	public final ArrayList<Entity> entities = new ArrayList<>(); 
+	public final ArrayList<Entity> entities = new ArrayList<>();
+	public final ArrayList<Particle> particles = new ArrayList<>();
 	public final EntityEnemy[] enemies;
 	public final int width, height;
 	public int pickCount, score, ticks;
-	private final String textureStr;
+	public final String textureStr;
 	
 	private Map(String textureName, boolean isMulti, int w, int h, int p1X, int p1Y, int p2X, int p2Y) {
 		int zoneCount = (w / 64) * (h / 64);
@@ -71,7 +71,7 @@ public final class Map implements Serializable{
 		entities.add(new EntityBall());
 	}
 	
-	private static BufferedImage loadTexture(String textureName) {
+	public static BufferedImage loadTexture(String textureName) {
 		try{
 			return ImageIO.read(GuiMenu.class.getResource("/textures/map/" + textureName + ".png"));
 		}catch (IOException e) {
@@ -161,6 +161,16 @@ public final class Map implements Serializable{
 			
 			currentMap = new Map(input.readUTF(), isMultiplayer, width = input.readShort() * 64, height = input.readShort() * 64, input.readShort(), input.readShort(), input.readShort(), input.readShort());
 			
+			if(currentMap.textureStr.equals("stone")) {
+				Particle.colorIndex = 1;
+			}else if(currentMap.textureStr.equals("dirt")) {
+				Particle.colorIndex = 2;
+			}else if(currentMap.textureStr.equals("brick")) {
+				Particle.colorIndex = 3;
+			}else{
+				Particle.colorIndex = 0;
+			}
+			
 			for(int y = 0; y < height; y += 64) {
 				for(int x = 0; x < width; x += 64) {
 					switch(input.readByte()) {
@@ -171,7 +181,9 @@ public final class Map implements Serializable{
 						
 						for(int k = 0, rng = Main.rand.nextInt(2); k < currentMap.enemies.length; ++k, rng = Main.rand.nextInt(2))
 							currentMap.enemies[k] = new EntityEnemy(x, y); break;
-							
+						
+						case 7: currentMap.zones[zoneIndex] = new MapZoneChest(x, y, zoneIndex++); break;	
+						
 						default: currentMap.zones[zoneIndex] = new MapZoneEmpty(x, y, zoneIndex++);
 					}
 				}
@@ -203,6 +215,7 @@ public final class Map implements Serializable{
 						case 0: zonee[zoneIndex] = new MapZoneNormal(x, y, zoneIndex++); break;
 						case 2: zonee[zoneIndex] = new MapZoneFruit(x, y, EnumFruit.APPLE, zoneIndex++); break;
 						case 3: zonee[zoneIndex] = new MapZoneFruit(x, y, EnumFruit.CHERRY, zoneIndex++); break;
+						case 7: zonee[zoneIndex] = new MapZoneChest(x, y, zoneIndex++); break;
 						default: zonee[zoneIndex] = new MapZoneEmpty(x, y, zoneIndex++);
 					}
 				}
@@ -242,6 +255,9 @@ public final class Map implements Serializable{
 	}
 	
 	public static MapZone getZoneAtIndex(int index) {
+		if(index < 0 || index > currentMap.zones.length) {
+			return null;
+		}
 		return currentMap.zones[index];
 	}
 	

@@ -3,6 +3,7 @@ package frutty.map.zones;
 import java.awt.Graphics;
 
 import frutty.entity.EntityApple;
+import frutty.entity.EntityPlayer;
 import frutty.gui.GuiIngame;
 import frutty.gui.GuiStats;
 import frutty.map.Map;
@@ -20,13 +21,8 @@ public final class MapZoneFruit extends MapZone{
 	}
 
 	@Override
-	public void onBreak() {
-		Map.setZoneEmptyAt(zoneIndex);
-		MapZone up = Map.getZoneAtPos(posX, posY - 64);
-		++GuiStats.zoneCount;
-		if(up != null && up instanceof MapZoneFruit) {
-			((MapZoneFruit)up).notified = true;
-		}
+	public void onBreak(EntityPlayer player) {
+		super.onBreak(player);
 		
 		Map.currentMap.score += 50;
 		if(--Map.currentMap.pickCount == 0) {
@@ -59,7 +55,7 @@ public final class MapZoneFruit extends MapZone{
 	}
 
 	@Override
-	public boolean isPassable() {
+	public boolean isBreakable() {
 		return fruitType == EnumFruit.CHERRY;
 	}
 }

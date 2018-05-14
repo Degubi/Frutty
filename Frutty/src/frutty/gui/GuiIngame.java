@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.util.Iterator;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -14,13 +15,13 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import frutty.Main;
 import frutty.entity.Entity;
 import frutty.entity.EntityEnemy;
 import frutty.entity.EntityPlayer;
 import frutty.gui.GuiSettings.Settings;
 import frutty.map.Map;
 import frutty.map.MapZone;
+import frutty.map.Particle;
 import frutty.map.zones.MapZoneFruit;
 import frutty.stuff.EnumFruit;
 
@@ -44,12 +45,8 @@ public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 	protected void paintComponent(Graphics graphics) {
 		super.paintComponent(graphics);
 		
-		for(MapZone drawZones : Map.currentMap.zones) {
-			drawZones.draw(graphics);
-		}
-		
-		for(EntityPlayer players : Map.currentMap.players)
-			players.render(graphics);
+		for(MapZone drawZones : Map.currentMap.zones) drawZones.draw(graphics);
+		for(EntityPlayer players : Map.currentMap.players) players.render(graphics);
 		
 		for(Entity entity : Map.currentMap.entities) {
 			if(entity.active) {
@@ -62,6 +59,9 @@ public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 				enemies.render(graphics);
 			}
 		}
+		
+		for(Particle particles : Map.currentMap.particles) particles.render(graphics);
+		
 		graphics.setColor(Color.DARK_GRAY);
 		for(int k = 0; k < 20; ++k) {
 			graphics.drawLine(Map.currentMap.width + 64 + k, 0, Map.currentMap.width + 64 + k, Map.currentMap.height + 83);
@@ -71,6 +71,19 @@ public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 		graphics.setFont(GuiHelper.ingameFont);
 		graphics.drawString("Score: " + Map.currentMap.score, Map.currentMap.width + 90, 20);
 		graphics.drawString("Top score: " + GuiStats.topScore, Map.currentMap.width + 90, 80);
+		
+		if(Settings.showDebug) {
+			graphics.setFont(GuiHelper.thiccFont);
+			graphics.setColor(Color.WHITE);
+			int entityCount = Map.currentMap.enemies.length + Map.currentMap.players.length + Map.currentMap.entities.size() + Map.currentMap.particles.size();
+			
+			graphics.drawString("zonecount: " + Map.currentMap.zones.length, 2, 20);
+			graphics.drawString("entities: " + entityCount, 2, 40);
+			graphics.drawString("map_width: " + Map.currentMap.width, 2, 60);
+			graphics.drawString("map_height: " + Map.currentMap.height, 2, 80);
+			graphics.drawString("playerpos_x: " + Map.currentMap.players[0].serverPosX, 2, 100);
+			graphics.drawString("playerpos_y: " + Map.currentMap.players[0].serverPosY, 2, 120);
+		}
 	}
 	
 	@Override
@@ -100,6 +113,10 @@ public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 					if(zone instanceof MapZoneFruit && ((MapZoneFruit)zone).fruitType == EnumFruit.APPLE) {
 						((MapZoneFruit) zone).update();
 					}
+				}
+				
+				for(Iterator<Particle> iterator = Map.currentMap.particles.iterator(); iterator.hasNext();) {
+					iterator.next().update(iterator);
 				}
 			}
 		}

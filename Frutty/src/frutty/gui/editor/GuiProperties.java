@@ -1,16 +1,26 @@
-package frutty.gui;
+package frutty.gui.editor;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.net.URISyntaxException;
 
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
-@SuppressWarnings("boxing") 
-public final class GuiProperties extends JPanel{
+import frutty.gui.GuiHelper;
+import frutty.gui.GuiMenu;
+
+public final class GuiProperties extends JPanel implements ActionListener{
 	private final PropertyTableModel table = new PropertyTableModel();
 	
 	//0: width, 1: height, 2: p1X, 3: p1Y, 4: p2X, 5: p2Y
@@ -19,7 +29,7 @@ public final class GuiProperties extends JPanel{
 		
 		JTable jTable = new JTable(table);
 		jTable.setBorder(new LineBorder(Color.GRAY, 1, true));
-		jTable.setBounds(20, 20, 300, 130);
+		jTable.setBounds(20, 20, 300, 145);
 		
 		jTable.setValueAt("Map Name", 0, 0);
 		jTable.setValueAt(mapName, 0, 1);
@@ -48,7 +58,20 @@ public final class GuiProperties extends JPanel{
 		jTable.getColumnModel().getColumn(1).setCellRenderer(render);
 		jTable.getColumnModel().getColumn(0).setCellRenderer(render);
 		
+		add(GuiHelper.newButton("Texture Selector", 100, 250, 150, this));
 		add(jTable);
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent event) {
+		if(event.getActionCommand().equals("Texture Selector")) {
+			try {
+				String[] textures =  new File(GuiMenu.class.getResource("/textures/map").toURI()).list();
+				GuiHelper.showNewFrame(new TextureSelector(textures, this), "Texture selector", JFrame.DISPOSE_ON_CLOSE, 200 + (textures.length - 1) * 128, 200);
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	public boolean isBackgroundMap() {
@@ -60,6 +83,9 @@ public final class GuiProperties extends JPanel{
 	}
 	public String getMapTextureName() {
 		return (String) table.getValueAt(1, 1);
+	}
+	public void setMapTextureName(String texture) {
+		table.setValueAt(texture, 1, 1);
 	}
 	public int getMapWidth() {
 		return (int) table.getValueAt(3, 1);
@@ -96,14 +122,17 @@ public final class GuiProperties extends JPanel{
 		public int getRowCount() {
 			return 9;
 		}
+		
 		@Override
 		public int getColumnCount() {
 			return 2;
 		}
+		
 		@Override
 		public boolean isCellEditable(int rowIndex, int columnIndex) {
-			return columnIndex == 1 && (rowIndex == 0 || rowIndex == 1 || rowIndex == 2); 
+			return columnIndex == 1 && (rowIndex == 0 || rowIndex == 2); 
 		}
+		
 	}
 	
 	private static final class CustomCellRenderer extends DefaultTableCellRenderer{
@@ -111,12 +140,53 @@ public final class GuiProperties extends JPanel{
 		@Override
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 			Component cell = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-			if(row != 0 && row != 1 && row != 2) {
+			if(row != 0 && row != 2) {
 				cell.setForeground(Color.GRAY);
 			}else{
 				cell.setForeground(null); 	//Kell mert különben rákattintás után az összes szürke fontot kap...
 			}
 			return cell;
+		}
+	}
+	
+	private static final class TextureSelector extends JPanel implements ActionListener{
+		private final GuiProperties mapProperties;
+		
+		public TextureSelector(String[] textures, GuiProperties props) {
+			mapProperties = props;
+			int position = 0, index = 0;
+			
+			JButton[] buttons = new JButton[textures.length - 1];
+			
+			for(String texture : textures) {
+				if(!texture.equals("chest.png")) {
+					JButton button = new JButton();
+					button.setActionCommand(texture.substring(0, texture.length() - 4));
+					button.setBounds(20 + position, 20, 0, 0);
+					position += 128;
+					button.addActionListener(this);
+					buttons[index++] = button;
+					add(button);
+				}
+			}
+			
+			new Thread(() -> {
+				int index2 = 0;
+				for(String texture : textures) {
+					if(!texture.equals("chest.png")) {
+						buttons[index2++].setIcon(new ImageIcon(new ImageIcon(GuiMenu.class.getResource("/textures/map/" + texture)).getImage().getScaledInstance(128, 128, Image.SCALE_DEFAULT)));
+					}
+				}
+			}).start();
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent event) {
+			if(event.getSource() instanceof JButton) {
+				mapProperties.setMapTextureName(event.getActionCommand());
+				mapProperties.repaint();
+				((JFrame)getTopLevelAncestor()).dispose();
+			}
 		}
 	}
 }
