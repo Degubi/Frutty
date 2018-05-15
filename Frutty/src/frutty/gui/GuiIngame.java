@@ -15,6 +15,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import frutty.Main;
 import frutty.entity.Entity;
 import frutty.entity.EntityEnemy;
 import frutty.entity.EntityPlayer;
@@ -22,7 +23,9 @@ import frutty.gui.GuiSettings.Settings;
 import frutty.map.Map;
 import frutty.map.MapZone;
 import frutty.map.Particle;
+import frutty.map.zones.MapZoneEmpty;
 import frutty.map.zones.MapZoneFruit;
+import frutty.map.zones.MapZoneWater;
 import frutty.stuff.EnumFruit;
 
 public final class GuiIngame extends JPanel implements Runnable, ActionListener{
@@ -108,8 +111,16 @@ public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 				}
 			}
 			
+			if(Map.currentMap.ticks % 4 == 0) {
+				MapZoneWater.updateWaterUV();
+			}
+			
 			if(Map.currentMap.ticks % 20 == 0) {
 				for(MapZone zone : Map.currentMap.zones) {
+					if(Settings.randomParticles && zone instanceof MapZoneEmpty == false && MapZone.isEmpty(zone.posX, zone.posY + 64) && Main.rand.nextInt(100) == 3) {
+						Particle.addParticles(2 + Main.rand.nextInt(5), zone.posX, zone.posY);
+					}
+					
 					if(zone instanceof MapZoneFruit && ((MapZoneFruit)zone).fruitType == EnumFruit.APPLE) {
 						((MapZoneFruit) zone).update();
 					}

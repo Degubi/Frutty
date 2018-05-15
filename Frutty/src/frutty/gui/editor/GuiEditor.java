@@ -87,6 +87,7 @@ public final class GuiEditor extends JPanel implements MouseListener{
 								case 5: editor.addNewButton(player1Texture, x, y, 5); break;
 								case 6: editor.addNewButton(player2Texture, x, y, 6); break;
 								case 7: editor.addNewButton(chestTexture, x, y, 7); break;
+								case 8: editor.addNewButton(waterTexture, x, y, 8); break;
 								default: editor.addNewButton(normalTexture, x, y, 0);
 							}
 						}
@@ -139,12 +140,12 @@ public final class GuiEditor extends JPanel implements MouseListener{
 					 	case 1: button.setMnemonic(2); button.setIcon(appleTexture); break;
 					 	case 2: button.setMnemonic(3); button.setIcon(cherryTexture); break;
 					 	case 3: button.setMnemonic(7); button.setIcon(chestTexture); break;
-					 	case 7: button.setMnemonic(0); button.setIcon(normalTexture); break;
 					 	case 4: case 5: case 6: 
 					 		if(!isAnyDown) {
 					 			button.setMnemonic(0); button.setIcon(normalTexture);
-					 		}
-					 		break;
+					 		}break;
+					 	case 7: button.setMnemonic(8); button.setIcon(waterTexture); break;
+					 	case 8: button.setMnemonic(0); button.setIcon(normalTexture); break;
 				 	}
 					
 				}else if(command.equals("Exit")) {
@@ -178,11 +179,12 @@ public final class GuiEditor extends JPanel implements MouseListener{
 				}
 			}else if(event.getButton() == MouseEvent.BUTTON3) {    //Right click
 				switch(button.getMnemonic()) {
+					case 8: button.setMnemonic(7); button.setIcon(chestTexture); break;
 					case 7: button.setMnemonic(3); button.setIcon(cherryTexture); break;
-					case 0: button.setMnemonic(7); button.setIcon(chestTexture); break;
-				 	case 1: button.setMnemonic(0); button.setIcon(normalTexture); break;
-				 	case 2: button.setMnemonic(1); button.setIcon(dugTexture); break;
-				 	case 3: button.setMnemonic(2); button.setIcon(appleTexture); break;
+					case 3: button.setMnemonic(2); button.setIcon(appleTexture); break;
+					case 2: button.setMnemonic(1); button.setIcon(dugTexture); break;
+					case 1: button.setMnemonic(0); button.setIcon(normalTexture); break;
+					case 0: button.setMnemonic(8); button.setIcon(waterTexture); break;
 				 	case 4: case 5: case 6: 
 				 		if(!isAnyDown) {
 				 			button.setMnemonic(0); button.setIcon(normalTexture);
@@ -215,4 +217,5 @@ public final class GuiEditor extends JPanel implements MouseListener{
 	private static final ImageIcon player1Texture = new ImageIcon("./textures/dev/player1.png");
 	private static final ImageIcon player2Texture = new ImageIcon("./textures/dev/player2.png");
 	private static final ImageIcon chestTexture = new ImageIcon("./textures/dev/chest.png");
+	private static final ImageIcon waterTexture = new ImageIcon("./textures/dev/water.png");
 }

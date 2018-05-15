@@ -14,6 +14,7 @@ import frutty.entity.EntityPlayer;
 import frutty.gui.GuiStats;
 import frutty.map.zones.MapZoneEmpty;
 import frutty.map.zones.MapZoneFruit;
+import frutty.map.zones.MapZoneWater;
 
 public abstract class MapZone implements Serializable{
 	private static final long serialVersionUID = 392316063689927131L;
@@ -53,7 +54,7 @@ public abstract class MapZone implements Serializable{
 	
 	/**Call super.onBreak if you want a normal breakable zone*/
 	public void onBreak(EntityPlayer player) {
-		if(isBreakable() && this instanceof MapZoneEmpty == false) {
+		if(isBreakable() && this instanceof MapZoneEmpty == false && this instanceof MapZoneWater == false) {
 			Map.setZoneEmptyAt(zoneIndex);
 			++GuiStats.zoneCount;
 			

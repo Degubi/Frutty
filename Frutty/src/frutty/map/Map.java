@@ -26,6 +26,7 @@ import frutty.map.zones.MapZoneEmpty;
 import frutty.map.zones.MapZoneFruit;
 import frutty.map.zones.MapZoneNormal;
 import frutty.map.zones.MapZoneSpawner;
+import frutty.map.zones.MapZoneWater;
 import frutty.stuff.EnumFruit;
 
 public final class Map implements Serializable{
@@ -183,6 +184,7 @@ public final class Map implements Serializable{
 							currentMap.enemies[k] = new EntityEnemy(x, y); break;
 						
 						case 7: currentMap.zones[zoneIndex] = new MapZoneChest(x, y, zoneIndex++); break;	
+						case 8: currentMap.zones[zoneIndex] = new MapZoneWater(x, y, zoneIndex++); break;
 						
 						default: currentMap.zones[zoneIndex] = new MapZoneEmpty(x, y, zoneIndex++);
 					}

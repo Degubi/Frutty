@@ -28,6 +28,7 @@ public final class GuiSettings extends JPanel implements ActionListener{
 	private final JCheckBox enemiesDisabled = GuiHelper.newCheckBox("Disable enemies", 400, 370, Settings.disableEnemies);
 	private final JCheckBox showCollisionBoxes = GuiHelper.newCheckBox("Debug Collisions", 400, 340, Settings.debugCollisions);
 	private final JCheckBox showDebug = GuiHelper.newCheckBox("Show Debug", 400, 310, Settings.showDebug);
+	private final JCheckBox randomParticles = GuiHelper.newCheckBox("Random Particles", 400, 200, Settings.randomParticles);
 	private final JTextField upKey = newTextField(Settings.upKey, 100, 245), downKey = newTextField(Settings.downKey, 100, 275);
 	private final JTextField leftKey = newTextField(Settings.leftKey, 100, 305), rightKey = newTextField(Settings.rightKey, 100, 335);
 	
@@ -72,6 +73,7 @@ public final class GuiSettings extends JPanel implements ActionListener{
 		add(showCollisionBoxes);
 		add(showDebug);
 		add(upKey);
+		add(randomParticles);
 		add(downKey);
 		add(leftKey);
 		add(rightKey);
@@ -94,11 +96,14 @@ public final class GuiSettings extends JPanel implements ActionListener{
 		graphics.setColor(Color.DARK_GRAY);
 		graphics.setFont(GuiHelper.thiccFont);
 		graphics.drawString("Difficulty:", 20, 80);
+		
 		graphics.drawString("Player 2 Controls:", 20, 220);
 		graphics.drawString("Up:", 40, 260);
 		graphics.drawString("Down:", 40, 290);
 		graphics.drawString("Left:", 40, 320);
 		graphics.drawString("Right:", 40, 350);
+		
+		graphics.drawString("Debug:", 380, 300);
 	}
 	
 	public static void showGuiSettings() {
@@ -121,6 +126,7 @@ public final class GuiSettings extends JPanel implements ActionListener{
 		Settings.showDebug = showDebug.isSelected();
 		Settings.debugCollisions = showCollisionBoxes.isSelected();
 		Settings.godEnabled = godMode.isSelected();
+		Settings.randomParticles = randomParticles.isSelected();
 		Settings.disableEnemies = enemiesDisabled.isSelected();
 		Settings.upKey = upKey.getText().charAt(0);
 		Settings.downKey = downKey.getText().charAt(0);
@@ -147,7 +153,7 @@ public final class GuiSettings extends JPanel implements ActionListener{
 	
 	public static final class Settings{
 		public static int difficulty, upKey, downKey, leftKey, rightKey;
-		public static boolean godEnabled, disableEnemies, debugCollisions, showDebug;
+		public static boolean godEnabled, disableEnemies, debugCollisions, showDebug, randomParticles;
 		public static String lastMap = "Creepy";
 		
 		public static void loadSettings() {
@@ -163,6 +169,7 @@ public final class GuiSettings extends JPanel implements ActionListener{
 				debugCollisions = Boolean.parseBoolean(data[7]);
 				lastMap = data[8];
 				showDebug = Boolean.parseBoolean(data[9]);
+				randomParticles = Boolean.parseBoolean(data[10]);
 			} catch (IOException e) {
 				try(PrintWriter output = new PrintWriter("settings.cfg")){
 					output.print(0);
@@ -184,6 +191,8 @@ public final class GuiSettings extends JPanel implements ActionListener{
 					output.print("Creepy");
 					output.print(' ');
 					output.print(false);
+					output.print(' ');
+					output.print(true);
 				} catch (FileNotFoundException ex) {}
 			}
 		}
@@ -209,6 +218,8 @@ public final class GuiSettings extends JPanel implements ActionListener{
 				output.print(lastMap);
 				output.print(' ');
 				output.print(showDebug);
+				output.print(' ');
+				output.print(randomParticles);
 			} catch (FileNotFoundException e) {}
 		}
 	}

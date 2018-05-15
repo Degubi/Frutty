@@ -153,7 +153,7 @@ public final class GuiProperties extends JPanel implements ActionListener{
 			JButton[] buttons = new JButton[textures.length - 1];
 			
 			for(String texture : textures) {
-				if(!texture.equals("chest.png")) {
+				if(!texture.equals("special")) {
 					JButton button = new JButton();
 					button.setActionCommand(texture.substring(0, texture.length() - 4));
 					button.setBounds(20 + position, 20, 0, 0);
@@ -167,7 +167,7 @@ public final class GuiProperties extends JPanel implements ActionListener{
 			new Thread(() -> {
 				int index2 = 0;
 				for(String texture : textures) {
-					if(!texture.equals("chest.png")) {
+					if(!texture.equals("special")) {
 						buttons[index2++].setIcon(new ImageIcon(new ImageIcon("./textures/map/" + texture).getImage().getScaledInstance(128, 128, Image.SCALE_DEFAULT)));
 					}
 				}

@@ -11,7 +11,7 @@ import frutty.map.Map;
 import frutty.map.MapZone;
 
 public final class MapZoneChest extends MapZone{
-	private static final BufferedImage chest = loadTexture("chest.png");
+	private static final BufferedImage chest = loadTexture("special/chest.png");
 	
 	public MapZoneChest(int xPos, int yPos, int index) {
 		super(xPos, yPos, index);
