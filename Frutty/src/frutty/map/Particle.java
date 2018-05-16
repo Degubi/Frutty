@@ -6,6 +6,7 @@ import java.util.Iterator;
 
 import frutty.Main;
 import frutty.gui.GuiHelper;
+import frutty.gui.GuiSettings.Settings;
 
 public final class Particle {
 	private static final Color[] colors = {new Color(202, 203, 87), new Color(127, 127, 127), new Color(150, 108, 74), new Color(178, 99, 78)};
@@ -22,8 +23,10 @@ public final class Particle {
 	}
 	
 	public static void addParticles(int count, int x, int y) {
-		for(int k = 0; k < count; ++k) {
-			Map.currentMap.particles.add(new Particle(x + Main.rand.nextInt(64), y + 64 + Main.rand.nextInt(32)));
+		if(Settings.graphicsLevel == 2) {
+			for(int k = 0; k < count; ++k) {
+				Map.currentMap.particles.add(new Particle(x + Main.rand.nextInt(64), y + 64 + Main.rand.nextInt(32)));
+			}
 		}
 	}
 	

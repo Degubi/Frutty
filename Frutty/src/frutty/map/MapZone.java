@@ -11,6 +11,7 @@ import javax.imageio.ImageIO;
 import frutty.Main;
 import frutty.entity.EntityPlayer;
 import frutty.gui.GuiHelper;
+import frutty.gui.GuiSettings.Settings;
 import frutty.gui.GuiStats;
 import frutty.map.zones.MapZoneEmpty;
 import frutty.map.zones.MapZoneFruit;
@@ -38,11 +39,13 @@ public abstract class MapZone implements Serializable{
 	
 	/** Super.draw(graphics)- et a végére ha kell depth render*/
 	public void draw(Graphics graphics) {
-		graphics.setColor(GuiHelper.color_84Black);
-		
-		int till = posY / 120;
-		for(int k = 0; k < till && k < 4; ++k) {
-			graphics.fillRect(posX, posY, 64, 64);
+		if(Settings.graphicsLevel > 0) {
+			graphics.setColor(GuiHelper.color_84Black);
+			
+			int till = posY / 120;
+			for(int k = 0; k < till && k < 4; ++k) {
+				graphics.fillRect(posX, posY, 64, 64);
+			}
 		}
 	}
 	
@@ -66,6 +69,5 @@ public abstract class MapZone implements Serializable{
 		}
 	}
 	
-	public boolean renderBeforePlayer() { return true;}
 	public abstract boolean isBreakable();
 }

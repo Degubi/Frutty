@@ -9,13 +9,16 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Hashtable;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
@@ -28,12 +31,24 @@ public final class GuiSettings extends JPanel implements ActionListener{
 	private final JCheckBox enemiesDisabled = GuiHelper.newCheckBox("Disable enemies", 400, 370, Settings.disableEnemies);
 	private final JCheckBox showCollisionBoxes = GuiHelper.newCheckBox("Debug Collisions", 400, 340, Settings.debugCollisions);
 	private final JCheckBox showDebug = GuiHelper.newCheckBox("Show Debug", 400, 310, Settings.showDebug);
-	private final JCheckBox randomParticles = GuiHelper.newCheckBox("Random Particles", 400, 200, Settings.randomParticles);
 	private final JTextField upKey = newTextField(Settings.upKey, 100, 245), downKey = newTextField(Settings.downKey, 100, 275);
 	private final JTextField leftKey = newTextField(Settings.leftKey, 100, 305), rightKey = newTextField(Settings.rightKey, 100, 335);
 	
+	private final JSlider graphicsSlider = new JSlider(JSlider.HORIZONTAL, 0, 2, Settings.graphicsLevel);
+	
 	public GuiSettings() {
 		setLayout(null);
+		
+		graphicsSlider.setPaintLabels(true);
+		graphicsSlider.setBounds(300, 50, 150, 40);
+		graphicsSlider.setOpaque(false);
+		graphicsSlider.setSnapToTicks(true);
+		
+		Hashtable<Integer, JLabel> table = new Hashtable<>();
+		table.put(0, new JLabel("Low"));
+		table.put(1, new JLabel("Medium"));
+		table.put(2, new JLabel("High"));
+		graphicsSlider.setLabelTable(table);
 		
 		easyButton.setBounds(100, 20, 70, 30);
 		normalButton.setBounds(100, 60, 80, 30);
@@ -64,6 +79,7 @@ public final class GuiSettings extends JPanel implements ActionListener{
 		butt.setMnemonic(100);
 		butt.addActionListener(this);
 		
+		add(graphicsSlider);
 		add(butt);
 		add(easyButton);
 		add(normalButton);
@@ -73,7 +89,6 @@ public final class GuiSettings extends JPanel implements ActionListener{
 		add(showCollisionBoxes);
 		add(showDebug);
 		add(upKey);
-		add(randomParticles);
 		add(downKey);
 		add(leftKey);
 		add(rightKey);
@@ -104,6 +119,8 @@ public final class GuiSettings extends JPanel implements ActionListener{
 		graphics.drawString("Right:", 40, 350);
 		
 		graphics.drawString("Debug:", 380, 300);
+		
+		graphics.drawString("Graphics level:", 320, 40);
 	}
 	
 	public static void showGuiSettings() {
@@ -126,7 +143,7 @@ public final class GuiSettings extends JPanel implements ActionListener{
 		Settings.showDebug = showDebug.isSelected();
 		Settings.debugCollisions = showCollisionBoxes.isSelected();
 		Settings.godEnabled = godMode.isSelected();
-		Settings.randomParticles = randomParticles.isSelected();
+		Settings.graphicsLevel = graphicsSlider.getValue();
 		Settings.disableEnemies = enemiesDisabled.isSelected();
 		Settings.upKey = upKey.getText().charAt(0);
 		Settings.downKey = downKey.getText().charAt(0);
@@ -137,6 +154,8 @@ public final class GuiSettings extends JPanel implements ActionListener{
 			Settings.saveSettings();
 			((JFrame)getTopLevelAncestor()).dispose();
 		}
+		
+		GuiMenu.menuGui.repaint();
 	}
 	
 	private static final class TextFilter extends DocumentFilter{
@@ -152,8 +171,8 @@ public final class GuiSettings extends JPanel implements ActionListener{
 	}
 	
 	public static final class Settings{
-		public static int difficulty, upKey, downKey, leftKey, rightKey;
-		public static boolean godEnabled, disableEnemies, debugCollisions, showDebug, randomParticles;
+		public static int difficulty, upKey, downKey, leftKey, rightKey, graphicsLevel;
+		public static boolean godEnabled, disableEnemies, debugCollisions, showDebug;
 		public static String lastMap = "Creepy";
 		
 		public static void loadSettings() {
@@ -169,7 +188,7 @@ public final class GuiSettings extends JPanel implements ActionListener{
 				debugCollisions = Boolean.parseBoolean(data[7]);
 				lastMap = data[8];
 				showDebug = Boolean.parseBoolean(data[9]);
-				randomParticles = Boolean.parseBoolean(data[10]);
+				graphicsLevel = Integer.parseInt(data[10]);
 			} catch (IOException e) {
 				try(PrintWriter output = new PrintWriter("settings.cfg")){
 					output.print(0);
@@ -192,7 +211,7 @@ public final class GuiSettings extends JPanel implements ActionListener{
 					output.print(' ');
 					output.print(false);
 					output.print(' ');
-					output.print(true);
+					output.print(2);
 				} catch (FileNotFoundException ex) {}
 			}
 		}
@@ -219,7 +238,7 @@ public final class GuiSettings extends JPanel implements ActionListener{
 				output.print(' ');
 				output.print(showDebug);
 				output.print(' ');
-				output.print(randomParticles);
+				output.print(graphicsLevel);
 			} catch (FileNotFoundException e) {}
 		}
 	}

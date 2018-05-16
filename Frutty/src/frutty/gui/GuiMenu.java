@@ -24,6 +24,8 @@ public final class GuiMenu extends JPanel implements ActionListener{
 	private final JCheckBox coopBox = GuiHelper.newCheckBox("Coop mode", 445, 130, false);
 	private final MapZone[] background;
 	
+	public static GuiMenu menuGui;
+	
 	public GuiMenu() {
 		setLayout(null);
 		
@@ -64,15 +66,12 @@ public final class GuiMenu extends JPanel implements ActionListener{
 	}
 	
 	public static void showMenu() {
-		GuiHelper.showNewFrame(new GuiMenu(), "Tutty Frutty", JFrame.EXIT_ON_CLOSE, 910, 675);
+		GuiHelper.showNewFrame(menuGui = new GuiMenu(), "Tutty Frutty", JFrame.EXIT_ON_CLOSE, 910, 675);
 	}
 	
 	@Override
 	protected void paintComponent(Graphics graphics) {
 		super.paintComponent(graphics);
-		
-		graphics.setColor(Color.BLACK);
-		graphics.fillRect(0, 0, 910, 675);
 		
 		for(MapZone zone : background)
 			zone.draw(graphics);

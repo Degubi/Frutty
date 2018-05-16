@@ -25,6 +25,7 @@ import frutty.map.zones.MapZoneChest;
 import frutty.map.zones.MapZoneEmpty;
 import frutty.map.zones.MapZoneFruit;
 import frutty.map.zones.MapZoneNormal;
+import frutty.map.zones.MapZoneSky;
 import frutty.map.zones.MapZoneSpawner;
 import frutty.map.zones.MapZoneWater;
 import frutty.stuff.EnumFruit;
@@ -40,18 +41,17 @@ public final class Map implements Serializable{
 	public final EntityEnemy[] enemies;
 	public final int width, height;
 	public int pickCount, score, ticks;
-	public final String textureStr;
+	public final String textureStr, skyTextureName;
 	
-	private Map(String textureName, boolean isMulti, int w, int h, int p1X, int p1Y, int p2X, int p2Y) {
+	private Map(String textureName, String skyName, boolean isMulti, int w, int h, int p1X, int p1Y, int p2X, int p2Y) {
 		int zoneCount = (w / 64) * (h / 64);
 		zones = new MapZone[zoneCount];
 		width = w - 64;
 		height = h - 64;
-		textureStr = textureName;
-		GuiIngame.texture = loadTexture(textureName);
+		GuiIngame.texture = loadTexture(textureStr = textureName);
+		GuiIngame.skyTexture = loadSkyTexture(skyTextureName = skyName);
 		
 		int enemyCount = 0;
-		
 		if(!Settings.disableEnemies) {
 			if(Settings.difficulty == 0) {
 				enemyCount += zoneCount < 70 ? 1 : zoneCount / 70;
@@ -76,6 +76,19 @@ public final class Map implements Serializable{
 		try{
 			return ImageIO.read(new File("./textures/map/" + textureName + ".png"));
 		}catch (IOException e) {
+			System.err.println("Can't find texture: " + textureName);
+			return null;
+		}
+	}
+	
+	public static BufferedImage loadSkyTexture(String textureName) {
+		try{
+			if(!textureName.equals("null")) {
+				return ImageIO.read(new File("./textures/map/skybox/" + textureName + ".png"));
+			}
+			return null;
+		}catch (IOException e) {
+			System.err.println("Can't find sky texture: " + textureName);
 			return null;
 		}
 	}
@@ -84,7 +97,7 @@ public final class Map implements Serializable{
 		Random rand = Main.rand;
 		int bigWidth = width * 64, bigHeight = height * 64, zoneIndex = 0;
 		
-		currentMap = new Map("normal", isMultiplayer, bigWidth, bigHeight, 0, 0, 0, 0);
+		currentMap = new Map("normal", "sky_base", isMultiplayer, bigWidth, bigHeight, 0, 0, 0, 0);
 		
 		for(int x = 0; x < bigWidth; x += 64) {
 			for(int y = 0, rng = rand.nextInt(10); y < bigHeight; y += 64, rng = rand.nextInt(10)) {
@@ -160,7 +173,7 @@ public final class Map implements Serializable{
 		try(ObjectInputStream input = new ObjectInputStream(new FileInputStream("./maps/" + name + ".deg"))){
 			int width, height, zoneIndex = 0;
 			
-			currentMap = new Map(input.readUTF(), isMultiplayer, width = input.readShort() * 64, height = input.readShort() * 64, input.readShort(), input.readShort(), input.readShort(), input.readShort());
+			currentMap = new Map(input.readUTF(), input.readUTF(), isMultiplayer, width = input.readShort() * 64, height = input.readShort() * 64, input.readShort(), input.readShort(), input.readShort(), input.readShort());
 			
 			if(currentMap.textureStr.equals("stone")) {
 				Particle.colorIndex = 1;
@@ -185,7 +198,7 @@ public final class Map implements Serializable{
 						
 						case 7: currentMap.zones[zoneIndex] = new MapZoneChest(x, y, zoneIndex++); break;	
 						case 8: currentMap.zones[zoneIndex] = new MapZoneWater(x, y, zoneIndex++); break;
-						
+						case 9: currentMap.zones[zoneIndex] = new MapZoneSky(x, y, zoneIndex++); break;
 						default: currentMap.zones[zoneIndex] = new MapZoneEmpty(x, y, zoneIndex++);
 					}
 				}
@@ -207,7 +220,8 @@ public final class Map implements Serializable{
 	
 	public static MapZone[] loadBackground() {
 		try(ObjectInputStream input = new ObjectInputStream(new FileInputStream("./maps/background" + Main.rand.nextInt(4) + ".deg"))){
-			GuiIngame.texture = Map.loadTexture(input.readUTF());
+			GuiIngame.texture = loadTexture(input.readUTF());
+			GuiIngame.skyTexture = loadSkyTexture(input.readUTF());
 			int width = input.readShort() * 64, height = input.readShort() * 64, zoneIndex = 0;
 			MapZone[] zonee = new MapZone[(width / 64) * (height / 64)];
 			
@@ -231,7 +245,7 @@ public final class Map implements Serializable{
 	
 	public static String loadMapSize(String fileName) {
 		try(ObjectInputStream input = new ObjectInputStream(new FileInputStream("./maps/" + fileName + ".deg"))){
-			input.readUTF();
+			input.readUTF(); input.readUTF();
 			return input.readShort() + "x" + input.readShort();
 		} catch (IOException e) {}
 		return "";
@@ -242,6 +256,7 @@ public final class Map implements Serializable{
 			try(ObjectInputStream input = new ObjectInputStream(new FileInputStream("./saves/" + fileName))){
 				currentMap = (Map) input.readObject();
 				GuiIngame.texture = loadTexture(currentMap.textureStr);
+				GuiIngame.skyTexture = loadSkyTexture(currentMap.skyTextureName);
 				return true;
 			} catch (ClassNotFoundException | IOException e) {}
 		}

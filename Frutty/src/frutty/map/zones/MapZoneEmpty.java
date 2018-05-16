@@ -1,5 +1,6 @@
 package frutty.map.zones;
 
+import java.awt.Color;
 import java.awt.Graphics;
 
 import frutty.map.MapZone;
@@ -10,7 +11,10 @@ public final class MapZoneEmpty extends MapZone{
 	}
 
 	@Override
-	public void draw(Graphics graphics) {}
+	public void draw(Graphics graphics) {
+		graphics.setColor(Color.BLACK);
+		graphics.fillRect(posX, posY, 64, 64);
+	}
 
 	@Override
 	public boolean isBreakable() {

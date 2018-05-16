@@ -34,7 +34,7 @@ public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 	static GuiIngame ingameGui;
 	
 	private boolean paused = false;
-	public static BufferedImage texture;
+	public static BufferedImage texture, skyTexture;
 	
 	public GuiIngame() {
 		setLayout(null);
@@ -48,13 +48,8 @@ public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 	protected void paintComponent(Graphics graphics) {
 		super.paintComponent(graphics);
 		
-		graphics.setColor(Color.BLACK);
-		graphics.fillRect(0, 0, Map.currentMap.width + 64, Map.currentMap.height + 64);
-		
 		for(MapZone drawZones : Map.currentMap.zones) {
-			if(drawZones.renderBeforePlayer()) {
-				drawZones.draw(graphics);
-			}
+			drawZones.draw(graphics);
 		}
 		for(EntityPlayer players : Map.currentMap.players) players.render(graphics);
 		
@@ -71,8 +66,8 @@ public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 		}
 		
 		for(MapZone drawZones : Map.currentMap.zones) {
-			if(!drawZones.renderBeforePlayer()) {
-				drawZones.draw(graphics);
+			if(drawZones instanceof MapZoneWater) {
+				((MapZoneWater)drawZones).drawAfter(graphics);
 			}
 		}
 		
@@ -95,8 +90,8 @@ public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 			
 			graphics.drawString("zonecount: " + Map.currentMap.zones.length, 2, 20);
 			graphics.drawString("entities: " + entityCount, 2, 40);
-			graphics.drawString("map_width: " + Map.currentMap.width, 2, 60);
-			graphics.drawString("map_height: " + Map.currentMap.height, 2, 80);
+			graphics.drawString("map_width: " + (Map.currentMap.width + 64), 2, 60);
+			graphics.drawString("map_height: " + (Map.currentMap.height + 64), 2, 80);
 			graphics.drawString("playerpos_x: " + Map.currentMap.players[0].serverPosX, 2, 100);
 			graphics.drawString("playerpos_y: " + Map.currentMap.players[0].serverPosY, 2, 120);
 		}
@@ -130,7 +125,7 @@ public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 			
 			if(Map.currentMap.ticks % 20 == 0) {
 				for(MapZone zone : Map.currentMap.zones) {
-					if(Settings.randomParticles && zone instanceof MapZoneEmpty == false && MapZone.isEmpty(zone.posX, zone.posY + 64) && Main.rand.nextInt(100) == 3) {
+					if(zone instanceof MapZoneEmpty == false && MapZone.isEmpty(zone.posX, zone.posY + 64) && Main.rand.nextInt(100) == 3) {
 						Particle.addParticles(2 + Main.rand.nextInt(5), zone.posX, zone.posY);
 					}
 					
