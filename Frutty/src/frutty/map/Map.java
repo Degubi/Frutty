@@ -206,7 +206,7 @@ public final class Map implements Serializable{
 	}
 	
 	public static MapZone[] loadBackground() {
-		try(ObjectInputStream input = new ObjectInputStream(new FileInputStream("./maps/background" + Main.rand.nextInt(3) + ".deg"))){
+		try(ObjectInputStream input = new ObjectInputStream(new FileInputStream("./maps/background" + Main.rand.nextInt(4) + ".deg"))){
 			GuiIngame.texture = Map.loadTexture(input.readUTF());
 			int width = input.readShort() * 64, height = input.readShort() * 64, zoneIndex = 0;
 			MapZone[] zonee = new MapZone[(width / 64) * (height / 64)];
@@ -218,6 +218,7 @@ public final class Map implements Serializable{
 						case 2: zonee[zoneIndex] = new MapZoneFruit(x, y, EnumFruit.APPLE, zoneIndex++); break;
 						case 3: zonee[zoneIndex] = new MapZoneFruit(x, y, EnumFruit.CHERRY, zoneIndex++); break;
 						case 7: zonee[zoneIndex] = new MapZoneChest(x, y, zoneIndex++); break;
+						case 8: zonee[zoneIndex] = new MapZoneWater(x, y, zoneIndex++); break;
 						default: zonee[zoneIndex] = new MapZoneEmpty(x, y, zoneIndex++);
 					}
 				}

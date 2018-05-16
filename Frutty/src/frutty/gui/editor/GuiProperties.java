@@ -34,7 +34,7 @@ public final class GuiProperties extends JPanel implements ActionListener{
 		jTable.setValueAt("Texture", 1, 0);
 		jTable.setValueAt(textureName, 1, 1);
 		jTable.setValueAt("Is Background?", 2, 0);
-		jTable.setValueAt(isBackground, 2, 1);
+		jTable.setValueAt(String.valueOf(isBackground), 2, 1);
 		
 		
 		jTable.setValueAt("Map Width", 3, 0);
@@ -64,12 +64,12 @@ public final class GuiProperties extends JPanel implements ActionListener{
 	public void actionPerformed(ActionEvent event) {
 		if(event.getActionCommand().equals("Texture Selector")) {
 			String[] textures = new File("./textures/map").list();
-			GuiHelper.showNewFrame(new TextureSelector(textures, this), "Texture selector", JFrame.DISPOSE_ON_CLOSE, 200 + (textures.length - 1) * 128, 200);
+			GuiHelper.showNewFrame(new TextureSelector(textures, this), "Texture selector", JFrame.DISPOSE_ON_CLOSE, 200 + (textures.length - 1) * 128, 300 + ((textures.length / 5)) * 64);
 		}
 	}
 	
 	public boolean isBackgroundMap() {
-		return (boolean) table.getValueAt(2, 1);
+		return Boolean.parseBoolean((String) table.getValueAt(2, 1));
 	}
 	
 	public String getMapName() {
@@ -148,7 +148,10 @@ public final class GuiProperties extends JPanel implements ActionListener{
 		
 		public TextureSelector(String[] textures, GuiProperties props) {
 			mapProperties = props;
-			int position = 0, index = 0;
+			
+			setLayout(null);
+			
+			int xPosition = 10, yPosition = 20, index = 0;
 			
 			JButton[] buttons = new JButton[textures.length - 1];
 			
@@ -156,8 +159,13 @@ public final class GuiProperties extends JPanel implements ActionListener{
 				if(!texture.equals("special")) {
 					JButton button = new JButton();
 					button.setActionCommand(texture.substring(0, texture.length() - 4));
-					button.setBounds(20 + position, 20, 0, 0);
-					position += 128;
+					button.setBounds(xPosition, yPosition, 128, 128);
+					xPosition += 138;
+					
+					if(xPosition > 600) {
+						xPosition = 10;
+						yPosition += 138;
+					}
 					button.addActionListener(this);
 					buttons[index++] = button;
 					add(button);

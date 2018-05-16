@@ -22,7 +22,6 @@ public final class GuiMenu extends JPanel implements ActionListener{
 	private final JComboBox<String> mapList = new JComboBox<>();
 	private final JTextField mapSizeField = new JTextField("8x8");
 	private final JCheckBox coopBox = GuiHelper.newCheckBox("Coop mode", 445, 130, false);
-	private static final Color grayened = new Color(0, 0, 0, 128);
 	private final MapZone[] background;
 	
 	public GuiMenu() {
@@ -72,10 +71,13 @@ public final class GuiMenu extends JPanel implements ActionListener{
 	protected void paintComponent(Graphics graphics) {
 		super.paintComponent(graphics);
 		
+		graphics.setColor(Color.BLACK);
+		graphics.fillRect(0, 0, 910, 675);
+		
 		for(MapZone zone : background)
 			zone.draw(graphics);
 		
-		graphics.setColor(grayened);
+		graphics.setColor(GuiHelper.color_128Black);
 		graphics.fillRect(0, 0, 910, 675);
 		
 		graphics.setColor(Color.WHITE);

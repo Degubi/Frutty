@@ -1,6 +1,5 @@
 package frutty.map;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -11,6 +10,7 @@ import javax.imageio.ImageIO;
 
 import frutty.Main;
 import frutty.entity.EntityPlayer;
+import frutty.gui.GuiHelper;
 import frutty.gui.GuiStats;
 import frutty.map.zones.MapZoneEmpty;
 import frutty.map.zones.MapZoneFruit;
@@ -18,7 +18,6 @@ import frutty.map.zones.MapZoneWater;
 
 public abstract class MapZone implements Serializable{
 	private static final long serialVersionUID = 392316063689927131L;
-	public static final Color blak = new Color(0, 0, 0, 96);
 	
 	public final int posX, posY, zoneIndex;
 	
@@ -39,7 +38,7 @@ public abstract class MapZone implements Serializable{
 	
 	/** Super.draw(graphics)- et a végére ha kell depth render*/
 	public void draw(Graphics graphics) {
-		graphics.setColor(blak);
+		graphics.setColor(GuiHelper.color_84Black);
 		
 		int till = posY / 120;
 		for(int k = 0; k < till && k < 4; ++k) {
@@ -67,5 +66,6 @@ public abstract class MapZone implements Serializable{
 		}
 	}
 	
+	public boolean renderBeforePlayer() { return true;}
 	public abstract boolean isBreakable();
 }

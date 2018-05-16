@@ -23,6 +23,8 @@ public final class GuiHelper {
 	public static final String recommendedMapSizeString = "Recommended max map size: " + recommendedMaxMapWidth + "x" + recommendedMaxMapHeight;
 	public static final LineBorder menuBorder = new LineBorder(Color.DARK_GRAY, 2);
 	
+	public static final Color color_128Black = new Color(0, 0, 0, 128), color_84Black = new Color(0, 0, 0, 84);
+	
 	private GuiHelper() {}
 	
 	public static void mapSizeCheck(int width, int height) {

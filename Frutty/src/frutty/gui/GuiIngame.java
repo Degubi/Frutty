@@ -48,7 +48,14 @@ public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 	protected void paintComponent(Graphics graphics) {
 		super.paintComponent(graphics);
 		
-		for(MapZone drawZones : Map.currentMap.zones) drawZones.draw(graphics);
+		graphics.setColor(Color.BLACK);
+		graphics.fillRect(0, 0, Map.currentMap.width + 64, Map.currentMap.height + 64);
+		
+		for(MapZone drawZones : Map.currentMap.zones) {
+			if(drawZones.renderBeforePlayer()) {
+				drawZones.draw(graphics);
+			}
+		}
 		for(EntityPlayer players : Map.currentMap.players) players.render(graphics);
 		
 		for(Entity entity : Map.currentMap.entities) {
@@ -60,6 +67,12 @@ public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 		for(EntityEnemy enemies : Map.currentMap.enemies) {
 			if(enemies.active) {
 				enemies.render(graphics);
+			}
+		}
+		
+		for(MapZone drawZones : Map.currentMap.zones) {
+			if(!drawZones.renderBeforePlayer()) {
+				drawZones.draw(graphics);
 			}
 		}
 		

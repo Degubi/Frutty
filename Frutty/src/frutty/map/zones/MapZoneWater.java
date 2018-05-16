@@ -1,6 +1,5 @@
 package frutty.map.zones;
 
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
@@ -21,14 +20,13 @@ public final class MapZoneWater extends MapZone {
 		
 		for(int k = 0; k < 32; ++k) {
 			water[k] = main.getSubimage(0, k * 16, 16, 16);
-			System.out.println(k * 16);
 		}
 		return water;
 	}
 	
 	@Override
 	public void draw(Graphics graphics) {
-		graphics.drawImage(textures[textureIndex], posX, posY, 64, 64, Color.BLACK, null);
+		graphics.drawImage(textures[textureIndex], posX, posY, 64, 64, null);
 		super.draw(graphics);
 	}
 	
@@ -45,6 +43,11 @@ public final class MapZoneWater extends MapZone {
 		if(textureIndex == 31) {
 			decrease = true;
 		}
+	}
+	
+	@Override
+	public boolean renderBeforePlayer() {
+		return false;
 	}
 	
 	@Override
