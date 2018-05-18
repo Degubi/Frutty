@@ -8,7 +8,6 @@ import frutty.gui.GuiIngame;
 import frutty.gui.GuiStats;
 import frutty.map.Map;
 import frutty.map.MapZone;
-import frutty.stuff.EnumFruit;
 
 public final class MapZoneFruit extends MapZone{
 	public final EnumFruit fruitType;
@@ -57,5 +56,10 @@ public final class MapZoneFruit extends MapZone{
 	@Override
 	public boolean isBreakable() {
 		return fruitType == EnumFruit.CHERRY;
+	}
+	
+	public static enum EnumFruit{
+		APPLE,
+		CHERRY;
 	}
 }

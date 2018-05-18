@@ -25,8 +25,8 @@ import frutty.map.MapZone;
 import frutty.map.Particle;
 import frutty.map.zones.MapZoneEmpty;
 import frutty.map.zones.MapZoneFruit;
+import frutty.map.zones.MapZoneFruit.EnumFruit;
 import frutty.map.zones.MapZoneWater;
-import frutty.stuff.EnumFruit;
 
 public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 	private final ScheduledExecutorService thread = Executors.newSingleThreadScheduledExecutor();

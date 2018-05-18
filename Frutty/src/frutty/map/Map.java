@@ -21,14 +21,12 @@ import frutty.entity.EntityPlayer;
 import frutty.gui.GuiHelper;
 import frutty.gui.GuiIngame;
 import frutty.gui.GuiSettings.Settings;
-import frutty.map.zones.MapZoneChest;
+import frutty.gui.editor.EnumEditorZone;
 import frutty.map.zones.MapZoneEmpty;
 import frutty.map.zones.MapZoneFruit;
+import frutty.map.zones.MapZoneFruit.EnumFruit;
 import frutty.map.zones.MapZoneNormal;
-import frutty.map.zones.MapZoneSky;
 import frutty.map.zones.MapZoneSpawner;
-import frutty.map.zones.MapZoneWater;
-import frutty.stuff.EnumFruit;
 
 public final class Map implements Serializable{
 	private static final long serialVersionUID = -5083163189200818535L;
@@ -97,7 +95,7 @@ public final class Map implements Serializable{
 		Random rand = Main.rand;
 		int bigWidth = width * 64, bigHeight = height * 64, zoneIndex = 0;
 		
-		currentMap = new Map("normal", "sky_base", isMultiplayer, bigWidth, bigHeight, 0, 0, 0, 0);
+		currentMap = new Map("normal", "null", isMultiplayer, bigWidth, bigHeight, 0, 0, 0, 0);
 		
 		for(int x = 0; x < bigWidth; x += 64) {
 			for(int y = 0, rng = rand.nextInt(10); y < bigHeight; y += 64, rng = rand.nextInt(10)) {
@@ -187,20 +185,7 @@ public final class Map implements Serializable{
 			
 			for(int y = 0; y < height; y += 64) {
 				for(int x = 0; x < width; x += 64) {
-					switch(input.readByte()) {
-						case 0: currentMap.zones[zoneIndex] = new MapZoneNormal(x, y, zoneIndex++); break;
-						case 2: currentMap.zones[zoneIndex] = new MapZoneFruit(x, y, EnumFruit.APPLE, zoneIndex++); break;
-						case 3: currentMap.zones[zoneIndex] = new MapZoneFruit(x, y, EnumFruit.CHERRY, zoneIndex++); ++currentMap.pickCount; break;
-						case 4: currentMap.zones[zoneIndex] = new MapZoneSpawner(x, y, zoneIndex++);
-						
-						for(int k = 0, rng = Main.rand.nextInt(2); k < currentMap.enemies.length; ++k, rng = Main.rand.nextInt(2))
-							currentMap.enemies[k] = new EntityEnemy(x, y); break;
-						
-						case 7: currentMap.zones[zoneIndex] = new MapZoneChest(x, y, zoneIndex++); break;	
-						case 8: currentMap.zones[zoneIndex] = new MapZoneWater(x, y, zoneIndex++); break;
-						case 9: currentMap.zones[zoneIndex] = new MapZoneSky(x, y, zoneIndex++); break;
-						default: currentMap.zones[zoneIndex] = new MapZoneEmpty(x, y, zoneIndex++);
-					}
+					currentMap.zones[zoneIndex] = EnumEditorZone.getFromIndex(input.readByte()).handleMapZone(zoneIndex++, x, y, false);
 				}
 			}
 		}catch(IOException e){}
@@ -227,14 +212,7 @@ public final class Map implements Serializable{
 			
 			for(int y = 0; y < height; y += 64) {
 				for(int x = 0; x < width; x += 64) {
-					switch(input.readByte()) {
-						case 0: zonee[zoneIndex] = new MapZoneNormal(x, y, zoneIndex++); break;
-						case 2: zonee[zoneIndex] = new MapZoneFruit(x, y, EnumFruit.APPLE, zoneIndex++); break;
-						case 3: zonee[zoneIndex] = new MapZoneFruit(x, y, EnumFruit.CHERRY, zoneIndex++); break;
-						case 7: zonee[zoneIndex] = new MapZoneChest(x, y, zoneIndex++); break;
-						case 8: zonee[zoneIndex] = new MapZoneWater(x, y, zoneIndex++); break;
-						default: zonee[zoneIndex] = new MapZoneEmpty(x, y, zoneIndex++);
-					}
+					zonee[zoneIndex] = EnumEditorZone.getFromIndex(input.readByte()).handleMapZone(zoneIndex++, x, y, true);
 				}
 			}
 			return zonee;

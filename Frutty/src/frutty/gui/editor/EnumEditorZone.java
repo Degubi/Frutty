@@ -5,6 +5,19 @@ import java.awt.event.MouseEvent;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
+import frutty.Main;
+import frutty.entity.EntityEnemy;
+import frutty.map.Map;
+import frutty.map.MapZone;
+import frutty.map.zones.MapZoneChest;
+import frutty.map.zones.MapZoneEmpty;
+import frutty.map.zones.MapZoneFruit;
+import frutty.map.zones.MapZoneFruit.EnumFruit;
+import frutty.map.zones.MapZoneNormal;
+import frutty.map.zones.MapZoneSky;
+import frutty.map.zones.MapZoneSpawner;
+import frutty.map.zones.MapZoneWater;
+
 public enum EnumEditorZone{
 	Normal(0, "normal.png"),
 	Empty(1, "dug.png"),
@@ -25,6 +38,25 @@ public enum EnumEditorZone{
 	private EnumEditorZone(int index, String texture){
 		zoneIndex = index;
 		icon = new ImageIcon("./textures/dev/" + texture);
+	}
+	
+	public MapZone handleMapZone(int index, int x, int y, boolean isBackground) {
+		switch(zoneIndex) {
+			case 0: return new MapZoneNormal(x, y, index);
+			case 2: return new MapZoneFruit(x, y, EnumFruit.APPLE, index);
+			case 3: if(!isBackground) ++Map.currentMap.pickCount; 
+					return new MapZoneFruit(x, y, EnumFruit.CHERRY, index);
+			case 4: if(!isBackground) {
+						for(int k = 0, rng = Main.rand.nextInt(2); k < +Map.currentMap.enemies.length; ++k, rng = Main.rand.nextInt(2))
+							Map.currentMap.enemies[k] = new EntityEnemy(x, y);
+						
+					return new MapZoneSpawner(x, y, index);
+			}
+			case 7: return new MapZoneChest(x, y, index);	
+			case 8: return new MapZoneWater(x, y, index);
+			case 9: return new MapZoneSky(x, y, index);
+			default: return new MapZoneEmpty(x, y, index);
+		}
 	}
 	
 	public void handlePrevious(JButton button, GuiProperties props, MouseEvent event) {

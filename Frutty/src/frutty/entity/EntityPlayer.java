@@ -14,7 +14,6 @@ import frutty.entity.effects.EntityEffectInvisible;
 import frutty.gui.GuiSettings.Settings;
 import frutty.map.Map;
 import frutty.map.MapZone;
-import frutty.stuff.EnumFacing;
 
 public final class EntityPlayer extends Entity implements KeyListener, MouseListener{
 	private static final BufferedImage[] textures = {loadTexture("player/side.png"), loadTexture("player/front.png"), loadTexture("player/back.png")};

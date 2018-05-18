@@ -5,14 +5,14 @@ import java.util.Iterator;
 
 import frutty.entity.EntityPlayer;
 
-public abstract class EntityEffect {	
+public abstract class EntityEffect{	
 	public int ticks;
 	
 	public EntityEffect(int duration) {
 		ticks = duration * 10;
 	}
 	
-	public void update(Iterator<EntityEffect> iterator) {
+	public final void update(Iterator<EntityEffect> iterator) {
 		if(--ticks == 0) {
 			iterator.remove();
 		}

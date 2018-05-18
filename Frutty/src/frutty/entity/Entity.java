@@ -9,11 +9,11 @@ import java.io.Serializable;
 
 import javax.imageio.ImageIO;
 
+import frutty.Main;
 import frutty.gui.GuiIngame;
 import frutty.gui.GuiSettings.Settings;
 import frutty.map.Map;
 import frutty.map.MapZone;
-import frutty.stuff.EnumFacing;
 
 //Coord to index: posX / 64 + (posY / 64 * ((Map.currentMap.width + 64) / 64))
 public abstract class Entity implements Serializable{
@@ -70,4 +70,27 @@ public abstract class Entity implements Serializable{
 	}
 	
 	public abstract void update(int ticks);
+	
+	public static enum EnumFacing {
+		UP(0, -64, 2),
+		DOWN(0, 64, 1),
+		LEFT(-64, 0, 3),
+		RIGHT(64, 0, 0);
+		
+		public final int xOffset, yOffset, textureIndex;
+		private EnumFacing(int x, int y, int index) {
+			xOffset = x;
+			yOffset = y;
+			textureIndex = index;
+		}
+
+		public static EnumFacing randomFacing() {
+			switch(Main.rand.nextInt(4)) {
+				case 0: return UP;
+				case 1: return DOWN;
+				case 2: return LEFT;
+				default: return RIGHT;
+			}
+		}
+	}
 }

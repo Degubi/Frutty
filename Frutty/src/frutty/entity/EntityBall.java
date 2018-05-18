@@ -6,7 +6,6 @@ import java.awt.Graphics;
 import frutty.gui.GuiStats;
 import frutty.map.Map;
 import frutty.map.MapZone;
-import frutty.stuff.EnumFacing;
 
 public class EntityBall extends Entity{
 	public EntityBall() {

@@ -5,7 +5,6 @@ import java.awt.image.BufferedImage;
 
 import frutty.Main;
 import frutty.map.MapZone;
-import frutty.stuff.EnumFacing;
 
 public final class EntityEnemy extends Entity {
 	private static final BufferedImage[] fastTextures = {loadTexture("enemy/fast_side.png"), loadTexture("enemy/fast_front.png"), loadTexture("enemy/fast_back.png")};
