@@ -94,7 +94,7 @@ public final class GuiMenu extends JPanel implements ActionListener{
 			Settings.lastMap = mapName;
 			if(mapName.equals("Generate")) {
 				String[] mapSizeSplit = mapSizeField.getText().split("x");
-				//Map.generateMap(Integer.parseInt(mapSizeSplit[0]), Integer.parseInt(mapSizeSplit[1]), coopBox.isSelected());
+				Map.generateMap(Integer.parseInt(mapSizeSplit[0]), Integer.parseInt(mapSizeSplit[1]), coopBox.isSelected());
 			}else{
 				Map.loadMap(mapName, coopBox.isSelected());
 			}
