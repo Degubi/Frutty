@@ -3,13 +3,14 @@ package frutty.entity;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
+import frutty.Main;
 import frutty.gui.GuiStats;
 import frutty.map.Map;
 import frutty.map.MapZone;
 
 public class EntityApple extends Entity{
-	public static final BufferedImage cherryTexture = loadTexture("cherry.png");
-	public static final BufferedImage appleTexture = loadTexture("apple.png");
+	public static final BufferedImage cherryTexture = Main.loadTexture("fruit", "cherry.png");
+	public static final BufferedImage appleTexture = Main.loadTexture("fruit", "apple.png");
 	
 	private int sleepCounter = 0;
 	

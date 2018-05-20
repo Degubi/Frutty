@@ -6,27 +6,37 @@ import java.util.Iterator;
 
 import frutty.Main;
 import frutty.gui.GuiHelper;
+import frutty.gui.GuiIngame;
 import frutty.gui.GuiSettings.Settings;
 
 public final class Particle {
-	private static final Color[] colors = {new Color(202, 203, 87), new Color(127, 127, 127), new Color(150, 108, 74), new Color(178, 99, 78)};
+	private static Color[] colors;
 	
-	public static int colorIndex = 0;
+	public final int colorIndex;
 	public int lifeTime, posX, posY;
 	public final int motionY;
 	
-	public Particle(int x, int y) {
+	public Particle(int x, int y, int colorIndex) {
 		posX = x;
 		posY = y;
 		lifeTime = 5 + Main.rand.nextInt(5);
 		motionY = 1 + Main.rand.nextInt(3);
+		this.colorIndex = colorIndex;
 	}
 	
-	public static void addParticles(int count, int x, int y) {
+	public static void addParticles(int count, int x, int y, int color) {
 		if(Settings.graphicsLevel == 2) {
 			for(int k = 0; k < count; ++k) {
-				Map.currentMap.particles.add(new Particle(x + Main.rand.nextInt(64), y + 64 + Main.rand.nextInt(32)));
+				Map.currentMap.particles.add(new Particle(x + Main.rand.nextInt(64), y + 64 + Main.rand.nextInt(32), color));
 			}
+		}
+	}
+	
+	public static void precacheParticles() {
+		colors = new Color[GuiIngame.textures.length];
+		
+		for(int k = 0; k < GuiIngame.textures.length; ++k) {
+			colors[k] = new Color(GuiIngame.textures[k].getRGB(2, 2), true);
 		}
 	}
 	

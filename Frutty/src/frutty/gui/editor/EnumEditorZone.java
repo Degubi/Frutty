@@ -1,12 +1,13 @@
 package frutty.gui.editor;
 
-import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
-import frutty.Main;
 import frutty.entity.EntityEnemy;
+import frutty.gui.editor.GuiEditor.TextureSelector;
 import frutty.map.Map;
 import frutty.map.MapZone;
 import frutty.map.zones.MapZoneChest;
@@ -19,111 +20,65 @@ import frutty.map.zones.MapZoneSpawner;
 import frutty.map.zones.MapZoneWater;
 
 public enum EnumEditorZone{
-	Normal(0, "normal.png"),
-	Empty(1, "dug.png"),
-	Apple(2, "apple.png"),
-	Cherry(3, "cherry.png"),
-	Spawner(4, "spawner.png"),
-	Player1(5, "player1.png"),
-	Player2(6, "player2.png"),
-	Chest(7, "chest.png"),
-	Water(8, "water.png"),
-	Sky(9, "sky.png");
+	Normal(0, "normal.png", TextureSelector.normalTextures),
+	Empty(1, "empty.png", null),
+	Apple(2, "apple.png", TextureSelector.appleTextures),
+	Cherry(3, "cherry.png", TextureSelector.cherryTextures),
+	Spawner(4, "spawner.png", null),
+	Player1(5, "player1.png", null),
+	Player2(6, "player2.png", null),
+	Chest(7, "chest.png", TextureSelector.chestTextures),
+	Water(8, "water.png", null),
+	Sky(9, "sky.png", null);
 	
 	private static final EnumEditorZone[] zones = values();
 	
 	public final int zoneIndex;
 	public final ImageIcon icon;
+	public final boolean hasTextureInfo;
+	public final ImageIcon[] editorTextures;
 	
-	private EnumEditorZone(int index, String texture){
+	private EnumEditorZone(int index, String texture, ImageIcon[] edText){
 		zoneIndex = index;
 		icon = new ImageIcon("./textures/dev/" + texture);
+		hasTextureInfo = edText != null;
+		editorTextures = edText;
 	}
 	
-	public MapZone handleMapZone(int index, int x, int y, boolean isBackground) {
+	public MapZone handleMapZone(int index, int x, int y, boolean isBackground, ObjectInputStream input) throws IOException {
 		switch(zoneIndex) {
-			case 0: return new MapZoneNormal(x, y, index);
-			case 2: return new MapZoneFruit(x, y, EnumFruit.APPLE, index);
+			case 0: return new MapZoneNormal(x, y, index, input.readByte());
+			case 2: return new MapZoneFruit(x, y, EnumFruit.APPLE, index, input.readByte());
 			case 3: if(!isBackground) ++Map.currentMap.pickCount; 
-					return new MapZoneFruit(x, y, EnumFruit.CHERRY, index);
+					return new MapZoneFruit(x, y, EnumFruit.CHERRY, index, input.readByte());
 			case 4: if(!isBackground) {
-						for(int k = 0, rng = Main.rand.nextInt(2); k < +Map.currentMap.enemies.length; ++k, rng = Main.rand.nextInt(2))
+						for(int k = 0; k < +Map.currentMap.enemies.length; ++k) {
 							Map.currentMap.enemies[k] = new EntityEnemy(x, y);
-						
-					return new MapZoneSpawner(x, y, index);
+						}
 			}
-			case 7: return new MapZoneChest(x, y, index);	
+			return new MapZoneSpawner(x, y, index);
+			case 7: return new MapZoneChest(x, y, index, input.readByte());	
 			case 8: return new MapZoneWater(x, y, index);
 			case 9: return new MapZoneSky(x, y, index);
 			default: return new MapZoneEmpty(x, y, index);
 		}
 	}
 	
-	public void handlePrevious(JButton button, GuiProperties props, MouseEvent event) {
-		EnumEditorZone prev = getPrevious(event, props, event.getX(), event.getY());
-		button.setMnemonic(prev.zoneIndex);
-		button.setIcon(prev.icon);
-	}
-	
 	public static EnumEditorZone getFromIndex(int index) {
 		return zones[index];
 	}
 	
-	public void handleReading(GuiEditor editor, int x, int y) {
+	public void handleReading(GuiEditor editor, ObjectInputStream input, int x, int y, String[] textures) throws IOException {
 		JButton button = new JButton(icon);
 		button.setBounds(x * 64, y * 64, 64, 64);
 		button.setMnemonic(zoneIndex);
 		button.addMouseListener(editor);
+		if(hasTextureInfo){
+			int textureData = input.readByte();
+			button.setActionCommand(textures[textureData]);
+			button.setIcon(editorTextures[TextureSelector.indexOf(textures[textureData] + ".png")]);
+		}
 		editor.zoneButtons.add(button);
 		editor.add(button);
-	}
-	
-	public void handleNext(JButton button, GuiProperties props, MouseEvent event) {
-		EnumEditorZone next = getNext(event, props, button.getX(), button.getY());
-		button.setMnemonic(next.zoneIndex);
-		button.setIcon(next.icon);
-	}
-	
-	private EnumEditorZone getPrevious(MouseEvent event, GuiProperties props, int mouseX, int mouseY) {
-		if(event.isShiftDown()) {
-			props.setPlayer1Pos(mouseX, mouseY);
-			return Player1;
-		}
-		if(event.isControlDown()) {
-			props.setPlayer2Pos(mouseX, mouseY);
-			return Player2;
-		}
-		if(event.isAltDown()) {
-			return Spawner;
-		}
-		if(zoneIndex == 7){
-			return Cherry;
-		}
-		if(zoneIndex == 4 || zoneIndex == 5 || zoneIndex == 6) {
-			return Normal;
-		}
-		return zoneIndex == 0 ? Sky : zones[zoneIndex - 1];
-	}
-	
-	private EnumEditorZone getNext(MouseEvent event, GuiProperties props, int mouseX, int mouseY) {
-		if(event.isShiftDown()) {
-			props.setPlayer1Pos(mouseX, mouseY);
-			return Player1;
-		}
-		if(event.isControlDown()) {
-			props.setPlayer2Pos(mouseX, mouseY);
-			return Player2;
-		}
-		if(event.isAltDown()) {
-			return Spawner;
-		}
-		
-		if(zoneIndex == 3) {
-			return Chest;
-		}
-		if((zoneIndex == 4 || zoneIndex == 5 || zoneIndex == 6)) {
-			return Normal;
-		}
-		return zoneIndex == zones.length - 1 ? Normal : zones[zoneIndex + 1];
 	}
 }

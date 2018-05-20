@@ -25,6 +25,7 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
 
+@SuppressWarnings("boxing")
 public final class GuiSettings extends JPanel implements ActionListener{
 	private final JRadioButton easyButton = new JRadioButton("Easy"), normalButton = new JRadioButton("Normal"), hardButton = new JRadioButton("Hard");
 	private final JCheckBox godMode = GuiHelper.newCheckBox("Enable God Mode", 400, 400, Settings.godEnabled);

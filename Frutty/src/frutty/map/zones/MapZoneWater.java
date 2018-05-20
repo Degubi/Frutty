@@ -4,10 +4,11 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
+import frutty.Main;
 import frutty.map.MapZone;
 
 public final class MapZoneWater extends MapZone {
-	private static final BufferedImage texture = loadTexture("special/water.png");
+	private static final BufferedImage texture = Main.loadTexture("map/special", "water.png");
 	private static boolean decrease = false;
 	private static int textureY = 0;
 	

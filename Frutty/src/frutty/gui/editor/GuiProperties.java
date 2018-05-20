@@ -2,34 +2,25 @@ package frutty.gui.editor;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Image;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
 
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
-import frutty.gui.GuiHelper;
-
-public final class GuiProperties extends JPanel implements ActionListener{
+@SuppressWarnings("boxing")
+public final class GuiProperties extends JPanel{
 	public static enum EnumProperty{
 		MapName("Map Name", 0),
-		Texture("Texture", 1),
-		SkyTexture("SkyTexture", 2),
-		IsBackground("Is Background?", 3),
-		MapWidth("Map Width", 4),
-		MapHeight("Map Height", 5),
-		Player1PosX("Player1 Pos X", 6),
-		Player1PosY("Player1 Pos Y", 7),
-		Player2PosX("Player2 Pos X", 8),
-		Player2PosY("Player2 Pos Y", 9);
+		SkyTexture("SkyTexture", 1),
+		IsBackground("Is Background?", 2),
+		MapWidth("Map Width", 3),
+		MapHeight("Map Height", 4),
+		Player1PosX("Player1 Pos X", 5),
+		Player1PosY("Player1 Pos Y", 6),
+		Player2PosX("Player2 Pos X", 7),
+		Player2PosY("Player2 Pos Y", 8);
 		
 		private final String propertyName;
 		private final int index;
@@ -47,7 +38,7 @@ public final class GuiProperties extends JPanel implements ActionListener{
 	
 	private final JTable table = new JTable(new PropertyTableModel());
 	
-	public GuiProperties(String mapName, String textureName, String skyName, boolean isBackground, int[] data) {
+	public GuiProperties(String mapName, String skyName, boolean isBackground, int[] data) {
 		setLayout(null);
 		
 		table.setBorder(new LineBorder(Color.GRAY, 1, true));
@@ -59,41 +50,27 @@ public final class GuiProperties extends JPanel implements ActionListener{
 		EnumProperty[] props = EnumProperty.values();
 		
 		props[0].register(table, mapName);
-		props[1].register(table, textureName);
-		props[2].register(table, skyName);
-		props[3].register(table, String.valueOf(isBackground));
-		props[4].register(table, data[0]);
-		props[5].register(table, data[1]);
+		props[1].register(table, skyName);
+		props[2].register(table, String.valueOf(isBackground));
+		props[3].register(table, data[0]);
+		props[4].register(table, data[1]);
 		
-		props[6].register(table, data[2]);
-		props[7].register(table, data[3]);
-		props[8].register(table, data[4]);
-		props[9].register(table, data[5]);
+		props[5].register(table, data[2]);
+		props[6].register(table, data[3]);
+		props[7].register(table, data[4]);
+		props[8].register(table, data[5]);
 		
-		add(GuiHelper.newButton("Texture Selector", 100, 250, 150, this));
 		add(table);
 	}
 	
-	@Override
-	public void actionPerformed(ActionEvent event) {
-		if(event.getActionCommand().equals("Texture Selector")) {
-			String[] textures = new File("./textures/map").list();
-			GuiHelper.showNewFrame(new TextureSelector(textures, this), "Texture selector", JFrame.DISPOSE_ON_CLOSE, 200 + (textures.length - 1) * 128, 300 + ((textures.length / 5)) * 64);
-		}
-	}
-
-	public void setMapTextureName(String texture) {
-		table.setValueAt(texture, 1, 1);
-	}
-	
 	public void setPlayer1Pos(int x, int y) {
-		table.setValueAt(x, 6, 1);
-		table.setValueAt(y, 7, 1);
+		table.setValueAt(x, 5, 1);
+		table.setValueAt(y, 6, 1);
 	}
 	
 	public void setPlayer2Pos(int x, int y) {
-		table.setValueAt(x, 8, 1);
-		table.setValueAt(y, 9, 1);
+		table.setValueAt(x, 7, 1);
+		table.setValueAt(y, 8, 1);
 	}
 	
 	public boolean getBooleanProperty(EnumProperty prop) {
@@ -136,55 +113,6 @@ public final class GuiProperties extends JPanel implements ActionListener{
 				cell.setForeground(null); 	//Kell mert különben rákattintás után az összes szürke fontot kap...
 			}
 			return cell;
-		}
-	}
-	
-	private static final class TextureSelector extends JPanel implements ActionListener{
-		private final GuiProperties mapProperties;
-		
-		public TextureSelector(String[] textures, GuiProperties props) {
-			mapProperties = props;
-			
-			setLayout(null);
-			
-			int xPosition = 10, yPosition = 20, index = 0;
-			
-			JButton[] buttons = new JButton[textures.length - 1];
-			
-			for(String texture : textures) {
-				if(texture.endsWith(".png")) {
-					JButton button = new JButton();
-					button.setActionCommand(texture.substring(0, texture.length() - 4));
-					button.setBounds(xPosition, yPosition, 128, 128);
-					xPosition += 138;
-					
-					if(xPosition > 600) {
-						xPosition = 10;
-						yPosition += 138;
-					}
-					button.addActionListener(this);
-					buttons[index++] = button;
-					add(button);
-				}
-			}
-			
-			new Thread(() -> {
-				int index2 = 0;
-				for(String texture : textures) {
-					if(texture.endsWith(".png")) {
-						buttons[index2++].setIcon(new ImageIcon(new ImageIcon("./textures/map/" + texture).getImage().getScaledInstance(128, 128, Image.SCALE_DEFAULT)));
-					}
-				}
-			}).start();
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent event) {
-			if(event.getSource() instanceof JButton) {
-				mapProperties.setMapTextureName(event.getActionCommand());
-				mapProperties.repaint();
-				((JFrame)getTopLevelAncestor()).dispose();
-			}
 		}
 	}
 }

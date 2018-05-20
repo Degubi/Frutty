@@ -34,7 +34,8 @@ public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 	static GuiIngame ingameGui;
 	
 	private boolean paused = false;
-	public static BufferedImage texture, skyTexture;
+	public static BufferedImage skyTexture;
+	public static BufferedImage[] textures;
 	
 	public GuiIngame() {
 		setLayout(null);
@@ -126,7 +127,7 @@ public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 			if(Map.currentMap.ticks % 20 == 0) {
 				for(MapZone zone : Map.currentMap.zones) {
 					if(zone instanceof MapZoneEmpty == false && MapZone.isEmpty(zone.posX, zone.posY + 64) && Main.rand.nextInt(100) == 3) {
-						Particle.addParticles(2 + Main.rand.nextInt(5), zone.posX, zone.posY);
+						Particle.addParticles(2 + Main.rand.nextInt(5), zone.posX, zone.posY, zone.getParticleIndex());
 					}
 					
 					if(zone instanceof MapZoneFruit && ((MapZoneFruit)zone).fruitType == EnumFruit.APPLE) {

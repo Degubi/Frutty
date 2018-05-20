@@ -1,12 +1,7 @@
 package frutty.map;
 
 import java.awt.Graphics;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
-
-import javax.imageio.ImageIO;
 
 import frutty.Main;
 import frutty.entity.EntityPlayer;
@@ -28,15 +23,6 @@ public abstract class MapZone implements Serializable{
 		zoneIndex = index;
 	}
 	
-	protected static BufferedImage loadTexture(String path) {
-		try{
-			return ImageIO.read(new File("./textures/map/" + path));
-		}catch(IOException e){
-			System.err.println("Can't find texture: " + path + ", returning null. Have fun :)");
-			return null;
-		}
-	}
-	
 	/** Super.draw(graphics)- et a végére ha kell depth render*/
 	public void draw(Graphics graphics) {
 		if(Settings.graphicsLevel > 0) {
@@ -54,7 +40,8 @@ public abstract class MapZone implements Serializable{
 		return zone != null && zone instanceof MapZoneEmpty;
 	}
 	
-	/**Call super.onBreak if you want a normal breakable zone*/
+	/**Call super.onBreak if you want a normal breakable zone
+	 * @param player Player obj used in subclasses */
 	public void onBreak(EntityPlayer player) {
 		if(isBreakable() && this instanceof MapZoneEmpty == false && this instanceof MapZoneWater == false) {
 			Map.setZoneEmptyAt(zoneIndex);
@@ -64,10 +51,13 @@ public abstract class MapZone implements Serializable{
 			if(up != null && up instanceof MapZoneFruit) {
 				((MapZoneFruit)up).notified = true;
 			}
-			
-			Particle.addParticles(2 + Main.rand.nextInt(10), posX, posY);
+			Particle.addParticles(2 + Main.rand.nextInt(10), posX, posY, getParticleIndex());
 		}
 	}
 	
+	@SuppressWarnings("static-method")
+	public int getParticleIndex() {
+		return 0;
+	}
 	public abstract boolean isBreakable();
 }

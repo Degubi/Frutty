@@ -13,10 +13,12 @@ public final class MapZoneFruit extends MapZone{
 	public final EnumFruit fruitType;
 	public boolean notified;
 	private int counter;
+	private final int textureIndex;
 	
-	public MapZoneFruit(int xPos, int yPos, EnumFruit type, int zoneIndex) {
+	public MapZoneFruit(int xPos, int yPos, EnumFruit type, int zoneIndex, int textIndex) {
 		super(xPos, yPos, zoneIndex);
 		fruitType = type;
+		textureIndex = textIndex;
 	}
 
 	@Override
@@ -32,7 +34,7 @@ public final class MapZoneFruit extends MapZone{
 	
 	@Override
 	public void draw(Graphics graphics) {
-		graphics.drawImage(GuiIngame.texture, posX, posY, 64, 64, null);
+		graphics.drawImage(GuiIngame.textures[textureIndex], posX, posY, 64, 64, null);
 		
 		if(fruitType == EnumFruit.APPLE) {
 			graphics.drawImage(EntityApple.appleTexture, posX, posY, null);
@@ -53,6 +55,11 @@ public final class MapZoneFruit extends MapZone{
 		}
 	}
 
+	@Override
+	public int getParticleIndex() {
+		return textureIndex;
+	}
+	
 	@Override
 	public boolean isBreakable() {
 		return fruitType == EnumFruit.CHERRY;

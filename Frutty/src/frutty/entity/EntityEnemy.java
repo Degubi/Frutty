@@ -7,8 +7,8 @@ import frutty.Main;
 import frutty.map.MapZone;
 
 public final class EntityEnemy extends Entity {
-	private static final BufferedImage[] fastTextures = {loadTexture("enemy/fast_side.png"), loadTexture("enemy/fast_front.png"), loadTexture("enemy/fast_back.png")};
-	private static final BufferedImage[] normalTextures = {loadTexture("enemy/side.png"), loadTexture("enemy/front.png"), loadTexture("enemy/back.png")};
+	private static final BufferedImage[] fastTextures = {Main.loadTexture("enemy", "fast_side.png"), Main.loadTexture("enemy", "fast_front.png"), Main.loadTexture("enemy", "fast_back.png")};
+	private static final BufferedImage[] normalTextures = {Main.loadTexture("enemy", "side.png"), Main.loadTexture("enemy", "front.png"), Main.loadTexture("enemy", "back.png")};
 	
 	private final int moveTick, updateTick;
 	

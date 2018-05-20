@@ -17,6 +17,7 @@ import frutty.gui.GuiSettings.Settings;
 import frutty.gui.editor.GuiEditor;
 import frutty.map.Map;
 import frutty.map.MapZone;
+import frutty.map.zones.MapZoneWater;
 
 public final class GuiMenu extends JPanel implements ActionListener{
 	private final JComboBox<String> mapList = new JComboBox<>();
@@ -73,8 +74,13 @@ public final class GuiMenu extends JPanel implements ActionListener{
 	protected void paintComponent(Graphics graphics) {
 		super.paintComponent(graphics);
 		
-		for(MapZone zone : background)
+		for(MapZone zone : background) {
 			zone.draw(graphics);
+			
+			if(zone instanceof MapZoneWater) {
+				((MapZoneWater) zone).drawAfter(graphics);
+			}
+		}
 		
 		graphics.setColor(GuiHelper.color_128Black);
 		graphics.fillRect(0, 0, 910, 675);
