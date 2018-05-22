@@ -33,7 +33,6 @@ public class EntityBall extends Entity{
 			
 			posX += motionX;
 			posY += motionY;
-			
 		}
 	}
 	

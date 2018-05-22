@@ -14,11 +14,19 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JList;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
@@ -31,9 +39,7 @@ public final class GuiEditor extends JPanel implements MouseListener{
 	final ArrayList<JButton> zoneButtons = new ArrayList<>();
 	private final GuiProperties mapProperties;
 	
-	private final JButton zoneSelector, textureSelector;
-	
-	private int activeToolIndex = 1, activeTextureIndex = TextureSelector.indexOf("normal.png");
+	private final JButton zoneSelector = new JButton(ToolSelector.emptyTexture), textureSelector = new JButton(TextureSelector.bigTextures[TextureSelector.indexOf("normal.png")]);
 	private String activeTexture = "normal";
 	
 	private final int toolSelectorX;
@@ -44,28 +50,28 @@ public final class GuiEditor extends JPanel implements MouseListener{
 		
 		toolSelectorX = data[0] * 64 + 80;
 		
-		zoneSelector = new JButton(ToolSelector.emptyTexture);
 		zoneSelector.setToolTipText("Zone Selector Tool");
 		zoneSelector.setMnemonic(1);
 		zoneSelector.setActionCommand("Zone Selector");
 		zoneSelector.addMouseListener(this);
 		zoneSelector.setBounds(data[0] * 64 + 20, 80, 64, 64);
 		
-		textureSelector = new JButton(TextureSelector.bigTextures[TextureSelector.indexOf("normal.png")]);
 		textureSelector.setToolTipText("Texture Selector Tool");
 		textureSelector.setActionCommand("Texture Selector");
+		textureSelector.setMnemonic(TextureSelector.indexOf("normal.png"));
 		textureSelector.addMouseListener(this);
 		textureSelector.setBounds(data[0] * 64 + 20, 200, 128, 128);
 		
 		add(zoneSelector);
 		add(textureSelector);
+	}
+	
+	@Override
+	protected void paintComponent(Graphics graphics) {
+		super.paintComponent(graphics);
 		
-		add(GuiHelper.newButton("Save", data[0] * 64 + 12, data[1] * 64 - 100, this));
-		add(GuiHelper.newButton("Exit", data[0] * 64 + 12, data[1] * 64 - 50, this));
-		add(GuiHelper.newButton("Clear", data[0] * 64 + 12, data[1] * 64 - 150, this));
-		add(GuiHelper.newButton("Properties", data[0] * 64 + 30, 30, this));
-		
-		GuiHelper.mapSizeCheck(data[0], data[1]);
+		graphics.setFont(GuiHelper.thiccFont);
+		graphics.drawString("Current texture: " + activeTexture, toolSelectorX - 70, 190);
 	}
 	
 	@Override
@@ -74,7 +80,6 @@ public final class GuiEditor extends JPanel implements MouseListener{
 			JButton button = (JButton) event.getSource();
 			
 			if(event.getButton() == MouseEvent.BUTTON1) {
-			
 				switch(button.getActionCommand()) {
 					case "Zone Selector":
 						EventQueue.invokeLater(() -> {
@@ -87,58 +92,6 @@ public final class GuiEditor extends JPanel implements MouseListener{
 						    frame.setUndecorated(true);
 							frame.setVisible(true);
 						}); break;
-						
-					case "Exit": ((JFrame)getTopLevelAncestor()).dispose(); GuiMenu.showMenu(); break;
-					case "Clear": 
-					for(JButton localButton : zoneButtons) {
-				 		localButton.setMnemonic(0);
-				 		localButton.setIcon(ToolSelector.normalTexture);
-				 	}break;
-				 	
-					case "Properties": GuiHelper.showNewFrame(mapProperties, "Map Properties", JFrame.DISPOSE_ON_CLOSE, 350, 350); break;
-					case "Save": 
-						try(ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream("./maps/" + mapProperties.getProperty(EnumProperty.MapName)))){
-					 		ArrayList<String> textures = new ArrayList<>();
-							
-					 		for(JButton writeButton : zoneButtons) {
-					 			if(EnumEditorZone.getFromIndex(writeButton.getMnemonic()).hasTextureInfo) {
-					 				String texture = writeButton.getActionCommand();
-					 				if(!texture.isEmpty() && !textures.contains(texture)) {
-					 					textures.add(texture);
-					 				}
-					 			}
-					 		}
-					 		
-					 		output.writeByte(textures.size());
-					 		
-					 		for(int k = 0; k < textures.size(); ++k) {
-					 			output.writeUTF(textures.get(k));
-					 		}
-					 		
-							output.writeUTF(mapProperties.getProperty(EnumProperty.SkyTexture));
-					 		output.writeShort(mapProperties.getIntProperty(EnumProperty.MapWidth));
-					 		output.writeShort(mapProperties.getIntProperty(EnumProperty.MapHeight));
-					 		
-						 	if(!mapProperties.getBooleanProperty(EnumProperty.IsBackground)) {
-						 		output.writeShort(mapProperties.getIntProperty(EnumProperty.Player1PosX));
-						 		output.writeShort(mapProperties.getIntProperty(EnumProperty.Player1PosY));
-						 		output.writeShort(mapProperties.getIntProperty(EnumProperty.Player2PosX));
-						 		output.writeShort(mapProperties.getIntProperty(EnumProperty.Player2PosY));
-					 		}
-						 	
-					 		for(JButton writeButton : zoneButtons) {
-					 			int zoneIndex = writeButton.getMnemonic();
-								output.writeByte(zoneIndex);
-								
-					 			if(EnumEditorZone.getFromIndex(zoneIndex).hasTextureInfo) {
-					 				output.writeByte(textures.indexOf(writeButton.getActionCommand()));
-					 			}
-					 		}
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-					 	JOptionPane.showMessageDialog(null, "Map saved as: " + mapProperties.getProperty(EnumProperty.MapName)); break;
-				 	
 					case "Texture Selector": 
 						EventQueue.invokeLater(() -> {
 							JFrame frame = new JFrame("Texture Selector");
@@ -151,7 +104,9 @@ public final class GuiEditor extends JPanel implements MouseListener{
 							frame.setVisible(true);
 						}); break;
 						
-					default: button.setMnemonic(activeToolIndex); button.setIcon(zoneSelector.getIcon());
+					default: int activeToolIndex = zoneSelector.getMnemonic();
+						button.setMnemonic(activeToolIndex); button.setIcon(zoneSelector.getIcon());
+						
 						if(EnumEditorZone.getFromIndex(activeToolIndex).hasTextureInfo) {
 							button.setActionCommand(activeTexture);
 						}else if(activeToolIndex == 5) {
@@ -160,10 +115,10 @@ public final class GuiEditor extends JPanel implements MouseListener{
 							mapProperties.setPlayer2Pos(button.getX(), button.getY());
 						}
 				}
-			}else if(event.getButton() == MouseEvent.BUTTON3) {
+			}else if(event.getButton() == MouseEvent.BUTTON3 && !button.getActionCommand().equals("Zone Selector") && !button.getActionCommand().equals("Texture Selector")) {
 				EnumEditorZone zone = EnumEditorZone.getFromIndex(button.getMnemonic());
 				if(zone.hasTextureInfo) {
-					button.setIcon(zone.editorTextures[activeTextureIndex]);
+					button.setIcon(zone.getEditorTexture()[textureSelector.getMnemonic()]);
 					button.setActionCommand(activeTexture);
 				}
 			}
@@ -171,64 +126,222 @@ public final class GuiEditor extends JPanel implements MouseListener{
 	}
 
 	public static void openEditor() {
-		int editorMode = JOptionPane.showOptionDialog(null, "Create new map or import", "Frutty map Editor", JOptionPane.YES_NO_CANCEL_OPTION, 1, null, new String[] {"New", "Import", "Cancel"}, null);
-		if(editorMode == 0) {
-			String input = JOptionPane.showInputDialog("Enter map size!", "10x10");
+		GuiEditor editor = new GuiEditor("filename.deg", false, "null", 800, 600, 0, 0, 0, 0);
+		showEditorFrame(editor, 800, 600);
+	}
+	
+	private void saveMap() {
+		String mapName = mapProperties.getProperty(EnumProperty.MapName);
+		try(ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream("./maps/" + mapName))){
+	 		ArrayList<String> textures = new ArrayList<>();
 			
-			if(input != null) {
-				String[] mapSizeString = input.split("x");
-				int mapWidth = Integer.parseInt(mapSizeString[0]), bigWidth = mapWidth * 64;
-				int mapHeight = Integer.parseInt(mapSizeString[1]), bigHeight = mapHeight * 64;
-				GuiEditor editor = new GuiEditor("filename.deg", false, "null", mapWidth, mapHeight, 0, 0, 0, 0);
+	 		for(JButton writeButton : zoneButtons) {
+	 			if(EnumEditorZone.getFromIndex(writeButton.getMnemonic()).hasTextureInfo) {
+	 				String texture = writeButton.getActionCommand();
+	 				if(!texture.isEmpty() && !textures.contains(texture)) {
+	 					textures.add(texture);
+	 				}
+	 			}
+	 		}
+	 		output.writeByte(textures.size());
+	 		
+	 		for(int k = 0; k < textures.size(); ++k) {
+	 			output.writeUTF(textures.get(k));
+	 		}
+	 		
+			output.writeUTF(mapProperties.getProperty(EnumProperty.SkyTexture));
+	 		output.writeShort(mapProperties.getIntProperty(EnumProperty.MapWidth));
+	 		output.writeShort(mapProperties.getIntProperty(EnumProperty.MapHeight));
+	 		
+		 	if(!mapProperties.getBooleanProperty(EnumProperty.IsBackground)) {
+		 		output.writeShort(mapProperties.getIntProperty(EnumProperty.Player1PosX));
+		 		output.writeShort(mapProperties.getIntProperty(EnumProperty.Player1PosY));
+		 		output.writeShort(mapProperties.getIntProperty(EnumProperty.Player2PosX));
+		 		output.writeShort(mapProperties.getIntProperty(EnumProperty.Player2PosY));
+	 		}
+		 	
+	 		for(JButton writeButton : zoneButtons) {
+	 			int zoneIndex = writeButton.getMnemonic();
+				output.writeByte(zoneIndex);
 				
-				for(int yPos = 0; yPos < bigHeight; yPos += 64) {
-					for(int xPos = 0; xPos < bigWidth; xPos += 64) {
-						JButton button = new JButton(ToolSelector.normalTexture);
-						button.setMnemonic(0);
-						button.setActionCommand("normal");
-						button.addMouseListener(editor);
-						button.setBounds(xPos, yPos, 64, 64);
-						editor.zoneButtons.add(button);
-						editor.add(button);
-					}
+	 			if(EnumEditorZone.getFromIndex(zoneIndex).hasTextureInfo) {
+	 				output.writeByte(textures.indexOf(writeButton.getActionCommand()));
+	 			}
+	 		}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		Path file = Paths.get("editorhistory.txt");
+		try {
+			List<String> lines = Files.readAllLines(file);
+			if(!lines.contains(mapName)) {
+				lines.add(mapName);
+				
+				if(lines.size() > 5) {
+					lines.remove(0);
+				}
+				Files.write(file, lines);
+			}
+		} catch (IOException e) {
+			try {
+				Files.write(file, List.of(mapName));
+			} catch (IOException e1) {
+			}
+		}
+		
+	 	JOptionPane.showMessageDialog(null, "Map saved as: " + mapName);
+	}
+	
+	private static void loadMap(String fileName) {
+		if(fileName != null && !fileName.isEmpty()) {
+			try(ObjectInputStream input = new ObjectInputStream(new FileInputStream("./maps/" + fileName))){
+				int textureCount = input.readByte();
+				String[] textures = new String[textureCount];
+				
+				for(int k = 0; k < textureCount; ++k) {
+					textures[k] = input.readUTF();
 				}
 				
-				GuiHelper.showNewFrame(editor, "Frutty Map Editor", JFrame.DISPOSE_ON_CLOSE, bigWidth + 200, bigHeight + 32);
-			}
-		}else if(editorMode == 1) {
-			String[] fileNames = new File("./maps/").list();
-			String fileName = (String) JOptionPane.showInputDialog(null, "Select Map!", "Maps:", JOptionPane.QUESTION_MESSAGE, null, fileNames, fileNames[0]);
-			
-			if(fileName != null && !fileName.isEmpty()) {
-				try(ObjectInputStream input = new ObjectInputStream(new FileInputStream("./maps/" + fileName))){
-					int textureCount = input.readByte();
-					String[] textures = new String[textureCount];
-					
-					for(int k = 0; k < textureCount; ++k) {
-						textures[k] = input.readUTF();
+				String skyName = input.readUTF();
+				int mapWidth = input.readShort(), mapHeight = input.readShort();
+				GuiEditor editor = fileName.startsWith("background") 
+								 ? new GuiEditor(fileName, true, skyName, mapWidth, mapHeight, 0, 0, 0, 0)
+								 : new GuiEditor(fileName, false, skyName, mapWidth, mapHeight, input.readShort(), input.readShort(), input.readShort(), input.readShort());
+				
+				for(int y = 0; y < mapHeight; ++y) {
+					for(int x = 0; x < mapWidth; ++x) {
+						EnumEditorZone.getFromIndex(input.readByte()).handleReading(editor, input, x, y, textures);
 					}
+				}
+				showEditorFrame(editor, mapWidth * 64, mapHeight * 64);
+				
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	private static void showEditorFrame(GuiEditor editor, int width, int height) {
+		EventQueue.invokeLater(() -> {
+			JFrame frame = new JFrame("Frutty Map Editor");
+			frame.setContentPane(editor);
+			frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+			frame.setResizable(false);
+			frame.setBounds(0, 0, width + 200, height + 63);
+			frame.setLocationRelativeTo(null);
+			
+			JMenuBar menuBar = new JMenuBar();
+	    	JMenu fileMenu = new JMenu("File");
+	    	JMenu mapMenu = new JMenu("Map");
+	    	JMenu history = new JMenu("History");
+	    	
+	    	mapMenu.setEnabled(!editor.zoneButtons.isEmpty());
+	    	
+	    	try {
+	    		var lines = Files.readAllLines(Paths.get("editorhistory.txt"));
+	    		for(int k = lines.size() - 1; k > -1; --k) {
+	    			String line = lines.get(k);
+	    			JMenuItem item = new JMenuItem(line);
+					item.addActionListener(event -> {
+						loadMap(line);
+			    		((JFrame)editor.getTopLevelAncestor()).dispose();
+					});
+					history.add(item);
+	    		}
+			} catch (IOException e1) {
+				JMenuItem offItem = new JMenuItem("No History");
+				offItem.setEnabled(false);
+				history.add(offItem);
+			}
+	    	
+	    	JMenuItem exitItem = new JMenuItem("Exit app");
+	    	exitItem.addActionListener(event -> System.exit(0));
+	    	
+	    	JMenuItem menuItem = new JMenuItem("Exit to menu");
+	    	menuItem.addActionListener(event -> {frame.dispose(); GuiMenu.showMenu();});
+	    	
+	    	JMenuItem resetItem = new JMenuItem("Reset map");
+	    	resetItem.setEnabled(!editor.zoneButtons.isEmpty());
+	    	resetItem.addActionListener(event -> {
+	    		for(JButton localButton : editor.zoneButtons) {
+			 		localButton.setMnemonic(0);
+			 		localButton.setActionCommand("normal");
+			 		localButton.setIcon(ToolSelector.normalTexture);
+	    	};});
+	    	
+	    	JMenuItem loadItem = new JMenuItem("Load map");
+	    	loadItem.addActionListener(event -> {
+	    		String[] fileNames = new File("./maps/").list();
+	    		loadMap((String) JOptionPane.showInputDialog(null, "Select Map!", "Maps:", JOptionPane.QUESTION_MESSAGE, null, fileNames, fileNames[0]));
+	    		((JFrame)editor.getTopLevelAncestor()).dispose();
+	    	});
+	    	
+	    	JMenuItem newMapItem = new JMenuItem("New map");
+	    	newMapItem.addActionListener(event -> {
+	    		String input = JOptionPane.showInputDialog("Enter map size!", "10x10");
+				
+				if(input != null) {
+					String[] mapSizeString = input.split("x");
+					int mapWidth = Integer.parseInt(mapSizeString[0]), bigWidth = mapWidth * 64;
+					int mapHeight = Integer.parseInt(mapSizeString[1]), bigHeight = mapHeight * 64;
+					GuiEditor newEditor = new GuiEditor("filename.deg", false, "null", mapWidth, mapHeight, 0, 0, 0, 0);
 					
-					String skyName = input.readUTF();
-					int mapWidth = input.readShort(), mapHeight = input.readShort();
-					GuiEditor editor = fileName.startsWith("background") 
-									 ? new GuiEditor(fileName, true, skyName, mapWidth, mapHeight, 0, 0, 0, 0)
-									 : new GuiEditor(fileName, false, skyName, mapWidth, mapHeight, input.readShort(), input.readShort(), input.readShort(), input.readShort());
-					
-					for(int y = 0; y < mapHeight; ++y) {
-						for(int x = 0; x < mapWidth; ++x) {
-							EnumEditorZone.getFromIndex(input.readByte()).handleReading(editor, input, x, y, textures);
+					for(int yPos = 0; yPos < bigHeight; yPos += 64) {
+						for(int xPos = 0; xPos < bigWidth; xPos += 64) {
+							JButton button = new JButton(ToolSelector.normalTexture);
+							button.setMnemonic(0);
+							button.setActionCommand("normal");
+							button.addMouseListener(newEditor);
+							button.setBounds(xPos, yPos, 64, 64);
+							newEditor.zoneButtons.add(button);
+							newEditor.add(button);
 						}
 					}
-					GuiHelper.showNewFrame(editor, "Frutty Map Editor", JFrame.DISPOSE_ON_CLOSE, mapWidth * 64 + 200, mapHeight * 64 + 32);
+					showEditorFrame(newEditor, bigWidth, bigHeight);
 					
-				} catch (IOException e) {
-					e.printStackTrace();
+					((JFrame)editor.getTopLevelAncestor()).dispose();
 				}
-			}
-			
-		}else{   //Dont't close everything :(
-			GuiMenu.showMenu();
-		}
+	    	});
+	    	
+	    	JMenuItem saveItem = new JMenuItem("Save map");
+	    	saveItem.setEnabled(!editor.zoneButtons.isEmpty());
+	    	saveItem.addActionListener(e -> editor.saveMap());
+	    	
+	    	JMenuItem historyResetItem = new JMenuItem("Delete History");
+	    	historyResetItem.addActionListener(event -> {
+	    		try {
+					Files.write(Paths.get("editorhistory.txt"), List.of());
+				} catch (IOException e1) {
+				}
+	    	});
+	    	
+	    	fileMenu.add(newMapItem);
+	    	fileMenu.add(loadItem);
+	    	fileMenu.addSeparator();
+	    	fileMenu.add(saveItem);
+	    	fileMenu.add(resetItem);
+	    	fileMenu.add(historyResetItem);
+	    	fileMenu.addSeparator();
+	    	fileMenu.add(menuItem);
+	    	fileMenu.add(exitItem);
+	    	
+	    	JMenuItem propertiesMenu = new JMenuItem("Map Properties");
+	    	propertiesMenu.addActionListener(e -> GuiHelper.showNewFrame(editor.mapProperties, "Map Properties", JFrame.DISPOSE_ON_CLOSE, 350, 350));
+	    	
+	    	JMenuItem infoMenu = new JMenuItem("Map Information");
+	    	infoMenu.addActionListener(event -> GuiHelper.showNewFrame(new InformationMenu(editor), "Map Info", JFrame.DISPOSE_ON_CLOSE, 350, 350));
+	    	
+	    	mapMenu.add(propertiesMenu);
+	    	mapMenu.add(infoMenu);
+	    	
+	    	menuBar.add(fileMenu);
+	    	menuBar.add(history);
+	    	menuBar.add(mapMenu);
+	    	frame.setJMenuBar(menuBar);
+			frame.setFocusable(true);
+			frame.setVisible(true);
+		});
 	}
 	
 	private static final class ToolSelector extends JPanel implements ActionListener{
@@ -265,7 +378,7 @@ public final class GuiEditor extends JPanel implements MouseListener{
 		public void actionPerformed(ActionEvent event) {
 			if(event.getSource() instanceof JButton) {
 				JButton button = (JButton) event.getSource();
-				editor.activeToolIndex = button.getMnemonic();
+				editor.zoneSelector.setMnemonic(button.getMnemonic());
 				editor.zoneSelector.setIcon(button.getIcon());
 				((JFrame)getTopLevelAncestor()).dispose();
 			}
@@ -297,12 +410,12 @@ public final class GuiEditor extends JPanel implements MouseListener{
 			cherryTextures = new ImageIcon[count];
 			chestTextures = new ImageIcon[count];
 			
-			BufferedImage appleTexture = Main.loadTexture("fruit", "apple.png");
-			BufferedImage cherryTexture = Main.loadTexture("fruit", "cherry.png");
-			BufferedImage chestTexture = Main.loadTexture("map/special", "chest.png");
-			
-			for(int k = 0; k < count; ++k) {
-				if(textureNames[k].endsWith(".png")) {
+			new Thread(() -> {
+				BufferedImage appleTexture = Main.loadTexture("fruit", "apple.png");
+				BufferedImage cherryTexture = Main.loadTexture("fruit", "cherry.png");
+				BufferedImage chestTexture = Main.loadTexture("map/special", "chest.png");
+				
+				for(int k = 0; k < textureNames.length; ++k) {
 					ImageIcon nrm = new ImageIcon("./textures/map/" + textureNames[k]);
 					normalTextures[k] = new ImageIcon((nrm).getImage().getScaledInstance(64, 64, Image.SCALE_DEFAULT));
 					bigTextures[k] = new ImageIcon((nrm).getImage().getScaledInstance(128, 128, Image.SCALE_DEFAULT));
@@ -310,7 +423,7 @@ public final class GuiEditor extends JPanel implements MouseListener{
 					cherryTextures[k] = combineTextures(nrm, cherryTexture);
 					chestTextures[k] = combineTextures(nrm, chestTexture);
 				}
-			}
+			}).start();
 		}
 		
 		private static ImageIcon combineTextures(ImageIcon normalTexture, BufferedImage overlay) {
@@ -334,25 +447,18 @@ public final class GuiEditor extends JPanel implements MouseListener{
 			editor = ed;
 			setLayout(null);
 			
-			int xPosition = 10, yPosition = 20, index = 0;
-			JButton[] buttons = new JButton[textureNames.length];
-			
-			for(String texture : textureNames) {
-				if(texture.endsWith(".png")) {
-					JButton button = new JButton();
-					button.setActionCommand(texture.substring(0, texture.length() - 4));
-					button.setBounds(xPosition, yPosition, 128, 128);
-					button.setIcon(bigTextures[indexOf(texture)]);
-					button.addActionListener(this);
-					xPosition += 138;
-					
-					if(xPosition > 600) {
-						xPosition = 10;
-						yPosition += 138;
-					}
-					buttons[index++] = button;
-					add(button);
+			for(int index = 0, xPosition = 10, yPosition = 20; index < bigTextures.length; ++index) {
+				JButton button = new JButton(bigTextures[index]);
+				button.setActionCommand(textureNames[index].substring(0, textureNames[index].length() - 4));
+				button.setBounds(xPosition, yPosition, 128, 128);
+				button.addActionListener(this);
+				xPosition += 138;
+				
+				if(xPosition > 600) {
+					xPosition = 10;
+					yPosition += 138;
 				}
+				add(button);
 			}
 		}
 
@@ -363,10 +469,53 @@ public final class GuiEditor extends JPanel implements MouseListener{
 				
 				editor.activeTexture = button.getActionCommand();
 				editor.textureSelector.setIcon(button.getIcon());
-				editor.activeTextureIndex = indexOf(button.getActionCommand() + ".png");
+				editor.textureSelector.setMnemonic(indexOf(button.getActionCommand() + ".png"));
 				editor.repaint();
 				((JFrame)getTopLevelAncestor()).dispose();
 			}
+		}
+	}
+	
+	private static final class InformationMenu extends JPanel{
+		private final GuiEditor editor;
+		private final int textureCount, textureSize;
+		@SuppressWarnings("rawtypes")
+		private final JList textureList;
+		
+		public InformationMenu(GuiEditor edit) {
+			setLayout(null);
+			editor = edit;
+			
+			ArrayList<String> textures = new ArrayList<>();
+			int size = 0;
+			
+	 		for(JButton writeButton : editor.zoneButtons) {
+	 			if(EnumEditorZone.getFromIndex(writeButton.getMnemonic()).hasTextureInfo) {
+	 				String texture = "textures/map/" + writeButton.getActionCommand() + ".png";
+	 				if(!textures.contains(texture)) {
+	 					size += new File("./" + texture).length();
+	 					textures.add(texture);
+	 				}
+	 			}
+	 		}
+	 		textureSize = size;
+	 		textureCount = textures.size();
+	 		
+	 		textureList = new JList<>(textures.toArray());
+			textureList.setBounds(60, 150, 200, 120);
+			textureList.setBorder(GuiHelper.menuBorder);
+	 		
+	 		add(textureList);
+		}
+		
+		@Override
+		protected void paintComponent(Graphics graphics) {
+			super.paintComponent(graphics);
+			
+			graphics.setFont(GuiHelper.thiccFont);
+			graphics.drawString("Texture Count: " + textureCount, 20, 20);
+			graphics.drawString("Texture size: " + textureSize + " bytes", 20, 40);
+			graphics.drawString("Textures Used:", 20, 145);
 		}
 	}
 	

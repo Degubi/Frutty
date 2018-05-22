@@ -22,6 +22,8 @@ public final class GuiProperties extends JPanel{
 		Player2PosX("Player2 Pos X", 7),
 		Player2PosY("Player2 Pos Y", 8);
 		
+		private static final EnumProperty[] props = values();
+		
 		private final String propertyName;
 		private final int index;
 		
@@ -47,18 +49,16 @@ public final class GuiProperties extends JPanel{
 		table.getColumnModel().getColumn(1).setCellRenderer(render);
 		table.getColumnModel().getColumn(0).setCellRenderer(render);
 		
-		EnumProperty[] props = EnumProperty.values();
+		EnumProperty.props[0].register(table, mapName);
+		EnumProperty.props[1].register(table, skyName);
+		EnumProperty.props[2].register(table, String.valueOf(isBackground));
+		EnumProperty.props[3].register(table, data[0]);
+		EnumProperty.props[4].register(table, data[1]);
 		
-		props[0].register(table, mapName);
-		props[1].register(table, skyName);
-		props[2].register(table, String.valueOf(isBackground));
-		props[3].register(table, data[0]);
-		props[4].register(table, data[1]);
-		
-		props[5].register(table, data[2]);
-		props[6].register(table, data[3]);
-		props[7].register(table, data[4]);
-		props[8].register(table, data[5]);
+		EnumProperty.props[5].register(table, data[2]);
+		EnumProperty.props[6].register(table, data[3]);
+		EnumProperty.props[7].register(table, data[4]);
+		EnumProperty.props[8].register(table, data[5]);
 		
 		add(table);
 	}
@@ -88,7 +88,7 @@ public final class GuiProperties extends JPanel{
 	private static final class PropertyTableModel extends DefaultTableModel{
 		@Override
 		public int getRowCount() {
-			return EnumProperty.values().length;
+			return EnumProperty.props.length;
 		}
 		
 		@Override
@@ -100,7 +100,6 @@ public final class GuiProperties extends JPanel{
 		public boolean isCellEditable(int rowIndex, int columnIndex) {
 			return columnIndex == 1 && (rowIndex == 0 || rowIndex == 2); 
 		}
-		
 	}
 	
 	private static final class CustomCellRenderer extends DefaultTableCellRenderer{
