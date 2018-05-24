@@ -27,7 +27,7 @@ public abstract class Entity implements Serializable{
 	
 	protected EnumFacing findFreeFacing() {
 		for(EnumFacing randomFacing = EnumFacing.randomFacing(); ; randomFacing = EnumFacing.randomFacing()) {
-			if(MapZone.isEmpty(posX + randomFacing.xOffset, posY + randomFacing.yOffset)) {
+			if(MapZone.isEmpty(serverPosX + randomFacing.xOffset, serverPosY + randomFacing.yOffset)) {
 				return randomFacing;
 			}
 			continue;
@@ -46,6 +46,14 @@ public abstract class Entity implements Serializable{
 				}
 			}
 		}
+	}
+	
+	protected int currentPosToIndex() {
+		return posX / 64 + (posY / 64 * ((Map.currentMap.width + 64) / 64));
+	}
+	
+	protected static int coordsToIndex(int x, int y) {
+		return x / 64 + (y / 64 * ((Map.currentMap.width + 64) / 64));
 	}
 	
 	public void render(Graphics graphics) {

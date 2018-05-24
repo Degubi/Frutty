@@ -6,18 +6,18 @@ import java.awt.Graphics;
 import frutty.map.MapZone;
 
 public final class MapZoneEmpty extends MapZone{
-	public MapZoneEmpty(int xPos, int yPos, int zoneIndex) {
-		super(xPos, yPos, zoneIndex);
+	public MapZoneEmpty() {
+		super(1, false);
 	}
 
 	@Override
-	public void draw(Graphics graphics) {
+	public void draw(int x, int y, int textureIndex, Graphics graphics) {
 		graphics.setColor(Color.BLACK);
-		graphics.fillRect(posX, posY, 64, 64);
+		graphics.fillRect(x, y, 64, 64);
 	}
 
 	@Override
-	public boolean isBreakable() {
+	public boolean isBreakable(int x, int y) {
 		return true;
 	}
 }

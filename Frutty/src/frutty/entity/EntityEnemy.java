@@ -5,10 +5,11 @@ import java.awt.image.BufferedImage;
 
 import frutty.Main;
 import frutty.map.MapZone;
+import frutty.registry.internal.InternalRegistry;
 
 public final class EntityEnemy extends Entity {
-	private static final BufferedImage[] fastTextures = {Main.loadTexture("enemy", "fast_side.png"), Main.loadTexture("enemy", "fast_front.png"), Main.loadTexture("enemy", "fast_back.png")};
-	private static final BufferedImage[] normalTextures = {Main.loadTexture("enemy", "side.png"), Main.loadTexture("enemy", "front.png"), Main.loadTexture("enemy", "back.png")};
+	private static final BufferedImage[] fastTextures = {InternalRegistry.loadTexture("enemy", "fast_side.png"), InternalRegistry.loadTexture("enemy", "fast_front.png"), InternalRegistry.loadTexture("enemy", "fast_back.png")};
+	private static final BufferedImage[] normalTextures = {InternalRegistry.loadTexture("enemy", "side.png"), InternalRegistry.loadTexture("enemy", "front.png"), InternalRegistry.loadTexture("enemy", "back.png")};
 	
 	private final int moveTick, updateTick;
 	

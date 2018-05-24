@@ -23,9 +23,7 @@ import frutty.gui.GuiSettings.Settings;
 import frutty.map.Map;
 import frutty.map.MapZone;
 import frutty.map.Particle;
-import frutty.map.zones.MapZoneEmpty;
-import frutty.map.zones.MapZoneFruit;
-import frutty.map.zones.MapZoneFruit.EnumFruit;
+import frutty.map.interfaces.ITransparentZone;
 import frutty.map.zones.MapZoneWater;
 
 public final class GuiIngame extends JPanel implements Runnable, ActionListener{
@@ -49,8 +47,8 @@ public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 	protected void paintComponent(Graphics graphics) {
 		super.paintComponent(graphics);
 		
-		for(MapZone drawZones : Map.currentMap.zones) {
-			drawZones.draw(graphics);
+		for(int k = 0; k < Map.currentMap.zones.length; ++k) {
+			Map.currentMap.zones[k].render(Map.currentMap.xCoords[k], Map.currentMap.yCoords[k], Map.currentMap.textureData[k], graphics);
 		}
 		for(EntityPlayer players : Map.currentMap.players) players.render(graphics);
 		
@@ -66,9 +64,10 @@ public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 			}
 		}
 		
-		for(MapZone drawZones : Map.currentMap.zones) {
-			if(drawZones instanceof MapZoneWater) {
-				((MapZoneWater)drawZones).drawAfter(graphics);
+		for(int k = 0; k < Map.currentMap.zones.length; ++k) {
+			MapZone zone = Map.currentMap.zones[k];
+			if(zone instanceof ITransparentZone) {
+				((ITransparentZone)zone).drawAfter(Map.currentMap.xCoords[k], Map.currentMap.yCoords[k], Map.currentMap.textureData[k], graphics);
 			}
 		}
 		
@@ -125,13 +124,14 @@ public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 			}
 			
 			if(Map.currentMap.ticks % 20 == 0) {
-				for(MapZone zone : Map.currentMap.zones) {
-					if(zone instanceof MapZoneEmpty == false && MapZone.isEmpty(zone.posX, zone.posY + 64) && Main.rand.nextInt(100) == 3) {
-						Particle.addParticles(2 + Main.rand.nextInt(5), zone.posX, zone.posY, zone.getParticleIndex());
+				for(int k = 0; k < Map.currentMap.zones.length; ++k) {
+					MapZone zone = Map.currentMap.zones[k];
+					if(zone != Main.emptyZone && MapZone.isEmpty(Map.currentMap.xCoords[k], Map.currentMap.yCoords[k] + 64) && Main.rand.nextInt(100) == 3) {
+						Particle.addParticles(2 + Main.rand.nextInt(5), Map.currentMap.xCoords[k], Map.currentMap.yCoords[k], Map.currentMap.textureData[k]);
 					}
 					
-					if(zone instanceof MapZoneFruit && ((MapZoneFruit)zone).fruitType == EnumFruit.APPLE) {
-						((MapZoneFruit) zone).update();
+					if(zone.hasZoneEntity()) {
+						Map.getZoneEntity(k).update();
 					}
 				}
 				

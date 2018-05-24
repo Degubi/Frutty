@@ -2,28 +2,31 @@ package frutty.map.zones;
 
 import java.awt.Graphics;
 
+import javax.swing.ImageIcon;
+
+import frutty.Main;
 import frutty.entity.EntityApple;
 import frutty.entity.EntityPlayer;
+import frutty.entity.zone.EntityAppleZone;
+import frutty.entity.zone.EntityZone;
 import frutty.gui.GuiIngame;
 import frutty.gui.GuiStats;
+import frutty.gui.editor.GuiEditor.TextureSelector;
 import frutty.map.Map;
 import frutty.map.MapZone;
+import frutty.map.interfaces.ITexturable;
 
-public final class MapZoneFruit extends MapZone{
+public final class MapZoneFruit extends MapZone implements ITexturable{
 	public final EnumFruit fruitType;
-	public boolean notified;
-	private int counter;
-	private final int textureIndex;
 	
-	public MapZoneFruit(int xPos, int yPos, EnumFruit type, int zoneIndex, int textIndex) {
-		super(xPos, yPos, zoneIndex);
+	public MapZoneFruit(EnumFruit type) {
+		super(type == EnumFruit.APPLE ? 2 : 3, true);
 		fruitType = type;
-		textureIndex = textIndex;
 	}
 
 	@Override
-	public void onBreak(EntityPlayer player) {
-		super.onBreak(player);
+	public void onBreak(int x, int y, int zoneIndex, int textureIndex, EntityPlayer player) {
+		super.onBreak(x, y, zoneIndex, textureIndex, player);
 		
 		Map.currentMap.score += 50;
 		if(--Map.currentMap.pickCount == 0) {
@@ -33,35 +36,39 @@ public final class MapZoneFruit extends MapZone{
 	}
 	
 	@Override
-	public void draw(Graphics graphics) {
-		graphics.drawImage(GuiIngame.textures[textureIndex], posX, posY, 64, 64, null);
-		
+	public void draw(int x, int y, int textureIndex, Graphics graphics) {
+		graphics.drawImage(GuiIngame.textures[textureIndex], x, y, 64, 64, null);
 		if(fruitType == EnumFruit.APPLE) {
-			graphics.drawImage(EntityApple.appleTexture, posX, posY, null);
+			graphics.drawImage(EntityApple.appleTexture, x, y, null);
 		}else if(fruitType == EnumFruit.CHERRY) {
-			graphics.drawImage(EntityApple.cherryTexture, posX, posY, null);
-		}
-		super.draw(graphics);
-	}
-	
-	public void update() {
-		if(notified){
-			if(counter > 1) {
-				Map.setZoneEmptyAt(zoneIndex);
-				Map.currentMap.entities.add(new EntityApple(posX, posY));
-			}else{
-				++counter;
-			}
+			graphics.drawImage(EntityApple.cherryTexture, x, y, null);
 		}
 	}
 
 	@Override
-	public int getParticleIndex() {
-		return textureIndex;
+	public EntityZone getZoneEntity(int x, int y, int zoneIndex) {
+		return fruitType == EnumFruit.APPLE ? new EntityAppleZone(x, y, zoneIndex) : null;
 	}
 	
 	@Override
-	public boolean isBreakable() {
+	public boolean hasZoneEntity() {
+		return fruitType == EnumFruit.APPLE;
+	}
+	
+	@Override
+	public ImageIcon[] getEditorTextureVars() {
+		return fruitType == EnumFruit.APPLE ? TextureSelector.appleTextures : TextureSelector.cherryTextures;
+	}
+	
+	@Override
+	public void onZoneAdded(boolean isBackground, int x, int y, Map mapInstance) {
+		if(!isBackground && this == Main.cherryZone) {
+			++mapInstance.pickCount;
+		}
+	}
+	
+	@Override
+	public boolean isBreakable(int x, int y) {
 		return fruitType == EnumFruit.CHERRY;
 	}
 	

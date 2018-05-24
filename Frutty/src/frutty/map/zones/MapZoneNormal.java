@@ -2,30 +2,25 @@ package frutty.map.zones;
 
 import java.awt.Graphics;
 
+import javax.swing.ImageIcon;
+
 import frutty.gui.GuiIngame;
+import frutty.gui.editor.GuiEditor.TextureSelector;
 import frutty.map.MapZone;
+import frutty.map.interfaces.ITexturable;
 
-public final class MapZoneNormal extends MapZone{
-	private final int textureIndex;
-	
-	public MapZoneNormal(int xPos, int yPos, int zoneIndex, int textIndex) {
-		super(xPos, yPos, zoneIndex);
-		textureIndex = textIndex;
-	}
-
-	@Override
-	public void draw(Graphics graphics) {
-		graphics.drawImage(GuiIngame.textures[textureIndex], posX, posY, 64, 64, null);
-		super.draw(graphics);
-	}
-
-	@Override
-	public int getParticleIndex() {
-		return textureIndex;
+public final class MapZoneNormal extends MapZone implements ITexturable{
+	public MapZoneNormal() {
+		super(0, true);
 	}
 	
 	@Override
-	public boolean isBreakable() {
-		return true;
+	public void draw(int x, int y, int textureIndex, Graphics graphics) {
+		graphics.drawImage(GuiIngame.textures[textureIndex], x, y, 64, 64, null);
+	}
+
+	@Override
+	public ImageIcon[] getEditorTextureVars() {
+		return TextureSelector.normalTextures;
 	}
 }

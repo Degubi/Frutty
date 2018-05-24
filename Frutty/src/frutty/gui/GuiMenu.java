@@ -16,14 +16,15 @@ import javax.swing.JTextField;
 import frutty.gui.GuiSettings.Settings;
 import frutty.gui.editor.GuiEditor;
 import frutty.map.Map;
+import frutty.map.Map.BackgrondMap;
 import frutty.map.MapZone;
-import frutty.map.zones.MapZoneWater;
+import frutty.map.interfaces.ITransparentZone;
 
 public final class GuiMenu extends JPanel implements ActionListener{
 	private final JComboBox<String> mapList = new JComboBox<>();
 	private final JTextField mapSizeField = new JTextField("8x8");
 	private final JCheckBox coopBox = GuiHelper.newCheckBox("Coop mode", 445, 130, false);
-	private final MapZone[] background;
+	private final BackgrondMap background;
 	
 	public static GuiMenu menuGui;
 	
@@ -74,11 +75,12 @@ public final class GuiMenu extends JPanel implements ActionListener{
 	protected void paintComponent(Graphics graphics) {
 		super.paintComponent(graphics);
 		
-		for(MapZone zone : background) {
-			zone.draw(graphics);
+		for(int k = 0; k < background.zones.length; ++k) {
+			MapZone zone = background.zones[k];
+			zone.render(background.xCoords[k], background.yCoords[k], background.textureData[k], graphics);
 			
-			if(zone instanceof MapZoneWater) {
-				((MapZoneWater) zone).drawAfter(graphics);
+			if(zone instanceof ITransparentZone) {
+				((ITransparentZone) zone).drawAfter(background.xCoords[k], background.yCoords[k], background.textureData[k], graphics);
 			}
 		}
 		

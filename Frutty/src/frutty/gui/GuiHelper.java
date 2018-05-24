@@ -7,7 +7,6 @@ import java.awt.Toolkit;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
 
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
@@ -77,15 +76,6 @@ public final class GuiHelper {
 		butt.setBounds(x, y, 120, 30);
 		butt.setMnemonic(100);
 		butt.addActionListener(listener);
-		return butt;
-	}
-	
-	public static JButton newEditorButton(int index, ImageIcon icon, String texture, int x, int y, ActionListener listener) {
-		JButton butt = new JButton(icon);
-		butt.setBounds(x, y, 64, 64);
-		butt.setMnemonic(index);
-		butt.addActionListener(listener);
-		butt.setActionCommand(texture);
 		return butt;
 	}
 	

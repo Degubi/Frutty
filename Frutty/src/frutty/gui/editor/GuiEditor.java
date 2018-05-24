@@ -30,19 +30,21 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import frutty.Main;
 import frutty.gui.GuiHelper;
 import frutty.gui.GuiMenu;
 import frutty.gui.editor.GuiProperties.EnumProperty;
+import frutty.registry.internal.InternalRegistry;
 
 public final class GuiEditor extends JPanel implements MouseListener{
-	final ArrayList<JButton> zoneButtons = new ArrayList<>();
+	public final ArrayList<JButton> zoneButtons = new ArrayList<>();
 	private final GuiProperties mapProperties;
 	
-	private final JButton zoneSelector = new JButton(ToolSelector.emptyTexture), textureSelector = new JButton(TextureSelector.bigTextures[TextureSelector.indexOf("normal.png")]);
+	private final JButton zoneSelector = new JButton(InternalRegistry.editorButtonIcons[1].get()), textureSelector = new JButton(TextureSelector.bigTextures[TextureSelector.indexOf("normal.png")]);
 	private String activeTexture = "normal";
 	
 	private final int toolSelectorX;
+	
+	private static JFrame toolSelectorFrame;
 	
 	private GuiEditor(String fileName, boolean isBackground, String skyName, int... data) {
 		mapProperties = new GuiProperties(fileName, skyName, isBackground, data);
@@ -83,14 +85,16 @@ public final class GuiEditor extends JPanel implements MouseListener{
 				switch(button.getActionCommand()) {
 					case "Zone Selector":
 						EventQueue.invokeLater(() -> {
-							JFrame frame = new JFrame("Tool Selector");
-							frame.setContentPane(new ToolSelector(this));
-							frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-							frame.setResizable(false);
-							frame.setBounds(toolSelectorX + 500, 300, 128, 320);
-							frame.setFocusable(true);
-						    frame.setUndecorated(true);
-							frame.setVisible(true);
+							if(toolSelectorFrame == null) {
+								toolSelectorFrame = new JFrame("Tool Selector");
+								toolSelectorFrame.setContentPane(new ToolSelector(this));
+								toolSelectorFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+								toolSelectorFrame.setResizable(false);
+								toolSelectorFrame.setBounds(toolSelectorX + 500, 300, 128, 500);
+								toolSelectorFrame.setFocusable(true);
+								toolSelectorFrame.setUndecorated(true);
+							}
+							toolSelectorFrame.setVisible(true);
 						}); break;
 					case "Texture Selector": 
 						EventQueue.invokeLater(() -> {
@@ -104,10 +108,14 @@ public final class GuiEditor extends JPanel implements MouseListener{
 							frame.setVisible(true);
 						}); break;
 						
-					default: int activeToolIndex = zoneSelector.getMnemonic();
+					default: if(toolSelectorFrame != null) {
+						toolSelectorFrame.dispose();
+						toolSelectorFrame = null;
+					}
+						int activeToolIndex = zoneSelector.getMnemonic();
 						button.setMnemonic(activeToolIndex); button.setIcon(zoneSelector.getIcon());
 						
-						if(EnumEditorZone.getFromIndex(activeToolIndex).hasTextureInfo) {
+						if(InternalRegistry.hasTextureInfo(activeToolIndex)) {
 							button.setActionCommand(activeTexture);
 						}else if(activeToolIndex == 5) {
 							mapProperties.setPlayer1Pos(button.getX(), button.getY());
@@ -116,9 +124,8 @@ public final class GuiEditor extends JPanel implements MouseListener{
 						}
 				}
 			}else if(event.getButton() == MouseEvent.BUTTON3 && !button.getActionCommand().equals("Zone Selector") && !button.getActionCommand().equals("Texture Selector")) {
-				EnumEditorZone zone = EnumEditorZone.getFromIndex(button.getMnemonic());
-				if(zone.hasTextureInfo) {
-					button.setIcon(zone.getEditorTexture()[textureSelector.getMnemonic()]);
+				if(InternalRegistry.hasTextureInfo(button.getMnemonic())) {
+					button.setIcon(InternalRegistry.getEditorTextureVariants(button.getMnemonic())[textureSelector.getMnemonic()]);
 					button.setActionCommand(activeTexture);
 				}
 			}
@@ -136,7 +143,7 @@ public final class GuiEditor extends JPanel implements MouseListener{
 	 		ArrayList<String> textures = new ArrayList<>();
 			
 	 		for(JButton writeButton : zoneButtons) {
-	 			if(EnumEditorZone.getFromIndex(writeButton.getMnemonic()).hasTextureInfo) {
+	 			if(InternalRegistry.hasTextureInfo(writeButton.getMnemonic())) {
 	 				String texture = writeButton.getActionCommand();
 	 				if(!texture.isEmpty() && !textures.contains(texture)) {
 	 					textures.add(texture);
@@ -164,7 +171,7 @@ public final class GuiEditor extends JPanel implements MouseListener{
 	 			int zoneIndex = writeButton.getMnemonic();
 				output.writeByte(zoneIndex);
 				
-	 			if(EnumEditorZone.getFromIndex(zoneIndex).hasTextureInfo) {
+	 			if(InternalRegistry.hasTextureInfo(zoneIndex)) {
 	 				output.writeByte(textures.indexOf(writeButton.getActionCommand()));
 	 			}
 	 		}
@@ -211,7 +218,7 @@ public final class GuiEditor extends JPanel implements MouseListener{
 				
 				for(int y = 0; y < mapHeight; ++y) {
 					for(int x = 0; x < mapWidth; ++x) {
-						EnumEditorZone.getFromIndex(input.readByte()).handleReading(editor, input, x, y, textures);
+						InternalRegistry.handleEditorReading(editor, input, x, y, textures);
 					}
 				}
 				showEditorFrame(editor, mapWidth * 64, mapHeight * 64);
@@ -267,7 +274,7 @@ public final class GuiEditor extends JPanel implements MouseListener{
 	    		for(JButton localButton : editor.zoneButtons) {
 			 		localButton.setMnemonic(0);
 			 		localButton.setActionCommand("normal");
-			 		localButton.setIcon(ToolSelector.normalTexture);
+			 		localButton.setIcon(InternalRegistry.editorButtonIcons[0].get());
 	    	};});
 	    	
 	    	JMenuItem loadItem = new JMenuItem("Load map");
@@ -289,7 +296,7 @@ public final class GuiEditor extends JPanel implements MouseListener{
 					
 					for(int yPos = 0; yPos < bigHeight; yPos += 64) {
 						for(int xPos = 0; xPos < bigWidth; xPos += 64) {
-							JButton button = new JButton(ToolSelector.normalTexture);
+							JButton button = new JButton(InternalRegistry.editorButtonIcons[0].get());
 							button.setMnemonic(0);
 							button.setActionCommand("normal");
 							button.addMouseListener(newEditor);
@@ -347,31 +354,34 @@ public final class GuiEditor extends JPanel implements MouseListener{
 	private static final class ToolSelector extends JPanel implements ActionListener{
 		private final GuiEditor editor;
 		
-		private static final ImageIcon normalTexture = new ImageIcon("./textures/dev/normal.png");
-		private static final ImageIcon emptyTexture = new ImageIcon("./textures/dev/empty.png");
-		private static final ImageIcon appleTexture = new ImageIcon("./textures/dev/apple.png");
-		private static final ImageIcon cherryTexture = new ImageIcon("./textures/dev/cherry.png");
-		private static final ImageIcon spawnerTexture = new ImageIcon("./textures/dev/spawner.png");
-		private static final ImageIcon chestTexture = new ImageIcon("./textures/dev/chest.png");
-		private static final ImageIcon player1Texture = new ImageIcon("./textures/dev/player1.png");
-		private static final ImageIcon player2Texture = new ImageIcon("./textures/dev/player2.png");
-		private static final ImageIcon waterTexture = new ImageIcon("./textures/dev/water.png");
-		private static final ImageIcon skyTexture = new ImageIcon("./textures/dev/sky.png");
-		
 		public ToolSelector(GuiEditor editor) {
 			setLayout(null);
 			this.editor = editor;
 			
-			add(GuiHelper.newEditorButton(0, normalTexture, "normal", 0, 0, this));
-			add(GuiHelper.newEditorButton(1, emptyTexture, "empty", 64, 0, this));
-			add(GuiHelper.newEditorButton(2, appleTexture, "apple", 0, 64, this));
-			add(GuiHelper.newEditorButton(3, cherryTexture, "cherry", 64, 64, this));
-			add(GuiHelper.newEditorButton(4, spawnerTexture, "spawner", 0, 128, this));
-			add(GuiHelper.newEditorButton(7, chestTexture, "chest", 64, 128, this));
-			add(GuiHelper.newEditorButton(5, player1Texture, "player1", 0, 192, this));
-			add(GuiHelper.newEditorButton(6, player2Texture, "player2", 64, 192, this));
-			add(GuiHelper.newEditorButton(8, waterTexture, "water", 0, 256, this));
-			add(GuiHelper.newEditorButton(9, skyTexture, "sky", 64, 256, this));
+			add(newEditorButton(0, InternalRegistry.editorButtonIcons[0].get(), 0, 0, this));
+			add(newEditorButton(1, InternalRegistry.editorButtonIcons[1].get(), 64, 0, this));
+			add(newEditorButton(2, InternalRegistry.editorButtonIcons[2].get(), 0, 64, this));
+			add(newEditorButton(3, InternalRegistry.editorButtonIcons[3].get(), 64, 64, this));
+			add(newEditorButton(4, InternalRegistry.editorButtonIcons[4].get(), 0, 128, this));
+			add(newEditorButton(7, InternalRegistry.editorButtonIcons[7].get(), 64, 128, this));
+			add(newEditorButton(5, InternalRegistry.editorButtonIcons[5].get(), 0, 192, this));
+			add(newEditorButton(6, InternalRegistry.editorButtonIcons[6].get(), 64, 192, this));
+			add(newEditorButton(8, InternalRegistry.editorButtonIcons[8].get(), 0, 256, this));
+			add(newEditorButton(9, InternalRegistry.editorButtonIcons[9].get(), 64, 256, this));
+			
+			for(int k = 15; k < 20; ++k) {
+				if(InternalRegistry.zoneRegistry.containsKey(k)) {
+					add(newEditorButton(k, InternalRegistry.editorButtonIcons[k].get(), 0, 320, this));
+				}
+			}
+		}
+		
+		private static JButton newEditorButton(int index, ImageIcon icon, int x, int y, ActionListener listener) {
+			JButton butt = new JButton(icon);
+			butt.setBounds(x, y, 64, 64);
+			butt.setMnemonic(index);
+			butt.addActionListener(listener);
+			return butt;
 		}
 		
 		@Override
@@ -410,20 +420,18 @@ public final class GuiEditor extends JPanel implements MouseListener{
 			cherryTextures = new ImageIcon[count];
 			chestTextures = new ImageIcon[count];
 			
-			new Thread(() -> {
-				BufferedImage appleTexture = Main.loadTexture("fruit", "apple.png");
-				BufferedImage cherryTexture = Main.loadTexture("fruit", "cherry.png");
-				BufferedImage chestTexture = Main.loadTexture("map/special", "chest.png");
+			BufferedImage appleTexture = InternalRegistry.loadTexture("fruit", "apple.png");
+			BufferedImage cherryTexture = InternalRegistry.loadTexture("fruit", "cherry.png");
+			BufferedImage chestTexture = InternalRegistry.loadTexture("map/special", "chest.png");
 				
-				for(int k = 0; k < textureNames.length; ++k) {
-					ImageIcon nrm = new ImageIcon("./textures/map/" + textureNames[k]);
-					normalTextures[k] = new ImageIcon((nrm).getImage().getScaledInstance(64, 64, Image.SCALE_DEFAULT));
-					bigTextures[k] = new ImageIcon((nrm).getImage().getScaledInstance(128, 128, Image.SCALE_DEFAULT));
-					appleTextures[k] = combineTextures(nrm, appleTexture);
-					cherryTextures[k] = combineTextures(nrm, cherryTexture);
-					chestTextures[k] = combineTextures(nrm, chestTexture);
-				}
-			}).start();
+			for(int k = 0; k < textureNames.length; ++k) {
+				ImageIcon nrm = new ImageIcon("./textures/map/" + textureNames[k]);
+				normalTextures[k] = new ImageIcon((nrm).getImage().getScaledInstance(64, 64, Image.SCALE_DEFAULT));
+				bigTextures[k] = new ImageIcon((nrm).getImage().getScaledInstance(128, 128, Image.SCALE_DEFAULT));
+				appleTextures[k] = combineTextures(nrm, appleTexture);
+				cherryTextures[k] = combineTextures(nrm, cherryTexture);
+				chestTextures[k] = combineTextures(nrm, chestTexture);
+			}
 		}
 		
 		private static ImageIcon combineTextures(ImageIcon normalTexture, BufferedImage overlay) {
@@ -490,7 +498,7 @@ public final class GuiEditor extends JPanel implements MouseListener{
 			int size = 0;
 			
 	 		for(JButton writeButton : editor.zoneButtons) {
-	 			if(EnumEditorZone.getFromIndex(writeButton.getMnemonic()).hasTextureInfo) {
+	 			if(InternalRegistry.hasTextureInfo(writeButton.getMnemonic())) {
 	 				String texture = "textures/map/" + writeButton.getActionCommand() + ".png";
 	 				if(!textures.contains(texture)) {
 	 					size += new File("./" + texture).length();

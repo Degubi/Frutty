@@ -6,17 +6,17 @@ import frutty.gui.GuiIngame;
 import frutty.map.MapZone;
 
 public final class MapZoneSky extends MapZone{
-	public MapZoneSky(int xPos, int yPos, int index) {
-		super(xPos, yPos, index);
+	public MapZoneSky() {
+		super(9, false);
 	}
 
 	@Override
-	public void draw(Graphics graphics) {
-		graphics.drawImage(GuiIngame.skyTexture, posX, posY, posX + 64, posY + 64, posX, posY, posX + 64, posY + 64, null);
+	public void draw(int x, int y, int textureIndex, Graphics graphics) {
+		graphics.drawImage(GuiIngame.skyTexture, x, y, x + 64, y + 64, x, y, x + 64, y + 64, null);
 	}
 	
 	@Override
-	public boolean isBreakable() {
+	public boolean isBreakable(int x, int y) {
 		return false;
 	}
 }

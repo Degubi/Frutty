@@ -2,6 +2,7 @@ package frutty.map;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.io.Serializable;
 import java.util.Iterator;
 
 import frutty.Main;
@@ -9,7 +10,9 @@ import frutty.gui.GuiHelper;
 import frutty.gui.GuiIngame;
 import frutty.gui.GuiSettings.Settings;
 
-public final class Particle {
+public final class Particle implements Serializable{
+	private static final long serialVersionUID = -9182849456014867036L;
+
 	private static Color[] colors;
 	
 	public final int colorIndex;

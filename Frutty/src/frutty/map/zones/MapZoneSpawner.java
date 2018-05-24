@@ -3,6 +3,8 @@ package frutty.map.zones;
 import java.awt.Color;
 import java.awt.Graphics;
 
+import frutty.entity.EntityEnemy;
+import frutty.map.Map;
 import frutty.map.MapZone;
 
 public final class MapZoneSpawner extends MapZone{
@@ -16,13 +18,13 @@ public final class MapZoneSpawner extends MapZone{
 			colorCache[indexer] = new Color(red, green, 125);
 		}
 	}
-	
-	public MapZoneSpawner(int xPos, int yPos, int zoneIndex) {
-		super(xPos, yPos, zoneIndex);
-	}
 
+	public MapZoneSpawner() {
+		super(4, false);
+	}
+	
 	@Override
-	public void draw(Graphics graphics) {
+	public void draw(int x, int y, int textureIndex, Graphics graphics) {
 		if(colorIndexer == 31) {
 			decrease = true;
 		}
@@ -30,11 +32,20 @@ public final class MapZoneSpawner extends MapZone{
 			decrease = false;
 		}
 		graphics.setColor(colorCache[decrease ? --colorIndexer : ++colorIndexer]);
-		graphics.fillRect(posX, posY, 64, 64);
+		graphics.fillRect(x, y, 64, 64);
 	}
 
 	@Override
-	public boolean isBreakable() {
+	public void onZoneAdded(boolean isBackground, int x, int y, Map mapInstance) {
+		if(!isBackground) {
+			for(int k = 0; k < +Map.currentMap.enemies.length; ++k) {
+				Map.currentMap.enemies[k] = new EntityEnemy(x, y);
+			}
+		}
+	}
+	
+	@Override
+	public boolean isBreakable(int x, int y) {
 		return false;
 	}
 }

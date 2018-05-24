@@ -18,15 +18,12 @@ import frutty.entity.Entity;
 import frutty.entity.EntityBall;
 import frutty.entity.EntityEnemy;
 import frutty.entity.EntityPlayer;
+import frutty.entity.zone.EntityZone;
 import frutty.gui.GuiHelper;
 import frutty.gui.GuiIngame;
 import frutty.gui.GuiSettings.Settings;
-import frutty.gui.editor.EnumEditorZone;
-import frutty.map.zones.MapZoneEmpty;
-import frutty.map.zones.MapZoneFruit;
-import frutty.map.zones.MapZoneFruit.EnumFruit;
-import frutty.map.zones.MapZoneNormal;
-import frutty.map.zones.MapZoneSpawner;
+import frutty.map.interfaces.ITexturable;
+import frutty.registry.internal.InternalRegistry;
 
 public final class Map implements Serializable{
 	private static final long serialVersionUID = -5083163189200818535L;
@@ -38,6 +35,8 @@ public final class Map implements Serializable{
 	public final ArrayList<Particle> particles = new ArrayList<>();
 	public final EntityEnemy[] enemies;
 	public final int width, height;
+	public final int[] xCoords, yCoords, textureData;
+	public final EntityZone[] zoneEntities;
 	public int pickCount, score, ticks;
 	public final String skyTextureName;
 	public final String[] textures;
@@ -49,6 +48,11 @@ public final class Map implements Serializable{
 		height = h - 64;
 		GuiIngame.textures = loadTextures(textures = txts);
 		GuiIngame.skyTexture = loadSkyTexture(skyTextureName = skyName);
+		
+		xCoords = new int[zoneCount];
+		yCoords = new int[zoneCount];
+		textureData = new int[zoneCount];
+		zoneEntities = new EntityZone[zoneCount];
 		
 		int enemyCount = 0;
 		if(!Settings.disableEnemies) {
@@ -105,15 +109,18 @@ public final class Map implements Serializable{
 		
 		for(int x = 0; x < bigWidth; x += 64) {
 			for(int y = 0, rng = rand.nextInt(10); y < bigHeight; y += 64, rng = rand.nextInt(10)) {
+				currentMap.xCoords[zoneIndex] = x;
+				currentMap.yCoords[zoneIndex] = y;
+				
 				if(rng < 6) {
-					currentMap.zones[zoneIndex] = new MapZoneNormal(x, y, zoneIndex++, 0);
+					currentMap.zones[zoneIndex++] = Main.normalZone;
 				}else if(rng >= 6 && rng < 9) {
-					currentMap.zones[zoneIndex] = new MapZoneEmpty(x, y, zoneIndex++);
+					currentMap.zones[zoneIndex++] = Main.emptyZone;
 				}else if(rng == 9) {
 					if(rand.nextBoolean()) {   //isApple
-						currentMap.zones[zoneIndex] = new MapZoneFruit(x, y, EnumFruit.APPLE, zoneIndex++, 0);
+						currentMap.zones[zoneIndex++] = Main.appleZone;
 					}else {
-						currentMap.zones[zoneIndex] = new MapZoneFruit(x, y, EnumFruit.CHERRY, zoneIndex++, 0);
+						currentMap.zones[zoneIndex++] = Main.cherryZone;
 						++currentMap.pickCount;
 					}
 				}
@@ -123,49 +130,48 @@ public final class Map implements Serializable{
 		int loopState = 0;
 		
 		outerLoop:
-		for(int x = rand.nextInt(width) * 64, y = rand.nextInt(height) * 64; ;x = rand.nextInt(width) * 64, y = rand.nextInt(height) * 64) {
-			for(int k = 0; k < zoneIndex; ++k) {
-				MapZone zone = currentMap.zones[k];
-				if(zone.posX == x && zone.posY == y && zone instanceof MapZoneEmpty) {  //Üres zóna keresés
-					if(loopState == 0) {
-						currentMap.zones[k] = new MapZoneSpawner(x, y, zoneIndex);
-						loopState = 1;
-						
-						for(int yClear = 0; yClear < bigHeight; yClear += 64) {
-							MapZone toSet = Map.getZoneAtPos(zone.posX, yClear);
-								if(toSet != null && yClear != zone.posY) {
-									Map.setZoneEmptyAt(toSet.zoneIndex);
-							}
+		for(int randIndex = rand.nextInt(zoneIndex); ; randIndex = rand.nextInt(zoneIndex)) {
+			if(currentMap.zones[randIndex] == Main.emptyZone) {
+				if(loopState == 0) {
+					currentMap.zones[randIndex] = Main.spawnerZone;
+					loopState = 1;
+					
+					//TODO tisztítást itt megcsinálni újra
+					
+					/*for(int yClear = 0; yClear < bigHeight; yClear += 64) {
+						MapZone toSet = Map.getZoneAtPos(zone.posX, yClear);
+							if(toSet != null && yClear != zone.posY) {
+								Map.setZoneEmptyAt(toSet.zoneIndex);
 						}
-						
-						for(int xClear = 0; xClear < bigWidth; xClear += 64) {
-							MapZone toSet = Map.getZoneAtPos(xClear, zone.posY);
-								if(toSet != null && xClear != zone.posX) {
-									Map.setZoneEmptyAt(toSet.zoneIndex);
-							}
-						}
-						
-						for(int l = 0; l < currentMap.enemies.length; ++l) {
-							currentMap.enemies[l] = new EntityEnemy(x, y);
-						}
-						
-						continue outerLoop;
-					}else if(loopState == 1) {
-						currentMap.players[0].posX = x;
-						currentMap.players[0].posY = y;
-						currentMap.players[0].serverPosX = x;
-						currentMap.players[0].serverPosY = y;
-						loopState = 2;
-						
-						if(isMultiplayer) continue outerLoop;
-						break outerLoop;
-					}else{
-						currentMap.players[1].posX = x;
-						currentMap.players[1].posY = y;
-						currentMap.players[1].serverPosX = x;
-						currentMap.players[1].serverPosY = y;
-						break outerLoop;
 					}
+					
+					for(int xClear = 0; xClear < bigWidth; xClear += 64) {
+						MapZone toSet = Map.getZoneAtPos(xClear, zone.posY);
+							if(toSet != null && xClear != zone.posX) {
+								Map.setZoneEmptyAt(toSet.zoneIndex);
+						}
+					}
+					*/
+					for(int l = 0; l < currentMap.enemies.length; ++l) {
+						currentMap.enemies[l] = new EntityEnemy(currentMap.xCoords[randIndex], currentMap.yCoords[randIndex]);
+					}
+					
+					continue outerLoop;
+				}else if(loopState == 1) {
+					currentMap.players[0].posX = currentMap.xCoords[randIndex];
+					currentMap.players[0].posY = currentMap.yCoords[randIndex];
+					currentMap.players[0].serverPosX = currentMap.xCoords[randIndex];
+					currentMap.players[0].serverPosY = currentMap.yCoords[randIndex];
+					loopState = 2;
+					
+					if(isMultiplayer) continue outerLoop;
+					break outerLoop;
+				}else{
+					currentMap.players[1].posX = currentMap.xCoords[randIndex];
+					currentMap.players[1].posY = currentMap.yCoords[randIndex];
+					currentMap.players[1].serverPosX = currentMap.xCoords[randIndex];
+					currentMap.players[1].serverPosY = currentMap.yCoords[randIndex];
+					break outerLoop;
 				}
 			}
 		}
@@ -176,7 +182,6 @@ public final class Map implements Serializable{
 	public static void loadMap(String name, boolean isMultiplayer) {
 		try(ObjectInputStream input = new ObjectInputStream(new FileInputStream("./maps/" + name + ".deg"))){
 			int width, height, zoneIndex = 0;
-			
 			int textureCount = input.readByte();
 			String[] textures = new String[textureCount];
 			
@@ -188,8 +193,20 @@ public final class Map implements Serializable{
 			
 			for(int y = 0; y < height; y += 64) {
 				for(int x = 0; x < width; x += 64) {
-					int data = input.readByte();
-					currentMap.zones[zoneIndex] = EnumEditorZone.getFromIndex(data).handleMapZone(zoneIndex++, x, y, false, input);
+					MapZone zone = InternalRegistry.handleMapReading(input.readByte());
+					zone.onZoneAdded(false, x, y, currentMap);
+					
+					if(zone instanceof ITexturable) {
+						currentMap.textureData[zoneIndex] = input.readByte();
+					}
+					
+					currentMap.xCoords[zoneIndex] = x;
+					currentMap.yCoords[zoneIndex] = y;
+					
+					if(zone.hasZoneEntity()) {
+						currentMap.zoneEntities[zoneIndex] = zone.getZoneEntity(x, y, zoneIndex);
+					}
+					currentMap.zones[zoneIndex++] = zone;
 				}
 			}
 		}catch(IOException e){}
@@ -197,17 +214,21 @@ public final class Map implements Serializable{
 		GuiHelper.mapSizeCheck(currentMap.width / 64 + 1, currentMap.height / 64 + 1);
 	}
 	
-	public static boolean createSave(String fileName) {
-		if(fileName != null) {
-			try(ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream("./saves/" + fileName + ".sav"))){
-				output.writeObject(Map.currentMap);
-				return true;
-			} catch (IOException e) {}
+	public static final class BackgrondMap{
+		public final MapZone[] zones;
+		public final int[] xCoords, yCoords, textureData;
+		
+		public BackgrondMap(int width, int height) {
+			int zoneCount = (width / 64) * (height / 64);
+			
+			zones = new MapZone[zoneCount];
+			xCoords = new int[zoneCount];
+			yCoords = new int[zoneCount];
+			textureData = new int[zoneCount];
 		}
-		return false;
 	}
 	
-	public static MapZone[] loadBackground() {
+	public static BackgrondMap loadBackground() {
 		try(ObjectInputStream input = new ObjectInputStream(new FileInputStream("./maps/background" + Main.rand.nextInt(4) + ".deg"))){
 			String[] textures = new String[input.readByte()];
 			
@@ -218,14 +239,21 @@ public final class Map implements Serializable{
 			GuiIngame.textures = loadTextures(textures);
 			GuiIngame.skyTexture = loadSkyTexture(input.readUTF());
 			int width = input.readShort() * 64, height = input.readShort() * 64, zoneIndex = 0;
-			MapZone[] zonee = new MapZone[(width / 64) * (height / 64)];
+			
+			BackgrondMap map = new BackgrondMap(width, height);
 			
 			for(int y = 0; y < height; y += 64) {
 				for(int x = 0; x < width; x += 64) {
-					zonee[zoneIndex] = EnumEditorZone.getFromIndex(input.readByte()).handleMapZone(zoneIndex++, x, y, true, input);
+					MapZone zone = InternalRegistry.handleMapReading(input.readByte());
+					if(zone instanceof ITexturable) {
+						map.textureData[zoneIndex] = input.readByte();
+					}
+					map.xCoords[zoneIndex] = x;
+					map.yCoords[zoneIndex] = y;
+					map.zones[zoneIndex++] = zone;
 				}
 			}
-			return zonee;
+			return map;
 		}catch(IOException e){
 			return null;
 		}
@@ -243,29 +271,44 @@ public final class Map implements Serializable{
 		return "";
 	}
 	
+	public static boolean createSave(String fileName) {
+		if(fileName != null) {
+			try(ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream("./saves/" + fileName + ".sav"))){
+				output.writeObject(Map.currentMap);
+				return true;
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return false;
+	}
+	
 	public static boolean loadSave(String fileName) {
 		if(fileName != null) {
 			try(ObjectInputStream input = new ObjectInputStream(new FileInputStream("./saves/" + fileName))){
 				currentMap = (Map) input.readObject();
 				GuiIngame.textures = loadTextures(currentMap.textures);
 				GuiIngame.skyTexture = loadSkyTexture(currentMap.skyTextureName);
+				Particle.precacheParticles();
 				return true;
-			} catch (ClassNotFoundException | IOException e) {}
+			} catch (ClassNotFoundException | IOException e) {
+				e.printStackTrace();
+			}
 		}
 		return false;
 	}
 	
 	public static MapZone getZoneAtPos(int x, int y) {
-		for(MapZone zone : currentMap.zones) {
-			if(zone.posX == x && zone.posY == y) {
-				return zone;
+		for(int k = 0; k < currentMap.zones.length; ++k) {
+			if(currentMap.xCoords[k] == x && currentMap.yCoords[k] == y) {
+				return currentMap.zones[k];
 			}
 		}
 		return null;
 	}
 	
 	public static MapZone getZoneAtIndex(int index) {
-		if(index < 0 || index > currentMap.zones.length) {
+		if(index < 0 || index > currentMap.zones.length - 1) {
 			return null;
 		}
 		return currentMap.zones[index];
@@ -284,7 +327,11 @@ public final class Map implements Serializable{
 		return (EntityBall) currentMap.entities.get(0);
 	}
 	
+	public static EntityZone getZoneEntity(int ID) {
+		return currentMap.zoneEntities[ID];
+	}
+	
 	public static void setZoneEmptyAt(int index) {
-		currentMap.zones[index] = new MapZoneEmpty(currentMap.zones[index].posX, currentMap.zones[index].posY, index);
+		currentMap.zones[index] = Main.emptyZone;
 	}
 }

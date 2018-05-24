@@ -9,15 +9,15 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import frutty.Main;
 import frutty.entity.effects.EntityEffect;
 import frutty.entity.effects.EntityEffectInvisible;
 import frutty.gui.GuiSettings.Settings;
 import frutty.map.Map;
 import frutty.map.MapZone;
+import frutty.registry.internal.InternalRegistry;
 
 public final class EntityPlayer extends Entity implements KeyListener, MouseListener{
-	private static final BufferedImage[] textures = {Main.loadTexture("player", "side.png"), Main.loadTexture("player", "front.png"), Main.loadTexture("player", "back.png")};
+	private static final BufferedImage[] textures = {InternalRegistry.loadTexture("player", "side.png"), InternalRegistry.loadTexture("player", "front.png"), InternalRegistry.loadTexture("player", "back.png")};
 	public final ArrayList<EntityEffect> entityEffects = new ArrayList<>();
 	
 	private int textureIndex;
@@ -48,7 +48,7 @@ public final class EntityPlayer extends Entity implements KeyListener, MouseList
 	}
 
 	private static boolean isFree(int x, int y) {
-		if(!Map.getZoneAtPos(x, y).isBreakable()) {
+		if(!Map.getZoneAtPos(x, y).isBreakable(x, y)) {
 			return false;
 		}
 		
@@ -68,7 +68,8 @@ public final class EntityPlayer extends Entity implements KeyListener, MouseList
 		serverPosY += facing.yOffset;
 		textureIndex = facing.textureIndex;
 		
-		Map.getZoneAtPos(posX, posY).onBreak(this);
+		int zoneIndex = currentPosToIndex();
+		Map.currentMap.zones[zoneIndex].onBreak(posX, posY, zoneIndex, Map.currentMap.textureData[zoneIndex], this);
 		lastPressTime = System.currentTimeMillis();
 	}
 	
