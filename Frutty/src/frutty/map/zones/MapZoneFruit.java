@@ -1,6 +1,7 @@
 package frutty.map.zones;
 
 import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
 
@@ -13,10 +14,12 @@ import frutty.gui.GuiIngame;
 import frutty.gui.GuiStats;
 import frutty.gui.editor.GuiEditor.TextureSelector;
 import frutty.map.Map;
-import frutty.map.MapZone;
+import frutty.map.base.MapZone;
 import frutty.map.interfaces.ITexturable;
 
 public final class MapZoneFruit extends MapZone implements ITexturable{
+	private static final BufferedImage cherryTexture = Main.loadTexture("fruit", "cherry.png");
+	
 	public final EnumFruit fruitType;
 	
 	public MapZoneFruit(EnumFruit type) {
@@ -41,7 +44,7 @@ public final class MapZoneFruit extends MapZone implements ITexturable{
 		if(fruitType == EnumFruit.APPLE) {
 			graphics.drawImage(EntityApple.appleTexture, x, y, null);
 		}else if(fruitType == EnumFruit.CHERRY) {
-			graphics.drawImage(EntityApple.cherryTexture, x, y, null);
+			graphics.drawImage(cherryTexture, x, y, null);
 		}
 	}
 
@@ -61,9 +64,9 @@ public final class MapZoneFruit extends MapZone implements ITexturable{
 	}
 	
 	@Override
-	public void onZoneAdded(boolean isBackground, int x, int y, Map mapInstance) {
+	public void onZoneAdded(boolean isBackground, int x, int y) {
 		if(!isBackground && this == Main.cherryZone) {
-			++mapInstance.pickCount;
+			++Map.currentMap.pickCount;
 		}
 	}
 	

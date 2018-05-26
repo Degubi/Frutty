@@ -30,18 +30,16 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import frutty.Main;
 import frutty.gui.GuiHelper;
 import frutty.gui.GuiMenu;
 import frutty.gui.editor.GuiProperties.EnumProperty;
-import frutty.registry.internal.InternalRegistry;
 
 public final class GuiEditor extends JPanel implements MouseListener{
 	public final ArrayList<JButton> zoneButtons = new ArrayList<>();
 	private final GuiProperties mapProperties;
-	
-	private final JButton zoneSelector = new JButton(InternalRegistry.editorButtonIcons[1].get()), textureSelector = new JButton(TextureSelector.bigTextures[TextureSelector.indexOf("normal.png")]);
+	private final JButton zoneSelector = new JButton(Main.editorButtonIcons[1].get()), textureSelector = new JButton(TextureSelector.bigTextures[TextureSelector.indexOf("normal.png")]);
 	private String activeTexture = "normal";
-	
 	private final int toolSelectorX;
 	
 	private static JFrame toolSelectorFrame;
@@ -115,7 +113,7 @@ public final class GuiEditor extends JPanel implements MouseListener{
 						int activeToolIndex = zoneSelector.getMnemonic();
 						button.setMnemonic(activeToolIndex); button.setIcon(zoneSelector.getIcon());
 						
-						if(InternalRegistry.hasTextureInfo(activeToolIndex)) {
+						if(Main.hasTextureInfo(activeToolIndex)) {
 							button.setActionCommand(activeTexture);
 						}else if(activeToolIndex == 5) {
 							mapProperties.setPlayer1Pos(button.getX(), button.getY());
@@ -124,8 +122,8 @@ public final class GuiEditor extends JPanel implements MouseListener{
 						}
 				}
 			}else if(event.getButton() == MouseEvent.BUTTON3 && !button.getActionCommand().equals("Zone Selector") && !button.getActionCommand().equals("Texture Selector")) {
-				if(InternalRegistry.hasTextureInfo(button.getMnemonic())) {
-					button.setIcon(InternalRegistry.getEditorTextureVariants(button.getMnemonic())[textureSelector.getMnemonic()]);
+				if(Main.hasTextureInfo(button.getMnemonic())) {
+					button.setIcon(Main.getEditorTextureVariants(button.getMnemonic())[textureSelector.getMnemonic()]);
 					button.setActionCommand(activeTexture);
 				}
 			}
@@ -133,8 +131,7 @@ public final class GuiEditor extends JPanel implements MouseListener{
 	}
 
 	public static void openEditor() {
-		GuiEditor editor = new GuiEditor("filename.deg", false, "null", 800, 600, 0, 0, 0, 0);
-		showEditorFrame(editor, 800, 600);
+		showEditorFrame(new GuiEditor("filename.deg", false, "null", 800, 600, 0, 0, 0, 0), 800, 600);
 	}
 	
 	private void saveMap() {
@@ -143,7 +140,7 @@ public final class GuiEditor extends JPanel implements MouseListener{
 	 		ArrayList<String> textures = new ArrayList<>();
 			
 	 		for(JButton writeButton : zoneButtons) {
-	 			if(InternalRegistry.hasTextureInfo(writeButton.getMnemonic())) {
+	 			if(Main.hasTextureInfo(writeButton.getMnemonic())) {
 	 				String texture = writeButton.getActionCommand();
 	 				if(!texture.isEmpty() && !textures.contains(texture)) {
 	 					textures.add(texture);
@@ -171,7 +168,7 @@ public final class GuiEditor extends JPanel implements MouseListener{
 	 			int zoneIndex = writeButton.getMnemonic();
 				output.writeByte(zoneIndex);
 				
-	 			if(InternalRegistry.hasTextureInfo(zoneIndex)) {
+	 			if(Main.hasTextureInfo(zoneIndex)) {
 	 				output.writeByte(textures.indexOf(writeButton.getActionCommand()));
 	 			}
 	 		}
@@ -194,6 +191,7 @@ public final class GuiEditor extends JPanel implements MouseListener{
 			try {
 				Files.write(file, List.of(mapName));
 			} catch (IOException e1) {
+				//Can't rly happen
 			}
 		}
 		
@@ -218,13 +216,13 @@ public final class GuiEditor extends JPanel implements MouseListener{
 				
 				for(int y = 0; y < mapHeight; ++y) {
 					for(int x = 0; x < mapWidth; ++x) {
-						InternalRegistry.handleEditorReading(editor, input, x, y, textures);
+						Main.handleEditorReading(editor, input, x, y, textures);
 					}
 				}
 				showEditorFrame(editor, mapWidth * 64, mapHeight * 64);
 				
 			} catch (IOException e) {
-				e.printStackTrace();
+				JOptionPane.showMessageDialog(null, "Map file deleted...");
 			}
 		}
 	}
@@ -262,30 +260,7 @@ public final class GuiEditor extends JPanel implements MouseListener{
 				history.add(offItem);
 			}
 	    	
-	    	JMenuItem exitItem = new JMenuItem("Exit app");
-	    	exitItem.addActionListener(event -> System.exit(0));
-	    	
-	    	JMenuItem menuItem = new JMenuItem("Exit to menu");
-	    	menuItem.addActionListener(event -> {frame.dispose(); GuiMenu.showMenu();});
-	    	
-	    	JMenuItem resetItem = new JMenuItem("Reset map");
-	    	resetItem.setEnabled(!editor.zoneButtons.isEmpty());
-	    	resetItem.addActionListener(event -> {
-	    		for(JButton localButton : editor.zoneButtons) {
-			 		localButton.setMnemonic(0);
-			 		localButton.setActionCommand("normal");
-			 		localButton.setIcon(InternalRegistry.editorButtonIcons[0].get());
-	    	};});
-	    	
-	    	JMenuItem loadItem = new JMenuItem("Load map");
-	    	loadItem.addActionListener(event -> {
-	    		String[] fileNames = new File("./maps/").list();
-	    		loadMap((String) JOptionPane.showInputDialog(null, "Select Map!", "Maps:", JOptionPane.QUESTION_MESSAGE, null, fileNames, fileNames[0]));
-	    		((JFrame)editor.getTopLevelAncestor()).dispose();
-	    	});
-	    	
-	    	JMenuItem newMapItem = new JMenuItem("New map");
-	    	newMapItem.addActionListener(event -> {
+	    	fileMenu.add(newMenuItem("New map", true, event -> {
 	    		String input = JOptionPane.showInputDialog("Enter map size!", "10x10");
 				
 				if(input != null) {
@@ -296,7 +271,7 @@ public final class GuiEditor extends JPanel implements MouseListener{
 					
 					for(int yPos = 0; yPos < bigHeight; yPos += 64) {
 						for(int xPos = 0; xPos < bigWidth; xPos += 64) {
-							JButton button = new JButton(InternalRegistry.editorButtonIcons[0].get());
+							JButton button = new JButton(Main.editorButtonIcons[0].get());
 							button.setMnemonic(0);
 							button.setActionCommand("normal");
 							button.addMouseListener(newEditor);
@@ -306,41 +281,32 @@ public final class GuiEditor extends JPanel implements MouseListener{
 						}
 					}
 					showEditorFrame(newEditor, bigWidth, bigHeight);
-					
 					((JFrame)editor.getTopLevelAncestor()).dispose();
 				}
-	    	});
+	    	}));
 	    	
-	    	JMenuItem saveItem = new JMenuItem("Save map");
-	    	saveItem.setEnabled(!editor.zoneButtons.isEmpty());
-	    	saveItem.addActionListener(e -> editor.saveMap());
+	    	fileMenu.add(newMenuItem("Load map", true, event -> {
+	    		String[] fileNames = new File("./maps/").list();
+	    		loadMap((String) JOptionPane.showInputDialog(null, "Select Map!", "Maps:", JOptionPane.QUESTION_MESSAGE, null, fileNames, fileNames[0]));
+	    		((JFrame)editor.getTopLevelAncestor()).dispose();
+	    	}));
 	    	
-	    	JMenuItem historyResetItem = new JMenuItem("Delete History");
-	    	historyResetItem.addActionListener(event -> {
-	    		try {
-					Files.write(Paths.get("editorhistory.txt"), List.of());
-				} catch (IOException e1) {
-				}
-	    	});
-	    	
-	    	fileMenu.add(newMapItem);
-	    	fileMenu.add(loadItem);
 	    	fileMenu.addSeparator();
-	    	fileMenu.add(saveItem);
-	    	fileMenu.add(resetItem);
-	    	fileMenu.add(historyResetItem);
+	    	fileMenu.add(newMenuItem("Save map", !editor.zoneButtons.isEmpty(), event -> editor.saveMap()));
+	    	fileMenu.add(newMenuItem("Reset map", !editor.zoneButtons.isEmpty(), event -> {
+	    		for(JButton localButton : editor.zoneButtons) {
+			 		localButton.setMnemonic(0);
+			 		localButton.setActionCommand("normal");
+			 		localButton.setIcon(Main.editorButtonIcons[0].get());
+	    	};}));
+	    	
+	    	fileMenu.add(newMenuItem("Delete History", true, event -> new File("editorhistory.txt").delete()));
 	    	fileMenu.addSeparator();
-	    	fileMenu.add(menuItem);
-	    	fileMenu.add(exitItem);
+	    	fileMenu.add(newMenuItem("Exit to menu", true, event -> {frame.dispose(); GuiMenu.showMenu();}));
+	    	fileMenu.add(newMenuItem("Exit app", true, event -> System.exit(0)));
 	    	
-	    	JMenuItem propertiesMenu = new JMenuItem("Map Properties");
-	    	propertiesMenu.addActionListener(e -> GuiHelper.showNewFrame(editor.mapProperties, "Map Properties", JFrame.DISPOSE_ON_CLOSE, 350, 350));
-	    	
-	    	JMenuItem infoMenu = new JMenuItem("Map Information");
-	    	infoMenu.addActionListener(event -> GuiHelper.showNewFrame(new InformationMenu(editor), "Map Info", JFrame.DISPOSE_ON_CLOSE, 350, 350));
-	    	
-	    	mapMenu.add(propertiesMenu);
-	    	mapMenu.add(infoMenu);
+	    	mapMenu.add(newMenuItem("Map Properties", true, event -> GuiHelper.showNewFrame(editor.mapProperties, "Map Properties", JFrame.DISPOSE_ON_CLOSE, 350, 350)));
+	    	mapMenu.add(newMenuItem("Map Information", true, event -> GuiHelper.showNewFrame(new InformationMenu(editor), "Map Info", JFrame.DISPOSE_ON_CLOSE, 350, 350)));
 	    	
 	    	menuBar.add(fileMenu);
 	    	menuBar.add(history);
@@ -351,6 +317,13 @@ public final class GuiEditor extends JPanel implements MouseListener{
 		});
 	}
 	
+	private static JMenuItem newMenuItem(String text, boolean setEnabled, ActionListener listener) {
+		JMenuItem item = new JMenuItem(text);
+		item.setEnabled(setEnabled);
+		item.addActionListener(listener);
+		return item;
+	}
+	
 	private static final class ToolSelector extends JPanel implements ActionListener{
 		private final GuiEditor editor;
 		
@@ -358,20 +331,20 @@ public final class GuiEditor extends JPanel implements MouseListener{
 			setLayout(null);
 			this.editor = editor;
 			
-			add(newEditorButton(0, InternalRegistry.editorButtonIcons[0].get(), 0, 0, this));
-			add(newEditorButton(1, InternalRegistry.editorButtonIcons[1].get(), 64, 0, this));
-			add(newEditorButton(2, InternalRegistry.editorButtonIcons[2].get(), 0, 64, this));
-			add(newEditorButton(3, InternalRegistry.editorButtonIcons[3].get(), 64, 64, this));
-			add(newEditorButton(4, InternalRegistry.editorButtonIcons[4].get(), 0, 128, this));
-			add(newEditorButton(7, InternalRegistry.editorButtonIcons[7].get(), 64, 128, this));
-			add(newEditorButton(5, InternalRegistry.editorButtonIcons[5].get(), 0, 192, this));
-			add(newEditorButton(6, InternalRegistry.editorButtonIcons[6].get(), 64, 192, this));
-			add(newEditorButton(8, InternalRegistry.editorButtonIcons[8].get(), 0, 256, this));
-			add(newEditorButton(9, InternalRegistry.editorButtonIcons[9].get(), 64, 256, this));
+			add(newEditorButton(0, Main.editorButtonIcons[0].get(), 0, 0, this));
+			add(newEditorButton(1, Main.editorButtonIcons[1].get(), 64, 0, this));
+			add(newEditorButton(2, Main.editorButtonIcons[2].get(), 0, 64, this));
+			add(newEditorButton(3, Main.editorButtonIcons[3].get(), 64, 64, this));
+			add(newEditorButton(4, Main.editorButtonIcons[4].get(), 0, 128, this));
+			add(newEditorButton(7, Main.editorButtonIcons[7].get(), 64, 128, this));
+			add(newEditorButton(5, Main.editorButtonIcons[5].get(), 0, 192, this));
+			add(newEditorButton(6, Main.editorButtonIcons[6].get(), 64, 192, this));
+			add(newEditorButton(8, Main.editorButtonIcons[8].get(), 0, 256, this));
+			add(newEditorButton(9, Main.editorButtonIcons[9].get(), 64, 256, this));
 			
 			for(int k = 15; k < 20; ++k) {
-				if(InternalRegistry.zoneRegistry.containsKey(k)) {
-					add(newEditorButton(k, InternalRegistry.editorButtonIcons[k].get(), 0, 320, this));
+				if(Main.zoneRegistry.containsKey(Integer.valueOf(k))) {
+					add(newEditorButton(k, Main.editorButtonIcons[k].get(), 0, 320, this));
 				}
 			}
 		}
@@ -420,9 +393,9 @@ public final class GuiEditor extends JPanel implements MouseListener{
 			cherryTextures = new ImageIcon[count];
 			chestTextures = new ImageIcon[count];
 			
-			BufferedImage appleTexture = InternalRegistry.loadTexture("fruit", "apple.png");
-			BufferedImage cherryTexture = InternalRegistry.loadTexture("fruit", "cherry.png");
-			BufferedImage chestTexture = InternalRegistry.loadTexture("map/special", "chest.png");
+			BufferedImage appleTexture = Main.loadTexture("fruit", "apple.png");
+			BufferedImage cherryTexture = Main.loadTexture("fruit", "cherry.png");
+			BufferedImage chestTexture = Main.loadTexture("map/special", "chest.png");
 				
 			for(int k = 0; k < textureNames.length; ++k) {
 				ImageIcon nrm = new ImageIcon("./textures/map/" + textureNames[k]);
@@ -486,7 +459,7 @@ public final class GuiEditor extends JPanel implements MouseListener{
 	
 	private static final class InformationMenu extends JPanel{
 		private final GuiEditor editor;
-		private final int textureCount, textureSize;
+		private final String textureCount, textureSize;
 		@SuppressWarnings("rawtypes")
 		private final JList textureList;
 		
@@ -498,7 +471,7 @@ public final class GuiEditor extends JPanel implements MouseListener{
 			int size = 0;
 			
 	 		for(JButton writeButton : editor.zoneButtons) {
-	 			if(InternalRegistry.hasTextureInfo(writeButton.getMnemonic())) {
+	 			if(Main.hasTextureInfo(writeButton.getMnemonic())) {
 	 				String texture = "textures/map/" + writeButton.getActionCommand() + ".png";
 	 				if(!textures.contains(texture)) {
 	 					size += new File("./" + texture).length();
@@ -506,8 +479,8 @@ public final class GuiEditor extends JPanel implements MouseListener{
 	 				}
 	 			}
 	 		}
-	 		textureSize = size;
-	 		textureCount = textures.size();
+	 		textureSize = "Texture size: " + size + " bytes";
+	 		textureCount = "Texture Count: " + textures.size();
 	 		
 	 		textureList = new JList<>(textures.toArray());
 			textureList.setBounds(60, 150, 200, 120);
@@ -521,8 +494,8 @@ public final class GuiEditor extends JPanel implements MouseListener{
 			super.paintComponent(graphics);
 			
 			graphics.setFont(GuiHelper.thiccFont);
-			graphics.drawString("Texture Count: " + textureCount, 20, 20);
-			graphics.drawString("Texture size: " + textureSize + " bytes", 20, 40);
+			graphics.drawString(textureCount, 20, 20);
+			graphics.drawString(textureSize, 20, 40);
 			graphics.drawString("Textures Used:", 20, 145);
 		}
 	}

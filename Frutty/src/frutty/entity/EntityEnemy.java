@@ -4,12 +4,12 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 import frutty.Main;
-import frutty.map.MapZone;
-import frutty.registry.internal.InternalRegistry;
+import frutty.map.Map;
+import frutty.map.base.MapZone;
 
 public final class EntityEnemy extends Entity {
-	private static final BufferedImage[] fastTextures = {InternalRegistry.loadTexture("enemy", "fast_side.png"), InternalRegistry.loadTexture("enemy", "fast_front.png"), InternalRegistry.loadTexture("enemy", "fast_back.png")};
-	private static final BufferedImage[] normalTextures = {InternalRegistry.loadTexture("enemy", "side.png"), InternalRegistry.loadTexture("enemy", "front.png"), InternalRegistry.loadTexture("enemy", "back.png")};
+	private static final BufferedImage[] fastTextures = {Main.loadTexture("enemy", "fast_side.png"), Main.loadTexture("enemy", "fast_front.png"), Main.loadTexture("enemy", "fast_back.png")};
+	private static final BufferedImage[] normalTextures = {Main.loadTexture("enemy", "side.png"), Main.loadTexture("enemy", "front.png"), Main.loadTexture("enemy", "back.png")};
 	
 	private final int moveTick, updateTick;
 	
@@ -32,12 +32,12 @@ public final class EntityEnemy extends Entity {
 	@Override
 	public void render(Graphics graphics) {
 		if(textureIndex == 3) {
-			graphics.drawImage(moveTick == 1 ? fastTextures[0] : normalTextures[0], posX + 64, posY, -64, 64, null);
+			graphics.drawImage(moveTick == 1 ? fastTextures[0] : normalTextures[0], renderPosX + 64, renderPosY, -64, 64, null);
 		}else{
 			if(animSwitch || textureIndex == 0) {
-				graphics.drawImage(moveTick == 1 ? fastTextures[textureIndex] : normalTextures[textureIndex], posX, posY, 64, 64, null);
+				graphics.drawImage(moveTick == 1 ? fastTextures[textureIndex] : normalTextures[textureIndex], renderPosX, renderPosY, 64, 64, null);
 			}else{
-				graphics.drawImage(moveTick == 1 ? fastTextures[textureIndex] : normalTextures[textureIndex], posX + 64, posY, -64, 64, null);
+				graphics.drawImage(moveTick == 1 ? fastTextures[textureIndex] : normalTextures[textureIndex], renderPosX + 64, renderPosY, -64, 64, null);
 			}
 		}
 		
@@ -47,11 +47,11 @@ public final class EntityEnemy extends Entity {
 	@Override
 	public void update(int ticks) {
 		if(ticks % moveTick == 0) {
+			checkPlayers();
 			if(ticks % updateTick == 0) {
-				checkPlayer(true);
 				animSwitch = !animSwitch;
 				
-				if(!MapZone.isEmpty(posX + motionX, posY + motionY)) {
+				if(serverPosX + motionX > Map.currentMap.width || serverPosX + motionX < 0 || !MapZone.isEmptyAt(coordsToIndex(serverPosX + motionX, serverPosY + motionY))) {
 					EnumFacing facing = findFreeFacing();
 					motionX = facing.xOffset;
 					motionY = facing.yOffset;
@@ -62,8 +62,8 @@ public final class EntityEnemy extends Entity {
 				serverPosY += motionY;
 			}
 		
-		posX += motionX / 16;
-		posY += motionY / 16;
+		renderPosX += motionX / 16;
+		renderPosY += motionY / 16;
 		}
 	}
 }

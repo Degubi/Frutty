@@ -13,13 +13,12 @@ import frutty.gui.GuiIngame;
 import frutty.gui.GuiStats;
 import frutty.gui.editor.GuiEditor.TextureSelector;
 import frutty.map.Map;
-import frutty.map.MapZone;
 import frutty.map.Particle;
+import frutty.map.base.MapZone;
 import frutty.map.interfaces.ITexturable;
-import frutty.registry.internal.InternalRegistry;
 
 public final class MapZoneChest extends MapZone implements ITexturable{
-	private static final BufferedImage chest = InternalRegistry.loadTexture("map/special", "chest.png");
+	private static final BufferedImage chest = Main.loadTexture("map/special", "chest.png");
 
 	public MapZoneChest() {
 		super(7, true);

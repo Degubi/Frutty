@@ -1,4 +1,4 @@
-package frutty.registry.internal;
+package frutty.plugin;
 
 import java.util.Objects;
 import java.util.function.Supplier;

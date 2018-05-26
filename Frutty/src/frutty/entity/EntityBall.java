@@ -5,7 +5,7 @@ import java.awt.Graphics;
 
 import frutty.gui.GuiStats;
 import frutty.map.Map;
-import frutty.map.MapZone;
+import frutty.map.base.MapZone;
 
 public class EntityBall extends Entity{
 	public EntityBall() {
@@ -16,30 +16,30 @@ public class EntityBall extends Entity{
 	@Override
 	public void render(Graphics graphics) {
 		graphics.setColor(Color.WHITE);
-		graphics.fillOval(posX + 24, posY + 24, 16, 16);
+		graphics.fillOval(renderPosX + 24, renderPosY + 24, 16, 16);
 		super.render(graphics);
 	}
 
 	public void activate(int x, int y, EnumFacing facing) {
 		if(!active) {
 			active = true;
-			posX = x;
-			posY = y;
+			renderPosX = x;
+			renderPosY = y;
 			serverPosX = x;
 			serverPosY = y;
 			
 			motionX = facing.xOffset;
 			motionY = facing.yOffset;
 			
-			posX += motionX;
-			posY += motionY;
+			renderPosX += motionX;
+			renderPosY += motionY;
 		}
 	}
 	
 	@Override
 	public void update(int ticks) {
 		if(ticks % 15 == 0) {
-			EntityEnemy enemy = Map.getEnemyPredictedAtPos(posX, posY, this);
+			EntityEnemy enemy = Map.getEnemyPredictedAtPos(renderPosX, renderPosY, this);
 			if(enemy != null) {
 				enemy.active = false;
 				active = false;
@@ -48,21 +48,21 @@ public class EntityBall extends Entity{
 			}
 			
 			for(EntityPlayer player : Map.currentMap.players) {
-				if(posY == player.posY && posX == player.posX) {
+				if(renderPosY == player.renderPosY && renderPosX == player.renderPosX) {
 					active = false;
 				}
 			}
 			
-			if(!MapZone.isEmpty(posX + motionX, posY + motionY)) {
+			if(!MapZone.isEmpty(renderPosX + motionX, renderPosY + motionY)) {
 				EnumFacing facing = findFreeFacing();
 				motionX = facing.xOffset;
 				motionY = facing.yOffset;
 			}
 			
-			posX += motionX;
-			posY += motionY;
-			serverPosX = posX;
-			serverPosY = posY;
+			renderPosX += motionX;
+			renderPosY += motionY;
+			serverPosX = renderPosX;
+			serverPosY = renderPosY;
 		}
 	}
 }

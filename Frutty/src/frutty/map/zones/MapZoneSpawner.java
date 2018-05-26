@@ -5,7 +5,7 @@ import java.awt.Graphics;
 
 import frutty.entity.EntityEnemy;
 import frutty.map.Map;
-import frutty.map.MapZone;
+import frutty.map.base.MapZone;
 
 public final class MapZoneSpawner extends MapZone{
 	private static final Color[] colorCache = new Color[32];
@@ -36,7 +36,7 @@ public final class MapZoneSpawner extends MapZone{
 	}
 
 	@Override
-	public void onZoneAdded(boolean isBackground, int x, int y, Map mapInstance) {
+	public void onZoneAdded(boolean isBackground, int x, int y) {
 		if(!isBackground) {
 			for(int k = 0; k < +Map.currentMap.enemies.length; ++k) {
 				Map.currentMap.enemies[k] = new EntityEnemy(x, y);

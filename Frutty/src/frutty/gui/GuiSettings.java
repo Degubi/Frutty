@@ -36,9 +36,12 @@ public final class GuiSettings extends JPanel implements ActionListener{
 	private final JTextField leftKey = newTextField(Settings.leftKey, 100, 305), rightKey = newTextField(Settings.rightKey, 100, 335);
 	
 	private final JSlider graphicsSlider = new JSlider(JSlider.HORIZONTAL, 0, 2, Settings.graphicsLevel);
+	private final GuiMenu menuInstance;
 	
-	public GuiSettings() {
+	public GuiSettings(GuiMenu menu) {
 		setLayout(null);
+		
+		menuInstance = menu;
 		
 		graphicsSlider.setPaintLabels(true);
 		graphicsSlider.setBounds(300, 50, 150, 40);
@@ -124,9 +127,9 @@ public final class GuiSettings extends JPanel implements ActionListener{
 		graphics.drawString("Graphics level:", 320, 40);
 	}
 	
-	public static void showGuiSettings() {
+	public static void showGuiSettings(GuiMenu menu) {
 		Settings.loadSettings();
-		GuiHelper.showNewFrame(new GuiSettings(), "Tutty Frutty Options", JFrame.DISPOSE_ON_CLOSE, 576, 480);
+		GuiHelper.showNewFrame(new GuiSettings(menu), "Tutty Frutty Options", JFrame.DISPOSE_ON_CLOSE, 576, 480);
 	}
 	
 	@Override
@@ -156,7 +159,7 @@ public final class GuiSettings extends JPanel implements ActionListener{
 			((JFrame)getTopLevelAncestor()).dispose();
 		}
 		
-		GuiMenu.menuGui.repaint();
+		menuInstance.repaint();
 	}
 	
 	private static final class TextFilter extends DocumentFilter{
@@ -213,7 +216,9 @@ public final class GuiSettings extends JPanel implements ActionListener{
 					output.print(false);
 					output.print(' ');
 					output.print(2);
-				} catch (FileNotFoundException ex) {}
+				} catch (FileNotFoundException ex) {
+					//Can't rly happen
+				}
 			}
 		}
 		
@@ -240,7 +245,9 @@ public final class GuiSettings extends JPanel implements ActionListener{
 				output.print(showDebug);
 				output.print(' ');
 				output.print(graphicsLevel);
-			} catch (FileNotFoundException e) {}
+			} catch (FileNotFoundException e) {
+				//Can't rly happen
+			}
 		}
 	}
 }

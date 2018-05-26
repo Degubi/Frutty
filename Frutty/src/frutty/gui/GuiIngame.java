@@ -21,8 +21,8 @@ import frutty.entity.EntityEnemy;
 import frutty.entity.EntityPlayer;
 import frutty.gui.GuiSettings.Settings;
 import frutty.map.Map;
-import frutty.map.MapZone;
 import frutty.map.Particle;
+import frutty.map.base.MapZone;
 import frutty.map.interfaces.ITransparentZone;
 import frutty.map.zones.MapZoneWater;
 
@@ -35,11 +35,15 @@ public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 	public static BufferedImage skyTexture;
 	public static BufferedImage[] textures;
 	
+	private int renderDelay;
+	private long renderLastUpdate = System.currentTimeMillis();
+	
 	public GuiIngame() {
 		setLayout(null);
 		
-		add(GuiHelper.newButton("Exit", Map.currentMap.width + 110, Map.currentMap.height - 50, this));
-		add(GuiHelper.newButton("Save", Map.currentMap.width + 110, Map.currentMap.height - 100, this));
+		add(GuiHelper.newButton("Exit", Map.currentMap.width + 100, Map.currentMap.height - 20, this));
+		add(GuiHelper.newButton("Save", Map.currentMap.width + 100, Map.currentMap.height - 100, this));
+		add(GuiHelper.newButton("Pause", Map.currentMap.width + 100, Map.currentMap.height - 180, this));
 		thread.scheduleAtFixedRate(this, 20, 20, TimeUnit.MILLISECONDS);
 	}
 	
@@ -84,16 +88,25 @@ public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 		graphics.drawString("Top score: " + GuiStats.topScore, Map.currentMap.width + 90, 80);
 		
 		if(Settings.showDebug) {
+			graphics.setColor(GuiHelper.color_128Black);
+			graphics.fillRect(0, 0, 130, 130);
+			
 			graphics.setFont(GuiHelper.thiccFont);
 			graphics.setColor(Color.WHITE);
-			int entityCount = Map.currentMap.enemies.length + Map.currentMap.players.length + Map.currentMap.entities.size() + Map.currentMap.particles.size();
 			
+			//Left
 			graphics.drawString("zonecount: " + Map.currentMap.zones.length, 2, 20);
-			graphics.drawString("entities: " + entityCount, 2, 40);
+			graphics.drawString("entities: " + (Map.currentMap.enemies.length + Map.currentMap.players.length + Map.currentMap.entities.size() + Map.currentMap.particles.size()), 2, 40);
 			graphics.drawString("map_width: " + (Map.currentMap.width + 64), 2, 60);
 			graphics.drawString("map_height: " + (Map.currentMap.height + 64), 2, 80);
 			graphics.drawString("playerpos_x: " + Map.currentMap.players[0].serverPosX, 2, 100);
 			graphics.drawString("playerpos_y: " + Map.currentMap.players[0].serverPosY, 2, 120);
+			
+			//Right
+			graphics.drawString("render delay: " + renderDelay + " ms", Map.currentMap.width - 80, 20);
+			
+			renderDelay = (int) (System.currentTimeMillis() - renderLastUpdate);
+			renderLastUpdate = System.currentTimeMillis();
 		}
 	}
 	
@@ -178,7 +191,9 @@ public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 			GuiMenu.showMenu();
 			Settings.saveSettings();
 			((JFrame)getTopLevelAncestor()).dispose();
-			
+		}else if(event.getActionCommand().equals("Pause")) {
+			paused = !paused;
+			((JFrame)getTopLevelAncestor()).requestFocus();
 		}else{  //Save
 			paused = true;
 			if(Map.createSave(JOptionPane.showInputDialog("Enter save name!"))) {

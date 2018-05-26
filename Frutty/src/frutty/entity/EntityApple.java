@@ -3,14 +3,12 @@ package frutty.entity;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
-import frutty.gui.GuiStats;
+import frutty.Main;
 import frutty.map.Map;
-import frutty.map.MapZone;
-import frutty.registry.internal.InternalRegistry;
+import frutty.map.base.MapZone;
 
-public class EntityApple extends Entity{
-	public static final BufferedImage cherryTexture = InternalRegistry.loadTexture("fruit", "cherry.png");
-	public static final BufferedImage appleTexture = InternalRegistry.loadTexture("fruit", "apple.png");
+public final class EntityApple extends Entity{
+	public static final BufferedImage appleTexture = Main.loadTexture("fruit", "apple.png");
 	
 	private int sleepCounter = 0;
 	
@@ -22,24 +20,25 @@ public class EntityApple extends Entity{
 	
 	@Override
 	public void render(Graphics graphics) {
-		graphics.drawImage(appleTexture, posX, posY, null);
+		graphics.drawImage(appleTexture, renderPosX, renderPosY, null);
 		
 		super.render(graphics);
-	}
-
-	private static EntityEnemy getEnemyAtPos(int x, int y) {
-		for(EntityEnemy enemy : Map.currentMap.enemies) {
-			if(enemy.serverPosX == x && enemy.active && (enemy.serverPosY == y || enemy.serverPosY == y - 64)) {
-				return enemy;
-			}
-		}
-		return null;
 	}
 	
 	@Override
 	public void update(int ticks) {
+		if(motionY != 0) {
+			checkPlayers();
+			
+			for(EntityEnemy enemies : Map.currentMap.enemies) {
+				if(doesCollide(enemies.serverPosX, enemies.serverPosY)) {
+					enemies.active = false;
+				}
+			}
+		}
+		
 		if(ticks % 8 == 0) {
-			if(MapZone.isEmpty(posX, serverPosY + 64)) {
+			if(MapZone.isEmptyAt(coordsToIndex(renderPosX, serverPosY + 64))) {
 				if(sleepCounter == 0) {
 					motionY = 64;
 				}else{
@@ -49,20 +48,8 @@ public class EntityApple extends Entity{
 				motionY = 0;
 				sleepCounter = 5;
 			}
-			
-			if(motionY != 0) {
-				checkPlayer(false);
-				
-				EntityEnemy enemy = getEnemyAtPos(posX, serverPosY);
-				if(enemy != null) {
-					enemy.active = false;
-					++GuiStats.enemyCount;
-					Map.currentMap.score += 100;
-				}
-			}
-			
 			serverPosY += motionY;
 		}
-		posY += motionY / 8;
+		renderPosY += motionY / 8;
 	}
 }

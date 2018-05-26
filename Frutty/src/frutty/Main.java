@@ -1,11 +1,30 @@
 package frutty;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.HashMap;
 import java.util.Random;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
+
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 
 import frutty.gui.GuiMenu;
 import frutty.gui.GuiSettings.Settings;
 import frutty.gui.GuiStats;
+import frutty.gui.editor.GuiEditor;
+import frutty.gui.editor.GuiEditor.TextureSelector;
+import frutty.map.base.MapZone;
+import frutty.map.interfaces.ITexturable;
 import frutty.map.zones.MapZoneChest;
 import frutty.map.zones.MapZoneEmpty;
 import frutty.map.zones.MapZoneFruit;
@@ -14,10 +33,15 @@ import frutty.map.zones.MapZoneNormal;
 import frutty.map.zones.MapZoneSky;
 import frutty.map.zones.MapZoneSpawner;
 import frutty.map.zones.MapZoneWater;
-import frutty.registry.internal.InternalRegistry;
-import frutty.registry.internal.PluginLoader;
+import frutty.plugin.IFruttyPlugin;
+import frutty.plugin.Lazy;
 
+@SuppressWarnings("boxing")
 public final class Main {
+	@SuppressWarnings("unchecked")
+	public static final Lazy<ImageIcon>[] editorButtonIcons = new Lazy[20];
+	public static final HashMap<Integer, MapZone> zoneRegistry = new HashMap<>();
+	
 	public static final Random rand = new Random();
 	
 	public static final MapZoneNormal normalZone = new MapZoneNormal();
@@ -30,20 +54,131 @@ public final class Main {
 	public static final MapZoneSky skyZone = new MapZoneSky();
 	
 	public static void main(String[] args){
-		InternalRegistry.registerZone(normalZone, "normal");
-		InternalRegistry.registerZone(emptyZone, "empty");
-		InternalRegistry.registerZone(appleZone, "apple");
-		InternalRegistry.registerZone(cherryZone, "cherry");
-		InternalRegistry.registerZone(spawnerZone, "spawner");
-		InternalRegistry.registerZone(chestZone, "chest");
-		InternalRegistry.registerZone(waterZone, "water");
-		InternalRegistry.registerZone(skyZone, "sky");
+		registerZone(normalZone, "normal");
+		registerZone(emptyZone, "empty");
+		registerZone(appleZone, "apple");
+		registerZone(cherryZone, "cherry");
+		registerZone(spawnerZone, "spawner");
+		registerZone(chestZone, "chest");
+		registerZone(waterZone, "water");
+		registerZone(skyZone, "sky");
 		
-		PluginLoader.loadPlugins();
+		loadPlugins();
 		
 		GuiMenu.showMenu();
 		Settings.loadSettings();
 		GuiStats.loadStats();
 		new File("./saves/").mkdir();
+		
+		editorButtonIcons[5] = new Lazy<>(() -> new ImageIcon("./textures/dev/player1.png"));
+		editorButtonIcons[6] = new Lazy<>(() -> new ImageIcon("./textures/dev/player2.png"));
+	}
+	
+	public static void registerZone(MapZone zone, String editorName) {
+		zoneRegistry.put(zone.zoneID, zone);
+		editorButtonIcons[zone.zoneID] = new Lazy<>(() -> new ImageIcon("./textures/dev/" + editorName + ".png"));
+	}
+	
+	public static boolean hasTextureInfo(int ID) {
+		return zoneRegistry.get(ID) instanceof ITexturable;
+	}
+	
+	public static ImageIcon[] getEditorTextureVariants(int ID) {
+		return ((ITexturable)zoneRegistry.get(ID)).getEditorTextureVars();
+	}
+	
+	public static MapZone handleMapReading(int ID) {
+		if(ID == 5 || ID == 6) {
+			return Main.emptyZone;
+		}
+		return zoneRegistry.get(ID);
+	}
+	
+	public static BufferedImage loadTexture(String prefix, String name) {
+		try{
+			return ImageIO.read(new File("./textures/" + prefix + "/" + name));
+		}catch(IOException e){
+			System.err.println("Can't find texture: " + prefix + "/" + name + ", returning null. Have fun :)");
+			return null;
+		}
+	}
+	
+	public static void handleEditorReading(GuiEditor editor, ObjectInputStream input, int x, int y, String[] textures) throws IOException {
+		int ID = input.readByte();
+		MapZone zone = zoneRegistry.get(ID);
+		
+		JButton button = new JButton(editorButtonIcons[ID].get());
+		button.setBounds(x * 64, y * 64, 64, 64);
+		button.setMnemonic(ID);
+		button.addMouseListener(editor);
+		if(zone != null && zone instanceof ITexturable){
+			int textureData = input.readByte();
+			button.setActionCommand(textures[textureData]);
+			button.setIcon(((ITexturable)zone).getEditorTextureVars()[TextureSelector.indexOf(textures[textureData] + ".png")]);
+		}
+		editor.zoneButtons.add(button);
+		editor.add(button);
+	}
+	
+	
+	
+	private static void loadPlugins() {
+		new File("./plugins/").mkdir();
+		
+		File[] all = new File("./plugins/").listFiles((dir, name) -> name.endsWith(".jar"));
+		if(all.length > 0) {
+			
+			String[] mainClassNames = new String[all.length];
+			URL[] classLoaderNames = new URL[all.length];
+			
+			for(int k = 0; k < all.length; ++k) {
+				try {
+					classLoaderNames[k] = all[k].toURI().toURL();
+				} catch (MalformedURLException e1) {
+					e1.printStackTrace();
+				}
+				
+				try(JarFile jar = new JarFile(all[k])){
+					Manifest mani = jar.getManifest();
+					if(mani == null) {
+						System.err.println("Can't find manifest file from plugin: " + all[k]);
+					}else{
+						String pluginClass = mani.getMainAttributes().getValue("Plugin-Class");
+						if(pluginClass == null) {
+							System.err.println("Can't find \"Plugin-Class\" attribute from plugin: " + all[k]);
+						}else {
+							mainClassNames[k] = pluginClass;
+						}
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			try(URLClassLoader urlClass = new URLClassLoader(classLoaderNames)){
+				for(int k = 0; k < mainClassNames.length; ++k) {
+					if(mainClassNames[k] == null) {
+						System.err.println("Can't load main class from plugin: " + all[k]);
+					}else{
+						Class<?> loaded = urlClass.loadClass(mainClassNames[k]);
+						if(hasInterface(loaded)) {
+							Method method = loaded.getMethod("register");
+							method.invoke(loaded.getDeclaredConstructor().newInstance());
+						}
+					}
+				}
+			} catch (IOException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | InstantiationException | ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	private static boolean hasInterface(Class<?> theClass) {
+		for(Class<?> faces : theClass.getInterfaces()) {
+			if(IFruttyPlugin.class.isAssignableFrom(faces)){
+				return true;
+			}
+		}
+		return false;
 	}
 }

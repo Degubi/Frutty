@@ -1,5 +1,6 @@
-package frutty.map;
+package frutty.map.base;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.io.Serializable;
 
@@ -10,8 +11,11 @@ import frutty.entity.zone.EntityZone;
 import frutty.gui.GuiHelper;
 import frutty.gui.GuiSettings.Settings;
 import frutty.gui.GuiStats;
+import frutty.map.Map;
+import frutty.map.Particle;
 import frutty.map.zones.MapZoneEmpty;
 
+@SuppressWarnings("unused")
 public abstract class MapZone implements Serializable{
 	private static final long serialVersionUID = 392316063689927131L;
 	
@@ -30,7 +34,7 @@ public abstract class MapZone implements Serializable{
 		return true;
 	}
 	
-	public void onZoneAdded(boolean isBackground, int x, int y, Map mapInstance) {}
+	public void onZoneAdded(boolean isBackground, int x, int y) {}
 	
 	public EntityZone getZoneEntity(int x, int y, int zoneIndex) {
 		return null;
@@ -62,6 +66,11 @@ public abstract class MapZone implements Serializable{
 			for(int k = 0; k < till && k < 4; ++k) {
 				graphics.fillRect(x, y, 64, 64);
 			}
+		}
+		
+		if(Settings.showDebug) {
+			graphics.setColor(Color.WHITE);
+			graphics.drawRect(x, y, 64, 64);
 		}
 	}
 	

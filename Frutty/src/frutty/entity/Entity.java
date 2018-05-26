@@ -8,19 +8,19 @@ import frutty.Main;
 import frutty.gui.GuiIngame;
 import frutty.gui.GuiSettings.Settings;
 import frutty.map.Map;
-import frutty.map.MapZone;
+import frutty.map.base.MapZone;
 
 //Coord to index: posX / 64 + (posY / 64 * ((Map.currentMap.width + 64) / 64))
 public abstract class Entity implements Serializable{
 	private static final long serialVersionUID = 2876462867774051456L;
 	
 	public boolean active = true;
-	public int posX, posY, serverPosX, serverPosY, motionX, motionY;
+	public int renderPosX, renderPosY, serverPosX, serverPosY, motionX, motionY;
 	
 	public Entity() {}
 	public Entity(int x, int y) {
-		posX = x;
-		posY = y;
+		renderPosX = x;
+		renderPosY = y;
 		serverPosX = x;
 		serverPosY = y;
 	}
@@ -34,10 +34,14 @@ public abstract class Entity implements Serializable{
 		}
 	}
 	
-	protected void checkPlayer(boolean checkInterp) {
+	protected boolean doesCollide(int x, int y) {
+		return (serverPosX >= x && serverPosX + 64 <= x + 64) &&
+			   (serverPosY >= y && serverPosY + 64 <= y + 64);
+	}
+	
+	protected void checkPlayers() {
 		for(EntityPlayer player : Map.currentMap.players) {
-			if((serverPosX == player.serverPosX && serverPosY == player.serverPosY) || checkInterp 
-					&& ((serverPosY + motionY == player.serverPosY && serverPosX + motionX == player.serverPosX))) {
+			if(doesCollide(player.serverPosX, player.serverPosY)) {
 				if(Settings.godEnabled || player.isInvicible()) {
 					active = false;
 					Map.currentMap.score += 100;
@@ -49,10 +53,10 @@ public abstract class Entity implements Serializable{
 	}
 	
 	protected int currentPosToIndex() {
-		return posX / 64 + (posY / 64 * ((Map.currentMap.width + 64) / 64));
+		return renderPosX / 64 + (renderPosY / 64 * ((Map.currentMap.width + 64) / 64));
 	}
 	
-	protected static int coordsToIndex(int x, int y) {
+	public static int coordsToIndex(int x, int y) {
 		return x / 64 + (y / 64 * ((Map.currentMap.width + 64) / 64));
 	}
 	
@@ -60,12 +64,14 @@ public abstract class Entity implements Serializable{
 		if(Settings.debugCollisions) {
 			graphics.setColor(Color.WHITE);
 			graphics.drawRect(serverPosX, serverPosY, 64, 64);
+			graphics.setColor(Color.RED);
+			graphics.drawRect(renderPosX, renderPosY, 64, 64);
 		}
 	}
 	
 	public abstract void update(int ticks);
 	
-	public static enum EnumFacing {
+	protected static enum EnumFacing {
 		UP(0, -64, 2),
 		DOWN(0, 64, 1),
 		LEFT(-64, 0, 3),

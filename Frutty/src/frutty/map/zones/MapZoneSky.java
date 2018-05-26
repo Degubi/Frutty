@@ -3,7 +3,7 @@ package frutty.map.zones;
 import java.awt.Graphics;
 
 import frutty.gui.GuiIngame;
-import frutty.map.MapZone;
+import frutty.map.base.MapZone;
 
 public final class MapZoneSky extends MapZone{
 	public MapZoneSky() {

@@ -22,8 +22,8 @@ import frutty.entity.zone.EntityZone;
 import frutty.gui.GuiHelper;
 import frutty.gui.GuiIngame;
 import frutty.gui.GuiSettings.Settings;
+import frutty.map.base.MapZone;
 import frutty.map.interfaces.ITexturable;
-import frutty.registry.internal.InternalRegistry;
 
 public final class Map implements Serializable{
 	private static final long serialVersionUID = -5083163189200818535L;
@@ -139,27 +139,28 @@ public final class Map implements Serializable{
 					//TODO tisztítást itt megcsinálni újra
 					
 					/*for(int yClear = 0; yClear < bigHeight; yClear += 64) {
-						MapZone toSet = Map.getZoneAtPos(zone.posX, yClear);
+						currentMap.zones[Entity.coordsToIndex(currentMap.xCoords[randIndex], yClear)] = Main.emptyZone;
+						/*MapZone toSet = Map.getZoneAtPos(zone.posX, yClear);
 							if(toSet != null && yClear != zone.posY) {
 								Map.setZoneEmptyAt(toSet.zoneIndex);
-						}
-					}
+						}*/
+					//}
 					
-					for(int xClear = 0; xClear < bigWidth; xClear += 64) {
-						MapZone toSet = Map.getZoneAtPos(xClear, zone.posY);
+					/*for(int xClear = 0; xClear < bigWidth; xClear += 64) {
+						currentMap.zones[Entity.coordsToIndex(xClear, currentMap.yCoords[randIndex])] = Main.emptyZone;
+						/*MapZone toSet = Map.getZoneAtPos(xClear, zone.posY);
 							if(toSet != null && xClear != zone.posX) {
 								Map.setZoneEmptyAt(toSet.zoneIndex);
-						}
-					}
-					*/
+						}*/
+					//}
 					for(int l = 0; l < currentMap.enemies.length; ++l) {
 						currentMap.enemies[l] = new EntityEnemy(currentMap.xCoords[randIndex], currentMap.yCoords[randIndex]);
 					}
 					
 					continue outerLoop;
 				}else if(loopState == 1) {
-					currentMap.players[0].posX = currentMap.xCoords[randIndex];
-					currentMap.players[0].posY = currentMap.yCoords[randIndex];
+					currentMap.players[0].renderPosX = currentMap.xCoords[randIndex];
+					currentMap.players[0].renderPosY = currentMap.yCoords[randIndex];
 					currentMap.players[0].serverPosX = currentMap.xCoords[randIndex];
 					currentMap.players[0].serverPosY = currentMap.yCoords[randIndex];
 					loopState = 2;
@@ -167,8 +168,8 @@ public final class Map implements Serializable{
 					if(isMultiplayer) continue outerLoop;
 					break outerLoop;
 				}else{
-					currentMap.players[1].posX = currentMap.xCoords[randIndex];
-					currentMap.players[1].posY = currentMap.yCoords[randIndex];
+					currentMap.players[1].renderPosX = currentMap.xCoords[randIndex];
+					currentMap.players[1].renderPosY = currentMap.yCoords[randIndex];
 					currentMap.players[1].serverPosX = currentMap.xCoords[randIndex];
 					currentMap.players[1].serverPosY = currentMap.yCoords[randIndex];
 					break outerLoop;
@@ -193,8 +194,8 @@ public final class Map implements Serializable{
 			
 			for(int y = 0; y < height; y += 64) {
 				for(int x = 0; x < width; x += 64) {
-					MapZone zone = InternalRegistry.handleMapReading(input.readByte());
-					zone.onZoneAdded(false, x, y, currentMap);
+					MapZone zone = Main.handleMapReading(input.readByte());
+					zone.onZoneAdded(false, x, y);
 					
 					if(zone instanceof ITexturable) {
 						currentMap.textureData[zoneIndex] = input.readByte();
@@ -209,7 +210,9 @@ public final class Map implements Serializable{
 					currentMap.zones[zoneIndex++] = zone;
 				}
 			}
-		}catch(IOException e){}
+		}catch(IOException e){
+			System.err.println("Can't load invalid map: " + name);
+		}
 		
 		GuiHelper.mapSizeCheck(currentMap.width / 64 + 1, currentMap.height / 64 + 1);
 	}
@@ -244,7 +247,7 @@ public final class Map implements Serializable{
 			
 			for(int y = 0; y < height; y += 64) {
 				for(int x = 0; x < width; x += 64) {
-					MapZone zone = InternalRegistry.handleMapReading(input.readByte());
+					MapZone zone = Main.handleMapReading(input.readByte());
 					if(zone instanceof ITexturable) {
 						map.textureData[zoneIndex] = input.readByte();
 					}
@@ -267,7 +270,9 @@ public final class Map implements Serializable{
 			}
 			input.readUTF();
 			return input.readShort() + "x" + input.readShort();
-		} catch (IOException e) {}
+		} catch (IOException e) {
+			System.err.println("Can't load map size for menu: " + fileName + ".deg");
+		}
 		return "";
 	}
 	
@@ -316,15 +321,11 @@ public final class Map implements Serializable{
 	
 	public static EntityEnemy getEnemyPredictedAtPos(int x, int y, EntityBall entity) {
 		for(EntityEnemy enemy : currentMap.enemies) {
-			if((enemy.posY == y && enemy.posX == x) || (enemy.posY == y - entity.motionY && enemy.posX == x - entity.motionX)) {
+			if((enemy.renderPosY == y && enemy.renderPosX == x) || (enemy.renderPosY == y - entity.motionY && enemy.renderPosX == x - entity.motionX)) {
 				return enemy;
 			}
 		}
 		return null;
-	}
-	
-	public static EntityBall getBall() {
-		return (EntityBall) currentMap.entities.get(0);
 	}
 	
 	public static EntityZone getZoneEntity(int ID) {

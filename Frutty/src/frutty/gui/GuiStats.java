@@ -9,6 +9,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -20,7 +21,11 @@ public final class GuiStats extends JPanel implements ActionListener{
 	public GuiStats() {
 		setLayout(null);
 		
-		add(GuiHelper.newButton("Reset", 70, 100, this));
+		JButton butt = new JButton("Reset");
+		butt.setBounds(70, 100, 120, 30);
+		butt.setMnemonic(100);
+		butt.addActionListener(this);
+		add(butt);
 	}
 	
 	public static void loadStats() {
@@ -52,7 +57,9 @@ public final class GuiStats extends JPanel implements ActionListener{
 			output.print(enemyCount);
 			output.print(' ');
 			output.println(zoneCount);
-		} catch (FileNotFoundException e) {}
+		} catch (FileNotFoundException e) {
+			//Can't rly happen
+		}
 	}
 	
 	@Override

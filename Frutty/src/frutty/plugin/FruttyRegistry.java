@@ -1,12 +1,11 @@
-package frutty.registry;
+package frutty.plugin;
 
 import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
 
-import frutty.map.MapZone;
-import frutty.registry.internal.InternalRegistry;
-import frutty.registry.internal.Lazy;
+import frutty.Main;
+import frutty.map.base.MapZone;
 
 public final class FruttyRegistry {
 	private FruttyRegistry() {}
@@ -20,10 +19,12 @@ public final class FruttyRegistry {
 		if(zone.zoneID < 20) {
 			System.err.println("Can't register zone with ID lower than 20");
 		}else {
+			@SuppressWarnings("boxing")
 			Integer sad = zone.zoneID;
-			if(!InternalRegistry.zoneRegistry.containsKey(sad)) {
-				InternalRegistry.zoneRegistry.put(sad, zone);
-				InternalRegistry.editorButtonIcons[zone.zoneID] = new Lazy<>(() -> new ImageIcon("./textures/dev/" + editorTextureName + ".png"));
+			
+			if(!Main.zoneRegistry.containsKey(sad)) {
+				Main.zoneRegistry.put(sad, zone);
+				Main.editorButtonIcons[zone.zoneID] = new Lazy<>(() -> new ImageIcon("./textures/dev/" + editorTextureName + ".png"));
 			}else{
 				System.err.println("Zone already registered with ID: " + zone.zoneID);
 			}
@@ -31,6 +32,6 @@ public final class FruttyRegistry {
 	}
 	
 	public static BufferedImage loadTexture(String prefix, String name) {
-		return InternalRegistry.loadTexture(prefix, name);
+		return Main.loadTexture(prefix, name);
 	}
 }

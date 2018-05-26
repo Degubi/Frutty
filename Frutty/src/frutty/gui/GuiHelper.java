@@ -5,7 +5,6 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseListener;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -53,37 +52,13 @@ public final class GuiHelper {
 		return box;
 	}
 	
-	public static JButton newMenuButton(String text, int x, int y, ActionListener listener) {
+	public static JButton newButton(String text, int x, int y, ActionListener listener) {
 		JButton butt = new JButton(text);
 		butt.setBounds(x, y, 160, 60);
 		butt.setBorder(menuBorder);
 		butt.setBackground(Color.LIGHT_GRAY);
 		butt.setMnemonic(100);
 		butt.addActionListener(listener);
-		return butt;
-	}
-	
-	public static JButton newButton(String text, int x, int y, int width, ActionListener listener) {
-		JButton butt = new JButton(text);
-		butt.setBounds(x, y, width, 30);
-		butt.setMnemonic(100);
-		butt.addActionListener(listener);
-		return butt;
-	}
-	
-	public static JButton newButton(String text, int x, int y, ActionListener listener) {
-		JButton butt = new JButton(text);
-		butt.setBounds(x, y, 120, 30);
-		butt.setMnemonic(100);
-		butt.addActionListener(listener);
-		return butt;
-	}
-	
-	public static JButton newButton(String text, int x, int y, MouseListener listener) {
-		JButton butt = new JButton(text);
-		butt.setBounds(x, y, 120, 30);
-		butt.setMnemonic(100);
-		butt.addMouseListener(listener);
 		return butt;
 	}
 }
