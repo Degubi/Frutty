@@ -52,7 +52,7 @@ public final class EntityPlayer extends Entity implements KeyListener, MouseList
 			return false;
 		}
 		
-		for(Entity entities : Map.currentMap.entities) {
+		for(Entity entities : Map.entities) {
 			if(entities instanceof EntityBall == false && entities.renderPosX == x && entities.renderPosY == y) {
 				return false;
 			}
@@ -68,8 +68,8 @@ public final class EntityPlayer extends Entity implements KeyListener, MouseList
 		serverPosY += facing.yOffset;
 		textureIndex = facing.textureIndex;
 		
-		int zoneIndex = currentPosToIndex();
-		Map.currentMap.zones[zoneIndex].onBreak(renderPosX, renderPosY, zoneIndex, Map.currentMap.textureData[zoneIndex], this);
+		int zoneIndex = coordsToIndex(renderPosX, renderPosY);
+		Map.zones[zoneIndex].onBreak(renderPosX, renderPosY, zoneIndex, Map.textureData[zoneIndex], this);
 		lastPressTime = System.currentTimeMillis();
 	}
 	
@@ -78,11 +78,11 @@ public final class EntityPlayer extends Entity implements KeyListener, MouseList
 		if(System.currentTimeMillis() - lastPressTime > 100L) {
 			if(event.getKeyCode() == upKey && renderPosY > 0 && isFree(renderPosX, renderPosY - 64)) {
 				setFacing(EnumFacing.UP);
-			}else if(event.getKeyCode() == downKey && renderPosY < Map.currentMap.height && isFree(renderPosX, renderPosY + 64)) {
+			}else if(event.getKeyCode() == downKey && renderPosY < Map.height && isFree(renderPosX, renderPosY + 64)) {
 				setFacing(EnumFacing.DOWN);
 			}else if(event.getKeyCode() == leftKey && renderPosX > 0 && isFree(renderPosX - 64, renderPosY)) {
 				setFacing(EnumFacing.LEFT);
-			}else if(event.getKeyCode() == rightKey && renderPosX < Map.currentMap.width && isFree(renderPosX + 64, renderPosY)) {
+			}else if(event.getKeyCode() == rightKey && renderPosX < Map.width && isFree(renderPosX + 64, renderPosY)) {
 				setFacing(EnumFacing.RIGHT);
 			}
 		}
@@ -90,8 +90,8 @@ public final class EntityPlayer extends Entity implements KeyListener, MouseList
 
 	@Override
 	public void mouseReleased(MouseEvent event) {
-		if(canShootBall && event.getX() < Map.currentMap.width + 64 && MapZone.isEmpty(renderPosX + currentFacing.xOffset, renderPosY + currentFacing.yOffset)) {
-			((EntityBall)Map.currentMap.entities.get(0)).activate(renderPosX, renderPosY, currentFacing);
+		if(canShootBall && event.getX() < Map.width + 64 && MapZone.isEmptyAt(coordsToIndex(renderPosX + currentFacing.xOffset, renderPosY + currentFacing.yOffset))) {
+			((EntityBall)Map.entities.get(0)).activate(renderPosX, renderPosY, currentFacing);
 		}
 	}
 	

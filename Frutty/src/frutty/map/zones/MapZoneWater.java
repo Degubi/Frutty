@@ -11,7 +11,7 @@ import frutty.map.base.MapZone;
 import frutty.map.interfaces.ITransparentZone;
 
 public final class MapZoneWater extends MapZone implements ITransparentZone{
-	private static final BufferedImage texture = Main.loadTexture("map/special", "water.png");
+	public static final BufferedImage texture = Main.loadTexture("map/special", "water.png");
 	private static boolean decrease = false;
 	private static int textureY = 0;
 	

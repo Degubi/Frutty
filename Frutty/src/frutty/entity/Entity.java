@@ -10,7 +10,6 @@ import frutty.gui.GuiSettings.Settings;
 import frutty.map.Map;
 import frutty.map.base.MapZone;
 
-//Coord to index: posX / 64 + (posY / 64 * ((Map.currentMap.width + 64) / 64))
 public abstract class Entity implements Serializable{
 	private static final long serialVersionUID = 2876462867774051456L;
 	
@@ -40,11 +39,11 @@ public abstract class Entity implements Serializable{
 	}
 	
 	protected void checkPlayers() {
-		for(EntityPlayer player : Map.currentMap.players) {
+		for(EntityPlayer player : Map.players) {
 			if(doesCollide(player.serverPosX, player.serverPosY)) {
 				if(Settings.godEnabled || player.isInvicible()) {
 					active = false;
-					Map.currentMap.score += 100;
+					Map.score += 100;
 				}else{
 					GuiIngame.showMessageAndClose("Game over!");
 				}
@@ -52,12 +51,8 @@ public abstract class Entity implements Serializable{
 		}
 	}
 	
-	protected int currentPosToIndex() {
-		return renderPosX / 64 + (renderPosY / 64 * ((Map.currentMap.width + 64) / 64));
-	}
-	
 	public static int coordsToIndex(int x, int y) {
-		return x / 64 + (y / 64 * ((Map.currentMap.width + 64) / 64));
+		return x / 64 + (y / 64 * ((Map.width + 64) / 64));
 	}
 	
 	public void render(Graphics graphics) {

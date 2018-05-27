@@ -16,7 +16,6 @@ import javax.swing.JTextField;
 import frutty.gui.GuiSettings.Settings;
 import frutty.gui.editor.GuiEditor;
 import frutty.map.Map;
-import frutty.map.Map.BackgrondMap;
 import frutty.map.base.MapZone;
 import frutty.map.interfaces.ITransparentZone;
 
@@ -24,14 +23,18 @@ public final class GuiMenu extends JPanel implements ActionListener{
 	private final JComboBox<String> mapList = new JComboBox<>();
 	private final JTextField mapSizeField = new JTextField("8x8");
 	private final JCheckBox coopBox = GuiHelper.newCheckBox("Coop mode", 445, 130, false);
-	private final BackgrondMap background = Map.loadBackground();
+	
+	private final MapZone[] zones = new MapZone[140];
+	private final int[] xCoords = new int[140], yCoords = new int[140], textureData = new int[140];
 	
 	public GuiMenu() {
 		setLayout(null);
 		
+		Thread backgroundMapThread = new Thread(() -> Map.loadBackground(zones, xCoords, yCoords, textureData));
+		backgroundMapThread.start();
+		
 		mapSizeField.setBounds(500, 20, 60, 30);
 		mapSizeField.setHorizontalAlignment(JTextField.CENTER);
-		
 		coopBox.setForeground(Color.WHITE);
 		
 		add(GuiHelper.newButton("New Game", 700, 20, this));
@@ -59,6 +62,12 @@ public final class GuiMenu extends JPanel implements ActionListener{
 		mapList.setSelectedItem(Settings.lastMap);
 		add(mapList);
 		add(coopBox);
+		
+		try {
+			backgroundMapThread.join();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public static void showMenu() {
@@ -69,13 +78,13 @@ public final class GuiMenu extends JPanel implements ActionListener{
 	protected void paintComponent(Graphics graphics) {
 		super.paintComponent(graphics);
 		
-		for(int k = 0; k < background.zones.length; ++k) {
-			MapZone zone = background.zones[k];
+		for(int k = 0; k < zones.length; ++k) {
+			MapZone zone = zones[k];
 			
-			zone.render(background.xCoords[k], background.yCoords[k], background.textureData[k], graphics);
+			zone.render(xCoords[k], yCoords[k], textureData[k], graphics);
 			
 			if(zone instanceof ITransparentZone) {
-				((ITransparentZone) zone).drawAfter(background.xCoords[k], background.yCoords[k], background.textureData[k], graphics);
+				((ITransparentZone) zone).drawAfter(xCoords[k], yCoords[k], textureData[k], graphics);
 			}
 		}
 		

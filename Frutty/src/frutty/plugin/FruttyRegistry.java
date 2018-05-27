@@ -1,6 +1,7 @@
 package frutty.plugin;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
 
 import javax.swing.ImageIcon;
 
@@ -24,7 +25,12 @@ public final class FruttyRegistry {
 			
 			if(!Main.zoneRegistry.containsKey(sad)) {
 				Main.zoneRegistry.put(sad, zone);
-				Main.editorButtonIcons[zone.zoneID] = new Lazy<>(() -> new ImageIcon("./textures/dev/" + editorTextureName + ".png"));
+				String path = "./textures/dev/" + editorTextureName + ".png";
+				Main.editorButtonIcons[zone.zoneID] = new Lazy<>(() -> new ImageIcon(path));
+				
+				if(!new File(path).exists()) {
+					System.err.println("Unable to load texture: " + path);
+				}
 			}else{
 				System.err.println("Zone already registered with ID: " + zone.zoneID);
 			}

@@ -2,6 +2,8 @@
 /saves/
 .classpath
 .project
+/plugins/
 settings.cfg
+editorhistory.txt
 stats.prop
 /.settings/

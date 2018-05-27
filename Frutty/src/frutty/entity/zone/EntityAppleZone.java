@@ -16,7 +16,7 @@ public final class EntityAppleZone extends EntityZone{
 		if(notified){
 			if(counter > 1) {
 				Map.setZoneEmptyAt(zoneIndex);
-				Map.currentMap.entities.add(new EntityApple(x, y));
+				Map.entities.add(new EntityApple(x, y));
 			}else{
 				++counter;
 			}

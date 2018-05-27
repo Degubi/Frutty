@@ -18,7 +18,7 @@ import frutty.map.base.MapZone;
 import frutty.map.interfaces.ITexturable;
 
 public final class MapZoneChest extends MapZone implements ITexturable{
-	private static final BufferedImage chest = Main.loadTexture("map/special", "chest.png");
+	public static final BufferedImage chest = Main.loadTexture("map/special", "chest.png");
 
 	public MapZoneChest() {
 		super(7, true);
@@ -34,11 +34,11 @@ public final class MapZoneChest extends MapZone implements ITexturable{
 	public void onBreak(int x, int y, int zoneIndex, int textureIndex, EntityPlayer player) {
 		player.entityEffects.add(new EntityEffectInvisible());
 		Map.setZoneEmptyAt(zoneIndex);
-		int upZoneIndex = x / 64 + ((y - 64) / 64 * ((Map.currentMap.width + 64) / 64));
+		int upZoneIndex = x / 64 + ((y - 64) / 64 * ((Map.width + 64) / 64));
 		MapZone up = Map.getZoneAtIndex(upZoneIndex);
 		++GuiStats.zoneCount;
 		if(up != null && up == Main.appleZone) {
-			((EntityAppleZone)Map.currentMap.zoneEntities[upZoneIndex]).notified = true;
+			((EntityAppleZone)Map.zoneEntities[upZoneIndex]).notified = true;
 		}
 		
 		Particle.addParticles(2 + Main.rand.nextInt(10), x, y, textureIndex);

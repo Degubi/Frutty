@@ -38,8 +38,8 @@ public final class MapZoneSpawner extends MapZone{
 	@Override
 	public void onZoneAdded(boolean isBackground, int x, int y) {
 		if(!isBackground) {
-			for(int k = 0; k < +Map.currentMap.enemies.length; ++k) {
-				Map.currentMap.enemies[k] = new EntityEnemy(x, y);
+			for(int k = 0; k < +Map.enemies.length; ++k) {
+				Map.enemies[k] = new EntityEnemy(x, y);
 			}
 		}
 	}

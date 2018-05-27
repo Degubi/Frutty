@@ -40,8 +40,8 @@ public final class GuiStats extends JPanel implements ActionListener{
 	}
 	
 	public static void compareScores() {
-		if(Map.currentMap.score > topScore) {
-			topScore = Map.currentMap.score;
+		if(Map.score > topScore) {
+			topScore = Map.score;
 			saveStats();
 		}
 	}

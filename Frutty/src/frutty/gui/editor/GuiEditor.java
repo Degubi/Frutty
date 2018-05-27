@@ -231,7 +231,7 @@ public final class GuiEditor extends JPanel implements MouseListener{
 		EventQueue.invokeLater(() -> {
 			JFrame frame = new JFrame("Frutty Map Editor");
 			frame.setContentPane(editor);
-			frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			frame.setResizable(false);
 			frame.setBounds(0, 0, width + 200, height + 63);
 			frame.setLocationRelativeTo(null);
@@ -342,7 +342,7 @@ public final class GuiEditor extends JPanel implements MouseListener{
 			add(newEditorButton(8, Main.editorButtonIcons[8].get(), 0, 256, this));
 			add(newEditorButton(9, Main.editorButtonIcons[9].get(), 64, 256, this));
 			
-			for(int k = 15; k < 20; ++k) {
+			for(int k = 20; k < 30; ++k) {
 				if(Main.zoneRegistry.containsKey(Integer.valueOf(k))) {
 					add(newEditorButton(k, Main.editorButtonIcons[k].get(), 0, 320, this));
 				}

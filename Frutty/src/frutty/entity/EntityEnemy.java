@@ -51,7 +51,7 @@ public final class EntityEnemy extends Entity {
 			if(ticks % updateTick == 0) {
 				animSwitch = !animSwitch;
 				
-				if(serverPosX + motionX > Map.currentMap.width || serverPosX + motionX < 0 || !MapZone.isEmptyAt(coordsToIndex(serverPosX + motionX, serverPosY + motionY))) {
+				if(serverPosX + motionX > Map.width || serverPosX + motionX < 0 || !MapZone.isEmptyAt(coordsToIndex(serverPosX + motionX, serverPosY + motionY))) {
 					EnumFacing facing = findFreeFacing();
 					motionX = facing.xOffset;
 					motionY = facing.yOffset;

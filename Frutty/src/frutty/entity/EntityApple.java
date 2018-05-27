@@ -30,7 +30,7 @@ public final class EntityApple extends Entity{
 		if(motionY != 0) {
 			checkPlayers();
 			
-			for(EntityEnemy enemies : Map.currentMap.enemies) {
+			for(EntityEnemy enemies : Map.enemies) {
 				if(doesCollide(enemies.serverPosX, enemies.serverPosY)) {
 					enemies.active = false;
 				}

@@ -44,10 +44,10 @@ public class EntityBall extends Entity{
 				enemy.active = false;
 				active = false;
 				++GuiStats.enemyCount;
-				Map.currentMap.score += 100;
+				Map.score += 100;
 			}
 			
-			for(EntityPlayer player : Map.currentMap.players) {
+			for(EntityPlayer player : Map.players) {
 				if(renderPosY == player.renderPosY && renderPosX == player.renderPosX) {
 					active = false;
 				}

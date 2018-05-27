@@ -24,6 +24,7 @@ import frutty.map.Map;
 import frutty.map.Particle;
 import frutty.map.base.MapZone;
 import frutty.map.interfaces.ITransparentZone;
+import frutty.map.zones.MapZoneEmpty;
 import frutty.map.zones.MapZoneWater;
 
 public final class GuiIngame extends JPanel implements Runnable, ActionListener{
@@ -41,9 +42,9 @@ public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 	public GuiIngame() {
 		setLayout(null);
 		
-		add(GuiHelper.newButton("Exit", Map.currentMap.width + 100, Map.currentMap.height - 20, this));
-		add(GuiHelper.newButton("Save", Map.currentMap.width + 100, Map.currentMap.height - 100, this));
-		add(GuiHelper.newButton("Pause", Map.currentMap.width + 100, Map.currentMap.height - 180, this));
+		add(GuiHelper.newButton("Exit", Map.width + 100, Map.height - 20, this));
+		add(GuiHelper.newButton("Save", Map.width + 100, Map.height - 100, this));
+		add(GuiHelper.newButton("Pause", Map.width + 100, Map.height - 180, this));
 		thread.scheduleAtFixedRate(this, 20, 20, TimeUnit.MILLISECONDS);
 	}
 	
@@ -51,41 +52,41 @@ public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 	protected void paintComponent(Graphics graphics) {
 		super.paintComponent(graphics);
 		
-		for(int k = 0; k < Map.currentMap.zones.length; ++k) {
-			Map.currentMap.zones[k].render(Map.currentMap.xCoords[k], Map.currentMap.yCoords[k], Map.currentMap.textureData[k], graphics);
+		for(int k = 0; k < Map.zones.length; ++k) {
+			Map.zones[k].render(Map.xCoords[k], Map.yCoords[k], Map.textureData[k], graphics);
 		}
-		for(EntityPlayer players : Map.currentMap.players) players.render(graphics);
+		for(EntityPlayer players : Map.players) players.render(graphics);
 		
-		for(Entity entity : Map.currentMap.entities) {
+		for(Entity entity : Map.entities) {
 			if(entity.active) {
 				entity.render(graphics);
 			}
 		}
 		
-		for(EntityEnemy enemies : Map.currentMap.enemies) {
+		for(EntityEnemy enemies : Map.enemies) {
 			if(enemies.active) {
 				enemies.render(graphics);
 			}
 		}
 		
-		for(int k = 0; k < Map.currentMap.zones.length; ++k) {
-			MapZone zone = Map.currentMap.zones[k];
+		for(int k = 0; k < Map.zones.length; ++k) {
+			MapZone zone = Map.zones[k];
 			if(zone instanceof ITransparentZone) {
-				((ITransparentZone)zone).drawAfter(Map.currentMap.xCoords[k], Map.currentMap.yCoords[k], Map.currentMap.textureData[k], graphics);
+				((ITransparentZone)zone).drawAfter(Map.xCoords[k], Map.yCoords[k], Map.textureData[k], graphics);
 			}
 		}
 		
-		for(Particle particles : Map.currentMap.particles) particles.render(graphics);
+		for(Particle particles : Map.particles) particles.render(graphics);
 		
 		graphics.setColor(Color.DARK_GRAY);
 		for(int k = 0; k < 20; ++k) {
-			graphics.drawLine(Map.currentMap.width + 64 + k, 0, Map.currentMap.width + 64 + k, Map.currentMap.height + 83);
+			graphics.drawLine(Map.width + 64 + k, 0, Map.width + 64 + k, Map.height + 83);
 		}
 		
 		graphics.setColor(Color.BLACK);
 		graphics.setFont(GuiHelper.ingameFont);
-		graphics.drawString("Score: " + Map.currentMap.score, Map.currentMap.width + 90, 20);
-		graphics.drawString("Top score: " + GuiStats.topScore, Map.currentMap.width + 90, 80);
+		graphics.drawString("Score: " + Map.score, Map.width + 90, 20);
+		graphics.drawString("Top score: " + GuiStats.topScore, Map.width + 90, 80);
 		
 		if(Settings.showDebug) {
 			graphics.setColor(GuiHelper.color_128Black);
@@ -95,15 +96,15 @@ public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 			graphics.setColor(Color.WHITE);
 			
 			//Left
-			graphics.drawString("zonecount: " + Map.currentMap.zones.length, 2, 20);
-			graphics.drawString("entities: " + (Map.currentMap.enemies.length + Map.currentMap.players.length + Map.currentMap.entities.size() + Map.currentMap.particles.size()), 2, 40);
-			graphics.drawString("map_width: " + (Map.currentMap.width + 64), 2, 60);
-			graphics.drawString("map_height: " + (Map.currentMap.height + 64), 2, 80);
-			graphics.drawString("playerpos_x: " + Map.currentMap.players[0].serverPosX, 2, 100);
-			graphics.drawString("playerpos_y: " + Map.currentMap.players[0].serverPosY, 2, 120);
+			graphics.drawString("zonecount: " + Map.zones.length, 2, 20);
+			graphics.drawString("entities: " + (Map.enemies.length + Map.players.length + Map.entities.size() + Map.particles.size()), 2, 40);
+			graphics.drawString("map_width: " + (Map.width + 64), 2, 60);
+			graphics.drawString("map_height: " + (Map.height + 64), 2, 80);
+			graphics.drawString("playerpos_x: " + Map.players[0].serverPosX, 2, 100);
+			graphics.drawString("playerpos_y: " + Map.players[0].serverPosY, 2, 120);
 			
 			//Right
-			graphics.drawString("render delay: " + renderDelay + " ms", Map.currentMap.width - 80, 20);
+			graphics.drawString("render delay: " + renderDelay + " ms", Map.width - 80, 20);
 			
 			renderDelay = (int) (System.currentTimeMillis() - renderLastUpdate);
 			renderLastUpdate = System.currentTimeMillis();
@@ -114,33 +115,33 @@ public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 	public void run() {
 		if(!paused) {
 			repaint();
-			++Map.currentMap.ticks;
+			++Map.ticks;
 			
-			for(Entity entity : Map.currentMap.players) {
-				entity.update(Map.currentMap.ticks);
+			for(Entity entity : Map.players) {
+				entity.update(Map.ticks);
 			}
 			
-			for(EntityEnemy monsters : Map.currentMap.enemies) {
+			for(EntityEnemy monsters : Map.enemies) {
 				if(monsters.active) {
-					monsters.update(Map.currentMap.ticks);
+					monsters.update(Map.ticks);
 				}
 			}
 			
-			for(Entity entities : Map.currentMap.entities) {
+			for(Entity entities : Map.entities) {
 				if(entities.active) {
-					entities.update(Map.currentMap.ticks);
+					entities.update(Map.ticks);
 				}
 			}
 			
-			if(Map.currentMap.ticks % 4 == 0) {
+			if(Map.ticks % 4 == 0) {
 				MapZoneWater.updateWaterUV();
 			}
 			
-			if(Map.currentMap.ticks % 20 == 0) {
-				for(int k = 0; k < Map.currentMap.zones.length; ++k) {
-					MapZone zone = Map.currentMap.zones[k];
-					if(zone != Main.emptyZone && MapZone.isEmpty(Map.currentMap.xCoords[k], Map.currentMap.yCoords[k] + 64) && Main.rand.nextInt(100) == 3) {
-						Particle.addParticles(2 + Main.rand.nextInt(5), Map.currentMap.xCoords[k], Map.currentMap.yCoords[k], Map.currentMap.textureData[k]);
+			if(Map.ticks % 20 == 0) {
+				for(int k = 0; k < Map.zones.length; ++k) {
+					MapZone zone = Map.zones[k];
+					if(zone instanceof MapZoneEmpty == false && MapZone.isEmpty(Map.xCoords[k], Map.yCoords[k] + 64) && Main.rand.nextInt(100) == 3) {
+						Particle.addParticles(2 + Main.rand.nextInt(5), Map.xCoords[k], Map.yCoords[k], Map.textureData[k]);
 					}
 					
 					if(zone.hasZoneEntity()) {
@@ -148,7 +149,7 @@ public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 					}
 				}
 				
-				for(Iterator<Particle> iterator = Map.currentMap.particles.iterator(); iterator.hasNext();) {
+				for(Iterator<Particle> iterator = Map.particles.iterator(); iterator.hasNext();) {
 					iterator.next().update(iterator);
 				}
 			}
@@ -168,11 +169,11 @@ public final class GuiIngame extends JPanel implements Runnable, ActionListener{
 			JFrame ingameFrame = new JFrame("Tutty Frutty");
 			ingameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 			ingameFrame.setResizable(false);
-			ingameFrame.setBounds(0, 0, Map.currentMap.width + 288, Map.currentMap.height + 100);
+			ingameFrame.setBounds(0, 0, Map.width + 288, Map.height + 100);
 			ingameFrame.setLocationRelativeTo(null);
 			ingameFrame.setContentPane(ingameGui = new GuiIngame());
 			ingameFrame.setFocusable(true);
-			for(EntityPlayer players : Map.currentMap.players) {
+			for(EntityPlayer players : Map.players) {
 				ingameFrame.addKeyListener(players);
 				ingameFrame.addMouseListener(players);
 			}

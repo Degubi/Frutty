@@ -18,7 +18,7 @@ import frutty.map.base.MapZone;
 import frutty.map.interfaces.ITexturable;
 
 public final class MapZoneFruit extends MapZone implements ITexturable{
-	private static final BufferedImage cherryTexture = Main.loadTexture("fruit", "cherry.png");
+	public static final BufferedImage cherryTexture = Main.loadTexture("fruit", "cherry.png");
 	
 	public final EnumFruit fruitType;
 	
@@ -31,8 +31,8 @@ public final class MapZoneFruit extends MapZone implements ITexturable{
 	public void onBreak(int x, int y, int zoneIndex, int textureIndex, EntityPlayer player) {
 		super.onBreak(x, y, zoneIndex, textureIndex, player);
 		
-		Map.currentMap.score += 50;
-		if(--Map.currentMap.pickCount == 0) {
+		Map.score += 50;
+		if(--Map.pickCount == 0) {
 			GuiIngame.showMessageAndClose("You won!");
 			GuiStats.compareScores();
 		}
@@ -66,7 +66,7 @@ public final class MapZoneFruit extends MapZone implements ITexturable{
 	@Override
 	public void onZoneAdded(boolean isBackground, int x, int y) {
 		if(!isBackground && this == Main.cherryZone) {
-			++Map.currentMap.pickCount;
+			++Map.pickCount;
 		}
 	}
 	

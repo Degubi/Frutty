@@ -13,7 +13,6 @@ import frutty.gui.GuiSettings.Settings;
 import frutty.gui.GuiStats;
 import frutty.map.Map;
 import frutty.map.Particle;
-import frutty.map.zones.MapZoneEmpty;
 
 @SuppressWarnings("unused")
 public abstract class MapZone implements Serializable{
@@ -47,10 +46,10 @@ public abstract class MapZone implements Serializable{
 			Map.setZoneEmptyAt(zoneIndex);
 			++GuiStats.zoneCount;
 			
-			int checkIndex = zoneIndex - (Map.currentMap.width / 64) - 1;
+			int checkIndex = zoneIndex - (Map.width / 64) - 1;
 			MapZone up = Map.getZoneAtIndex(checkIndex);
 			if(up != null && up == Main.appleZone) {
-				((EntityAppleZone)Map.currentMap.zoneEntities[checkIndex]).notified = true;
+				((EntityAppleZone)Map.zoneEntities[checkIndex]).notified = true;
 			}
 			Particle.addParticles(2 + Main.rand.nextInt(10), x, y, textureIndex);
 		}
@@ -76,11 +75,11 @@ public abstract class MapZone implements Serializable{
 	
 	public static boolean isEmpty(int x, int y) {
 		MapZone zone = Map.getZoneAtPos(x, y);
-		return zone != null && zone instanceof MapZoneEmpty;
+		return zone != null && zone == Main.emptyZone;
 	}
 	
 	public static boolean isEmptyAt(int index) {
 		MapZone zone = Map.getZoneAtIndex(index);
-		return zone != null && zone instanceof MapZoneEmpty;
+		return zone != null && zone == Main.emptyZone;
 	}
 }
