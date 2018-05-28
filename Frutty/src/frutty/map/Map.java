@@ -258,7 +258,7 @@ public final class Map{
 		return "";
 	}
 	
-	public static boolean createSave(String fileName) {
+	public static void createSave(String fileName) {
 		if(fileName != null) {
 			try(ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream("./saves/" + fileName + ".sav"))){
 				output.writeObject(players);
@@ -282,12 +282,10 @@ public final class Map{
 				output.writeObject(zoneEntities);
 				output.writeUTF(skyTextureName);
 				output.writeObject(textures);
-				return true;
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
-		return false;
 	}
 	
 	public static boolean loadSave(String fileName) {

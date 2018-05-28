@@ -88,7 +88,7 @@ public final class GuiMenu extends JPanel implements ActionListener{
 			}
 		}
 		
-		graphics.setColor(GuiHelper.color_128Black);
+		graphics.setColor(GuiHelper.color_84Black);
 		graphics.fillRect(0, 0, 910, 675);
 		
 		graphics.setColor(Color.WHITE);

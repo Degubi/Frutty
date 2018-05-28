@@ -3,7 +3,6 @@
  */
 module frutty.api{
 	requires java.desktop;
-	requires java.instrument;
 	
 	exports frutty.entity;
 	exports frutty.entity.zone;

@@ -175,7 +175,7 @@ public final class GuiSettings extends JPanel implements ActionListener{
 	}
 	
 	public static final class Settings{
-		public static int difficulty, upKey, downKey, leftKey, rightKey, graphicsLevel;
+		public static int difficulty, upKey, downKey, leftKey, rightKey, graphicsLevel = 2;
 		public static boolean godEnabled, disableEnemies, debugCollisions, showDebug;
 		public static String lastMap = "Creepy";
 		
