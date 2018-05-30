@@ -29,9 +29,10 @@ import javax.swing.text.DocumentFilter;
 public final class GuiSettings extends JPanel implements ActionListener{
 	private final JRadioButton easyButton = new JRadioButton("Easy"), normalButton = new JRadioButton("Normal"), hardButton = new JRadioButton("Hard");
 	private final JCheckBox godMode = GuiHelper.newCheckBox("Enable God Mode", 400, 400, Settings.godEnabled);
-	private final JCheckBox enemiesDisabled = GuiHelper.newCheckBox("Disable enemies", 400, 370, Settings.disableEnemies);
-	private final JCheckBox showCollisionBoxes = GuiHelper.newCheckBox("Debug Collisions", 400, 340, Settings.debugCollisions);
-	private final JCheckBox showDebug = GuiHelper.newCheckBox("Show Debug", 400, 310, Settings.showDebug);
+	private final JCheckBox enemiesDisabled = GuiHelper.newCheckBox("Disable Enemies", 400, 370, Settings.disableEnemies);
+	private final JCheckBox showCollisionBoxes = GuiHelper.newCheckBox("Show Collision Boxes", 400, 340, Settings.debugCollisions);
+	private final JCheckBox showMapDebug = GuiHelper.newCheckBox("Enable Map Debug", 400, 280, Settings.mapDebug);
+	private final JCheckBox showRenderDebug = GuiHelper.newCheckBox("Enable Render Debug", 400, 310, Settings.renderDebug);
 	private final JTextField upKey = newTextField(Settings.upKey, 100, 245), downKey = newTextField(Settings.downKey, 100, 275);
 	private final JTextField leftKey = newTextField(Settings.leftKey, 100, 305), rightKey = newTextField(Settings.rightKey, 100, 335);
 	
@@ -91,7 +92,8 @@ public final class GuiSettings extends JPanel implements ActionListener{
 		add(godMode);
 		add(enemiesDisabled);
 		add(showCollisionBoxes);
-		add(showDebug);
+		add(showMapDebug);
+		add(showRenderDebug);
 		add(upKey);
 		add(downKey);
 		add(leftKey);
@@ -122,8 +124,7 @@ public final class GuiSettings extends JPanel implements ActionListener{
 		graphics.drawString("Left:", 40, 320);
 		graphics.drawString("Right:", 40, 350);
 		
-		graphics.drawString("Debug:", 380, 300);
-		
+		graphics.drawString("Debug:", 380, 250);
 		graphics.drawString("Graphics level:", 320, 40);
 	}
 	
@@ -144,10 +145,11 @@ public final class GuiSettings extends JPanel implements ActionListener{
 			Settings.difficulty = 2;
 		}
 		
-		Settings.showDebug = showDebug.isSelected();
+		Settings.mapDebug = showMapDebug.isSelected();
 		Settings.debugCollisions = showCollisionBoxes.isSelected();
 		Settings.godEnabled = godMode.isSelected();
 		Settings.graphicsLevel = graphicsSlider.getValue();
+		Settings.renderDebug = showRenderDebug.isSelected();
 		Settings.disableEnemies = enemiesDisabled.isSelected();
 		Settings.upKey = upKey.getText().charAt(0);
 		Settings.downKey = downKey.getText().charAt(0);
@@ -176,7 +178,7 @@ public final class GuiSettings extends JPanel implements ActionListener{
 	
 	public static final class Settings{
 		public static int difficulty, upKey, downKey, leftKey, rightKey, graphicsLevel = 2;
-		public static boolean godEnabled, disableEnemies, debugCollisions, showDebug;
+		public static boolean godEnabled, disableEnemies, debugCollisions, mapDebug, renderDebug;
 		public static String lastMap = "Creepy";
 		
 		public static void loadSettings() {
@@ -191,8 +193,9 @@ public final class GuiSettings extends JPanel implements ActionListener{
 				disableEnemies = Boolean.parseBoolean(data[6]);
 				debugCollisions = Boolean.parseBoolean(data[7]);
 				lastMap = data[8];
-				showDebug = Boolean.parseBoolean(data[9]);
+				mapDebug = Boolean.parseBoolean(data[9]);
 				graphicsLevel = Integer.parseInt(data[10]);
+				renderDebug = Boolean.parseBoolean(data[11]);
 			} catch (IOException e) {
 				try(PrintWriter output = new PrintWriter("settings.cfg")){
 					output.print(0);
@@ -216,6 +219,8 @@ public final class GuiSettings extends JPanel implements ActionListener{
 					output.print(false);
 					output.print(' ');
 					output.print(2);
+					output.print(' ');
+					output.print(false);
 				} catch (FileNotFoundException ex) {
 					//Can't rly happen
 				}
@@ -242,9 +247,11 @@ public final class GuiSettings extends JPanel implements ActionListener{
 				output.print(' ');
 				output.print(lastMap);
 				output.print(' ');
-				output.print(showDebug);
+				output.print(mapDebug);
 				output.print(' ');
 				output.print(graphicsLevel);
+				output.print(' ');
+				output.print(renderDebug);
 			} catch (FileNotFoundException e) {
 				//Can't rly happen
 			}

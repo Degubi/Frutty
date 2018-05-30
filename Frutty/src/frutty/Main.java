@@ -67,7 +67,6 @@ public final class Main {
 		registerZone(skyZone, "dev", "sky");
 		
 		loadPlugins();
-		
 		GuiMenu.showMenu();
 		Settings.loadSettings();
 		GuiStats.loadStats();

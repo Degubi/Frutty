@@ -67,7 +67,7 @@ public abstract class MapZone implements Serializable{
 			}
 		}
 		
-		if(Settings.showDebug) {
+		if(Settings.renderDebug) {
 			graphics.setColor(Color.WHITE);
 			graphics.drawRect(x, y, 64, 64);
 		}

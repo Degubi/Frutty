@@ -45,7 +45,7 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 	
 	public GuiIngame() {
 		setLayout(null);
-		thread.scheduleAtFixedRate(this, 20, 20, TimeUnit.MILLISECONDS);
+		thread.scheduleAtFixedRate(this, 0, 20, TimeUnit.MILLISECONDS);
 	}
 	
 	@Override
@@ -67,6 +67,8 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 			}
 		}
 		
+		for(Particle particles : Map.particles) particles.render(graphics);
+		
 		for(int k = 0; k < Map.zones.length; ++k) {
 			MapZone zone = Map.zones[k];
 			if(zone instanceof ITransparentZone) {
@@ -74,17 +76,12 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 			}
 		}
 		
-		for(Particle particles : Map.particles) particles.render(graphics);
-		
-		graphics.setColor(Color.DARK_GRAY);
-		for(int k = 0; k < 20; ++k) graphics.drawLine(Map.width + 64 + k, 0, Map.width + 64 + k, Map.height + 83);
-		
 		graphics.setColor(Color.BLACK);
 		graphics.setFont(GuiHelper.ingameFont);
 		graphics.drawString("Score: " + Map.score, Map.width + 90, 20);
 		graphics.drawString("Top score: " + GuiStats.topScore, Map.width + 90, 80);
 		
-		if(Settings.showDebug) {
+		if(Settings.mapDebug) {
 			graphics.setColor(GuiHelper.color_128Black);
 			graphics.fillRect(0, 0, 130, 130);
 			
@@ -98,13 +95,25 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 			graphics.drawString("map_height: " + (Map.height + 64), 2, 80);
 			graphics.drawString("playerpos_x: " + Map.players[0].serverPosX, 2, 100);
 			graphics.drawString("playerpos_y: " + Map.players[0].serverPosY, 2, 120);
+		}
+		
+		if(Settings.renderDebug) {
+			graphics.setColor(GuiHelper.color_128Black);
+			graphics.fillRect(Map.width - 85, 0, 160, 130);
+			
+			graphics.setFont(GuiHelper.thiccFont);
+			graphics.setColor(Color.WHITE);
 			
 			//Right
 			graphics.drawString("render delay: " + renderDelay + " ms", Map.width - 80, 20);
+			graphics.drawString("fps: " + 1000 / (System.currentTimeMillis() - renderLastUpdate), Map.width - 80, 40);
 			
 			renderDelay = (int) (System.currentTimeMillis() - renderLastUpdate);
 			renderLastUpdate = System.currentTimeMillis();
 		}
+		
+		graphics.setColor(Color.DARK_GRAY);
+		for(int k = 0; k < 20; ++k) graphics.drawLine(Map.width + 64 + k, 0, Map.width + 64 + k, Map.height + 83);
 	}
 	
 	@Override
