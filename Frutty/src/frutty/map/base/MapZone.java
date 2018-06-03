@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.io.Serializable;
 
+import javax.swing.ImageIcon;
+
 import frutty.Main;
 import frutty.entity.EntityPlayer;
 import frutty.entity.zone.EntityAppleZone;
@@ -11,6 +13,7 @@ import frutty.entity.zone.EntityZone;
 import frutty.gui.GuiHelper;
 import frutty.gui.GuiSettings.Settings;
 import frutty.gui.GuiStats;
+import frutty.map.Lazy;
 import frutty.map.Map;
 import frutty.map.Particle;
 
@@ -20,6 +23,7 @@ public abstract class MapZone implements Serializable{
 	
 	public final int zoneID;
 	public final boolean hasShadowRender;
+	public transient final Lazy<ImageIcon> editorTexture = new Lazy<>(this::getEditorTexture);
 	
 	public MapZone(int ID, boolean hasDarkening) {
 		zoneID = ID;
@@ -27,17 +31,11 @@ public abstract class MapZone implements Serializable{
 	}
 	
 	public abstract void draw(int x, int y, int textureIndex, Graphics graphics);
-	
+	protected abstract ImageIcon getEditorTexture();
 	public boolean hasZoneEntity() {return false;}
-	public boolean isBreakable(int x, int y) {
-		return true;
-	}
-	
+	public boolean isBreakable(int x, int y) {return true;}
 	public void onZoneAdded(boolean isBackground, int x, int y) {}
-	
-	public EntityZone getZoneEntity(int x, int y, int zoneIndex) {
-		return null;
-	}
+	public EntityZone getZoneEntity(int x, int y, int zoneIndex) {return null;}
 	
 	/**Call super.onBreak if you want a normal breakable zone
 	 * @param player Player obj used in subclasses */

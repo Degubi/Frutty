@@ -11,18 +11,17 @@ import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 
 public final class GuiHelper {
 	public static final Font ingameFont = new Font("TimesRoman", Font.PLAIN, 22);
 	public static final Font thiccFont = new Font("TimeRoman", Font.BOLD, 14);
-	
+	public static final Color color_128Black = new Color(0, 0, 0, 128), color_84Black = new Color(0, 0, 0, 84);
 	private static final int recommendedMaxMapHeight = Toolkit.getDefaultToolkit().getScreenSize().height / 64 - 1;
 	private static final int recommendedMaxMapWidth = Toolkit.getDefaultToolkit().getScreenSize().width / 64 - 1;
 	public static final String recommendedMapSizeString = "Recommended max map size: " + recommendedMaxMapWidth + "x" + recommendedMaxMapHeight;
 	public static final LineBorder menuBorder = new LineBorder(Color.DARK_GRAY, 2);
-	
-	public static final Color color_128Black = new Color(0, 0, 0, 128), color_84Black = new Color(0, 0, 0, 84);
 	
 	private GuiHelper() {}
 	
@@ -45,11 +44,19 @@ public final class GuiHelper {
 		});
 	}
 	
-	public static JCheckBox newCheckBox(String text, int x, int y, boolean setSelected) {
+	public static JCheckBox newCheckBox(String text, int x, int y, Color foreground, boolean setSelected) {
 		JCheckBox box = new JCheckBox(text, setSelected);
 		box.setBounds(x, y, 150, 30);
+		box.setForeground(foreground);
 		box.setOpaque(false);
 		return box;
+	}
+	
+	public static JTextField newTextField(String text, int x, int y) {
+		JTextField field = new JTextField(text);
+		field.setBounds(x, y, 60, 30);
+		field.setHorizontalAlignment(JTextField.CENTER);
+		return field;
 	}
 	
 	public static JButton newButton(String text, int x, int y, ActionListener listener) {

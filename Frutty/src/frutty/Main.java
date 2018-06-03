@@ -1,8 +1,5 @@
 package frutty;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -21,7 +18,6 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
-import frutty.entity.EntityApple;
 import frutty.gui.GuiMenu;
 import frutty.gui.GuiSettings.Settings;
 import frutty.gui.GuiStats;
@@ -38,13 +34,10 @@ import frutty.map.zones.MapZoneSky;
 import frutty.map.zones.MapZoneSpawner;
 import frutty.map.zones.MapZoneWater;
 import frutty.plugin.IFruttyPlugin;
-import frutty.plugin.Lazy;
 
-@SuppressWarnings({"boxing", "unchecked"})
+@SuppressWarnings("boxing")
 public final class Main {
-	public static final Lazy<ImageIcon>[] editorButtonIcons = new Lazy[30];
 	public static final HashMap<Integer, MapZone> zoneRegistry = new HashMap<>();
-	
 	public static final Random rand = new Random();
 	
 	public static final MapZoneNormal normalZone = new MapZoneNormal();
@@ -56,69 +49,23 @@ public final class Main {
 	public static final MapZoneWater waterZone = new MapZoneWater();
 	public static final MapZoneSky skyZone = new MapZoneSky();
 	
+	public static final String VERSION = "1.0.0";
+	
 	public static void main(String[] args){
-		registerZone(normalZone, "map", "normal");
-		registerZone(emptyZone, null, null);
-		registerZone(appleZone, null, null);
-		registerZone(cherryZone, null, null);
-		registerZone(spawnerZone, "dev", "spawner");
-		registerZone(chestZone, null, null);
-		registerZone(waterZone, null, null);
-		registerZone(skyZone, "dev", "sky");
+		zoneRegistry.put(normalZone.zoneID, normalZone);
+		zoneRegistry.put(emptyZone.zoneID, emptyZone);
+		zoneRegistry.put(appleZone.zoneID, appleZone);
+		zoneRegistry.put(cherryZone.zoneID, cherryZone);
+		zoneRegistry.put(spawnerZone.zoneID, spawnerZone);
+		zoneRegistry.put(chestZone.zoneID, chestZone);
+		zoneRegistry.put(waterZone.zoneID, waterZone);
+		zoneRegistry.put(skyZone.zoneID, skyZone);
 		
 		loadPlugins();
-		GuiMenu.showMenu();
+		GuiMenu.showMenu(true);
 		Settings.loadSettings();
 		GuiStats.loadStats();
 		new File("./saves/").mkdir();
-		
-		editorButtonIcons[1] = new Lazy<>(() -> {
-			BufferedImage emptyZoneTexture = new BufferedImage(64, 64, BufferedImage.TYPE_INT_RGB);
-			Graphics emptyGraphics = emptyZoneTexture.getGraphics();
-			emptyGraphics.setColor(Color.BLACK);
-			emptyGraphics.fillRect(0, 0, 64, 64);
-			return new ImageIcon(emptyZoneTexture);
-		});
-		editorButtonIcons[2] = new Lazy<>(() -> {
-			BufferedImage apple = new BufferedImage(64, 64, BufferedImage.TYPE_INT_RGB);
-			Graphics graph = apple.getGraphics();
-			graph.drawImage(editorButtonIcons[0].get().getImage(), 0, 0, null);
-			graph.drawImage(EntityApple.appleTexture, 0, 0, null);
-			return new ImageIcon(apple);
-		});
-		editorButtonIcons[3] = new Lazy<>(() -> {
-			BufferedImage apple = new BufferedImage(64, 64, BufferedImage.TYPE_INT_RGB);
-			Graphics graph = apple.getGraphics();
-			graph.drawImage(editorButtonIcons[0].get().getImage(), 0, 0, null);
-			graph.drawImage(MapZoneFruit.cherryTexture, 0, 0, null);
-			return new ImageIcon(apple);
-		});
-		editorButtonIcons[5] = new Lazy<>(() -> new ImageIcon("./textures/dev/player1.png"));
-		editorButtonIcons[6] = new Lazy<>(() -> new ImageIcon("./textures/dev/player2.png"));
-		editorButtonIcons[7] = new Lazy<>(() -> {
-			BufferedImage chestTexture = new BufferedImage(64, 64, BufferedImage.TYPE_INT_RGB);
-			Graphics chestGraphics = chestTexture.getGraphics();
-			chestGraphics.drawImage(editorButtonIcons[0].get().getImage(), 0, 0, null);
-			chestGraphics.drawImage(MapZoneChest.chest, 0, 0, null);
-			return new ImageIcon(chestTexture);
-		});
-		editorButtonIcons[8] = new Lazy<>(() -> {
-			BufferedImage waterTexture = new BufferedImage(64, 64, BufferedImage.TYPE_INT_RGB);
-			Graphics waterGraphics = waterTexture.getGraphics();
-			waterGraphics.setColor(Color.BLACK);
-			waterGraphics.fillRect(0, 0, 64, 64);
-			waterGraphics.drawImage(MapZoneWater.texture, 0, 0, 64, 64, 0, 0, 16, 16, null);
-			return new ImageIcon(waterTexture);
-		});
-	}
-	
-	public static void registerZone(MapZone zone, String folder, String editorName) {
-		zoneRegistry.put(zone.zoneID, zone);
-		if(folder != null) {
-			editorButtonIcons[zone.zoneID] = new Lazy<>(() -> folder.equals("map")
-					? new ImageIcon(new ImageIcon("./textures/map/" + editorName + ".png").getImage().getScaledInstance(64, 64, Image.SCALE_DEFAULT))
-					: new ImageIcon("./textures/" + folder + "/" + editorName + ".png"));
-		}
 	}
 	
 	public static boolean hasTextureInfo(int ID) {
@@ -149,11 +96,11 @@ public final class Main {
 		int ID = input.readByte();
 		MapZone zone = zoneRegistry.get(ID);
 		
-		JButton button = new JButton(editorButtonIcons[ID].get());
+		JButton button = new JButton(zone.editorTexture.get());
 		button.setBounds(x * 64, y * 64, 64, 64);
 		button.setMnemonic(ID);
 		button.addMouseListener(editor);
-		if(zone != null && zone instanceof ITexturable){
+		if(zone instanceof ITexturable){
 			int textureData = input.readByte();
 			button.setActionCommand(textures[textureData]);
 			button.setIcon(((ITexturable)zone).getEditorTextureVars()[TextureSelector.indexOf(textures[textureData] + ".png")]);
@@ -200,9 +147,9 @@ public final class Main {
 					if(mainClassNames[k] == null) {
 						System.err.println("Can't load main class from plugin: " + all[k]);
 					}else{
-						Class<?> loaded = urlClass.loadClass(mainClassNames[k]);
+						var loaded = urlClass.loadClass(mainClassNames[k]);
 						if(hasInterface(loaded)) {
-							Method method = loaded.getMethod("register");
+							Method method = loaded.getMethod("pluginMain");
 							method.invoke(loaded.getDeclaredConstructor().newInstance());
 						}
 					}
@@ -214,7 +161,7 @@ public final class Main {
 	}
 	
 	private static boolean hasInterface(Class<?> theClass) {
-		for(Class<?> faces : theClass.getInterfaces()) {
+		for(var faces : theClass.getInterfaces()) {
 			if(IFruttyPlugin.class.isAssignableFrom(faces)){
 				return true;
 			}

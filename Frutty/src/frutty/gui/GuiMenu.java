@@ -4,8 +4,13 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -13,6 +18,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import frutty.Main;
 import frutty.gui.GuiSettings.Settings;
 import frutty.gui.editor.GuiEditor;
 import frutty.map.Map;
@@ -21,8 +27,8 @@ import frutty.map.interfaces.ITransparentZone;
 
 public final class GuiMenu extends JPanel implements ActionListener{
 	private final JComboBox<String> mapList = new JComboBox<>();
-	private final JTextField mapSizeField = new JTextField("8x8");
-	private final JCheckBox coopBox = GuiHelper.newCheckBox("Coop mode", 445, 130, false);
+	private final JTextField mapSizeField = GuiHelper.newTextField("8x8", 500, 20);
+	private final JCheckBox coopBox = GuiHelper.newCheckBox("Coop mode", 445, 130, Color.WHITE, false);
 	
 	private final MapZone[] zones = new MapZone[140];
 	private final int[] xCoords = new int[140], yCoords = new int[140], textureData = new int[140];
@@ -32,10 +38,6 @@ public final class GuiMenu extends JPanel implements ActionListener{
 		
 		Thread backgroundMapThread = new Thread(() -> Map.loadBackground(zones, xCoords, yCoords, textureData));
 		backgroundMapThread.start();
-		
-		mapSizeField.setBounds(500, 20, 60, 30);
-		mapSizeField.setHorizontalAlignment(JTextField.CENTER);
-		coopBox.setForeground(Color.WHITE);
 		
 		add(GuiHelper.newButton("New Game", 700, 20, this));
 		add(GuiHelper.newButton("Exit", 370, 550, this));
@@ -70,8 +72,28 @@ public final class GuiMenu extends JPanel implements ActionListener{
 		}
 	}
 	
-	public static void showMenu() {
-		GuiHelper.showNewFrame(new GuiMenu(), "Tutty Frutty", JFrame.EXIT_ON_CLOSE, 910, 675);
+	public static void showMenu(boolean checkUpdate) {
+		GuiMenu menu = new GuiMenu();
+		
+		new Thread(() -> {
+			if(checkUpdate) {
+				try(BufferedReader download = new BufferedReader(new InputStreamReader(new URL("https://pastebin.com/raw/m5qJbnks").openStream()))){
+					if(!Main.VERSION.equals(download.readLine())) {
+						JButton updaterButton = new JButton("Click here to Update...");
+						updaterButton.setActionCommand("Update");
+						updaterButton.setBounds(660, 600, 240, 40);
+						updaterButton.addActionListener(menu);
+						updaterButton.setBackground(Color.GREEN);
+						updaterButton.setForeground(Color.RED);
+						menu.add(updaterButton);
+						menu.repaint();
+					}
+				}catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}).start();
+		GuiHelper.showNewFrame(menu, "Tutty Frutty", JFrame.EXIT_ON_CLOSE, 910, 675);
 	}
 	
 	@Override
@@ -80,9 +102,7 @@ public final class GuiMenu extends JPanel implements ActionListener{
 		
 		for(int k = 0; k < zones.length; ++k) {
 			MapZone zone = zones[k];
-			
 			zone.render(xCoords[k], yCoords[k], textureData[k], graphics);
-			
 			if(zone instanceof ITransparentZone) {
 				((ITransparentZone) zone).drawAfter(xCoords[k], yCoords[k], textureData[k], graphics);
 			}
@@ -90,7 +110,6 @@ public final class GuiMenu extends JPanel implements ActionListener{
 		
 		graphics.setColor(GuiHelper.color_84Black);
 		graphics.fillRect(0, 0, 910, 675);
-		
 		graphics.setColor(Color.WHITE);
 		graphics.setFont(GuiHelper.thiccFont);
 		graphics.drawString(GuiHelper.recommendedMapSizeString, 330, 80);
@@ -126,6 +145,13 @@ public final class GuiMenu extends JPanel implements ActionListener{
 			
 		case "Editor": GuiEditor.openEditor(); ((JFrame)getTopLevelAncestor()).dispose(); break;
 		case "Stats": GuiStats.openStatsGui(); break;
+		case "Update": try {
+				JOptionPane.showMessageDialog(null, "Exiting game to Updater", "Frutty Updater", 0);
+				Runtime.getRuntime().exec("java -jar FruttyInstaller.jar");
+				System.exit(0);
+			} catch (IOException e) {
+				e.printStackTrace();
+			} break;
 			
 		default: //Load
 			String[] allMapNames = new File("./saves/").list();

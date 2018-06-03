@@ -38,7 +38,7 @@ import frutty.gui.editor.GuiProperties.EnumProperty;
 public final class GuiEditor extends JPanel implements MouseListener{
 	public final ArrayList<JButton> zoneButtons = new ArrayList<>();
 	private final GuiProperties mapProperties;
-	private final JButton zoneSelector = new JButton(Main.editorButtonIcons[1].get()), textureSelector = new JButton(TextureSelector.bigTextures[TextureSelector.indexOf("normal.png")]);
+	private final JButton zoneSelector = new JButton(Main.emptyZone.editorTexture.get()), textureSelector = new JButton(TextureSelector.bigTextures[TextureSelector.indexOf("normal.png")]);
 	private String activeTexture = "normal";
 	private final int toolSelectorX;
 	
@@ -271,7 +271,7 @@ public final class GuiEditor extends JPanel implements MouseListener{
 					
 					for(int yPos = 0; yPos < bigHeight; yPos += 64) {
 						for(int xPos = 0; xPos < bigWidth; xPos += 64) {
-							JButton button = new JButton(Main.editorButtonIcons[0].get());
+							JButton button = new JButton(Main.normalZone.editorTexture.get());
 							button.setMnemonic(0);
 							button.setActionCommand("normal");
 							button.addMouseListener(newEditor);
@@ -297,12 +297,12 @@ public final class GuiEditor extends JPanel implements MouseListener{
 	    		for(JButton localButton : editor.zoneButtons) {
 			 		localButton.setMnemonic(0);
 			 		localButton.setActionCommand("normal");
-			 		localButton.setIcon(Main.editorButtonIcons[0].get());
+			 		localButton.setIcon(Main.normalZone.editorTexture.get());
 	    	};}));
 	    	
 	    	fileMenu.add(newMenuItem("Delete History", true, event -> new File("editorhistory.txt").delete()));
 	    	fileMenu.addSeparator();
-	    	fileMenu.add(newMenuItem("Exit to menu", true, event -> {frame.dispose(); GuiMenu.showMenu();}));
+	    	fileMenu.add(newMenuItem("Exit to menu", true, event -> {frame.dispose(); GuiMenu.showMenu(false);}));
 	    	fileMenu.add(newMenuItem("Exit app", true, event -> System.exit(0)));
 	    	
 	    	mapMenu.add(newMenuItem("Map Properties", true, event -> GuiHelper.showNewFrame(editor.mapProperties, "Map Properties", JFrame.DISPOSE_ON_CLOSE, 350, 350)));
@@ -327,24 +327,38 @@ public final class GuiEditor extends JPanel implements MouseListener{
 	private static final class ToolSelector extends JPanel implements ActionListener{
 		private final GuiEditor editor;
 		
+		private static final ImageIcon player1Texture = new ImageIcon("./textures/dev/player1.png");
+		private static final ImageIcon player2Texture =  new ImageIcon("./textures/dev/player2.png");
+		
 		public ToolSelector(GuiEditor editor) {
 			setLayout(null);
 			this.editor = editor;
 			
-			add(newEditorButton(0, Main.editorButtonIcons[0].get(), 0, 0, this));
-			add(newEditorButton(1, Main.editorButtonIcons[1].get(), 64, 0, this));
-			add(newEditorButton(2, Main.editorButtonIcons[2].get(), 0, 64, this));
-			add(newEditorButton(3, Main.editorButtonIcons[3].get(), 64, 64, this));
-			add(newEditorButton(4, Main.editorButtonIcons[4].get(), 0, 128, this));
-			add(newEditorButton(7, Main.editorButtonIcons[7].get(), 64, 128, this));
-			add(newEditorButton(5, Main.editorButtonIcons[5].get(), 0, 192, this));
-			add(newEditorButton(6, Main.editorButtonIcons[6].get(), 64, 192, this));
-			add(newEditorButton(8, Main.editorButtonIcons[8].get(), 0, 256, this));
-			add(newEditorButton(9, Main.editorButtonIcons[9].get(), 64, 256, this));
+			add(newEditorButton(0, Main.normalZone.editorTexture.get(), 0, 0, this));
+			add(newEditorButton(1, Main.emptyZone.editorTexture.get(), 64, 0, this));
+			add(newEditorButton(2, Main.appleZone.editorTexture.get(), 0, 64, this));
+			add(newEditorButton(3, Main.cherryZone.editorTexture.get(), 64, 64, this));
+			add(newEditorButton(4, Main.spawnerZone.editorTexture.get(), 0, 128, this));
+			add(newEditorButton(7, Main.chestZone.editorTexture.get(), 64, 128, this));
+			add(newEditorButton(5, player1Texture, 0, 192, this));
+			add(newEditorButton(6, player2Texture, 64, 192, this));
+			add(newEditorButton(8, Main.waterZone.editorTexture.get(), 0, 256, this));
+			add(newEditorButton(9, Main.skyZone.editorTexture.get(), 64, 256, this));
 			
-			for(int k = 20; k < 30; ++k) {
-				if(Main.zoneRegistry.containsKey(Integer.valueOf(k))) {
-					add(newEditorButton(k, Main.editorButtonIcons[k].get(), 0, 320, this));
+			var entries = Main.zoneRegistry.entrySet();
+			int xPos = 0, yPos = 320, counter = 0;
+			for(var entry : entries) {
+				int id = entry.getKey();
+				if(id > 20) {
+					add(newEditorButton(id, entry.getValue().editorTexture.get(), xPos, yPos, this));
+				}
+				++counter;
+				
+				if(counter % 2 == 0) {
+					xPos = 0;
+					yPos += 64;
+				}else{
+					xPos = 64;
 				}
 			}
 		}

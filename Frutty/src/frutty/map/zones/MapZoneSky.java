@@ -2,6 +2,8 @@ package frutty.map.zones;
 
 import java.awt.Graphics;
 
+import javax.swing.ImageIcon;
+
 import frutty.gui.GuiIngame;
 import frutty.map.base.MapZone;
 
@@ -18,5 +20,10 @@ public final class MapZoneSky extends MapZone{
 	@Override
 	public boolean isBreakable(int x, int y) {
 		return false;
+	}
+
+	@Override
+	protected ImageIcon getEditorTexture() {
+		return new ImageIcon("./textures/dev/sky.png");
 	}
 }

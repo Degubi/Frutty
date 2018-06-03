@@ -1,4 +1,4 @@
-package frutty.plugin;
+package frutty.map;
 
 import java.util.Objects;
 import java.util.function.Supplier;

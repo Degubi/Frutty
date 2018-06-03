@@ -3,6 +3,8 @@ package frutty.map.zones;
 import java.awt.Color;
 import java.awt.Graphics;
 
+import javax.swing.ImageIcon;
+
 import frutty.entity.EntityEnemy;
 import frutty.map.Map;
 import frutty.map.base.MapZone;
@@ -47,5 +49,10 @@ public final class MapZoneSpawner extends MapZone{
 	@Override
 	public boolean isBreakable(int x, int y) {
 		return false;
+	}
+
+	@Override
+	protected ImageIcon getEditorTexture() {
+		return new ImageIcon("./textures/dev/spawner.png");
 	}
 }

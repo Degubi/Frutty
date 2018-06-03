@@ -79,4 +79,20 @@ public final class MapZoneFruit extends MapZone implements ITexturable{
 		APPLE,
 		CHERRY;
 	}
+
+	@Override
+	protected ImageIcon getEditorTexture() {
+		if(fruitType == EnumFruit.APPLE) {
+			BufferedImage apple = new BufferedImage(64, 64, BufferedImage.TYPE_INT_RGB);
+			Graphics graph = apple.getGraphics();
+			graph.drawImage(Main.normalZone.editorTexture.get().getImage(), 0, 0, null);
+			graph.drawImage(EntityApple.appleTexture, 0, 0, null);
+			return new ImageIcon(apple);
+		}
+		BufferedImage apple = new BufferedImage(64, 64, BufferedImage.TYPE_INT_RGB);
+		Graphics graph = apple.getGraphics();
+		graph.drawImage(Main.normalZone.editorTexture.get().getImage(), 0, 0, null);
+		graph.drawImage(MapZoneFruit.cherryTexture, 0, 0, null);
+		return new ImageIcon(apple);
+	}
 }

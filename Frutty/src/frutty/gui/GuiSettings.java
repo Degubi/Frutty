@@ -28,11 +28,11 @@ import javax.swing.text.DocumentFilter;
 @SuppressWarnings("boxing")
 public final class GuiSettings extends JPanel implements ActionListener{
 	private final JRadioButton easyButton = new JRadioButton("Easy"), normalButton = new JRadioButton("Normal"), hardButton = new JRadioButton("Hard");
-	private final JCheckBox godMode = GuiHelper.newCheckBox("Enable God Mode", 400, 400, Settings.godEnabled);
-	private final JCheckBox enemiesDisabled = GuiHelper.newCheckBox("Disable Enemies", 400, 370, Settings.disableEnemies);
-	private final JCheckBox showCollisionBoxes = GuiHelper.newCheckBox("Show Collision Boxes", 400, 340, Settings.debugCollisions);
-	private final JCheckBox showMapDebug = GuiHelper.newCheckBox("Enable Map Debug", 400, 280, Settings.mapDebug);
-	private final JCheckBox showRenderDebug = GuiHelper.newCheckBox("Enable Render Debug", 400, 310, Settings.renderDebug);
+	private final JCheckBox godMode = GuiHelper.newCheckBox("Enable God Mode", 400, 400, Color.BLACK, Settings.godEnabled);
+	private final JCheckBox enemiesDisabled = GuiHelper.newCheckBox("Disable Enemies", 400, 370, Color.BLACK, Settings.disableEnemies);
+	private final JCheckBox showCollisionBoxes = GuiHelper.newCheckBox("Show Collision Boxes", 400, 340, Color.BLACK, Settings.debugCollisions);
+	private final JCheckBox showMapDebug = GuiHelper.newCheckBox("Enable Map Debug", 400, 280, Color.BLACK, Settings.mapDebug);
+	private final JCheckBox showRenderDebug = GuiHelper.newCheckBox("Enable Render Debug", 400, 310, Color.BLACK, Settings.renderDebug);
 	private final JTextField upKey = newTextField(Settings.upKey, 100, 245), downKey = newTextField(Settings.downKey, 100, 275);
 	private final JTextField leftKey = newTextField(Settings.leftKey, 100, 305), rightKey = newTextField(Settings.rightKey, 100, 335);
 	

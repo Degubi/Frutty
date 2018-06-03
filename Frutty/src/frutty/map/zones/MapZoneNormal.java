@@ -1,6 +1,7 @@
 package frutty.map.zones;
 
 import java.awt.Graphics;
+import java.awt.Image;
 
 import javax.swing.ImageIcon;
 
@@ -22,5 +23,10 @@ public final class MapZoneNormal extends MapZone implements ITexturable{
 	@Override
 	public ImageIcon[] getEditorTextureVars() {
 		return TextureSelector.normalTextures;
+	}
+
+	@Override
+	protected ImageIcon getEditorTexture() {
+		return new ImageIcon(new ImageIcon("./textures/map/normal.png").getImage().getScaledInstance(64, 64, Image.SCALE_DEFAULT));
 	}
 }

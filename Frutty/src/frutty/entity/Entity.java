@@ -57,16 +57,18 @@ public abstract class Entity implements Serializable{
 	
 	public void render(Graphics graphics) {
 		if(Settings.debugCollisions) {
-			graphics.setColor(Color.WHITE);
+			graphics.setColor(Color.BLUE);
 			graphics.drawRect(serverPosX, serverPosY, 64, 64);
 			graphics.setColor(Color.RED);
 			graphics.drawRect(renderPosX, renderPosY, 64, 64);
+			graphics.setColor(Color.GREEN);
+			graphics.fillOval(renderPosX + 24, renderPosY + 24, 16, 16);
 		}
 	}
 	
 	public abstract void update(int ticks);
 	
-	protected static enum EnumFacing {
+	public static enum EnumFacing {
 		UP(0, -64, 2),
 		DOWN(0, 64, 1),
 		LEFT(-64, 0, 3),
