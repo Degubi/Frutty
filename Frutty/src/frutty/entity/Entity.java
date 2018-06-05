@@ -6,7 +6,7 @@ import java.io.Serializable;
 
 import frutty.Main;
 import frutty.gui.GuiIngame;
-import frutty.gui.GuiSettings.Settings;
+import frutty.gui.Settings;
 import frutty.map.Map;
 import frutty.map.base.MapZone;
 
@@ -61,8 +61,6 @@ public abstract class Entity implements Serializable{
 			graphics.drawRect(serverPosX, serverPosY, 64, 64);
 			graphics.setColor(Color.RED);
 			graphics.drawRect(renderPosX, renderPosY, 64, 64);
-			graphics.setColor(Color.GREEN);
-			graphics.fillOval(renderPosX + 24, renderPosY + 24, 16, 16);
 		}
 	}
 	

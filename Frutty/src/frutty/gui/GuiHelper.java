@@ -12,6 +12,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 
 public final class GuiHelper {
@@ -55,7 +56,7 @@ public final class GuiHelper {
 	public static JTextField newTextField(String text, int x, int y) {
 		JTextField field = new JTextField(text);
 		field.setBounds(x, y, 60, 30);
-		field.setHorizontalAlignment(JTextField.CENTER);
+		field.setHorizontalAlignment(SwingConstants.CENTER);
 		return field;
 	}
 	

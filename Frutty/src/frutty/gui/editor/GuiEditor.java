@@ -3,6 +3,7 @@ package frutty.gui.editor;
 import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -22,6 +23,7 @@ import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JMenu;
@@ -29,6 +31,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
+import javax.swing.WindowConstants;
 
 import frutty.Main;
 import frutty.gui.GuiHelper;
@@ -38,8 +42,8 @@ import frutty.gui.editor.GuiProperties.EnumProperty;
 public final class GuiEditor extends JPanel implements MouseListener{
 	public final ArrayList<JButton> zoneButtons = new ArrayList<>();
 	private final GuiProperties mapProperties;
-	private final JButton zoneSelector = new JButton(Main.emptyZone.editorTexture.get()), textureSelector = new JButton(TextureSelector.bigTextures[TextureSelector.indexOf("normal.png")]);
-	private String activeTexture = "normal";
+	protected final JButton zoneSelector = new JButton(Main.emptyZone.editorTexture.get()), textureSelector = new JButton(TextureSelector.bigTextures[TextureSelector.indexOf("normal.png")]);
+	protected String activeTexture = "normal";
 	private final int toolSelectorX;
 	
 	private static JFrame toolSelectorFrame;
@@ -86,7 +90,7 @@ public final class GuiEditor extends JPanel implements MouseListener{
 							if(toolSelectorFrame == null) {
 								toolSelectorFrame = new JFrame("Tool Selector");
 								toolSelectorFrame.setContentPane(new ToolSelector(this));
-								toolSelectorFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+								toolSelectorFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 								toolSelectorFrame.setResizable(false);
 								toolSelectorFrame.setBounds(toolSelectorX + 500, 300, 128, 500);
 								toolSelectorFrame.setFocusable(true);
@@ -98,7 +102,7 @@ public final class GuiEditor extends JPanel implements MouseListener{
 						EventQueue.invokeLater(() -> {
 							JFrame frame = new JFrame("Texture Selector");
 							frame.setContentPane(new TextureSelector(this));
-							frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+							frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 							frame.setResizable(false);
 							frame.setBounds(0, 0, (TextureSelector.textureNames.length + 1) * 128, (TextureSelector.textureNames.length + 1) * 64);
 							frame.setLocationRelativeTo(null);
@@ -231,7 +235,7 @@ public final class GuiEditor extends JPanel implements MouseListener{
 		EventQueue.invokeLater(() -> {
 			JFrame frame = new JFrame("Frutty Map Editor");
 			frame.setContentPane(editor);
-			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 			frame.setResizable(false);
 			frame.setBounds(0, 0, width + 200, height + 63);
 			frame.setLocationRelativeTo(null);
@@ -260,7 +264,7 @@ public final class GuiEditor extends JPanel implements MouseListener{
 				history.add(offItem);
 			}
 	    	
-	    	fileMenu.add(newMenuItem("New map", true, event -> {
+	    	fileMenu.add(newMenuItem("New map", 'N', true, event -> {
 	    		String input = JOptionPane.showInputDialog("Enter map size!", "10x10");
 				
 				if(input != null) {
@@ -285,28 +289,31 @@ public final class GuiEditor extends JPanel implements MouseListener{
 				}
 	    	}));
 	    	
-	    	fileMenu.add(newMenuItem("Load map", true, event -> {
-	    		String[] fileNames = new File("./maps/").list();
-	    		loadMap((String) JOptionPane.showInputDialog(null, "Select Map!", "Maps:", JOptionPane.QUESTION_MESSAGE, null, fileNames, fileNames[0]));
-	    		((JFrame)editor.getTopLevelAncestor()).dispose();
+	    	fileMenu.add(newMenuItem("Load map", 'L', true, event -> {
+	    		JFileChooser fileChooser = new JFileChooser("./maps/");
+	    		
+	    		if(fileChooser.showOpenDialog(null) == 0) {
+	    			loadMap(fileChooser.getSelectedFile().getName());
+	    			((JFrame)editor.getTopLevelAncestor()).dispose();
+	    		}
 	    	}));
 	    	
 	    	fileMenu.addSeparator();
-	    	fileMenu.add(newMenuItem("Save map", !editor.zoneButtons.isEmpty(), event -> editor.saveMap()));
-	    	fileMenu.add(newMenuItem("Reset map", !editor.zoneButtons.isEmpty(), event -> {
+	    	fileMenu.add(newMenuItem("Save map", 'S', !editor.zoneButtons.isEmpty(), event -> editor.saveMap()));
+	    	fileMenu.add(newMenuItem("Reset map", '0', !editor.zoneButtons.isEmpty(), event -> {
 	    		for(JButton localButton : editor.zoneButtons) {
 			 		localButton.setMnemonic(0);
 			 		localButton.setActionCommand("normal");
 			 		localButton.setIcon(Main.normalZone.editorTexture.get());
 	    	};}));
 	    	
-	    	fileMenu.add(newMenuItem("Delete History", true, event -> new File("editorhistory.txt").delete()));
+	    	fileMenu.add(newMenuItem("Delete History", '0', true, event -> new File("editorhistory.txt").delete()));
 	    	fileMenu.addSeparator();
-	    	fileMenu.add(newMenuItem("Exit to menu", true, event -> {frame.dispose(); GuiMenu.showMenu(false);}));
-	    	fileMenu.add(newMenuItem("Exit app", true, event -> System.exit(0)));
+	    	fileMenu.add(newMenuItem("Exit to menu", '0', true, event -> {frame.dispose(); GuiMenu.showMenu(false);}));
+	    	fileMenu.add(newMenuItem("Exit app", '0', true, event -> System.exit(0)));
 	    	
-	    	mapMenu.add(newMenuItem("Map Properties", true, event -> GuiHelper.showNewFrame(editor.mapProperties, "Map Properties", JFrame.DISPOSE_ON_CLOSE, 350, 350)));
-	    	mapMenu.add(newMenuItem("Map Information", true, event -> GuiHelper.showNewFrame(new InformationMenu(editor), "Map Info", JFrame.DISPOSE_ON_CLOSE, 350, 350)));
+	    	mapMenu.add(newMenuItem("Map Properties", 'P', true, event -> GuiHelper.showNewFrame(editor.mapProperties, "Map Properties", WindowConstants.DISPOSE_ON_CLOSE, 350, 350)));
+	    	mapMenu.add(newMenuItem("Map Information", 'I', true, event -> GuiHelper.showNewFrame(new InformationMenu(editor), "Map Info", WindowConstants.DISPOSE_ON_CLOSE, 350, 350)));
 	    	
 	    	menuBar.add(fileMenu);
 	    	menuBar.add(history);
@@ -317,18 +324,21 @@ public final class GuiEditor extends JPanel implements MouseListener{
 		});
 	}
 	
-	private static JMenuItem newMenuItem(String text, boolean setEnabled, ActionListener listener) {
+	private static JMenuItem newMenuItem(String text, char shortcut, boolean setEnabled, ActionListener listener) {
 		JMenuItem item = new JMenuItem(text);
+		if(shortcut != '0') {
+			item.setAccelerator(KeyStroke.getKeyStroke(shortcut, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
+		}
 		item.setEnabled(setEnabled);
 		item.addActionListener(listener);
 		return item;
 	}
 	
-	private static final class ToolSelector extends JPanel implements ActionListener{
+	public static final class ToolSelector extends JPanel implements ActionListener{
 		private final GuiEditor editor;
 		
-		private static final ImageIcon player1Texture = new ImageIcon("./textures/dev/player1.png");
-		private static final ImageIcon player2Texture =  new ImageIcon("./textures/dev/player2.png");
+		public static final ImageIcon player1Texture = new ImageIcon("./textures/dev/player1.png");
+		public static final ImageIcon player2Texture =  new ImageIcon("./textures/dev/player2.png");
 		
 		public ToolSelector(GuiEditor editor) {
 			setLayout(null);
@@ -348,6 +358,7 @@ public final class GuiEditor extends JPanel implements MouseListener{
 			var entries = Main.zoneRegistry.entrySet();
 			int xPos = 0, yPos = 320, counter = 0;
 			for(var entry : entries) {
+				@SuppressWarnings("boxing")
 				int id = entry.getKey();
 				if(id > 20) {
 					add(newEditorButton(id, entry.getValue().editorTexture.get(), xPos, yPos, this));
@@ -386,7 +397,7 @@ public final class GuiEditor extends JPanel implements MouseListener{
 		private final GuiEditor editor;
 		
 		public static final ImageIcon[] bigTextures, normalTextures, appleTextures, cherryTextures, chestTextures;
-		private static final String[] textureNames;
+		static final String[] textureNames;
 		
 		static {
 			String[] nop1 = new File("./textures/map").list(), nop2 = new String[nop1.length];

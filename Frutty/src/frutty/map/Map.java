@@ -17,10 +17,11 @@ import frutty.entity.Entity;
 import frutty.entity.EntityBall;
 import frutty.entity.EntityEnemy;
 import frutty.entity.EntityPlayer;
+import frutty.entity.zone.EntityAppleZone;
 import frutty.entity.zone.EntityZone;
 import frutty.gui.GuiHelper;
 import frutty.gui.GuiIngame;
-import frutty.gui.GuiSettings.Settings;
+import frutty.gui.Settings;
 import frutty.map.base.MapZone;
 import frutty.map.interfaces.ITexturable;
 
@@ -104,8 +105,8 @@ public final class Map{
 		
 		init(new String[] {"normal"}, "null", isMultiplayer, bigWidth, bigHeight, 0, 0, 0, 0);
 		
-		for(int x = 0; x < bigWidth; x += 64) {
-			for(int y = 0, rng = rand.nextInt(10); y < bigHeight; y += 64, rng = rand.nextInt(10)) {
+		for(int y = 0; y < bigHeight; y += 64) {
+			for(int x = 0, rng = rand.nextInt(10); x < bigWidth; x += 64, rng = rand.nextInt(10)) {
 				xCoords[zoneIndex] = x;
 				yCoords[zoneIndex] = y;
 				
@@ -115,6 +116,7 @@ public final class Map{
 					zones[zoneIndex++] = Main.emptyZone;
 				}else if(rng == 9) {
 					if(rand.nextBoolean()) {   //isApple
+						zoneEntities[zoneIndex] = new EntityAppleZone(x, y, zoneIndex);
 						zones[zoneIndex++] = Main.appleZone;
 					}else {
 						zones[zoneIndex++] = Main.cherryZone;
@@ -124,10 +126,8 @@ public final class Map{
 			}
 		}
 		
-		int loopState = 0;
-		
 		outerLoop:
-		for(int randIndex = rand.nextInt(zoneIndex); ; randIndex = rand.nextInt(zoneIndex)) {
+		for(int randIndex = rand.nextInt(zoneIndex), loopState = 0; ; randIndex = rand.nextInt(zoneIndex)) {
 			if(zones[randIndex] == Main.emptyZone) {
 				if(loopState == 0) {
 					zones[randIndex] = Main.spawnerZone;
@@ -160,6 +160,7 @@ public final class Map{
 					players[0].renderPosY = yCoords[randIndex];
 					players[0].serverPosX = xCoords[randIndex];
 					players[0].serverPosY = yCoords[randIndex];
+					
 					loopState = 2;
 					
 					if(isMultiplayer) continue outerLoop;

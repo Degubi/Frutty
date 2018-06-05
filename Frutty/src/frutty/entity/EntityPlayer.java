@@ -12,7 +12,7 @@ import java.util.Iterator;
 import frutty.Main;
 import frutty.entity.effects.EntityEffect;
 import frutty.entity.effects.EntityEffectInvisible;
-import frutty.gui.GuiSettings.Settings;
+import frutty.gui.Settings;
 import frutty.map.Map;
 import frutty.map.base.MapZone;
 
@@ -43,7 +43,6 @@ public final class EntityPlayer extends Entity implements KeyListener, MouseList
 			upKey = Settings.upKey;
 			downKey = Settings.downKey;
 		}
-		
 		currentFacing = EnumFacing.RIGHT;
 	}
 

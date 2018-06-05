@@ -11,8 +11,8 @@ import frutty.entity.EntityPlayer;
 import frutty.entity.zone.EntityAppleZone;
 import frutty.entity.zone.EntityZone;
 import frutty.gui.GuiHelper;
-import frutty.gui.GuiSettings.Settings;
 import frutty.gui.GuiStats;
+import frutty.gui.Settings;
 import frutty.map.Lazy;
 import frutty.map.Map;
 import frutty.map.Particle;
@@ -65,7 +65,7 @@ public abstract class MapZone implements Serializable{
 			}
 		}
 		
-		if(Settings.renderDebug) {
+		if(Settings.renderDebugLevel > 1) {
 			graphics.setColor(Color.WHITE);
 			graphics.drawRect(x, y, 64, 64);
 		}

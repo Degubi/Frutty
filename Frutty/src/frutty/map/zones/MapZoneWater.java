@@ -8,7 +8,7 @@ import javax.swing.ImageIcon;
 
 import frutty.Main;
 import frutty.gui.GuiHelper;
-import frutty.gui.GuiSettings.Settings;
+import frutty.gui.Settings;
 import frutty.map.base.MapZone;
 import frutty.map.interfaces.ITransparentZone;
 

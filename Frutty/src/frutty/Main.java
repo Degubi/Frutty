@@ -19,10 +19,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
 import frutty.gui.GuiMenu;
-import frutty.gui.GuiSettings.Settings;
 import frutty.gui.GuiStats;
+import frutty.gui.Settings;
 import frutty.gui.editor.GuiEditor;
 import frutty.gui.editor.GuiEditor.TextureSelector;
+import frutty.gui.editor.GuiEditor.ToolSelector;
 import frutty.map.base.MapZone;
 import frutty.map.interfaces.ITexturable;
 import frutty.map.zones.MapZoneChest;
@@ -39,7 +40,8 @@ import frutty.plugin.IFruttyPlugin;
 public final class Main {
 	public static final HashMap<Integer, MapZone> zoneRegistry = new HashMap<>();
 	public static final Random rand = new Random();
-	
+	public static final String VERSION = "1.0.0";
+
 	public static final MapZoneNormal normalZone = new MapZoneNormal();
 	public static final MapZoneEmpty emptyZone = new MapZoneEmpty();
 	public static final MapZoneFruit appleZone = new MapZoneFruit(EnumFruit.APPLE);
@@ -48,8 +50,6 @@ public final class Main {
 	public static final MapZoneChest chestZone = new MapZoneChest();
 	public static final MapZoneWater waterZone = new MapZoneWater();
 	public static final MapZoneSky skyZone = new MapZoneSky();
-	
-	public static final String VERSION = "1.0.0";
 	
 	public static void main(String[] args){
 		zoneRegistry.put(normalZone.zoneID, normalZone);
@@ -94,19 +94,36 @@ public final class Main {
 	
 	public static void handleEditorReading(GuiEditor editor, ObjectInputStream input, int x, int y, String[] textures) throws IOException {
 		int ID = input.readByte();
-		MapZone zone = zoneRegistry.get(ID);
 		
-		JButton button = new JButton(zone.editorTexture.get());
-		button.setBounds(x * 64, y * 64, 64, 64);
-		button.setMnemonic(ID);
-		button.addMouseListener(editor);
-		if(zone instanceof ITexturable){
-			int textureData = input.readByte();
-			button.setActionCommand(textures[textureData]);
-			button.setIcon(((ITexturable)zone).getEditorTextureVars()[TextureSelector.indexOf(textures[textureData] + ".png")]);
+		if(ID == 5) {
+			JButton button = new JButton(ToolSelector.player1Texture);
+			button.setBounds(x * 64, y * 64, 64, 64);
+			button.setMnemonic(ID);
+			button.addMouseListener(editor);
+			editor.zoneButtons.add(button);
+			editor.add(button);
+		}else if(ID == 6) {
+			JButton button = new JButton(ToolSelector.player2Texture);
+			button.setBounds(x * 64, y * 64, 64, 64);
+			button.setMnemonic(ID);
+			button.addMouseListener(editor);
+			editor.zoneButtons.add(button);
+			editor.add(button);
+		}else{
+			MapZone zone = zoneRegistry.get(ID);
+			
+			JButton button = new JButton(zone.editorTexture.get());
+			button.setBounds(x * 64, y * 64, 64, 64);
+			button.setMnemonic(ID);
+			button.addMouseListener(editor);
+			if(zone instanceof ITexturable){
+				int textureData = input.readByte();
+				button.setActionCommand(textures[textureData]);
+				button.setIcon(((ITexturable)zone).getEditorTextureVars()[TextureSelector.indexOf(textures[textureData] + ".png")]);
+			}
+			editor.zoneButtons.add(button);
+			editor.add(button);
 		}
-		editor.zoneButtons.add(button);
-		editor.add(button);
 	}
 	
 	private static void loadPlugins() {

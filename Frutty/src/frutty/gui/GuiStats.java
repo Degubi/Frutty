@@ -10,8 +10,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.WindowConstants;
 
 import frutty.map.Map;
 
@@ -47,7 +47,7 @@ public final class GuiStats extends JPanel implements ActionListener{
 	}
 	
 	public static void openStatsGui() {
-		GuiHelper.showNewFrame(new GuiStats(), "Tutty Frutty", JFrame.DISPOSE_ON_CLOSE, 240, 180);
+		GuiHelper.showNewFrame(new GuiStats(), "Tutty Frutty", WindowConstants.DISPOSE_ON_CLOSE, 240, 180);
 	}
 	
 	public static void saveStats() {

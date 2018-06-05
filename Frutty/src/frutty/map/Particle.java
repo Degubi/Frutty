@@ -8,7 +8,7 @@ import java.util.Iterator;
 import frutty.Main;
 import frutty.gui.GuiHelper;
 import frutty.gui.GuiIngame;
-import frutty.gui.GuiSettings.Settings;
+import frutty.gui.Settings;
 
 public final class Particle implements Serializable{
 	private static final long serialVersionUID = -9182849456014867036L;
@@ -22,8 +22,8 @@ public final class Particle implements Serializable{
 	public Particle(int x, int y, int colorIndex) {
 		posX = x;
 		posY = y;
-		lifeTime = 5 + Main.rand.nextInt(5);
-		motionY = 1 + Main.rand.nextInt(3);
+		lifeTime = 25 + Main.rand.nextInt(20);
+		motionY = 2 + Main.rand.nextInt(3);
 		this.colorIndex = colorIndex;
 	}
 	
@@ -45,7 +45,7 @@ public final class Particle implements Serializable{
 	
 	public void render(Graphics graphics) {
 		graphics.setColor(colors[colorIndex]);
-		graphics.fillRect(posX, posY += motionY, 4, 4);
+		graphics.fillRect(posX, posY, 4, 4);
 		
 		graphics.setColor(GuiHelper.color_84Black);
 		int till = posY / 240;
@@ -55,6 +55,7 @@ public final class Particle implements Serializable{
 	}
 	
 	public void update(Iterator<Particle> iterator) {
+		posY += motionY;
 		if(--lifeTime == 0) {
 			iterator.remove();
 		}

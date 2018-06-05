@@ -18,12 +18,12 @@ import java.util.concurrent.TimeUnit;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.WindowConstants;
 
 import frutty.Main;
 import frutty.entity.Entity;
 import frutty.entity.EntityEnemy;
 import frutty.entity.EntityPlayer;
-import frutty.gui.GuiSettings.Settings;
 import frutty.map.Map;
 import frutty.map.Particle;
 import frutty.map.base.MapZone;
@@ -32,11 +32,12 @@ import frutty.map.zones.MapZoneEmpty;
 import frutty.map.zones.MapZoneWater;
 
 public final class GuiIngame extends JPanel implements Runnable, KeyListener{
-	private final ScheduledExecutorService thread = Executors.newSingleThreadScheduledExecutor();
+	protected final ScheduledExecutorService updateThread = Executors.newSingleThreadScheduledExecutor();
+	protected final ScheduledExecutorService renderThread = Executors.newSingleThreadScheduledExecutor();
 	
 	static GuiIngame ingameGui;
 	
-	private boolean paused = false;
+	protected boolean paused = false;
 	public static BufferedImage skyTexture;
 	public static BufferedImage[] textures;
 	
@@ -45,7 +46,8 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 	
 	public GuiIngame() {
 		setLayout(null);
-		thread.scheduleAtFixedRate(this, 0, 20, TimeUnit.MILLISECONDS);
+		updateThread.scheduleAtFixedRate(this, 0, 20, TimeUnit.MILLISECONDS);
+		renderThread.scheduleAtFixedRate(() -> ingameGui.repaint(), 0, 1000 / Settings.fps, TimeUnit.MILLISECONDS);
 	}
 	
 	@Override
@@ -97,7 +99,7 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 			graphics.drawString("playerpos_y: " + Map.players[0].serverPosY, 2, 120);
 		}
 		
-		if(Settings.renderDebug) {
+		if(Settings.renderDebugLevel == 1 || Settings.renderDebugLevel == 3) {
 			graphics.setColor(GuiHelper.color_128Black);
 			graphics.fillRect(Map.width - 85, 0, 160, 130);
 			
@@ -119,7 +121,6 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 	@Override
 	public void run() {
 		if(!paused) {
-			repaint();
 			++Map.ticks;
 			
 			for(Entity entity : Map.players) {
@@ -142,6 +143,12 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 				MapZoneWater.updateWaterUV();
 			}
 			
+			if(Map.ticks % 2 == 0) {
+				for(Iterator<Particle> iterator = Map.particles.iterator(); iterator.hasNext();) {
+					iterator.next().update(iterator);
+				}
+			}
+			
 			if(Map.ticks % 20 == 0) {
 				for(int k = 0; k < Map.zones.length; ++k) {
 					MapZone zone = Map.zones[k];
@@ -153,16 +160,13 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 						Map.getZoneEntity(k).update();
 					}
 				}
-				
-				for(Iterator<Particle> iterator = Map.particles.iterator(); iterator.hasNext();) {
-					iterator.next().update(iterator);
-				}
 			}
 		}
 	}
 	
 	public static void showMessageAndClose(String message) {
-		ingameGui.thread.shutdown();
+		ingameGui.updateThread.shutdown();
+		ingameGui.renderThread.shutdown();
 		JOptionPane.showMessageDialog(null, message, "Frutty", JOptionPane.PLAIN_MESSAGE);
 		GuiMenu.showMenu(false);
 		((JFrame)ingameGui.getTopLevelAncestor()).dispose();
@@ -172,7 +176,7 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 	public static void showIngame() {
 		EventQueue.invokeLater(() -> {
 			JFrame ingameFrame = new JFrame("Tutty Frutty");
-			ingameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			ingameFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 			ingameFrame.setResizable(false);
 			ingameFrame.setBounds(0, 0, Map.width + 288, Map.height + 100);
 			ingameFrame.setLocationRelativeTo(null);
@@ -196,7 +200,7 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 				JFrame returnFrame = new JFrame("Frutty");
 				PauseMenu menu = new PauseMenu();
 				returnFrame.setContentPane(menu);
-				returnFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+				returnFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 				returnFrame.setResizable(false);
 				returnFrame.setBounds(0, 0, 600, 540);
 				returnFrame.setLocationRelativeTo(null);
@@ -224,27 +228,26 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 			if(cmd.equals("Resume")) {
 				ingameGui.paused = false;
 			}else if(cmd.equals("Exit")) {
-				ingameGui.thread.shutdown();
+				ingameGui.renderThread.shutdown();
+				ingameGui.updateThread.shutdown();
 				if(JOptionPane.showConfirmDialog(null, "Save current status?", "Save?", JOptionPane.YES_NO_OPTION, 1) == 0) {
 					Map.createSave(JOptionPane.showInputDialog("Enter save name!"));
 				}
 				GuiStats.saveStats();
-				Settings.saveSettings();
 				System.exit(0);
 			}else if(cmd.equals("Menu")) {
-				ingameGui.thread.shutdown();
+				ingameGui.renderThread.shutdown();
+				ingameGui.updateThread.shutdown();
 				if(JOptionPane.showConfirmDialog(null, "Save current status?", "Save?", JOptionPane.YES_NO_OPTION, 1) == 0) {
 					Map.createSave(JOptionPane.showInputDialog("Enter save name!"));
 				}
 				((JFrame)ingameGui.getTopLevelAncestor()).dispose();
 				GuiMenu.showMenu(false);
 				GuiStats.saveStats();
-				Settings.saveSettings();
 			}else{  //Save
 				ingameGui.paused = true;
 				Map.createSave(JOptionPane.showInputDialog("Enter save name!"));
 				ingameGui.paused = false;
-				Settings.saveSettings();
 				GuiStats.saveStats();
 			}
 			((JFrame)getTopLevelAncestor()).dispose();

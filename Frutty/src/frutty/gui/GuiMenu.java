@@ -17,9 +17,9 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.WindowConstants;
 
 import frutty.Main;
-import frutty.gui.GuiSettings.Settings;
 import frutty.gui.editor.GuiEditor;
 import frutty.map.Map;
 import frutty.map.base.MapZone;
@@ -78,7 +78,7 @@ public final class GuiMenu extends JPanel implements ActionListener{
 		new Thread(() -> {
 			if(checkUpdate) {
 				try(BufferedReader download = new BufferedReader(new InputStreamReader(new URL("https://pastebin.com/raw/m5qJbnks").openStream()))){
-					if(!Main.VERSION.equals(download.readLine())) {
+					if(!Main.VERSION.equals(download.readLine().split(" ")[0])) {
 						JButton updaterButton = new JButton("Click here to Update...");
 						updaterButton.setActionCommand("Update");
 						updaterButton.setBounds(660, 600, 240, 40);
@@ -93,7 +93,7 @@ public final class GuiMenu extends JPanel implements ActionListener{
 				}
 			}
 		}).start();
-		GuiHelper.showNewFrame(menu, "Tutty Frutty", JFrame.EXIT_ON_CLOSE, 910, 675);
+		GuiHelper.showNewFrame(menu, "Tutty Frutty", WindowConstants.EXIT_ON_CLOSE, 910, 675);
 	}
 	
 	@Override
@@ -133,7 +133,7 @@ public final class GuiMenu extends JPanel implements ActionListener{
 			((JFrame)getTopLevelAncestor()).dispose(); break;
 			
 		case "Exit": System.exit(0); break;
-		case "Settings": GuiSettings.showGuiSettings(this); break;
+		case "Settings": Settings.showGuiSettings(this); break;
 		case "MapSelector": 
 			if(((String)mapList.getSelectedItem()).toLowerCase().equals("generate")) {
 				mapSizeField.setEditable(true);

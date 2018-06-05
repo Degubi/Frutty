@@ -22,10 +22,10 @@ public final class GuiProperties extends JPanel{
 		Player2PosX("Player2 Pos X", 7),
 		Player2PosY("Player2 Pos Y", 8);
 		
-		private static final EnumProperty[] props = values();
+		protected static final EnumProperty[] props = values();
 		
-		private final String propertyName;
-		private final int index;
+		protected final String propertyName;
+		protected final int index;
 		
 		private EnumProperty(String name, int ind) {
 			propertyName = name;
@@ -85,7 +85,7 @@ public final class GuiProperties extends JPanel{
 		return (int) table.getValueAt(prop.index, 1);
 	}
 	
-	private static final class PropertyTableModel extends DefaultTableModel{
+	protected static final class PropertyTableModel extends DefaultTableModel{
 		@Override
 		public int getRowCount() {
 			return EnumProperty.props.length;
@@ -98,15 +98,15 @@ public final class GuiProperties extends JPanel{
 		
 		@Override
 		public boolean isCellEditable(int rowIndex, int columnIndex) {
-			return columnIndex == 1 && (rowIndex == 0 || rowIndex == 2); 
+			return columnIndex == 1 && rowIndex < 3; 
 		}
 	}
 	
-	private static final class CustomCellRenderer extends DefaultTableCellRenderer{
+	protected static final class CustomCellRenderer extends DefaultTableCellRenderer{
 		@Override
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 			Component cell = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-			if(row != 0 && row != 2) {
+			if(row > 2) {
 				cell.setForeground(Color.GRAY);
 			}else{
 				cell.setForeground(null); 	//Kell mert különben rákattintás után az összes szürke fontot kap...
