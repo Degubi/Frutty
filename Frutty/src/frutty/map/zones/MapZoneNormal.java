@@ -6,7 +6,7 @@ import java.awt.Image;
 import javax.swing.ImageIcon;
 
 import frutty.gui.GuiIngame;
-import frutty.gui.editor.GuiEditor.TextureSelector;
+import frutty.gui.editor.GuiToolSelector.GuiTextureSelector;
 import frutty.map.base.MapZone;
 import frutty.map.interfaces.ITexturable;
 
@@ -22,7 +22,7 @@ public final class MapZoneNormal extends MapZone implements ITexturable{
 
 	@Override
 	public ImageIcon[] getEditorTextureVars() {
-		return TextureSelector.normalTextures;
+		return GuiTextureSelector.normalTextures;
 	}
 
 	@Override

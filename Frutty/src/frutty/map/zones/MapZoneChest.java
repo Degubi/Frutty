@@ -11,7 +11,7 @@ import frutty.entity.effects.EntityEffectInvisible;
 import frutty.entity.zone.EntityAppleZone;
 import frutty.gui.GuiIngame;
 import frutty.gui.GuiStats;
-import frutty.gui.editor.GuiEditor.TextureSelector;
+import frutty.gui.editor.GuiToolSelector.GuiTextureSelector;
 import frutty.map.Map;
 import frutty.map.Particle;
 import frutty.map.base.MapZone;
@@ -46,7 +46,7 @@ public final class MapZoneChest extends MapZone implements ITexturable{
 
 	@Override
 	public ImageIcon[] getEditorTextureVars() {
-		return TextureSelector.chestTextures;
+		return GuiTextureSelector.chestTextures;
 	}
 
 	@Override

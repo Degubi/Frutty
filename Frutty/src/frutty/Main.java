@@ -22,8 +22,8 @@ import frutty.gui.GuiMenu;
 import frutty.gui.GuiStats;
 import frutty.gui.Settings;
 import frutty.gui.editor.GuiEditor;
-import frutty.gui.editor.GuiEditor.TextureSelector;
-import frutty.gui.editor.GuiEditor.ToolSelector;
+import frutty.gui.editor.GuiToolSelector;
+import frutty.gui.editor.GuiToolSelector.GuiTextureSelector;
 import frutty.map.base.MapZone;
 import frutty.map.interfaces.ITexturable;
 import frutty.map.zones.MapZoneChest;
@@ -96,14 +96,14 @@ public final class Main {
 		int ID = input.readByte();
 		
 		if(ID == 5) {
-			JButton button = new JButton(ToolSelector.player1Texture);
+			JButton button = new JButton(GuiToolSelector.player1Texture);
 			button.setBounds(x * 64, y * 64, 64, 64);
 			button.setMnemonic(ID);
 			button.addMouseListener(editor);
 			editor.zoneButtons.add(button);
 			editor.add(button);
 		}else if(ID == 6) {
-			JButton button = new JButton(ToolSelector.player2Texture);
+			JButton button = new JButton(GuiToolSelector.player2Texture);
 			button.setBounds(x * 64, y * 64, 64, 64);
 			button.setMnemonic(ID);
 			button.addMouseListener(editor);
@@ -119,7 +119,7 @@ public final class Main {
 			if(zone instanceof ITexturable){
 				int textureData = input.readByte();
 				button.setActionCommand(textures[textureData]);
-				button.setIcon(((ITexturable)zone).getEditorTextureVars()[TextureSelector.indexOf(textures[textureData] + ".png")]);
+				button.setIcon(((ITexturable)zone).getEditorTextureVars()[GuiTextureSelector.indexOf(textures[textureData] + ".png")]);
 			}
 			editor.zoneButtons.add(button);
 			editor.add(button);

@@ -12,7 +12,7 @@ import frutty.entity.zone.EntityAppleZone;
 import frutty.entity.zone.EntityZone;
 import frutty.gui.GuiIngame;
 import frutty.gui.GuiStats;
-import frutty.gui.editor.GuiEditor.TextureSelector;
+import frutty.gui.editor.GuiToolSelector.GuiTextureSelector;
 import frutty.map.Map;
 import frutty.map.base.MapZone;
 import frutty.map.interfaces.ITexturable;
@@ -60,7 +60,7 @@ public final class MapZoneFruit extends MapZone implements ITexturable{
 	
 	@Override
 	public ImageIcon[] getEditorTextureVars() {
-		return fruitType == EnumFruit.APPLE ? TextureSelector.appleTextures : TextureSelector.cherryTextures;
+		return fruitType == EnumFruit.APPLE ? GuiTextureSelector.appleTextures : GuiTextureSelector.cherryTextures;
 	}
 	
 	@Override
