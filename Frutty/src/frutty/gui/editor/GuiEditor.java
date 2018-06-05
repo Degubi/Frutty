@@ -18,6 +18,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -35,9 +36,9 @@ import frutty.gui.GuiMenu;
 import frutty.gui.editor.GuiProperties.EnumProperty;
 import frutty.gui.editor.ZoneSelectorButton.TextureSelectorButton;
 
-public final class GuiEditor extends JPanel implements MouseListener{
-	public final ArrayList<JButton> zoneButtons = new ArrayList<>();
-	private final GuiProperties mapProperties;
+public final class GuiEditor extends JPanel{
+	public final ArrayList<ZoneButton> zoneButtons = new ArrayList<>();
+	protected final GuiProperties mapProperties;
 	protected final ZoneSelectorButton zoneSelectorButton;
 	protected final TextureSelectorButton textureSelectorButton;
 	
@@ -58,31 +59,6 @@ public final class GuiEditor extends JPanel implements MouseListener{
 			graphics.drawString("Current texture: " + textureSelectorButton.activeTexture, getWidth() - 175, 190);
 		}
 	}
-	
-	@Override
-	public void mousePressed(MouseEvent event) {
-		if(event.getSource() instanceof JButton) {
-			JButton button = (JButton) event.getSource();
-			
-			if(event.getButton() == MouseEvent.BUTTON1) {
-				button.setMnemonic(zoneSelectorButton.activeZone); button.setIcon(zoneSelectorButton.getIcon());
-						
-				if(Main.hasTextureInfo(zoneSelectorButton.activeZone)) {
-					button.setIcon(Main.getEditorTextureVariants(button.getMnemonic())[textureSelectorButton.activeTextureIndex]);
-					button.setActionCommand(textureSelectorButton.activeTexture);
-				}else if(zoneSelectorButton.activeZone == 5) {
-					mapProperties.setPlayer1Pos(button.getX(), button.getY());
-				}else if(zoneSelectorButton.activeZone == 6) {
-					mapProperties.setPlayer2Pos(button.getX(), button.getY());
-				}
-			}else if(event.getButton() == MouseEvent.BUTTON3 && !button.getActionCommand().equals("Zone Selector") && !button.getActionCommand().equals("Texture Selector")) {
-				if(Main.hasTextureInfo(button.getMnemonic())) {
-					button.setIcon(Main.getEditorTextureVariants(button.getMnemonic())[textureSelectorButton.activeTextureIndex]);
-					button.setActionCommand(textureSelectorButton.activeTexture);
-				}
-			}
-		}
-	}
 
 	public static void openEditor() {
 		showEditorFrame(new GuiEditor("filename.deg", false, "null", 800, 600, 0, 0, 0, 0), 800, 600);
@@ -93,11 +69,10 @@ public final class GuiEditor extends JPanel implements MouseListener{
 		try(ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream("./maps/" + mapName))){
 	 		ArrayList<String> textures = new ArrayList<>();
 			
-	 		for(JButton writeButton : zoneButtons) {
-	 			if(Main.hasTextureInfo(writeButton.getMnemonic())) {
-	 				String texture = writeButton.getActionCommand();
-	 				if(!texture.isEmpty() && !textures.contains(texture)) {
-	 					textures.add(texture);
+	 		for(ZoneButton writeButton : zoneButtons) {
+	 			if(Main.hasTextureInfo(writeButton.zoneID)) {
+	 				if(!writeButton.zoneTexture.isEmpty() && !textures.contains(writeButton.zoneTexture)) {
+	 					textures.add(writeButton.zoneTexture);
 	 				}
 	 			}
 	 		}
@@ -118,12 +93,11 @@ public final class GuiEditor extends JPanel implements MouseListener{
 		 		output.writeShort(mapProperties.getIntProperty(EnumProperty.Player2PosY));
 	 		}
 		 	
-	 		for(JButton writeButton : zoneButtons) {
-	 			int zoneIndex = writeButton.getMnemonic();
-				output.writeByte(zoneIndex);
+	 		for(ZoneButton writeButton : zoneButtons) {
+				output.writeByte(writeButton.zoneID);
 				
-	 			if(Main.hasTextureInfo(zoneIndex)) {
-	 				output.writeByte(textures.indexOf(writeButton.getActionCommand()));
+	 			if(Main.hasTextureInfo(writeButton.zoneID)) {
+	 				output.writeByte(textures.indexOf(writeButton.zoneTexture));
 	 			}
 	 		}
 		} catch (IOException e) {
@@ -225,10 +199,9 @@ public final class GuiEditor extends JPanel implements MouseListener{
 					
 					for(int yPos = 0; yPos < bigHeight; yPos += 64) {
 						for(int xPos = 0; xPos < bigWidth; xPos += 64) {
-							JButton button = new JButton(Main.normalZone.editorTexture.get());
-							button.setMnemonic(0);
-							button.setActionCommand("normal");
-							button.addMouseListener(newEditor);
+							ZoneButton button = new ZoneButton(Main.normalZone.editorTexture.get(), newEditor);
+							button.zoneID = 0;
+							button.zoneTexture = "normal";
 							button.setBounds(xPos, yPos, 64, 64);
 							newEditor.zoneButtons.add(button);
 							newEditor.add(button);
@@ -251,9 +224,9 @@ public final class GuiEditor extends JPanel implements MouseListener{
 	    	fileMenu.addSeparator();
 	    	fileMenu.add(newMenuItem("Save map", 'S', !editor.zoneButtons.isEmpty(), event -> editor.saveMap()));
 	    	fileMenu.add(newMenuItem("Reset map", '0', !editor.zoneButtons.isEmpty(), event -> {
-	    		for(JButton localButton : editor.zoneButtons) {
-			 		localButton.setMnemonic(0);
-			 		localButton.setActionCommand("normal");
+	    		for(ZoneButton localButton : editor.zoneButtons) {
+			 		localButton.zoneID = 0;
+			 		localButton.zoneTexture = "normal";
 			 		localButton.setIcon(Main.normalZone.editorTexture.get());
 	    	};}));
 	    	
@@ -284,5 +257,47 @@ public final class GuiEditor extends JPanel implements MouseListener{
 		return item;
 	}
 	
-	@Override public void mouseClicked(MouseEvent event) {} @Override public void mouseReleased(MouseEvent e) {} @Override public void mouseEntered(MouseEvent e) {} @Override public void mouseExited(MouseEvent e) {}
+	public static final class ZoneButton extends JButton implements MouseListener{
+		public String zoneTexture;
+		public int zoneID;
+		private final GuiEditor editorInstance;
+		
+		public ZoneButton(ImageIcon texture, GuiEditor editor) {
+			super(texture);
+			editorInstance = editor;
+			
+			addMouseListener(this);
+		}
+		
+		@Override
+		public void mousePressed(MouseEvent event) {
+			ZoneButton button = (ZoneButton)event.getComponent();
+			if(event.getButton() == MouseEvent.BUTTON1) {
+				button.zoneID = editorInstance.zoneSelectorButton.activeZone; button.setIcon(editorInstance.zoneSelectorButton.getIcon());
+						
+				if(Main.hasTextureInfo(editorInstance.zoneSelectorButton.activeZone)) {
+					button.setIcon(Main.getEditorTextureVariants(button.zoneID)[editorInstance.textureSelectorButton.activeTextureIndex]);
+					button.zoneTexture = editorInstance.textureSelectorButton.activeTexture;
+				}else if(editorInstance.zoneSelectorButton.activeZone == 5) {
+					editorInstance.mapProperties.setPlayer1Pos(button.getX(), button.getY());
+				}else if(editorInstance.zoneSelectorButton.activeZone == 6) {
+					editorInstance.mapProperties.setPlayer2Pos(button.getX(), button.getY());
+				}
+			}else if(event.getButton() == MouseEvent.BUTTON3) {
+				if(Main.hasTextureInfo(button.zoneID)) {
+					button.setIcon(Main.getEditorTextureVariants(button.zoneID)[editorInstance.textureSelectorButton.activeTextureIndex]);
+					button.zoneTexture = editorInstance.textureSelectorButton.activeTexture;
+				}
+			}
+		}
+		
+		@Override
+		public void mouseClicked(MouseEvent e) {}
+		@Override
+		public void mouseReleased(MouseEvent e) {}
+		@Override
+		public void mouseEntered(MouseEvent e) {}
+		@Override
+		public void mouseExited(MouseEvent e) {}
+	}
 }

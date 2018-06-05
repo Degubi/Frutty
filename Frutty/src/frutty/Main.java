@@ -16,12 +16,12 @@ import java.util.jar.Manifest;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 
 import frutty.gui.GuiMenu;
 import frutty.gui.GuiStats;
 import frutty.gui.Settings;
 import frutty.gui.editor.GuiEditor;
+import frutty.gui.editor.GuiEditor.ZoneButton;
 import frutty.gui.editor.GuiToolSelector;
 import frutty.gui.editor.GuiToolSelector.GuiTextureSelector;
 import frutty.map.base.MapZone;
@@ -96,29 +96,26 @@ public final class Main {
 		int ID = input.readByte();
 		
 		if(ID == 5) {
-			JButton button = new JButton(GuiToolSelector.player1Texture);
+			ZoneButton button = new ZoneButton(GuiToolSelector.player1Texture, editor);
 			button.setBounds(x * 64, y * 64, 64, 64);
-			button.setMnemonic(ID);
-			button.addMouseListener(editor);
+			button.zoneID = ID;
 			editor.zoneButtons.add(button);
 			editor.add(button);
 		}else if(ID == 6) {
-			JButton button = new JButton(GuiToolSelector.player2Texture);
+			ZoneButton button = new ZoneButton(GuiToolSelector.player2Texture, editor);
 			button.setBounds(x * 64, y * 64, 64, 64);
-			button.setMnemonic(ID);
-			button.addMouseListener(editor);
+			button.zoneID = ID;
 			editor.zoneButtons.add(button);
 			editor.add(button);
 		}else{
 			MapZone zone = zoneRegistry.get(ID);
 			
-			JButton button = new JButton(zone.editorTexture.get());
+			ZoneButton button = new ZoneButton(zone.editorTexture.get(), editor);
 			button.setBounds(x * 64, y * 64, 64, 64);
-			button.setMnemonic(ID);
-			button.addMouseListener(editor);
+			button.zoneID = ID;
 			if(zone instanceof ITexturable){
 				int textureData = input.readByte();
-				button.setActionCommand(textures[textureData]);
+				button.zoneTexture = textures[textureData];
 				button.setIcon(((ITexturable)zone).getEditorTextureVars()[GuiTextureSelector.indexOf(textures[textureData] + ".png")]);
 			}
 			editor.zoneButtons.add(button);

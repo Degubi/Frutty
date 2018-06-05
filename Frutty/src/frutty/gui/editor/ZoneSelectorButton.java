@@ -19,7 +19,6 @@ public final class ZoneSelectorButton extends JButton implements ActionListener{
 		super(Main.emptyZone.editorTexture.get());
 		
 		editorInstance = editor;
-		setActionCommand("Zone Selector");
 		setToolTipText("Zone Selector Tool");
 		addActionListener(this);
 		setBounds(mapWidth * 64 + 20, 80, 64, 64);
@@ -34,7 +33,8 @@ public final class ZoneSelectorButton extends JButton implements ActionListener{
 			toolSelectorFrame.addFocusListener(selector);
 			toolSelectorFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 			toolSelectorFrame.setResizable(false);
-			toolSelectorFrame.setBounds(getLocationOnScreen().x, 300, 128, 500);
+			int height = Main.zoneRegistry.size() % 2 == 0 ? ((Main.zoneRegistry.size() + 2) / 2) * 64 : ((Main.zoneRegistry.size() + 3) / 2) * 64;
+			toolSelectorFrame.setBounds(getLocationOnScreen().x, getLocationOnScreen().y, 128, height);
 			toolSelectorFrame.setFocusable(true);
 			toolSelectorFrame.setUndecorated(true);
 			toolSelectorFrame.setVisible(true);
@@ -51,7 +51,6 @@ public final class ZoneSelectorButton extends JButton implements ActionListener{
 			
 			editorInstance = editor;
 			setToolTipText("Texture Selector Tool");
-			setActionCommand("Texture Selector");
 			addActionListener(this);
 			setBounds(width * 64 + 20, 200, 128, 128);
 		}
