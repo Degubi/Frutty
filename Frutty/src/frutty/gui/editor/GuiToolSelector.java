@@ -27,23 +27,22 @@ public final class GuiToolSelector extends JPanel implements ActionListener, Foc
 		setLayout(null);
 		this.editor = editor;
 		
-		add(newEditorButton(0, Main.normalZone.editorTexture.get(), 0, 0, this));
-		add(newEditorButton(1, Main.emptyZone.editorTexture.get(), 64, 0, this));
-		add(newEditorButton(2, Main.appleZone.editorTexture.get(), 0, 64, this));
-		add(newEditorButton(3, Main.cherryZone.editorTexture.get(), 64, 64, this));
-		add(newEditorButton(4, Main.spawnerZone.editorTexture.get(), 0, 128, this));
-		add(newEditorButton(7, Main.chestZone.editorTexture.get(), 64, 128, this));
-		add(newEditorButton(5, player1Texture, 0, 192, this));
-		add(newEditorButton(6, player2Texture, 64, 192, this));
-		add(newEditorButton(8, Main.waterZone.editorTexture.get(), 0, 256, this));
-		add(newEditorButton(9, Main.skyZone.editorTexture.get(), 64, 256, this));
+		add(newEditorButton("normalZone", Main.normalZone.editorTexture.get(), 0, 0, this));
+		add(newEditorButton("emptyZone", Main.emptyZone.editorTexture.get(), 64, 0, this));
+		add(newEditorButton("appleZone", Main.appleZone.editorTexture.get(), 0, 64, this));
+		add(newEditorButton("cherryZone", Main.cherryZone.editorTexture.get(), 64, 64, this));
+		add(newEditorButton("spawnerZone", Main.spawnerZone.editorTexture.get(), 0, 128, this));
+		add(newEditorButton("chestZone", Main.chestZone.editorTexture.get(), 64, 128, this));
+		add(newEditorButton("player1Zone", player1Texture, 0, 192, this));
+		add(newEditorButton("player2Zone", player2Texture, 64, 192, this));
+		add(newEditorButton("waterZone", Main.waterZone.editorTexture.get(), 0, 256, this));
+		add(newEditorButton("skyZone", Main.skyZone.editorTexture.get(), 64, 256, this));
 		
 		var entries = Main.zoneRegistry.entrySet();
 		int xPos = 0, yPos = 320, counter = 0;
 		for(var entry : entries) {
-			@SuppressWarnings("boxing")
-			int id = entry.getKey();
-			if(id > 20) {
+			String id = entry.getKey();
+			if(id.contains(":")) {
 				add(newEditorButton(id, entry.getValue().editorTexture.get(), xPos, yPos, this));
 			}
 			++counter;
@@ -57,10 +56,10 @@ public final class GuiToolSelector extends JPanel implements ActionListener, Foc
 		}
 	}
 	
-	private static JButton newEditorButton(int index, ImageIcon icon, int x, int y, ActionListener listener) {
+	private static JButton newEditorButton(String ID, ImageIcon icon, int x, int y, ActionListener listener) {
 		JButton butt = new JButton(icon);
 		butt.setBounds(x, y, 64, 64);
-		butt.setMnemonic(index);
+		butt.setActionCommand(ID);
 		butt.addActionListener(listener);
 		return butt;
 	}
@@ -69,7 +68,7 @@ public final class GuiToolSelector extends JPanel implements ActionListener, Foc
 	public void actionPerformed(ActionEvent event) {
 		if(event.getSource() instanceof JButton) {
 			JButton button = (JButton) event.getSource();
-			editor.zoneSelectorButton.activeZone = button.getMnemonic();
+			editor.zoneSelectorButton.activeZone = button.getActionCommand();
 			editor.zoneSelectorButton.setIcon(button.getIcon());
 			((JFrame)getTopLevelAncestor()).dispose();
 		}

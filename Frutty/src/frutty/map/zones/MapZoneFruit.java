@@ -23,7 +23,7 @@ public final class MapZoneFruit extends MapZone implements ITexturable{
 	public final EnumFruit fruitType;
 	
 	public MapZoneFruit(EnumFruit type) {
-		super(type == EnumFruit.APPLE ? 2 : 3, true);
+		super(true);
 		fruitType = type;
 	}
 
@@ -81,7 +81,7 @@ public final class MapZoneFruit extends MapZone implements ITexturable{
 	}
 
 	@Override
-	protected ImageIcon getEditorTexture() {
+	protected ImageIcon getEditorIcon() {
 		if(fruitType == EnumFruit.APPLE) {
 			BufferedImage apple = new BufferedImage(64, 64, BufferedImage.TYPE_INT_RGB);
 			Graphics graph = apple.getGraphics();

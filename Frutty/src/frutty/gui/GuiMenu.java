@@ -44,6 +44,7 @@ public final class GuiMenu extends JPanel implements ActionListener{
 		add(GuiHelper.newButton("Settings", 700, 250, this));
 		add(GuiHelper.newButton("Load Save", 700, 100, this));
 		add(GuiHelper.newButton("Editor", 20, 475, this));
+		add(GuiHelper.newButton("Plugins", 20, 400, this));
 		add(GuiHelper.newButton("Stats", 700, 330, this));
 		
 		mapList.addActionListener(this);
@@ -93,7 +94,7 @@ public final class GuiMenu extends JPanel implements ActionListener{
 				}
 			}
 		}).start();
-		GuiHelper.showNewFrame(menu, "Tutty Frutty", WindowConstants.EXIT_ON_CLOSE, 910, 675);
+		GuiHelper.showNewFrame(menu, "Frutty", WindowConstants.EXIT_ON_CLOSE, 910, 675);
 	}
 	
 	@Override
@@ -118,9 +119,9 @@ public final class GuiMenu extends JPanel implements ActionListener{
 	
 	@Override
 	public void actionPerformed(ActionEvent event) {
-		switch(event.getActionCommand()) {
+		String command = event.getActionCommand();
 		
-		case "New Game":
+		if(command.equals("New Game")){
 			String mapName = ((String)mapList.getSelectedItem());
 			Settings.lastMap = mapName;
 			if(mapName.equals("Generate")) {
@@ -130,30 +131,36 @@ public final class GuiMenu extends JPanel implements ActionListener{
 				Map.loadMap(mapName, coopBox.isSelected());
 			}
 			GuiIngame.showIngame();
-			((JFrame)getTopLevelAncestor()).dispose(); break;
+			((JFrame)getTopLevelAncestor()).dispose();
 			
-		case "Exit": System.exit(0); break;
-		case "Settings": Settings.showGuiSettings(this); break;
-		case "MapSelector": 
+		}else if(command.equals("Exit")){
+			System.exit(0);
+		}else if(command.equals("Settings")){
+			Settings.showGuiSettings(this);
+		}else if(command.equals("MapSelector")){ 
 			if(((String)mapList.getSelectedItem()).toLowerCase().equals("generate")) {
 				mapSizeField.setEditable(true);
 				mapSizeField.setText("8x8");
 			}else{
 				mapSizeField.setEditable(false);
 				mapSizeField.setText(Map.loadMapSize((String) mapList.getSelectedItem()));
-			}break;
-			
-		case "Editor": GuiEditor.openEditor(); ((JFrame)getTopLevelAncestor()).dispose(); break;
-		case "Stats": GuiStats.openStatsGui(); break;
-		case "Update": try {
+			}
+		}else if(command.equals("Plugins")) {
+			GuiPlugins.showPlugins();
+		}else if(command.equals("Editor")){
+			GuiEditor.openEditor(); ((JFrame)getTopLevelAncestor()).dispose();
+		}else if(command.equals("Stats")){
+			GuiStats.openStatsGui();
+		}else if(command.equals("Update")){
+			try {
 				JOptionPane.showMessageDialog(null, "Exiting game to Updater", "Frutty Updater", 0);
 				Runtime.getRuntime().exec("java -jar FruttyInstaller.jar");
 				System.exit(0);
 			} catch (IOException e) {
 				e.printStackTrace();
-			} break;
+			} 
 			
-		default: //Load
+		}else{ //Load
 			String[] allMapNames = new File("./saves/").list();
 			if(allMapNames.length > 0) {
 				if(Map.loadSave((String) JOptionPane.showInputDialog(this, "Chose map file!", "Saves", JOptionPane.QUESTION_MESSAGE, null, allMapNames, allMapNames[0]))) {

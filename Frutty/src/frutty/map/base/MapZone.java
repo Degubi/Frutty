@@ -21,17 +21,15 @@ import frutty.map.Particle;
 public abstract class MapZone implements Serializable{
 	private static final long serialVersionUID = 392316063689927131L;
 	
-	public final int zoneID;
 	public final boolean hasShadowRender;
-	public transient final Lazy<ImageIcon> editorTexture = new Lazy<>(this::getEditorTexture);
+	public transient final Lazy<ImageIcon> editorTexture = new Lazy<>(this::getEditorIcon);
 	
-	public MapZone(int ID, boolean hasDarkening) {
-		zoneID = ID;
+	public MapZone(boolean hasDarkening) {
 		hasShadowRender = hasDarkening;
 	}
 	
 	public abstract void draw(int x, int y, int textureIndex, Graphics graphics);
-	protected abstract ImageIcon getEditorTexture();
+	protected abstract ImageIcon getEditorIcon();
 	public boolean hasZoneEntity() {return false;}
 	public boolean isBreakable(int x, int y) {return true;}
 	public void onZoneAdded(boolean isBackground, int x, int y) {}

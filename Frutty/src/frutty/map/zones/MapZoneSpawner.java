@@ -22,7 +22,7 @@ public final class MapZoneSpawner extends MapZone{
 	}
 
 	public MapZoneSpawner() {
-		super(4, false);
+		super(false);
 	}
 	
 	@Override
@@ -52,7 +52,7 @@ public final class MapZoneSpawner extends MapZone{
 	}
 
 	@Override
-	protected ImageIcon getEditorTexture() {
+	protected ImageIcon getEditorIcon() {
 		return new ImageIcon("./textures/dev/spawner.png");
 	}
 }

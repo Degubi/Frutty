@@ -18,7 +18,7 @@ public final class MapZoneWater extends MapZone implements ITransparentZone{
 	private static int textureY = 0;
 	
 	public MapZoneWater() {
-		super(8, false);
+		super(false);
 	}
 	
 	@Override
@@ -57,7 +57,7 @@ public final class MapZoneWater extends MapZone implements ITransparentZone{
 	}
 
 	@Override
-	protected ImageIcon getEditorTexture() {
+	protected ImageIcon getEditorIcon() {
 		BufferedImage returnTexture = new BufferedImage(64, 64, BufferedImage.TYPE_INT_RGB);
 		Graphics waterGraphics = returnTexture.getGraphics();
 		waterGraphics.setColor(Color.BLACK);

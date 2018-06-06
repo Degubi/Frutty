@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
@@ -99,9 +101,9 @@ public final class Map{
 		}
 	}
 
-	public static void generateMap(int width, int height, boolean isMultiplayer) {
+	public static void generateMap(int genWidth, int genHeight, boolean isMultiplayer) {
 		Random rand = Main.rand;
-		int bigWidth = width * 64, bigHeight = height * 64, zoneIndex = 0;
+		int bigWidth = genWidth * 64, bigHeight = genHeight * 64, zoneIndex = 0;
 		
 		init(new String[] {"normal"}, "null", isMultiplayer, bigWidth, bigHeight, 0, 0, 0, 0);
 		
@@ -175,7 +177,7 @@ public final class Map{
 			}
 		}
 		
-		GuiHelper.mapSizeCheck(width / 64 + 1, height / 64 + 1);
+		GuiHelper.mapSizeCheck(genWidth / 64 + 1, genHeight / 64 + 1);
 	}
 	
 	public static void loadMap(String name, boolean isMultiplayer) {
@@ -188,11 +190,18 @@ public final class Map{
 				textures[k] = input.readUTF();
 			}
 			
+			int zoneIDCount = input.readByte();
+			String[] zoneIDS = new String[zoneIDCount];
+			
+			for(int k = 0; k < zoneIDCount; ++k) {
+				zoneIDS[k] = input.readUTF();
+			}
+			
 			init(textures, input.readUTF(), isMultiplayer, width = input.readShort() * 64, height = input.readShort() * 64, input.readShort(), input.readShort(), input.readShort(), input.readShort());
 			
 			for(int y = 0; y < height; y += 64) {
 				for(int x = 0; x < width; x += 64) {
-					MapZone zone = Main.handleMapReading(input.readByte());
+					MapZone zone = Main.handleMapReading(zoneIDS[input.readByte()]);
 					zone.onZoneAdded(false, x, y);
 					
 					if(zone instanceof ITexturable) {
@@ -223,6 +232,13 @@ public final class Map{
 				textures[k] = input.readUTF();
 			}
 			
+			int zoneIDCount = input.readByte();
+			String[] zoneIDS = new String[zoneIDCount];
+			
+			for(int k = 0; k < zoneIDCount; ++k) {
+				zoneIDS[k] = input.readUTF();
+			}
+			
 			loadTextures(textures);
 			loadSkyTexture(input.readUTF());
 			
@@ -232,7 +248,7 @@ public final class Map{
 			
 			for(int y = 0; y < 640; y += 64) {
 				for(int x = 0; x < 896; x += 64) {
-					MapZone zone = Main.handleMapReading(input.readByte());
+					MapZone zone = Main.handleMapReading(zoneIDS[input.readByte()]);
 					if(zone instanceof ITexturable) {
 						backTextureData[zoneIndex] = input.readByte();
 					}
@@ -251,6 +267,12 @@ public final class Map{
 			for(int k = 0; k < textureCount; ++k) {
 				input.readUTF();
 			}
+			
+			int idCount = input.readByte();
+			for(int k = 0; k < idCount; ++k) {
+				input.readUTF();
+			}
+			
 			input.readUTF();
 			return input.readShort() + "x" + input.readShort();
 		} catch (IOException e) {
@@ -262,13 +284,36 @@ public final class Map{
 	public static void createSave(String fileName) {
 		if(fileName != null) {
 			try(ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream("./saves/" + fileName + ".sav"))){
-				output.writeObject(players);
+				output.writeShort(zones.length);
 				
-				output.writeInt(zones.length);
+				HashMap<Integer, String> zoneIDS = new HashMap<>();
+				
+				var entries = Main.zoneRegistry.entrySet();
 				for(MapZone zone : zones) {
-					output.writeByte(zone.zoneID);
+					for(Entry<String, MapZone> entry : entries) {
+						if(entry.getValue() == zone && !zoneIDS.containsValue(entry.getKey())) {
+							zoneIDS.put(zoneIDS.size(), entry.getKey());
+							break;
+						}
+					}
+				}
+				output.writeByte(zoneIDS.size());
+				
+				for(int k = 0; k < zoneIDS.size(); ++k) {
+					output.writeUTF(zoneIDS.get(k));
 				}
 				
+				for(MapZone zone : zones) {
+					String zoneName = Main.getZoneName(zone);
+					
+					for(Entry<Integer, String> meh : zoneIDS.entrySet()) {
+						if(meh.getValue() == zoneName) {
+							output.writeByte(meh.getKey());
+						}
+					}
+				}
+				
+				output.writeObject(players);
 				output.writeObject(entities);
 				output.writeObject(particles);
 				output.writeObject(enemies);
@@ -292,15 +337,18 @@ public final class Map{
 	public static boolean loadSave(String fileName) {
 		if(fileName != null) {
 			try(ObjectInputStream input = new ObjectInputStream(new FileInputStream("./saves/" + fileName))){
-				players = (EntityPlayer[]) input.readObject();
+				zones = new MapZone[input.readShort()];
+				String[] zoneIDs = new String[input.readByte()];
 				
-				int count = input.readInt();
-				zones = new MapZone[count];
-				
-				for(int k = 0; k < count; ++k) {
-					zones[k] = Main.zoneRegistry.get((int)input.readByte());
+				for(int k = 0; k < zoneIDs.length; ++k) {
+					zoneIDs[k] = input.readUTF();
 				}
 				
+				for(int k = 0; k < zones.length; ++k) {
+					zones[k] = Main.zoneRegistry.get(zoneIDs[input.readByte()]);
+				}
+				
+				players = (EntityPlayer[]) input.readObject();
 				entities = (ArrayList<Entity>) input.readObject();
 				particles = (ArrayList<Particle>) input.readObject();
 				enemies = (EntityEnemy[]) input.readObject();

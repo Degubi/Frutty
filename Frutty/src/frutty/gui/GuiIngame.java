@@ -175,7 +175,7 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 	
 	public static void showIngame() {
 		EventQueue.invokeLater(() -> {
-			JFrame ingameFrame = new JFrame("Tutty Frutty");
+			JFrame ingameFrame = new JFrame("Frutty");
 			ingameFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 			ingameFrame.setResizable(false);
 			ingameFrame.setBounds(0, 0, Map.width + 288, Map.height + 100);

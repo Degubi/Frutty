@@ -5,11 +5,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.Random;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
@@ -36,9 +37,10 @@ import frutty.map.zones.MapZoneSpawner;
 import frutty.map.zones.MapZoneWater;
 import frutty.plugin.IFruttyPlugin;
 
-@SuppressWarnings("boxing")
 public final class Main {
-	public static final HashMap<Integer, MapZone> zoneRegistry = new HashMap<>();
+	public static final HashMap<String, MapZone> zoneRegistry = new HashMap<>();
+	public static final ArrayList<Plugin> pluginList = new ArrayList<>(2);
+	
 	public static final Random rand = new Random();
 	public static final String VERSION = "1.0.0";
 
@@ -52,32 +54,47 @@ public final class Main {
 	public static final MapZoneSky skyZone = new MapZoneSky();
 	
 	public static void main(String[] args){
-		zoneRegistry.put(normalZone.zoneID, normalZone);
-		zoneRegistry.put(emptyZone.zoneID, emptyZone);
-		zoneRegistry.put(appleZone.zoneID, appleZone);
-		zoneRegistry.put(cherryZone.zoneID, cherryZone);
-		zoneRegistry.put(spawnerZone.zoneID, spawnerZone);
-		zoneRegistry.put(chestZone.zoneID, chestZone);
-		zoneRegistry.put(waterZone.zoneID, waterZone);
-		zoneRegistry.put(skyZone.zoneID, skyZone);
+		zoneRegistry.put("normalZone", normalZone);
+		zoneRegistry.put("emptyZone", emptyZone);
+		zoneRegistry.put("appleZone", appleZone);
+		zoneRegistry.put("cherryZone", cherryZone);
+		zoneRegistry.put("spawnerZone", spawnerZone);
+		zoneRegistry.put("chestZone", chestZone);
+		zoneRegistry.put("waterZone", waterZone);
+		zoneRegistry.put("skyZone", skyZone);
 		
-		loadPlugins();
 		GuiMenu.showMenu(true);
 		Settings.loadSettings();
 		GuiStats.loadStats();
 		new File("./saves/").mkdir();
+		
+		pluginList.add(new Plugin("Frutty", "A Neri naon büdös", null, VERSION, null));
+		pluginList.add(Plugin.pluginLoaderPlugin);
+		
+		loadPlugins();
 	}
 	
-	public static boolean hasTextureInfo(int ID) {
+	public static String getZoneName(MapZone zone) {
+		var entries = zoneRegistry.entrySet();
+		
+		for(Entry<String, MapZone> entry : entries) {
+			if(entry.getValue() == zone) {
+				return entry.getKey();
+			}
+		}
+		return null;
+	}
+	
+	public static boolean hasTextureInfo(String ID) {
 		return zoneRegistry.get(ID) instanceof ITexturable;
 	}
 	
-	public static ImageIcon[] getEditorTextureVariants(int ID) {
+	public static ImageIcon[] getEditorTextureVariants(String ID) {
 		return ((ITexturable)zoneRegistry.get(ID)).getEditorTextureVars();
 	}
 	
-	public static MapZone handleMapReading(int ID) {
-		if(ID == 5 || ID == 6) {
+	public static MapZone handleMapReading(String ID) {
+		if(ID.equals("player1Zone") || ID.equals("player2Zone")) {
 			return Main.emptyZone;
 		}
 		return zoneRegistry.get(ID);
@@ -92,27 +109,25 @@ public final class Main {
 		}
 	}
 	
-	public static void handleEditorReading(GuiEditor editor, ObjectInputStream input, int x, int y, String[] textures) throws IOException {
-		int ID = input.readByte();
-		
-		if(ID == 5) {
+	public static void handleEditorReading(GuiEditor editor, String zoneID, ObjectInputStream input, int x, int y, String[] textures) throws IOException {
+		if(zoneID.equals("player1Zone")) {
 			ZoneButton button = new ZoneButton(GuiToolSelector.player1Texture, editor);
 			button.setBounds(x * 64, y * 64, 64, 64);
-			button.zoneID = ID;
+			button.zoneID = zoneID;
 			editor.zoneButtons.add(button);
 			editor.add(button);
-		}else if(ID == 6) {
+		}else if(zoneID.equals("player2Zone")) {
 			ZoneButton button = new ZoneButton(GuiToolSelector.player2Texture, editor);
 			button.setBounds(x * 64, y * 64, 64, 64);
-			button.zoneID = ID;
+			button.zoneID = zoneID;
 			editor.zoneButtons.add(button);
 			editor.add(button);
 		}else{
-			MapZone zone = zoneRegistry.get(ID);
+			MapZone zone = zoneRegistry.get(zoneID);
 			
 			ZoneButton button = new ZoneButton(zone.editorTexture.get(), editor);
 			button.setBounds(x * 64, y * 64, 64, 64);
-			button.zoneID = ID;
+			button.zoneID = zoneID;
 			if(zone instanceof ITexturable){
 				int textureData = input.readByte();
 				button.zoneTexture = textures[textureData];
@@ -123,7 +138,7 @@ public final class Main {
 		}
 	}
 	
-	private static void loadPlugins() {
+	public static void loadPlugins() {
 		new File("./plugins/").mkdir();
 		
 		File[] all = new File("./plugins/").listFiles((dir, name) -> name.endsWith(".jar"));
@@ -162,9 +177,14 @@ public final class Main {
 						System.err.println("Can't load main class from plugin: " + all[k]);
 					}else{
 						var loaded = urlClass.loadClass(mainClassNames[k]);
-						if(hasInterface(loaded)) {
-							Method method = loaded.getMethod("pluginMain");
-							method.invoke(loaded.getDeclaredConstructor().newInstance());
+						if(hasInterface(loaded, IFruttyPlugin.class)) {
+							Object instance = loaded.getDeclaredConstructor().newInstance();
+							loaded.getMethod("initPlugin").invoke(instance);
+							pluginList.add(new Plugin((String) loaded.getMethod("getPluginID").invoke(instance), 
+												   (String) loaded.getMethod("getPluginDescription").invoke(instance), 
+												   (String) loaded.getMethod("getUpdateURL").invoke(instance), 
+												   (String) loaded.getMethod("getPluginVersion").invoke(instance),
+												   (String) loaded.getMethod("getVersionURL").invoke(instance)));
 						}
 					}
 				}
@@ -174,12 +194,39 @@ public final class Main {
 		}
 	}
 	
-	private static boolean hasInterface(Class<?> theClass) {
+	private static boolean hasInterface(Class<?> theClass, Class<?> interfaceClass) {
 		for(var faces : theClass.getInterfaces()) {
-			if(IFruttyPlugin.class.isAssignableFrom(faces)){
+			if(interfaceClass.isAssignableFrom(faces)){
 				return true;
 			}
 		}
 		return false;
+	}
+	
+	public static final class Plugin {
+		public static final Plugin pluginLoaderPlugin = new Plugin("Plugin Loader", "Base plugin loading module for Frutty", "https://www.google.com", "1.0.0", null);
+		
+		public final String description;
+		public final String ID, updateURL, version, versionURL;
+			
+		public Plugin(String name, String desc, String url, String ver, String verURL) {
+			description = desc;
+			ID = name;
+			updateURL = url;
+			version = ver;
+			versionURL = verURL;
+		}
+			
+		@Override
+		public String toString() {
+			return ID;
+		}
+			
+		public String getInfo() {
+			return "Name: " + ID + 
+					"<br>Version: " + version + 
+					"<br>URL: " + (updateURL == null ? "" : ("<a href=" + updateURL + ">" + updateURL + "</a>")) + 
+					"<br>Description: " + description;
+		}
 	}
 }

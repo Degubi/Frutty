@@ -9,7 +9,7 @@ import frutty.map.base.MapZone;
 
 public final class MapZoneSky extends MapZone{
 	public MapZoneSky() {
-		super(9, false);
+		super(false);
 	}
 
 	@Override
@@ -23,7 +23,7 @@ public final class MapZoneSky extends MapZone{
 	}
 
 	@Override
-	protected ImageIcon getEditorTexture() {
+	protected ImageIcon getEditorIcon() {
 		return new ImageIcon("./textures/dev/sky.png");
 	}
 }

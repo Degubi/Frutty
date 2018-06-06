@@ -67,9 +67,12 @@ public final class GuiEditor extends JPanel{
 	private void saveMap() {
 		String mapName = mapProperties.getProperty(EnumProperty.MapName);
 		try(ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream("./maps/" + mapName))){
-	 		ArrayList<String> textures = new ArrayList<>();
+	 		ArrayList<String> textures = new ArrayList<>(), zoneIDs = new ArrayList<>();
 			
 	 		for(ZoneButton writeButton : zoneButtons) {
+	 			if(!zoneIDs.contains(writeButton.zoneID)) {
+	 				zoneIDs.add(writeButton.zoneID);
+	 			}
 	 			if(Main.hasTextureInfo(writeButton.zoneID)) {
 	 				if(!writeButton.zoneTexture.isEmpty() && !textures.contains(writeButton.zoneTexture)) {
 	 					textures.add(writeButton.zoneTexture);
@@ -80,6 +83,12 @@ public final class GuiEditor extends JPanel{
 	 		
 	 		for(int k = 0; k < textures.size(); ++k) {
 	 			output.writeUTF(textures.get(k));
+	 		}
+	 		
+	 		output.writeByte(zoneIDs.size());
+	 		
+	 		for(int k = 0; k < zoneIDs.size(); ++k) {
+	 			output.writeUTF(zoneIDs.get(k));
 	 		}
 	 		
 			output.writeUTF(mapProperties.getProperty(EnumProperty.SkyTexture));
@@ -94,8 +103,8 @@ public final class GuiEditor extends JPanel{
 	 		}
 		 	
 	 		for(ZoneButton writeButton : zoneButtons) {
-				output.writeByte(writeButton.zoneID);
-				
+	 			output.writeByte(zoneIDs.indexOf(writeButton.zoneID));
+	 			
 	 			if(Main.hasTextureInfo(writeButton.zoneID)) {
 	 				output.writeByte(textures.indexOf(writeButton.zoneTexture));
 	 			}
@@ -136,6 +145,13 @@ public final class GuiEditor extends JPanel{
 					textures[k] = input.readUTF();
 				}
 				
+				int zoneIDCount = input.readByte();
+				String[] zoneIDS = new String[zoneIDCount];
+				
+				for(int k = 0; k < zoneIDCount; ++k) {
+					zoneIDS[k] = input.readUTF();
+				}
+				
 				String skyName = input.readUTF();
 				int mapWidth = input.readShort(), mapHeight = input.readShort();
 				GuiEditor editor = fileName.startsWith("background") 
@@ -144,7 +160,7 @@ public final class GuiEditor extends JPanel{
 				
 				for(int y = 0; y < mapHeight; ++y) {
 					for(int x = 0; x < mapWidth; ++x) {
-						Main.handleEditorReading(editor, input, x, y, textures);
+						Main.handleEditorReading(editor, zoneIDS[input.readByte()], input, x, y, textures);
 					}
 				}
 				showEditorFrame(editor, mapWidth * 64, mapHeight * 64);
@@ -200,7 +216,7 @@ public final class GuiEditor extends JPanel{
 					for(int yPos = 0; yPos < bigHeight; yPos += 64) {
 						for(int xPos = 0; xPos < bigWidth; xPos += 64) {
 							ZoneButton button = new ZoneButton(Main.normalZone.editorTexture.get(), newEditor);
-							button.zoneID = 0;
+							button.zoneID = "normalZone";
 							button.zoneTexture = "normal";
 							button.setBounds(xPos, yPos, 64, 64);
 							newEditor.zoneButtons.add(button);
@@ -225,7 +241,7 @@ public final class GuiEditor extends JPanel{
 	    	fileMenu.add(newMenuItem("Save map", 'S', !editor.zoneButtons.isEmpty(), event -> editor.saveMap()));
 	    	fileMenu.add(newMenuItem("Reset map", '0', !editor.zoneButtons.isEmpty(), event -> {
 	    		for(ZoneButton localButton : editor.zoneButtons) {
-			 		localButton.zoneID = 0;
+			 		localButton.zoneID = "normalZone";
 			 		localButton.zoneTexture = "normal";
 			 		localButton.setIcon(Main.normalZone.editorTexture.get());
 	    	};}));
@@ -258,8 +274,7 @@ public final class GuiEditor extends JPanel{
 	}
 	
 	public static final class ZoneButton extends JButton implements MouseListener{
-		public String zoneTexture;
-		public int zoneID;
+		public String zoneTexture, zoneID;
 		private final GuiEditor editorInstance;
 		
 		public ZoneButton(ImageIcon texture, GuiEditor editor) {
@@ -278,9 +293,9 @@ public final class GuiEditor extends JPanel{
 				if(Main.hasTextureInfo(editorInstance.zoneSelectorButton.activeZone)) {
 					button.setIcon(Main.getEditorTextureVariants(button.zoneID)[editorInstance.textureSelectorButton.activeTextureIndex]);
 					button.zoneTexture = editorInstance.textureSelectorButton.activeTexture;
-				}else if(editorInstance.zoneSelectorButton.activeZone == 5) {
+				}else if(editorInstance.zoneSelectorButton.activeZone.equals("player1Zone")) {
 					editorInstance.mapProperties.setPlayer1Pos(button.getX(), button.getY());
-				}else if(editorInstance.zoneSelectorButton.activeZone == 6) {
+				}else if(editorInstance.zoneSelectorButton.activeZone.equals("player2Zone")) {
 					editorInstance.mapProperties.setPlayer2Pos(button.getX(), button.getY());
 				}
 			}else if(event.getButton() == MouseEvent.BUTTON3) {

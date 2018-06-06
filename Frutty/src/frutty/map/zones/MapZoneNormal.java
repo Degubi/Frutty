@@ -12,7 +12,7 @@ import frutty.map.interfaces.ITexturable;
 
 public final class MapZoneNormal extends MapZone implements ITexturable{
 	public MapZoneNormal() {
-		super(0, true);
+		super(true);
 	}
 	
 	@Override
@@ -26,7 +26,7 @@ public final class MapZoneNormal extends MapZone implements ITexturable{
 	}
 
 	@Override
-	protected ImageIcon getEditorTexture() {
+	protected ImageIcon getEditorIcon() {
 		return new ImageIcon(new ImageIcon("./textures/map/normal.png").getImage().getScaledInstance(64, 64, Image.SCALE_DEFAULT));
 	}
 }

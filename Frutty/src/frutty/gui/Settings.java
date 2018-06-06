@@ -98,7 +98,7 @@ public final class Settings{
 		tabbed.addTab("Debug", debugInstance = new DebugOptions(menu));
 		
 		EventQueue.invokeLater(() -> {
-			JFrame returnFrame = new JFrame("Tutty Frutty Options");
+			JFrame returnFrame = new JFrame("Frutty Options");
 			returnFrame.setContentPane(tabbed);
 			returnFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 			returnFrame.setResizable(false);

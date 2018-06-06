@@ -6,27 +6,27 @@ import frutty.Main;
 import frutty.map.base.MapZone;
 
 public interface IFruttyPlugin {
-	public void pluginMain();
+	void initPlugin();
+	String getPluginID();
+	String getPluginVersion();
+	default String getPluginDescription() {return null;}
+	default String getUpdateURL() {return null;}
+	default String getVersionURL() {return null;}
 	
 	/**
 	 * @param ID Zone ID
 	 * @param zone The zone object
 	 * @param editorTextureName Name of the texture used in editor, put it in the dev folder
 	 */
-	public static void registerZone(MapZone zone) {
-		if(zone.zoneID < 21) {
-			throw new IllegalArgumentException("Can't register zone with ID lower than 20");
+	default void registerZone(String ID, MapZone zone) {
+		String finalID = getPluginID() + ":" + ID;
+		if(Main.zoneRegistry.containsKey(finalID)) {
+			throw new IllegalArgumentException("Zone already registered with ID: " + finalID);
 		}
-		@SuppressWarnings("boxing")
-		Integer sad = zone.zoneID;
-		
-		if(Main.zoneRegistry.containsKey(sad)) {
-			throw new IllegalArgumentException("Zone already registered with ID: " + zone.zoneID);
-		}
-		Main.zoneRegistry.put(sad, zone);
+		Main.zoneRegistry.put(finalID, zone);
 	}
 	
-	public static BufferedImage loadTexture(String prefix, String name) {
+	static BufferedImage loadTexture(String prefix, String name) {
 		return Main.loadTexture(prefix, name);
 	}
 }

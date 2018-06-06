@@ -47,7 +47,7 @@ public final class GuiStats extends JPanel implements ActionListener{
 	}
 	
 	public static void openStatsGui() {
-		GuiHelper.showNewFrame(new GuiStats(), "Tutty Frutty", WindowConstants.DISPOSE_ON_CLOSE, 240, 180);
+		GuiHelper.showNewFrame(new GuiStats(), "Frutty", WindowConstants.DISPOSE_ON_CLOSE, 240, 180);
 	}
 	
 	public static void saveStats() {

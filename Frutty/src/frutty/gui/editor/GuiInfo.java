@@ -4,12 +4,12 @@ import java.awt.Graphics;
 import java.io.File;
 import java.util.ArrayList;
 
-import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JPanel;
 
 import frutty.Main;
 import frutty.gui.GuiHelper;
+import frutty.gui.editor.GuiEditor.ZoneButton;
 
 public final class GuiInfo extends JPanel{
 	private final GuiEditor editor;
@@ -24,9 +24,9 @@ public final class GuiInfo extends JPanel{
 		ArrayList<String> textures = new ArrayList<>();
 		int size = 0;
 		
- 		for(JButton writeButton : editor.zoneButtons) {
- 			if(Main.hasTextureInfo(writeButton.getMnemonic())) {
- 				String texture = "textures/map/" + writeButton.getActionCommand() + ".png";
+ 		for(ZoneButton writeButton : editor.zoneButtons) {
+ 			if(Main.hasTextureInfo(writeButton.zoneID)) {
+ 				String texture = "textures/map/" + writeButton.zoneTexture + ".png";
  				if(!textures.contains(texture)) {
  					size += new File("./" + texture).length();
  					textures.add(texture);

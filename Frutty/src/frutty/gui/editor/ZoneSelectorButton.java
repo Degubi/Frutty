@@ -12,7 +12,7 @@ import frutty.Main;
 import frutty.gui.editor.GuiToolSelector.GuiTextureSelector;
 
 public final class ZoneSelectorButton extends JButton implements ActionListener{
-	protected int activeZone = 1;
+	protected String activeZone = "normalZone";
 	private final GuiEditor editorInstance;
 	
 	public ZoneSelectorButton(int mapWidth, GuiEditor editor) {

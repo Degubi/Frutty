@@ -21,7 +21,7 @@ public final class MapZoneChest extends MapZone implements ITexturable{
 	public static final BufferedImage chestTexture = Main.loadTexture("map/special", "chest.png");
 
 	public MapZoneChest() {
-		super(7, true);
+		super(true);
 	}
 	
 	@Override
@@ -50,7 +50,7 @@ public final class MapZoneChest extends MapZone implements ITexturable{
 	}
 
 	@Override
-	protected ImageIcon getEditorTexture() {
+	protected ImageIcon getEditorIcon() {
 		BufferedImage toReturn = new BufferedImage(64, 64, BufferedImage.TYPE_INT_RGB);
 		Graphics chestGraphics = toReturn.getGraphics();
 		chestGraphics.drawImage(Main.normalZone.editorTexture.get().getImage(), 0, 0, null);

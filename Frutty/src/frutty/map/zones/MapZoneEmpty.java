@@ -10,7 +10,7 @@ import frutty.map.base.MapZone;
 
 public final class MapZoneEmpty extends MapZone{
 	public MapZoneEmpty() {
-		super(1, false);
+		super(false);
 	}
 
 	@Override
@@ -25,7 +25,7 @@ public final class MapZoneEmpty extends MapZone{
 	}
 
 	@Override
-	protected ImageIcon getEditorTexture() {
+	protected ImageIcon getEditorIcon() {
 		BufferedImage emptyZoneTexture = new BufferedImage(64, 64, BufferedImage.TYPE_INT_RGB);
 		Graphics emptyGraphics = emptyZoneTexture.getGraphics();
 		emptyGraphics.setColor(Color.BLACK);
