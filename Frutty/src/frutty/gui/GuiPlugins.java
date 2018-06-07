@@ -1,10 +1,13 @@
 package frutty.gui;
 
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Desktop;
 import java.awt.EventQueue;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JSplitPane;
@@ -17,6 +20,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import frutty.Main;
+import frutty.Main.Plugin;
+import frutty.stuff.Version;
 
 public final class GuiPlugins implements ListSelectionListener, HyperlinkListener{
 	protected final JList<Object> pluginList = new JList<>(Main.pluginList.toArray());
@@ -26,10 +31,11 @@ public final class GuiPlugins implements ListSelectionListener, HyperlinkListene
 		GuiPlugins plugs = new GuiPlugins();
 		
 		plugs.pluginList.addListSelectionListener(plugs);
+		plugs.pluginList.setCellRenderer(new PluginListRenderer());
 		plugs.description.addHyperlinkListener(plugs);
 		plugs.description.setEditable(false);
 		plugs.description.setContentType("text/html");
-		plugs.description.setText(Main.pluginList.get(0).getInfo());
+		plugs.pluginList.setSelectedIndex(0);
 		
 		JSplitPane pane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, plugs.pluginList, plugs.description);
 		pane.setDividerLocation(285);
@@ -45,6 +51,15 @@ public final class GuiPlugins implements ListSelectionListener, HyperlinkListene
 			returnFrame.setFocusable(true);
 			returnFrame.setVisible(true);
 		});
+		
+		new Thread(() -> {
+			for(Plugin plugin : Main.pluginList) {
+				if(plugin.version.isOlderThan(Version.fromURL(plugin.versionURL))) {
+					plugin.needsUpdate = true;
+					pane.repaint();
+				}
+			}
+		}).start();
 	}
 
 	@Override
@@ -61,6 +76,17 @@ public final class GuiPlugins implements ListSelectionListener, HyperlinkListene
 			} catch (IOException | URISyntaxException e) {
 				e.printStackTrace();
 			}
+		}
+	}
+	
+	protected static final class PluginListRenderer extends DefaultListCellRenderer{
+		@Override
+		public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+			Component comp = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+			if(((Plugin) value).needsUpdate) {
+				comp.setForeground(Color.RED);
+			}
+			return comp;
 		}
 	}
 }

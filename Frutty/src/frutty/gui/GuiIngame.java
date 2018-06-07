@@ -55,17 +55,17 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 		super.paintComponent(graphics);
 		
 		for(int k = 0; k < Map.zones.length; ++k) Map.zones[k].render(Map.xCoords[k], Map.yCoords[k], Map.textureData[k], graphics);
-		for(EntityPlayer players : Map.players) players.render(graphics);
+		for(EntityPlayer players : Map.players) players.handleRender(graphics);
 		
 		for(Entity entity : Map.entities) {
 			if(entity.active) {
-				entity.render(graphics);
+				entity.handleRender(graphics);
 			}
 		}
 		
 		for(EntityEnemy enemies : Map.enemies) {
 			if(enemies.active) {
-				enemies.render(graphics);
+				enemies.handleRender(graphics);
 			}
 		}
 		
@@ -185,7 +185,6 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 			ingameFrame.setFocusable(true);
 			for(EntityPlayer players : Map.players) {
 				ingameFrame.addKeyListener(players);
-				ingameFrame.addMouseListener(players);
 			}
 			ingameFrame.setVisible(true);
 		});

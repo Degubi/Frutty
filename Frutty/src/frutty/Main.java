@@ -8,6 +8,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
@@ -36,13 +39,14 @@ import frutty.map.zones.MapZoneSky;
 import frutty.map.zones.MapZoneSpawner;
 import frutty.map.zones.MapZoneWater;
 import frutty.plugin.IFruttyPlugin;
+import frutty.stuff.Version;
 
 public final class Main {
 	public static final HashMap<String, MapZone> zoneRegistry = new HashMap<>();
 	public static final ArrayList<Plugin> pluginList = new ArrayList<>(2);
 	
 	public static final Random rand = new Random();
-	public static final String VERSION = "1.0.0";
+	public static final Plugin gamePluginContainer = new Plugin("Frutty", "Base plugin for the game", null, Version.from(1, 0, 0), "https://pastebin.com/raw/m5qJbnks");
 
 	public static final MapZoneNormal normalZone = new MapZoneNormal();
 	public static final MapZoneEmpty emptyZone = new MapZoneEmpty();
@@ -53,7 +57,7 @@ public final class Main {
 	public static final MapZoneWater waterZone = new MapZoneWater();
 	public static final MapZoneSky skyZone = new MapZoneSky();
 	
-	public static void main(String[] args){
+	public static void main(String[] args) throws IOException{
 		zoneRegistry.put("normalZone", normalZone);
 		zoneRegistry.put("emptyZone", emptyZone);
 		zoneRegistry.put("appleZone", appleZone);
@@ -66,11 +70,19 @@ public final class Main {
 		GuiMenu.showMenu(true);
 		Settings.loadSettings();
 		GuiStats.loadStats();
-		new File("./saves/").mkdir();
 		
-		pluginList.add(new Plugin("Frutty", "A Neri naon büdös", null, VERSION, null));
+		Path savePath = Paths.get("saves");
+		if(!Files.exists(savePath)) {
+			Files.createDirectory(Paths.get("saves"));
+		}
+		
+		Path updaterPath = Paths.get("FruttyInstaller.jar");
+		if(Files.exists(updaterPath)) {
+			Files.move(updaterPath, Paths.get("./bin/FruttyInstaller.jar"));
+		}
+		
+		pluginList.add(gamePluginContainer);
 		pluginList.add(Plugin.pluginLoaderPlugin);
-		
 		loadPlugins();
 	}
 	
@@ -102,7 +114,7 @@ public final class Main {
 	
 	public static BufferedImage loadTexture(String prefix, String name) {
 		try{
-			return ImageIO.read(new File("./textures/" + prefix + "/" + name));
+			return ImageIO.read(Files.newInputStream(Paths.get("./textures/" + prefix + "/" + name)));
 		}catch(IOException e){
 			System.err.println("Can't find texture: " + prefix + "/" + name + ", returning null. Have fun :)");
 			return null;
@@ -138,8 +150,11 @@ public final class Main {
 		}
 	}
 	
-	public static void loadPlugins() {
-		new File("./plugins/").mkdir();
+	public static void loadPlugins() throws IOException {
+		Path pluginPath = Paths.get("plugins");
+		if(!Files.exists(pluginPath)) {
+			Files.createDirectory(pluginPath);
+		}
 		
 		File[] all = new File("./plugins/").listFiles((dir, name) -> name.endsWith(".jar"));
 		if(all.length > 0) {
@@ -177,13 +192,13 @@ public final class Main {
 						System.err.println("Can't load main class from plugin: " + all[k]);
 					}else{
 						var loaded = urlClass.loadClass(mainClassNames[k]);
-						if(hasInterface(loaded, IFruttyPlugin.class)) {
+						if(hasInterface(loaded)) {
 							Object instance = loaded.getDeclaredConstructor().newInstance();
 							loaded.getMethod("initPlugin").invoke(instance);
 							pluginList.add(new Plugin((String) loaded.getMethod("getPluginID").invoke(instance), 
 												   (String) loaded.getMethod("getPluginDescription").invoke(instance), 
 												   (String) loaded.getMethod("getUpdateURL").invoke(instance), 
-												   (String) loaded.getMethod("getPluginVersion").invoke(instance),
+												   (Version) loaded.getMethod("getPluginVersion").invoke(instance),
 												   (String) loaded.getMethod("getVersionURL").invoke(instance)));
 						}
 					}
@@ -194,9 +209,9 @@ public final class Main {
 		}
 	}
 	
-	private static boolean hasInterface(Class<?> theClass, Class<?> interfaceClass) {
+	private static boolean hasInterface(Class<?> theClass) {
 		for(var faces : theClass.getInterfaces()) {
-			if(interfaceClass.isAssignableFrom(faces)){
+			if(IFruttyPlugin.class.isAssignableFrom(faces)){
 				return true;
 			}
 		}
@@ -204,12 +219,14 @@ public final class Main {
 	}
 	
 	public static final class Plugin {
-		public static final Plugin pluginLoaderPlugin = new Plugin("Plugin Loader", "Base plugin loading module for Frutty", "https://www.google.com", "1.0.0", null);
+		public static final Plugin pluginLoaderPlugin = new Plugin("Plugin Loader", "Base plugin loading module for Frutty", null, Version.from(1, 0, 0), null);
 		
 		public final String description;
-		public final String ID, updateURL, version, versionURL;
+		public final String ID, updateURL, versionURL;
+		public final Version version;
+		public boolean needsUpdate = false;
 			
-		public Plugin(String name, String desc, String url, String ver, String verURL) {
+		public Plugin(String name, String desc, String url, Version ver, String verURL) {
 			description = desc;
 			ID = name;
 			updateURL = url;
@@ -226,7 +243,8 @@ public final class Main {
 			return "Name: " + ID + 
 					"<br>Version: " + version + 
 					"<br>URL: " + (updateURL == null ? "" : ("<a href=" + updateURL + ">" + updateURL + "</a>")) + 
-					"<br>Description: " + description;
+					"<br>Needs update: <b><font color=" + (needsUpdate ? "red>" : "green>") + (needsUpdate ? "Yes" : "No") + "</font></b>" + (
+					description != null ? ("<br>Description: " + description) : "");
 		}
 	}
 }

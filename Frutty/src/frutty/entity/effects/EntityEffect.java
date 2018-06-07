@@ -9,7 +9,7 @@ public abstract class EntityEffect{
 	public int ticks;
 	
 	public EntityEffect(int duration) {
-		ticks = duration * 10;
+		ticks = duration;
 	}
 	
 	public final void update(Iterator<EntityEffect> iterator) {

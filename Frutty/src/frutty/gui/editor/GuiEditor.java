@@ -43,11 +43,17 @@ public final class GuiEditor extends JPanel{
 	protected final TextureSelectorButton textureSelectorButton;
 	
 	private GuiEditor(String fileName, boolean isBackground, String skyName, int... data) {
-		mapProperties = new GuiProperties(fileName, skyName, isBackground, data);
 		setLayout(null);
 		
-		add(zoneSelectorButton = new ZoneSelectorButton(data[0], this));
-		add(textureSelectorButton = new TextureSelectorButton(data[0], this));
+		if(fileName != null) {
+			mapProperties = new GuiProperties(fileName, skyName, isBackground, data);
+			add(zoneSelectorButton = new ZoneSelectorButton(data[0], this));
+			add(textureSelectorButton = new TextureSelectorButton(data[0], this));
+		}else{
+			mapProperties = null;
+			zoneSelectorButton = null;
+			textureSelectorButton = null;
+		}
 	}
 	
 	@Override
@@ -61,7 +67,7 @@ public final class GuiEditor extends JPanel{
 	}
 
 	public static void openEditor() {
-		showEditorFrame(new GuiEditor("filename.deg", false, "null", 800, 600, 0, 0, 0, 0), 800, 600);
+		showEditorFrame(new GuiEditor(null, false, null, 0, 0, 0, 0, 0, 0), 800, 600);
 	}
 	
 	private void saveMap() {
@@ -205,27 +211,26 @@ public final class GuiEditor extends JPanel{
 			}
 	    	
 	    	fileMenu.add(newMenuItem("New map", 'N', true, event -> {
-	    		String input = JOptionPane.showInputDialog("Enter map size!", "10x10");
+	    		String[] types = {"Normal", "Background"};
+	    		int input = JOptionPane.showOptionDialog(null, "Make Normal or Background map?", "Map Type Chooser", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, types, types[0]);
+	    		
+    			String[] mapSizeString = (input == 0 ? JOptionPane.showInputDialog("Enter map size!", "10x10") : "14x10").split("x");
+				int mapWidth = Integer.parseInt(mapSizeString[0]), bigWidth = mapWidth * 64;
+				int mapHeight = Integer.parseInt(mapSizeString[1]), bigHeight = mapHeight * 64;
+				GuiEditor newEditor = new GuiEditor(JOptionPane.showInputDialog("Enter map name!", "mapname.deg"), input == 1, "null", mapWidth, mapHeight, 0, 0, 0, 0);
 				
-				if(input != null) {
-					String[] mapSizeString = input.split("x");
-					int mapWidth = Integer.parseInt(mapSizeString[0]), bigWidth = mapWidth * 64;
-					int mapHeight = Integer.parseInt(mapSizeString[1]), bigHeight = mapHeight * 64;
-					GuiEditor newEditor = new GuiEditor("filename.deg", false, "null", mapWidth, mapHeight, 0, 0, 0, 0);
-					
-					for(int yPos = 0; yPos < bigHeight; yPos += 64) {
-						for(int xPos = 0; xPos < bigWidth; xPos += 64) {
-							ZoneButton button = new ZoneButton(Main.normalZone.editorTexture.get(), newEditor);
-							button.zoneID = "normalZone";
-							button.zoneTexture = "normal";
-							button.setBounds(xPos, yPos, 64, 64);
-							newEditor.zoneButtons.add(button);
-							newEditor.add(button);
-						}
+				for(int yPos = 0; yPos < bigHeight; yPos += 64) {
+					for(int xPos = 0; xPos < bigWidth; xPos += 64) {
+						ZoneButton button = new ZoneButton(Main.normalZone.editorTexture.get(), newEditor);
+						button.zoneID = "normalZone";
+						button.zoneTexture = "normal";
+						button.setBounds(xPos, yPos, 64, 64);
+						newEditor.zoneButtons.add(button);
+						newEditor.add(button);
 					}
-					showEditorFrame(newEditor, bigWidth, bigHeight);
-					((JFrame)editor.getTopLevelAncestor()).dispose();
 				}
+				showEditorFrame(newEditor, bigWidth, bigHeight);
+				((JFrame)editor.getTopLevelAncestor()).dispose();
 	    	}));
 	    	
 	    	fileMenu.add(newMenuItem("Load map", 'L', true, event -> {
@@ -248,6 +253,7 @@ public final class GuiEditor extends JPanel{
 	    	
 	    	fileMenu.add(newMenuItem("Delete History", '0', true, event -> new File("editorhistory.txt").delete()));
 	    	fileMenu.addSeparator();
+	    	fileMenu.add(newMenuItem("Close map", '0', true, event -> {openEditor(); ((JFrame)editor.getTopLevelAncestor()).dispose();}));
 	    	fileMenu.add(newMenuItem("Exit to menu", '0', true, event -> {frame.dispose(); GuiMenu.showMenu(false);}));
 	    	fileMenu.add(newMenuItem("Exit app", '0', true, event -> System.exit(0)));
 	    	

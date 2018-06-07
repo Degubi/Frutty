@@ -1,12 +1,13 @@
 package frutty.map;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
@@ -16,7 +17,6 @@ import javax.imageio.ImageIO;
 
 import frutty.Main;
 import frutty.entity.Entity;
-import frutty.entity.EntityBall;
 import frutty.entity.EntityEnemy;
 import frutty.entity.EntityPlayer;
 import frutty.entity.zone.EntityAppleZone;
@@ -76,7 +76,6 @@ public final class Map{
 		}else{
 			players = new EntityPlayer[]{new EntityPlayer(p1X, p1Y, true)};
 		}
-		entities.add(new EntityBall());
 		
 		Particle.precacheParticles();
 	}
@@ -85,7 +84,7 @@ public final class Map{
 		GuiIngame.textures = new BufferedImage[textureNames.length];
 		try{
 			for(int k = 0; k < textureNames.length; ++k) {
-				GuiIngame.textures[k] = ImageIO.read(new File("./textures/map/" + textureNames[k] + ".png"));
+				GuiIngame.textures[k] = ImageIO.read(Files.newInputStream(Paths.get("./textures/map/" + textureNames[k] + ".png")));
 			}
 		}catch (IOException e) {
 		}
@@ -94,7 +93,7 @@ public final class Map{
 	public static void loadSkyTexture(String textureName) {
 		try{
 			if(!textureName.equals("null")) {
-				GuiIngame.skyTexture = ImageIO.read(new File("./textures/map/skybox/" + textureName + ".png"));
+				GuiIngame.skyTexture = ImageIO.read(Files.newInputStream(Paths.get("./textures/map/skybox/" + textureName + ".png")));
 			}
 		}catch (IOException e) {
 			System.err.println("Can't find sky texture: " + textureName);
@@ -262,7 +261,7 @@ public final class Map{
 	}
 	
 	public static String loadMapSize(String fileName) {
-		try(ObjectInputStream input = new ObjectInputStream(new FileInputStream("./maps/" + fileName + ".deg"))){
+		try(ObjectInputStream input = new ObjectInputStream(Files.newInputStream(Paths.get("./maps/" + fileName + ".deg")))){
 			int textureCount = input.readByte();
 			for(int k = 0; k < textureCount; ++k) {
 				input.readUTF();
@@ -387,15 +386,6 @@ public final class Map{
 			return null;
 		}
 		return zones[index];
-	}
-	
-	public static EntityEnemy getEnemyPredictedAtPos(int x, int y, EntityBall entity) {
-		for(EntityEnemy enemy : enemies) {
-			if((enemy.renderPosY == y && enemy.renderPosX == x) || (enemy.renderPosY == y - entity.motionY && enemy.renderPosX == x - entity.motionX)) {
-				return enemy;
-			}
-		}
-		return null;
 	}
 	
 	public static EntityZone getZoneEntity(int ID) {

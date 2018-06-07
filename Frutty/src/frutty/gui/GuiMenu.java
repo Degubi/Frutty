@@ -4,11 +4,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -24,6 +21,7 @@ import frutty.gui.editor.GuiEditor;
 import frutty.map.Map;
 import frutty.map.base.MapZone;
 import frutty.map.interfaces.ITransparentZone;
+import frutty.stuff.Version;
 
 public final class GuiMenu extends JPanel implements ActionListener{
 	private final JComboBox<String> mapList = new JComboBox<>();
@@ -76,24 +74,20 @@ public final class GuiMenu extends JPanel implements ActionListener{
 	public static void showMenu(boolean checkUpdate) {
 		GuiMenu menu = new GuiMenu();
 		
-		new Thread(() -> {
-			if(checkUpdate) {
-				try(BufferedReader download = new BufferedReader(new InputStreamReader(new URL("https://pastebin.com/raw/m5qJbnks").openStream()))){
-					if(!Main.VERSION.equals(download.readLine().split(" ")[0])) {
-						JButton updaterButton = new JButton("Click here to Update...");
-						updaterButton.setActionCommand("Update");
-						updaterButton.setBounds(660, 600, 240, 40);
-						updaterButton.addActionListener(menu);
-						updaterButton.setBackground(Color.GREEN);
-						updaterButton.setForeground(Color.RED);
-						menu.add(updaterButton);
-						menu.repaint();
-					}
-				}catch (IOException e) {
-					e.printStackTrace();
+		if(checkUpdate) {
+			new Thread(() -> {
+				if(Version.fromURL("https://pastebin.com/raw/m5qJbnks").isNewerThan(Main.gamePluginContainer.version)) {
+					JButton updaterButton = new JButton("Click here to Update...");
+					updaterButton.setActionCommand("Update");
+					updaterButton.setBounds(660, 600, 240, 40);
+					updaterButton.addActionListener(menu);
+					updaterButton.setBackground(Color.GREEN);
+					updaterButton.setForeground(Color.RED);
+					menu.add(updaterButton);
+					menu.repaint();
 				}
-			}
-		}).start();
+			}).start();
+		}
 		GuiHelper.showNewFrame(menu, "Frutty", WindowConstants.EXIT_ON_CLOSE, 910, 675);
 	}
 	
@@ -115,6 +109,7 @@ public final class GuiMenu extends JPanel implements ActionListener{
 		graphics.setFont(GuiHelper.thiccFont);
 		graphics.drawString(GuiHelper.recommendedMapSizeString, 330, 80);
 		graphics.drawString("Size:", 455, 40);
+		graphics.drawString("Version: " + Main.gamePluginContainer.version, 10, 625);
 	}
 	
 	@Override
@@ -153,8 +148,8 @@ public final class GuiMenu extends JPanel implements ActionListener{
 			GuiStats.openStatsGui();
 		}else if(command.equals("Update")){
 			try {
-				JOptionPane.showMessageDialog(null, "Exiting game to Updater", "Frutty Updater", 0);
-				Runtime.getRuntime().exec("java -jar FruttyInstaller.jar");
+				JOptionPane.showMessageDialog(null, "Exiting game to Updater", "Frutty Updater", 1);
+				Runtime.getRuntime().exec("java -jar ./bin/FruttyInstaller.jar");
 				System.exit(0);
 			} catch (IOException e) {
 				e.printStackTrace();

@@ -9,7 +9,7 @@ public final class EntityEffectInvisible extends EntityEffect {
 	private boolean animSwitch = false;
 	
 	public EntityEffectInvisible() {
-		super(75);
+		super(20);
 	}
 	
 	@Override

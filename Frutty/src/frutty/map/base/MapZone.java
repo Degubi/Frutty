@@ -13,9 +13,9 @@ import frutty.entity.zone.EntityZone;
 import frutty.gui.GuiHelper;
 import frutty.gui.GuiStats;
 import frutty.gui.Settings;
-import frutty.map.Lazy;
 import frutty.map.Map;
 import frutty.map.Particle;
+import frutty.stuff.Lazy;
 
 @SuppressWarnings("unused")
 public abstract class MapZone implements Serializable{

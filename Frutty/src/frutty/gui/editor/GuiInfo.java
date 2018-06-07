@@ -1,7 +1,9 @@
 package frutty.gui.editor;
 
 import java.awt.Graphics;
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import javax.swing.JList;
@@ -28,7 +30,9 @@ public final class GuiInfo extends JPanel{
  			if(Main.hasTextureInfo(writeButton.zoneID)) {
  				String texture = "textures/map/" + writeButton.zoneTexture + ".png";
  				if(!textures.contains(texture)) {
- 					size += new File("./" + texture).length();
+ 					try {
+						size += Files.size(Paths.get("./" + texture));
+					} catch (IOException e) {}
  					textures.add(texture);
  				}
  			}

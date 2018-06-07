@@ -4,11 +4,12 @@ import java.awt.image.BufferedImage;
 
 import frutty.Main;
 import frutty.map.base.MapZone;
+import frutty.stuff.Version;
 
 public interface IFruttyPlugin {
 	void initPlugin();
 	String getPluginID();
-	String getPluginVersion();
+	Version getPluginVersion();
 	default String getPluginDescription() {return null;}
 	default String getUpdateURL() {return null;}
 	default String getVersionURL() {return null;}

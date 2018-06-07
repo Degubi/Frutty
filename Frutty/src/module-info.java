@@ -12,4 +12,5 @@ module frutty.api{
 	exports frutty.map.zones;
 	
 	exports frutty.plugin;
+	exports frutty.stuff;
 }

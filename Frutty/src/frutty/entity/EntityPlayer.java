@@ -3,8 +3,6 @@ package frutty.entity;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -14,23 +12,18 @@ import frutty.entity.effects.EntityEffect;
 import frutty.entity.effects.EntityEffectInvisible;
 import frutty.gui.Settings;
 import frutty.map.Map;
-import frutty.map.base.MapZone;
 
-public final class EntityPlayer extends Entity implements KeyListener, MouseListener{
+public final class EntityPlayer extends Entity implements KeyListener{
 	private static final BufferedImage[] textures = {Main.loadTexture("player", "side.png"), Main.loadTexture("player", "front.png"), Main.loadTexture("player", "back.png")};
 	public final ArrayList<EntityEffect> entityEffects = new ArrayList<>();
 	
 	private int textureIndex;
 	private long lastPressTime;
-	private EnumFacing currentFacing;
 	
 	private final int leftKey, rightKey, upKey, downKey;
-	private final boolean canShootBall;
 	
 	public EntityPlayer(int x, int y, boolean isFirst) {
 		super(x, y);
-		
-		canShootBall = isFirst;
 		
 		if(isFirst){
 			leftKey = KeyEvent.VK_LEFT;
@@ -43,7 +36,6 @@ public final class EntityPlayer extends Entity implements KeyListener, MouseList
 			upKey = Settings.upKey;
 			downKey = Settings.downKey;
 		}
-		currentFacing = EnumFacing.RIGHT;
 	}
 
 	private static boolean isFree(int x, int y) {
@@ -52,7 +44,7 @@ public final class EntityPlayer extends Entity implements KeyListener, MouseList
 		}
 		
 		for(Entity entities : Map.entities) {
-			if(entities instanceof EntityBall == false && entities.renderPosX == x && entities.renderPosY == y) {
+			if(entities.renderPosX == x && entities.renderPosY == y) {
 				return false;
 			}
 		}
@@ -60,7 +52,6 @@ public final class EntityPlayer extends Entity implements KeyListener, MouseList
 	}
 	
 	private void setFacing(EnumFacing facing) {
-		currentFacing = facing;
 		renderPosX += facing.xOffset;
 		renderPosY += facing.yOffset;
 		serverPosX += facing.xOffset;
@@ -86,13 +77,6 @@ public final class EntityPlayer extends Entity implements KeyListener, MouseList
 			}
 		}
 	}
-
-	@Override
-	public void mouseReleased(MouseEvent event) {
-		if(canShootBall && event.getX() < Map.width + 64 && MapZone.isEmptyAt(coordsToIndex(renderPosX + currentFacing.xOffset, renderPosY + currentFacing.yOffset))) {
-			((EntityBall)Map.entities.get(0)).activate(renderPosX, renderPosY, currentFacing);
-		}
-	}
 	
 	@Override
 	public void render(Graphics graphics) {
@@ -105,7 +89,6 @@ public final class EntityPlayer extends Entity implements KeyListener, MouseList
 		for(EntityEffect effects : entityEffects) {
 			effects.handleEffect(this, graphics);
 		}
-		super.render(graphics);
 	}
 	
 	public boolean isInvicible() {
@@ -116,13 +99,26 @@ public final class EntityPlayer extends Entity implements KeyListener, MouseList
 		}
 		return false;
 	}
-	
-	@Override 
-	public void update(int ticks) {
+
+	@Override public void keyTyped(KeyEvent e) {} @Override public void keyReleased(KeyEvent e) {}
+
+	@Override
+	public void updateClient() {}
+
+	@Override
+	public void updateServer() {
 		for(Iterator<EntityEffect> iterator = entityEffects.iterator(); iterator.hasNext();) {
 			iterator.next().update(iterator);
-		}
+		}		
 	}
-	
-	@Override public void mouseClicked(MouseEvent e) {} @Override public void mousePressed(MouseEvent e) {} @Override public void mouseEntered(MouseEvent e) {} @Override public void mouseExited(MouseEvent e) {} @Override public void keyTyped(KeyEvent e) {} @Override public void keyReleased(KeyEvent e) {}
+
+	@Override
+	public int getClientUpdate() {
+		return 1;
+	}
+
+	@Override
+	public int getServerUpdate() {
+		return 32;
+	}
 }

@@ -14,14 +14,16 @@ public abstract class Entity implements Serializable{
 	private static final long serialVersionUID = 2876462867774051456L;
 	
 	public boolean active = true;
-	public int renderPosX, renderPosY, serverPosX, serverPosY, motionX, motionY;
+	public int renderPosX, renderPosY, serverPosX, serverPosY, motionX, motionY, moveRate;
 	
 	public Entity() {}
+	/** @param sRate: Min: 8, steps of 8 */
 	public Entity(int x, int y) {
 		renderPosX = x;
 		renderPosY = y;
 		serverPosX = x;
 		serverPosY = y;
+		moveRate = getServerUpdate() / getClientUpdate();
 	}
 	
 	protected EnumFacing findFreeFacing() {
@@ -51,11 +53,21 @@ public abstract class Entity implements Serializable{
 		}
 	}
 	
+	protected void checkEnemies() {
+		for(EntityEnemy enemies : Map.enemies) {
+			if(doesCollide(enemies.serverPosX, enemies.serverPosY)) {
+				enemies.active = false;
+			}
+		}
+	}
+	
 	public static int coordsToIndex(int x, int y) {
 		return x / 64 + (y / 64 * ((Map.width + 64) / 64));
 	}
 	
-	public void render(Graphics graphics) {
+	public final void handleRender(Graphics graphics) {
+		render(graphics);
+		
 		if(Settings.debugCollisions) {
 			graphics.setColor(Color.BLUE);
 			graphics.drawRect(serverPosX, serverPosY, 64, 64);
@@ -64,7 +76,24 @@ public abstract class Entity implements Serializable{
 		}
 	}
 	
-	public abstract void update(int ticks);
+	public abstract void render(Graphics graphics);
+	public abstract void updateClient();
+	public abstract void updateServer();
+	public abstract int getClientUpdate();
+	public abstract int getServerUpdate();
+	
+	public final void update(int ticks) {
+		if(ticks % getClientUpdate() == 0) {
+			updateClient();
+			renderPosX += motionX / moveRate;
+			renderPosY += motionY / moveRate;
+		}
+		if(ticks % getServerUpdate() == 0) {
+			updateServer();
+			serverPosX += motionX;
+			serverPosY += motionY;
+		}
+	}
 	
 	public static enum EnumFacing {
 		UP(0, -64, 2),
