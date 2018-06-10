@@ -14,7 +14,7 @@ import frutty.gui.GuiIngame;
 import frutty.gui.GuiStats;
 import frutty.gui.editor.GuiToolSelector.GuiTextureSelector;
 import frutty.map.Map;
-import frutty.map.base.MapZone;
+import frutty.map.MapZone;
 import frutty.map.interfaces.ITexturable;
 
 public final class MapZoneFruit extends MapZone implements ITexturable{
@@ -82,17 +82,10 @@ public final class MapZoneFruit extends MapZone implements ITexturable{
 
 	@Override
 	protected ImageIcon getEditorIcon() {
-		if(fruitType == EnumFruit.APPLE) {
-			BufferedImage apple = new BufferedImage(64, 64, BufferedImage.TYPE_INT_RGB);
-			Graphics graph = apple.getGraphics();
-			graph.drawImage(Main.normalZone.editorTexture.get().getImage(), 0, 0, null);
-			graph.drawImage(EntityApple.appleTexture, 0, 0, null);
-			return new ImageIcon(apple);
-		}
-		BufferedImage apple = new BufferedImage(64, 64, BufferedImage.TYPE_INT_RGB);
-		Graphics graph = apple.getGraphics();
-		graph.drawImage(Main.normalZone.editorTexture.get().getImage(), 0, 0, null);
-		graph.drawImage(MapZoneFruit.cherryTexture, 0, 0, null);
-		return new ImageIcon(apple);
+		var returnTexture = new BufferedImage(64, 64, BufferedImage.TYPE_INT_RGB);
+		var graphics = returnTexture.getGraphics();
+		graphics.drawImage(Main.normalZone.editorTexture.get().getImage(), 0, 0, null);
+		graphics.drawImage(fruitType == EnumFruit.APPLE ? EntityApple.appleTexture : MapZoneFruit.cherryTexture, 0, 0, null);
+		return new ImageIcon(returnTexture);
 	}
 }

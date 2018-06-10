@@ -9,7 +9,7 @@ import javax.swing.ImageIcon;
 import frutty.Main;
 import frutty.gui.GuiHelper;
 import frutty.gui.Settings;
-import frutty.map.base.MapZone;
+import frutty.map.MapZone;
 import frutty.map.interfaces.ITransparentZone;
 
 public final class MapZoneWater extends MapZone implements ITransparentZone{
@@ -58,11 +58,11 @@ public final class MapZoneWater extends MapZone implements ITransparentZone{
 
 	@Override
 	protected ImageIcon getEditorIcon() {
-		BufferedImage returnTexture = new BufferedImage(64, 64, BufferedImage.TYPE_INT_RGB);
-		Graphics waterGraphics = returnTexture.getGraphics();
-		waterGraphics.setColor(Color.BLACK);
-		waterGraphics.fillRect(0, 0, 64, 64);
-		waterGraphics.drawImage(MapZoneWater.waterTexture, 0, 0, 64, 64, 0, 0, 16, 16, null);
+		var returnTexture = new BufferedImage(64, 64, BufferedImage.TYPE_INT_RGB);
+		var graphics = returnTexture.getGraphics();
+		graphics.setColor(Color.BLACK);
+		graphics.fillRect(0, 0, 64, 64);
+		graphics.drawImage(MapZoneWater.waterTexture, 0, 0, 64, 64, 0, 0, 16, 16, null);
 		return new ImageIcon(returnTexture);
 	}
 }

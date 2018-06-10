@@ -20,7 +20,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import frutty.Main;
-import frutty.Main.Plugin;
+import frutty.stuff.Plugin;
 import frutty.stuff.Version;
 
 public final class GuiPlugins implements ListSelectionListener, HyperlinkListener{
@@ -37,12 +37,12 @@ public final class GuiPlugins implements ListSelectionListener, HyperlinkListene
 		plugs.description.setContentType("text/html");
 		plugs.pluginList.setSelectedIndex(0);
 		
-		JSplitPane pane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, plugs.pluginList, plugs.description);
+		var pane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, plugs.pluginList, plugs.description);
 		pane.setDividerLocation(285);
 		pane.setEnabled(false);
 		
 		EventQueue.invokeLater(() -> {
-			JFrame returnFrame = new JFrame("Frutty Plugins");
+			var returnFrame = new JFrame("Frutty Plugins");
 			returnFrame.setContentPane(pane);
 			returnFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 			returnFrame.setResizable(false);
@@ -82,7 +82,7 @@ public final class GuiPlugins implements ListSelectionListener, HyperlinkListene
 	protected static final class PluginListRenderer extends DefaultListCellRenderer{
 		@Override
 		public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-			Component comp = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+			var comp = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 			if(((Plugin) value).needsUpdate) {
 				comp.setForeground(Color.RED);
 			}

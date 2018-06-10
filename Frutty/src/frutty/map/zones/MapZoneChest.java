@@ -13,8 +13,8 @@ import frutty.gui.GuiIngame;
 import frutty.gui.GuiStats;
 import frutty.gui.editor.GuiToolSelector.GuiTextureSelector;
 import frutty.map.Map;
+import frutty.map.MapZone;
 import frutty.map.Particle;
-import frutty.map.base.MapZone;
 import frutty.map.interfaces.ITexturable;
 
 public final class MapZoneChest extends MapZone implements ITexturable{
@@ -51,10 +51,10 @@ public final class MapZoneChest extends MapZone implements ITexturable{
 
 	@Override
 	protected ImageIcon getEditorIcon() {
-		BufferedImage toReturn = new BufferedImage(64, 64, BufferedImage.TYPE_INT_RGB);
-		Graphics chestGraphics = toReturn.getGraphics();
-		chestGraphics.drawImage(Main.normalZone.editorTexture.get().getImage(), 0, 0, null);
-		chestGraphics.drawImage(chestTexture, 0, 0, null);
+		var toReturn = new BufferedImage(64, 64, BufferedImage.TYPE_INT_RGB);
+		var graphics = toReturn.getGraphics();
+		graphics.drawImage(Main.normalZone.editorTexture.get().getImage(), 0, 0, null);
+		graphics.drawImage(chestTexture, 0, 0, null);
 		return new ImageIcon(toReturn);
 	}
 }

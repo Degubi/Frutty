@@ -92,7 +92,7 @@ public final class EntityPlayer extends Entity implements KeyListener{
 	}
 	
 	public boolean isInvicible() {
-		for(EntityEffect effects : entityEffects) {
+		for(var effects : entityEffects) {
 			if(effects instanceof EntityEffectInvisible) {
 				return true;
 			}

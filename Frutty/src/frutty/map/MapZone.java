@@ -1,4 +1,4 @@
-package frutty.map.base;
+package frutty.map;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -13,8 +13,6 @@ import frutty.entity.zone.EntityZone;
 import frutty.gui.GuiHelper;
 import frutty.gui.GuiStats;
 import frutty.gui.Settings;
-import frutty.map.Map;
-import frutty.map.Particle;
 import frutty.stuff.Lazy;
 
 @SuppressWarnings("unused")

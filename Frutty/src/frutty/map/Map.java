@@ -10,7 +10,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map.Entry;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
@@ -24,7 +23,6 @@ import frutty.entity.zone.EntityZone;
 import frutty.gui.GuiHelper;
 import frutty.gui.GuiIngame;
 import frutty.gui.Settings;
-import frutty.map.base.MapZone;
 import frutty.map.interfaces.ITexturable;
 
 public final class Map{
@@ -180,7 +178,7 @@ public final class Map{
 	}
 	
 	public static void loadMap(String name, boolean isMultiplayer) {
-		try(ObjectInputStream input = new ObjectInputStream(new FileInputStream("./maps/" + name + ".deg"))){
+		try(var input = new ObjectInputStream(new FileInputStream("./maps/" + name + ".deg"))){
 			int width, height, zoneIndex = 0;
 			int textureCount = input.readByte();
 			String[] textures = new String[textureCount];
@@ -224,7 +222,7 @@ public final class Map{
 	}
 	
 	public static void loadBackground(MapZone[] backZones, int[] backXCoords, int[] backYCoords, int[] backTextureData) {
-		try(ObjectInputStream input = new ObjectInputStream(new FileInputStream("./maps/background" + Main.rand.nextInt(4) + ".deg"))){
+		try(var input = new ObjectInputStream(new FileInputStream("./maps/background" + Main.rand.nextInt(4) + ".deg"))){
 			String[] textures = new String[input.readByte()];
 			
 			for(int k = 0; k < textures.length; ++k) {
@@ -261,7 +259,7 @@ public final class Map{
 	}
 	
 	public static String loadMapSize(String fileName) {
-		try(ObjectInputStream input = new ObjectInputStream(Files.newInputStream(Paths.get("./maps/" + fileName + ".deg")))){
+		try(var input = new ObjectInputStream(Files.newInputStream(Paths.get("./maps/" + fileName + ".deg")))){
 			int textureCount = input.readByte();
 			for(int k = 0; k < textureCount; ++k) {
 				input.readUTF();
@@ -282,14 +280,14 @@ public final class Map{
 	
 	public static void createSave(String fileName) {
 		if(fileName != null) {
-			try(ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream("./saves/" + fileName + ".sav"))){
+			try(var output = new ObjectOutputStream(new FileOutputStream("./saves/" + fileName + ".sav"))){
 				output.writeShort(zones.length);
 				
-				HashMap<Integer, String> zoneIDS = new HashMap<>();
+				var zoneIDS = new HashMap<Integer, String>();
 				
 				var entries = Main.zoneRegistry.entrySet();
 				for(MapZone zone : zones) {
-					for(Entry<String, MapZone> entry : entries) {
+					for(var entry : entries) {
 						if(entry.getValue() == zone && !zoneIDS.containsValue(entry.getKey())) {
 							zoneIDS.put(zoneIDS.size(), entry.getKey());
 							break;
@@ -305,7 +303,7 @@ public final class Map{
 				for(MapZone zone : zones) {
 					String zoneName = Main.getZoneName(zone);
 					
-					for(Entry<Integer, String> meh : zoneIDS.entrySet()) {
+					for(var meh : zoneIDS.entrySet()) {
 						if(meh.getValue() == zoneName) {
 							output.writeByte(meh.getKey());
 						}
@@ -335,7 +333,7 @@ public final class Map{
 	
 	public static boolean loadSave(String fileName) {
 		if(fileName != null) {
-			try(ObjectInputStream input = new ObjectInputStream(new FileInputStream("./saves/" + fileName))){
+			try(var input = new ObjectInputStream(new FileInputStream("./saves/" + fileName))){
 				zones = new MapZone[input.readShort()];
 				String[] zoneIDs = new String[input.readByte()];
 				

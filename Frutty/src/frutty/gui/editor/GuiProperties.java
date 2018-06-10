@@ -45,7 +45,7 @@ public final class GuiProperties extends JPanel{
 		
 		table.setBorder(new LineBorder(Color.GRAY, 1, true));
 		table.setBounds(20, 20, 300, 165);
-		CustomCellRenderer render = new CustomCellRenderer();
+		var render = new CustomCellRenderer();
 		table.getColumnModel().getColumn(1).setCellRenderer(render);
 		table.getColumnModel().getColumn(0).setCellRenderer(render);
 		
@@ -105,7 +105,7 @@ public final class GuiProperties extends JPanel{
 	protected static final class CustomCellRenderer extends DefaultTableCellRenderer{
 		@Override
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-			Component cell = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+			var cell = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 			if(row > 2) {
 				cell.setForeground(Color.GRAY);
 			}else{

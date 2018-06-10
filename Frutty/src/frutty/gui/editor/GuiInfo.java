@@ -11,7 +11,6 @@ import javax.swing.JPanel;
 
 import frutty.Main;
 import frutty.gui.GuiHelper;
-import frutty.gui.editor.GuiEditor.ZoneButton;
 
 public final class GuiInfo extends JPanel{
 	private final GuiEditor editor;
@@ -23,10 +22,10 @@ public final class GuiInfo extends JPanel{
 		setLayout(null);
 		editor = edit;
 		
-		ArrayList<String> textures = new ArrayList<>();
+		var textures = new ArrayList<String>();
 		int size = 0;
 		
- 		for(ZoneButton writeButton : editor.zoneButtons) {
+ 		for(var writeButton : editor.zoneButtons) {
  			if(Main.hasTextureInfo(writeButton.zoneID)) {
  				String texture = "textures/map/" + writeButton.zoneTexture + ".png";
  				if(!textures.contains(texture)) {

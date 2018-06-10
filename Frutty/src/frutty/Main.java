@@ -9,14 +9,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map.Entry;
 import java.util.Random;
 import java.util.jar.JarFile;
-import java.util.jar.Manifest;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -28,7 +25,7 @@ import frutty.gui.editor.GuiEditor;
 import frutty.gui.editor.GuiEditor.ZoneButton;
 import frutty.gui.editor.GuiToolSelector;
 import frutty.gui.editor.GuiToolSelector.GuiTextureSelector;
-import frutty.map.base.MapZone;
+import frutty.map.MapZone;
 import frutty.map.interfaces.ITexturable;
 import frutty.map.zones.MapZoneChest;
 import frutty.map.zones.MapZoneEmpty;
@@ -39,10 +36,11 @@ import frutty.map.zones.MapZoneSky;
 import frutty.map.zones.MapZoneSpawner;
 import frutty.map.zones.MapZoneWater;
 import frutty.plugin.IFruttyPlugin;
+import frutty.stuff.Plugin;
 import frutty.stuff.Version;
 
 public final class Main {
-	public static final HashMap<String, MapZone> zoneRegistry = new HashMap<>();
+	public static final HashMap<String, MapZone> zoneRegistry = new HashMap<>(8);
 	public static final ArrayList<Plugin> pluginList = new ArrayList<>(2);
 	
 	public static final Random rand = new Random();
@@ -71,12 +69,12 @@ public final class Main {
 		Settings.loadSettings();
 		GuiStats.loadStats();
 		
-		Path savePath = Paths.get("saves");
+		var savePath = Paths.get("saves");
 		if(!Files.exists(savePath)) {
 			Files.createDirectory(Paths.get("saves"));
 		}
 		
-		Path updaterPath = Paths.get("FruttyInstaller.jar");
+		var updaterPath = Paths.get("FruttyInstaller.jar");
 		if(Files.exists(updaterPath)) {
 			Files.move(updaterPath, Paths.get("./bin/FruttyInstaller.jar"));
 		}
@@ -89,7 +87,7 @@ public final class Main {
 	public static String getZoneName(MapZone zone) {
 		var entries = zoneRegistry.entrySet();
 		
-		for(Entry<String, MapZone> entry : entries) {
+		for(var entry : entries) {
 			if(entry.getValue() == zone) {
 				return entry.getKey();
 			}
@@ -123,21 +121,21 @@ public final class Main {
 	
 	public static void handleEditorReading(GuiEditor editor, String zoneID, ObjectInputStream input, int x, int y, String[] textures) throws IOException {
 		if(zoneID.equals("player1Zone")) {
-			ZoneButton button = new ZoneButton(GuiToolSelector.player1Texture, editor);
+			var button = new ZoneButton(GuiToolSelector.player1Texture, editor);
 			button.setBounds(x * 64, y * 64, 64, 64);
 			button.zoneID = zoneID;
 			editor.zoneButtons.add(button);
 			editor.add(button);
 		}else if(zoneID.equals("player2Zone")) {
-			ZoneButton button = new ZoneButton(GuiToolSelector.player2Texture, editor);
+			var button = new ZoneButton(GuiToolSelector.player2Texture, editor);
 			button.setBounds(x * 64, y * 64, 64, 64);
 			button.zoneID = zoneID;
 			editor.zoneButtons.add(button);
 			editor.add(button);
 		}else{
-			MapZone zone = zoneRegistry.get(zoneID);
+			var zone = zoneRegistry.get(zoneID);
 			
-			ZoneButton button = new ZoneButton(zone.editorTexture.get(), editor);
+			var button = new ZoneButton(zone.editorTexture.get(), editor);
 			button.setBounds(x * 64, y * 64, 64, 64);
 			button.zoneID = zoneID;
 			if(zone instanceof ITexturable){
@@ -151,16 +149,16 @@ public final class Main {
 	}
 	
 	public static void loadPlugins() throws IOException {
-		Path pluginPath = Paths.get("plugins");
+		var pluginPath = Paths.get("plugins");
 		if(!Files.exists(pluginPath)) {
 			Files.createDirectory(pluginPath);
 		}
 		
-		File[] all = new File("./plugins/").listFiles((dir, name) -> name.endsWith(".jar"));
+		var all = new File("./plugins/").listFiles((dir, name) -> name.endsWith(".jar"));
 		if(all.length > 0) {
 			
-			String[] mainClassNames = new String[all.length];
-			URL[] classLoaderNames = new URL[all.length];
+			var mainClassNames = new String[all.length];
+			var classLoaderNames = new URL[all.length];
 			
 			for(int k = 0; k < all.length; ++k) {
 				try {
@@ -169,8 +167,8 @@ public final class Main {
 					e1.printStackTrace();
 				}
 				
-				try(JarFile jar = new JarFile(all[k])){
-					Manifest mani = jar.getManifest();
+				try(var jar = new JarFile(all[k])){
+					var mani = jar.getManifest();
 					if(mani == null) {
 						System.err.println("Can't find manifest file from plugin: " + all[k]);
 					}else{
@@ -186,7 +184,7 @@ public final class Main {
 				}
 			}
 			
-			try(URLClassLoader urlClass = new URLClassLoader(classLoaderNames)){
+			try(var urlClass = new URLClassLoader(classLoaderNames)){
 				for(int k = 0; k < mainClassNames.length; ++k) {
 					if(mainClassNames[k] == null) {
 						System.err.println("Can't load main class from plugin: " + all[k]);
@@ -216,35 +214,5 @@ public final class Main {
 			}
 		}
 		return false;
-	}
-	
-	public static final class Plugin {
-		public static final Plugin pluginLoaderPlugin = new Plugin("Plugin Loader", "Base plugin loading module for Frutty", null, Version.from(1, 0, 0), null);
-		
-		public final String description;
-		public final String ID, updateURL, versionURL;
-		public final Version version;
-		public boolean needsUpdate = false;
-			
-		public Plugin(String name, String desc, String url, Version ver, String verURL) {
-			description = desc;
-			ID = name;
-			updateURL = url;
-			version = ver;
-			versionURL = verURL;
-		}
-			
-		@Override
-		public String toString() {
-			return ID;
-		}
-			
-		public String getInfo() {
-			return "Name: " + ID + 
-					"<br>Version: " + version + 
-					"<br>URL: " + (updateURL == null ? "" : ("<a href=" + updateURL + ">" + updateURL + "</a>")) + 
-					"<br>Needs update: <b><font color=" + (needsUpdate ? "red>" : "green>") + (needsUpdate ? "Yes" : "No") + "</font></b>" + (
-					description != null ? ("<br>Description: " + description) : "");
-		}
 	}
 }

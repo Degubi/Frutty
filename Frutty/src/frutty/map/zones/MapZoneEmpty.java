@@ -6,7 +6,7 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
 
-import frutty.map.base.MapZone;
+import frutty.map.MapZone;
 
 public final class MapZoneEmpty extends MapZone{
 	public MapZoneEmpty() {
@@ -26,10 +26,10 @@ public final class MapZoneEmpty extends MapZone{
 
 	@Override
 	protected ImageIcon getEditorIcon() {
-		BufferedImage emptyZoneTexture = new BufferedImage(64, 64, BufferedImage.TYPE_INT_RGB);
-		Graphics emptyGraphics = emptyZoneTexture.getGraphics();
-		emptyGraphics.setColor(Color.BLACK);
-		emptyGraphics.fillRect(0, 0, 64, 64);
+		var emptyZoneTexture = new BufferedImage(64, 64, BufferedImage.TYPE_INT_RGB);
+		var graphics = emptyZoneTexture.getGraphics();
+		graphics.setColor(Color.BLACK);
+		graphics.fillRect(0, 0, 64, 64);
 		return new ImageIcon(emptyZoneTexture);
 	}
 }

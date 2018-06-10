@@ -20,7 +20,7 @@ public final class EntityApple extends EntityFalling{
 	@Override
 	public void updateClient() {
 		if(motionY != 0) {
-			checkPlayers();
+			checkPlayers(false);
 			checkEnemies();
 		}
 	}

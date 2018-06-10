@@ -8,7 +8,7 @@ import frutty.Main;
 import frutty.gui.GuiIngame;
 import frutty.gui.Settings;
 import frutty.map.Map;
-import frutty.map.base.MapZone;
+import frutty.map.MapZone;
 
 public abstract class Entity implements Serializable{
 	private static final long serialVersionUID = 2876462867774051456L;
@@ -17,7 +17,6 @@ public abstract class Entity implements Serializable{
 	public int renderPosX, renderPosY, serverPosX, serverPosY, motionX, motionY, moveRate;
 	
 	public Entity() {}
-	/** @param sRate: Min: 8, steps of 8 */
 	public Entity(int x, int y) {
 		renderPosX = x;
 		renderPosY = y;
@@ -27,7 +26,7 @@ public abstract class Entity implements Serializable{
 	}
 	
 	protected EnumFacing findFreeFacing() {
-		for(EnumFacing randomFacing = EnumFacing.randomFacing(); ; randomFacing = EnumFacing.randomFacing()) {
+		for(var randomFacing = EnumFacing.randomFacing(); ; randomFacing = EnumFacing.randomFacing()) {
 			if(MapZone.isEmpty(serverPosX + randomFacing.xOffset, serverPosY + randomFacing.yOffset)) {
 				return randomFacing;
 			}
@@ -40,12 +39,14 @@ public abstract class Entity implements Serializable{
 			   (serverPosY >= y && serverPosY + 64 <= y + 64);
 	}
 	
-	protected void checkPlayers() {
-		for(EntityPlayer player : Map.players) {
+	protected void checkPlayers(boolean addScore) {
+		for(var player : Map.players) {
 			if(doesCollide(player.serverPosX, player.serverPosY)) {
 				if(Settings.godEnabled || player.isInvicible()) {
 					active = false;
-					Map.score += 100;
+					if(addScore) {
+						Map.score += 100;
+					}
 				}else{
 					GuiIngame.showMessageAndClose("Game over!");
 				}
@@ -54,7 +55,7 @@ public abstract class Entity implements Serializable{
 	}
 	
 	protected void checkEnemies() {
-		for(EntityEnemy enemies : Map.enemies) {
+		for(var enemies : Map.enemies) {
 			if(doesCollide(enemies.serverPosX, enemies.serverPosY)) {
 				enemies.active = false;
 			}

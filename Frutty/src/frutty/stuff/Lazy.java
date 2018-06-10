@@ -6,23 +6,20 @@ import java.util.function.Supplier;
 public final class Lazy<T>{
 	private final Supplier<T> mkFunction;
 	private T value;
-	private boolean hasValue;
 	
 	public Lazy(Supplier<T> fun) {
-		Objects.requireNonNull(fun, "Initializer can't be null!");
-		mkFunction = fun;
+		mkFunction = Objects.requireNonNull(fun, "Initializer can't be null!");
 	}
 	
 	public T get() {
-		if(!hasValue) {
+		if(value == null) {
 			value = mkFunction.get();
-			hasValue = true;
 		}
 		return value;
 	}
 	
 	@Override
 	public String toString() {
-		return !hasValue ? "Empty Lazy Value" : "Lazy Value: " + value;
+		return value == null ? "Empty Lazy Value" : "Lazy Value: " + value;
 	}
 }

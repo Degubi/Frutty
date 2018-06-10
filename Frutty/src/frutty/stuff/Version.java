@@ -24,7 +24,7 @@ public final class Version{
 			return INVALID_VERSION;
 		}
 		
-		String[] split = versionString.split("\\.");
+		var split = versionString.split("\\.");
 		if(split.length == 0) {
 			return INVALID_VERSION;
 		}else if(split.length == 1) {
@@ -42,7 +42,7 @@ public final class Version{
 	
 	public static Version fromURL(String url) {
 		if(url != null) {
-			try(BufferedReader download = new BufferedReader(new InputStreamReader(new URL(url).openStream()))){
+			try(var download = new BufferedReader(new InputStreamReader(new URL(url).openStream()))){
 				return fromString(download.readLine());
 			} catch (MalformedURLException e) {
 				System.err.println(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")) + ": Invalid url: " + url);

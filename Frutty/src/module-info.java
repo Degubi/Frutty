@@ -7,7 +7,7 @@ module frutty.api{
 	exports frutty.entity;
 	exports frutty.entity.zone;
 	
-	exports frutty.map.base;
+	exports frutty.map;
 	exports frutty.map.interfaces;
 	exports frutty.map.zones;
 	

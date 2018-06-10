@@ -3,11 +3,11 @@ package frutty.gui;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -29,7 +29,7 @@ public final class GuiStats extends JPanel implements ActionListener{
 	}
 	
 	public static void loadStats() {
-		try(BufferedReader input = new BufferedReader(new FileReader("stats.prop"))){
+		try(var input = Files.newBufferedReader(Paths.get("stats.prop"))){
 			String[] split = input.readLine().split(" ");
 			topScore = Integer.parseInt(split[0]);
 			enemyCount = Integer.parseInt(split[1]);
@@ -51,7 +51,7 @@ public final class GuiStats extends JPanel implements ActionListener{
 	}
 	
 	public static void saveStats() {
-		try(PrintWriter output = new PrintWriter("stats.prop")){
+		try(var output = new PrintWriter("stats.prop")){
 			output.print(topScore);
 			output.print(' ');
 			output.print(enemyCount);

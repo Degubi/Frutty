@@ -5,11 +5,11 @@ import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Hashtable;
 
 import javax.swing.ButtonGroup;
@@ -40,7 +40,7 @@ public final class Settings{
 	private static WorldOptions worldInstance;
 	
 	public static void loadSettings() {
-		try(BufferedReader input = new BufferedReader(new FileReader("settings.cfg"))){
+		try(var input = Files.newBufferedReader(Paths.get("settings.cfg"))){
 			String[] data = input.readLine().split(" ");
 			difficulty = Integer.parseInt(data[0]);
 			godEnabled = Boolean.parseBoolean(data[1]);
@@ -91,7 +91,7 @@ public final class Settings{
 	
 	public static void showGuiSettings(GuiMenu menu) {
 		Settings.loadSettings();
-		JTabbedPane tabbed = new JTabbedPane();
+		var tabbed = new JTabbedPane();
 		tabbed.addTab("Gameplay", gameInstance = new GameOptions());
 		tabbed.addTab("Graphics", videoInstance = new VideoOptions(menu));
 		tabbed.addTab("World", worldInstance = new WorldOptions());
@@ -132,7 +132,7 @@ public final class Settings{
 		Settings.leftKey = gameInstance.leftKeyField.getText().charAt(0);
 		Settings.rightKey = gameInstance.rightKeyField.getText().charAt(0);
 		
-		try(PrintWriter output = new PrintWriter("settings.cfg")){
+		try(var output = new PrintWriter("settings.cfg")){
 			output.print(difficulty);
 			output.print(' ');
 			output.print(godEnabled);
@@ -190,7 +190,7 @@ public final class Settings{
 			renderDebugLevelSlider.setPaintLabels(true);
 			renderDebugLevelSlider.setPaintTicks(true);
 			
-			Hashtable<Integer, JLabel> renderTable = new Hashtable<>(4);
+			var renderTable = new Hashtable<Integer, JLabel>(4);
 			renderTable.put(0, new JLabel("None"));
 			renderTable.put(1, new JLabel("FPS Debug"));
 			renderTable.put(2, new JLabel("Zone Bounds"));
@@ -237,7 +237,7 @@ public final class Settings{
 			graphicsSlider.setOpaque(false);
 			graphicsSlider.setSnapToTicks(true);
 			
-			Hashtable<Integer, JLabel> table = new Hashtable<>(3);
+			var table = new Hashtable<Integer, JLabel>(3);
 			table.put(0, new JLabel("Low"));
 			table.put(1, new JLabel("Medium"));
 			table.put(2, new JLabel("High"));
@@ -290,7 +290,7 @@ public final class Settings{
 			normalButton.setBounds(100, 60, 80, 30);
 			hardButton.setBounds(100, 100, 80, 30);
 			
-			ButtonGroup difficultyGroup = new ButtonGroup();
+			var difficultyGroup = new ButtonGroup();
 			easyButton.addActionListener(this);
 			normalButton.addActionListener(this);
 			hardButton.addActionListener(this);
@@ -321,7 +321,7 @@ public final class Settings{
 		}
 
 		private static JTextField newTextField(int code, int x, int y) {
-			JTextField field = new JTextField(Character.toString((char)code));
+			var field = new JTextField(Character.toString((char)code));
 			field.setBounds(x, y, 20, 20);
 			field.setHorizontalAlignment(SwingConstants.CENTER);
 			((AbstractDocument)field.getDocument()).setDocumentFilter(TextFilter.filter);

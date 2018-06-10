@@ -6,6 +6,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -19,7 +21,7 @@ import javax.swing.WindowConstants;
 import frutty.Main;
 import frutty.gui.editor.GuiEditor;
 import frutty.map.Map;
-import frutty.map.base.MapZone;
+import frutty.map.MapZone;
 import frutty.map.interfaces.ITransparentZone;
 import frutty.stuff.Version;
 
@@ -149,14 +151,19 @@ public final class GuiMenu extends JPanel implements ActionListener{
 		}else if(command.equals("Update")){
 			try {
 				JOptionPane.showMessageDialog(null, "Exiting game to Updater", "Frutty Updater", 1);
-				Runtime.getRuntime().exec("java -jar ./bin/FruttyInstaller.jar");
+				
+				if(Files.exists(Paths.get("runtime"))) {
+					Runtime.getRuntime().exec("runtime\\bin\\javaw -jar ./bin/FruttyInstaller.jar");
+				}else{
+					Runtime.getRuntime().exec("java -jar ./bin/FruttyInstaller.jar");
+				}
 				System.exit(0);
 			} catch (IOException e) {
 				e.printStackTrace();
 			} 
 			
 		}else{ //Load
-			String[] allMapNames = new File("./saves/").list();
+			var allMapNames = new File("./saves/").list();
 			if(allMapNames.length > 0) {
 				if(Map.loadSave((String) JOptionPane.showInputDialog(this, "Chose map file!", "Saves", JOptionPane.QUESTION_MESSAGE, null, allMapNames, allMapNames[0]))) {
 					GuiIngame.showIngame();

@@ -1,5 +1,6 @@
 package frutty.gui.editor;
 
+import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.Toolkit;
@@ -13,7 +14,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -71,11 +71,12 @@ public final class GuiEditor extends JPanel{
 	}
 	
 	private void saveMap() {
-		String mapName = mapProperties.getProperty(EnumProperty.MapName);
-		try(ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream("./maps/" + mapName))){
-	 		ArrayList<String> textures = new ArrayList<>(), zoneIDs = new ArrayList<>();
+		var mapName = mapProperties.getProperty(EnumProperty.MapName);
+		try(var output = new ObjectOutputStream(new FileOutputStream("./maps/" + mapName))){
+	 		var textures = new ArrayList<String>();
+	 		var zoneIDs = new ArrayList<String>();
 			
-	 		for(ZoneButton writeButton : zoneButtons) {
+	 		for(var writeButton : zoneButtons) {
 	 			if(!zoneIDs.contains(writeButton.zoneID)) {
 	 				zoneIDs.add(writeButton.zoneID);
 	 			}
@@ -108,7 +109,7 @@ public final class GuiEditor extends JPanel{
 		 		output.writeShort(mapProperties.getIntProperty(EnumProperty.Player2PosY));
 	 		}
 		 	
-	 		for(ZoneButton writeButton : zoneButtons) {
+	 		for(var writeButton : zoneButtons) {
 	 			output.writeByte(zoneIDs.indexOf(writeButton.zoneID));
 	 			
 	 			if(Main.hasTextureInfo(writeButton.zoneID)) {
@@ -119,9 +120,9 @@ public final class GuiEditor extends JPanel{
 			e.printStackTrace();
 		}
 		
-		Path file = Paths.get("editorhistory.txt");
+		var file = Paths.get("editorhistory.txt");
 		try {
-			List<String> lines = Files.readAllLines(file);
+			var lines = Files.readAllLines(file);
 			if(!lines.contains(mapName)) {
 				lines.add(mapName);
 				
@@ -143,7 +144,7 @@ public final class GuiEditor extends JPanel{
 	
 	private static void loadMap(String fileName) {
 		if(fileName != null && !fileName.isEmpty()) {
-			try(ObjectInputStream input = new ObjectInputStream(new FileInputStream("./maps/" + fileName))){
+			try(var input = new ObjectInputStream(new FileInputStream("./maps/" + fileName))){
 				int textureCount = input.readByte();
 				String[] textures = new String[textureCount];
 				
@@ -214,10 +215,10 @@ public final class GuiEditor extends JPanel{
 	    		String[] types = {"Normal", "Background"};
 	    		int input = JOptionPane.showOptionDialog(null, "Make Normal or Background map?", "Map Type Chooser", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, types, types[0]);
 	    		
-    			String[] mapSizeString = (input == 0 ? JOptionPane.showInputDialog("Enter map size!", "10x10") : "14x10").split("x");
+    			var mapSizeString = (input == 0 ? JOptionPane.showInputDialog("Enter map size!", "10x10") : "14x10").split("x");
 				int mapWidth = Integer.parseInt(mapSizeString[0]), bigWidth = mapWidth * 64;
 				int mapHeight = Integer.parseInt(mapSizeString[1]), bigHeight = mapHeight * 64;
-				GuiEditor newEditor = new GuiEditor(JOptionPane.showInputDialog("Enter map name!", "mapname.deg"), input == 1, "null", mapWidth, mapHeight, 0, 0, 0, 0);
+				var newEditor = new GuiEditor(JOptionPane.showInputDialog("Enter map name!", "mapname.deg"), input == 1, "null", mapWidth, mapHeight, 0, 0, 0, 0);
 				
 				for(int yPos = 0; yPos < bigHeight; yPos += 64) {
 					for(int xPos = 0; xPos < bigWidth; xPos += 64) {
@@ -234,7 +235,7 @@ public final class GuiEditor extends JPanel{
 	    	}));
 	    	
 	    	fileMenu.add(newMenuItem("Load map", 'L', true, event -> {
-	    		JFileChooser fileChooser = new JFileChooser("./maps/");
+	    		var fileChooser = new JFileChooser("./maps/");
 	    		
 	    		if(fileChooser.showOpenDialog(null) == 0) {
 	    			loadMap(fileChooser.getSelectedFile().getName());
@@ -245,7 +246,7 @@ public final class GuiEditor extends JPanel{
 	    	fileMenu.addSeparator();
 	    	fileMenu.add(newMenuItem("Save map", 'S', !editor.zoneButtons.isEmpty(), event -> editor.saveMap()));
 	    	fileMenu.add(newMenuItem("Reset map", '0', !editor.zoneButtons.isEmpty(), event -> {
-	    		for(ZoneButton localButton : editor.zoneButtons) {
+	    		for(var localButton : editor.zoneButtons) {
 			 		localButton.zoneID = "normalZone";
 			 		localButton.zoneTexture = "normal";
 			 		localButton.setIcon(Main.normalZone.editorTexture.get());
@@ -310,6 +311,14 @@ public final class GuiEditor extends JPanel{
 					button.zoneTexture = editorInstance.textureSelectorButton.activeTexture;
 				}
 			}
+		}
+		
+		@Override
+		public void paint(Graphics graphics) {
+			super.paint(graphics);
+			
+			graphics.setColor(Color.WHITE);
+			graphics.drawString(zoneTexture, 10, 60);
 		}
 		
 		@Override
