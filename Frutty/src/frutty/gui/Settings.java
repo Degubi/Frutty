@@ -5,6 +5,7 @@ import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -40,7 +41,7 @@ public final class Settings{
 	private static WorldOptions worldInstance;
 	
 	public static void loadSettings() {
-		try(var input = Files.newBufferedReader(Paths.get("settings.cfg"))){
+		try(BufferedReader input = Files.newBufferedReader(Paths.get("settings.cfg"))){
 			String[] data = input.readLine().split(" ");
 			difficulty = Integer.parseInt(data[0]);
 			godEnabled = Boolean.parseBoolean(data[1]);
@@ -169,7 +170,7 @@ public final class Settings{
 		saveButton.addActionListener((ActionListener) panel);
 		panel.add(saveButton);
 	}
-
+	
 	@SuppressWarnings("boxing")
 	protected static final class DebugOptions extends JPanel implements ActionListener{
 		protected final JCheckBox godMode = GuiHelper.newCheckBox("Enable God Mode", 20, 80, Color.BLACK, Settings.godEnabled);

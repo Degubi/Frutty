@@ -71,7 +71,7 @@ public final class Main {
 		
 		var savePath = Paths.get("saves");
 		if(!Files.exists(savePath)) {
-			Files.createDirectory(Paths.get("saves"));
+			Files.createDirectory(savePath);
 		}
 		
 		var updaterPath = Paths.get("FruttyInstaller.jar");
