@@ -6,8 +6,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -152,11 +150,8 @@ public final class GuiMenu extends JPanel implements ActionListener{
 			try {
 				JOptionPane.showMessageDialog(null, "Exiting game to Updater", "Frutty Updater", 1);
 				
-				if(Files.exists(Paths.get("runtime"))) {
-					Runtime.getRuntime().exec("runtime\\bin\\javaw -jar ./bin/FruttyInstaller.jar");
-				}else{
-					Runtime.getRuntime().exec("java -jar ./bin/FruttyInstaller.jar");
-				}
+				Runtime.getRuntime().exec(System.getProperty("java.version").startsWith("10.") ? "javaw bin/FruttyUpdater"
+										  : "runtime\\bin\\javaw bin/FruttyUpdater");
 				System.exit(0);
 			} catch (IOException e) {
 				e.printStackTrace();

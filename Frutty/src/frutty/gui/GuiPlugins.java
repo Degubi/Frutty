@@ -37,12 +37,12 @@ public final class GuiPlugins implements ListSelectionListener, HyperlinkListene
 		plugs.description.setContentType("text/html");
 		plugs.pluginList.setSelectedIndex(0);
 		
-		var pane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, plugs.pluginList, plugs.description);
-		pane.setDividerLocation(285);
+		JSplitPane pane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, plugs.pluginList, plugs.description);
+		pane.setResizeWeight(0.5D);
 		pane.setEnabled(false);
 		
 		EventQueue.invokeLater(() -> {
-			var returnFrame = new JFrame("Frutty Plugins");
+			JFrame returnFrame = new JFrame("Frutty Plugins");
 			returnFrame.setContentPane(pane);
 			returnFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 			returnFrame.setResizable(false);

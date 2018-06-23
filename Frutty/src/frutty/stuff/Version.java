@@ -1,8 +1,7 @@
 package frutty.stuff;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalTime;
@@ -11,7 +10,7 @@ import java.util.Objects;
 
 public final class Version{
 	public final int majorVersion, minorVersion, patchVersion;
-	private static final Version INVALID_VERSION = new Version(-1, -1, -1);
+	public static final Version INVALID_VERSION = new Version(-1, -1, -1);
 	
 	private Version(int major, int minor, int patch) {
 		majorVersion = major;
@@ -42,8 +41,12 @@ public final class Version{
 	
 	public static Version fromURL(String url) {
 		if(url != null) {
-			try(var download = new BufferedReader(new InputStreamReader(new URL(url).openStream()))){
-				return fromString(download.readLine());
+			try(InputStream stream = new URL("https://pastebin.com/raw/m5qJbnks").openConnection().getInputStream()){
+				int first = stream.read() - 48;
+				stream.read();
+				int second = stream.read() - 48;
+				stream.read();
+				return new Version(first, second, stream.read() - 48);
 			} catch (MalformedURLException e) {
 				System.err.println(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")) + ": Invalid url: " + url);
 			} catch (IOException e) {}

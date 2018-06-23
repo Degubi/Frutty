@@ -54,7 +54,9 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 	protected void paintComponent(Graphics graphics) {
 		super.paintComponent(graphics);
 		
-		for(int k = 0; k < Map.zones.length; ++k) Map.zones[k].render(Map.xCoords[k], Map.yCoords[k], Map.textureData[k], graphics);
+		MapZone[] zones = Map.zones;
+		
+		for(int k = 0; k < zones.length; ++k) zones[k].render(Map.xCoords[k], Map.yCoords[k], Map.textureData[k], graphics);
 		for(EntityPlayer players : Map.players) players.handleRender(graphics);
 		
 		for(Entity entity : Map.entities) {
@@ -71,8 +73,8 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 		
 		for(Particle particles : Map.particles) particles.render(graphics);
 		
-		for(int k = 0; k < Map.zones.length; ++k) {
-			MapZone zone = Map.zones[k];
+		for(int k = 0; k < zones.length; ++k) {
+			MapZone zone = zones[k];
 			if(zone instanceof ITransparentZone) {
 				((ITransparentZone)zone).drawAfter(Map.xCoords[k], Map.yCoords[k], Map.textureData[k], graphics);
 			}
@@ -91,7 +93,7 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 			graphics.setColor(Color.WHITE);
 			
 			//Left
-			graphics.drawString("zonecount: " + Map.zones.length, 2, 20);
+			graphics.drawString("zonecount: " + zones.length, 2, 20);
 			graphics.drawString("entities: " + (Map.enemies.length + Map.players.length + Map.entities.size() + Map.particles.size()), 2, 40);
 			graphics.drawString("map_width: " + (Map.width + 64), 2, 60);
 			graphics.drawString("map_height: " + (Map.height + 64), 2, 80);

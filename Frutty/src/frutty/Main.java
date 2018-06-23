@@ -4,7 +4,10 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.lang.invoke.MethodHandle;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -14,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -35,13 +39,15 @@ import frutty.map.zones.MapZoneNormal;
 import frutty.map.zones.MapZoneSky;
 import frutty.map.zones.MapZoneSpawner;
 import frutty.map.zones.MapZoneWater;
-import frutty.plugin.IFruttyPlugin;
+import frutty.plugin.FruttyPlugin;
+import frutty.plugin.FruttyPluginMain;
 import frutty.stuff.Plugin;
 import frutty.stuff.Version;
 
 public final class Main {
 	public static final HashMap<String, MapZone> zoneRegistry = new HashMap<>(8);
 	public static final ArrayList<Plugin> pluginList = new ArrayList<>(2);
+	public static final ArrayList<MethodHandle> mapLoadEvents = new ArrayList<>(0);
 	
 	public static final Random rand = new Random();
 	public static final Plugin gamePluginContainer = new Plugin("Frutty", "Base plugin for the game", null, Version.from(1, 0, 0), "https://pastebin.com/raw/m5qJbnks");
@@ -72,11 +78,6 @@ public final class Main {
 		var savePath = Paths.get("saves");
 		if(!Files.exists(savePath)) {
 			Files.createDirectory(savePath);
-		}
-		
-		var updaterPath = Paths.get("FruttyInstaller.jar");
-		if(Files.exists(updaterPath)) {
-			Files.move(updaterPath, Paths.get("./bin/FruttyInstaller.jar"));
 		}
 		
 		pluginList.add(gamePluginContainer);
@@ -156,7 +157,6 @@ public final class Main {
 		
 		var all = new File("./plugins/").listFiles((dir, name) -> name.endsWith(".jar"));
 		if(all.length > 0) {
-			
 			var mainClassNames = new String[all.length];
 			var classLoaderNames = new URL[all.length];
 			
@@ -168,7 +168,7 @@ public final class Main {
 				}
 				
 				try(var jar = new JarFile(all[k])){
-					var mani = jar.getManifest();
+					Manifest mani = jar.getManifest();
 					if(mani == null) {
 						System.err.println("Can't find manifest file from plugin: " + all[k]);
 					}else{
@@ -184,35 +184,38 @@ public final class Main {
 				}
 			}
 			
-			try(var urlClass = new URLClassLoader(classLoaderNames)){
+			try(URLClassLoader urlClass = new URLClassLoader(classLoaderNames)){
 				for(int k = 0; k < mainClassNames.length; ++k) {
 					if(mainClassNames[k] == null) {
 						System.err.println("Can't load main class from plugin: " + all[k]);
 					}else{
-						var loaded = urlClass.loadClass(mainClassNames[k]);
-						if(hasInterface(loaded)) {
-							Object instance = loaded.getDeclaredConstructor().newInstance();
-							loaded.getMethod("initPlugin").invoke(instance);
-							pluginList.add(new Plugin((String) loaded.getMethod("getPluginID").invoke(instance), 
-												   (String) loaded.getMethod("getPluginDescription").invoke(instance), 
-												   (String) loaded.getMethod("getUpdateURL").invoke(instance), 
-												   (Version) loaded.getMethod("getPluginVersion").invoke(instance),
-												   (String) loaded.getMethod("getVersionURL").invoke(instance)));
+						Class<?> loaded = urlClass.loadClass(mainClassNames[k]);
+						if(loaded.isAnnotationPresent(FruttyPlugin.class)) {
+							FruttyPlugin pluginAnnotation = loaded.getDeclaredAnnotation(FruttyPlugin.class);
+							pluginList.add(new Plugin(pluginAnnotation.id(), pluginAnnotation.description(), pluginAnnotation.updateURL(), Version.fromString(pluginAnnotation.version()), pluginAnnotation.versionURL()));
+							
+							Method[] methods = loaded.getDeclaredMethods();
+							boolean ranMain = false;
+							for(Method method : methods) {
+								if(method.isAnnotationPresent(FruttyPluginMain.class)) {
+									if((method.getModifiers() & Modifier.STATIC) != 0) {
+										method.invoke(null);
+										ranMain = true;
+										break;
+									}
+									System.err.println("Main method from plugin: " + all[k] + " is not static");
+								}
+							}
+							
+							if(!ranMain) {
+								System.err.println("Can't find main method annotated with @FruttyPluginMain from plugin: " + all[k]);
+							}
 						}
 					}
 				}
-			} catch (IOException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | InstantiationException | ClassNotFoundException e) {
+			} catch (IOException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | ClassNotFoundException e) {
 				e.printStackTrace();
 			}
 		}
-	}
-	
-	private static boolean hasInterface(Class<?> theClass) {
-		for(var faces : theClass.getInterfaces()) {
-			if(IFruttyPlugin.class.isAssignableFrom(faces)){
-				return true;
-			}
-		}
-		return false;
 	}
 }

@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.invoke.MethodHandle;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import javax.imageio.ImageIO;
 
 import frutty.Main;
 import frutty.entity.Entity;
+import frutty.entity.EntityApple;
 import frutty.entity.EntityEnemy;
 import frutty.entity.EntityPlayer;
 import frutty.entity.zone.EntityAppleZone;
@@ -24,6 +26,7 @@ import frutty.gui.GuiHelper;
 import frutty.gui.GuiIngame;
 import frutty.gui.Settings;
 import frutty.map.interfaces.ITexturable;
+import frutty.plugin.event.MapInitEvent;
 
 public final class Map{
 	public static EntityPlayer[] players;
@@ -43,6 +46,11 @@ public final class Map{
 		pickCount = 0;
 		score = 0;
 		ticks = 0;
+		
+		MapInitEvent loadEvent = new MapInitEvent(w, h, txts, entities);
+		for(MethodHandle handles : Main.mapLoadEvents) {
+			loadEvent.invoke(handles);
+		}
 		
 		int zoneCount = (w / 64) * (h / 64);
 		zones = new MapZone[zoneCount];
