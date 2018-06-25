@@ -125,33 +125,35 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 		if(!paused) {
 			++Map.ticks;
 			
+			int ticks = Map.ticks;
+			
 			for(Entity entity : Map.players) {
-				entity.update(Map.ticks);
+				entity.update(ticks);
 			}
 			
 			for(EntityEnemy monsters : Map.enemies) {
 				if(monsters.active) {
-					monsters.update(Map.ticks);
+					monsters.update(ticks);
 				}
 			}
 			
 			for(Entity entities : Map.entities) {
 				if(entities.active) {
-					entities.update(Map.ticks);
+					entities.update(ticks);
 				}
 			}
 			
-			if(Map.ticks % 4 == 0) {
+			if(ticks % 4 == 0) {
 				MapZoneWater.updateWaterUV();
 			}
 			
-			if(Map.ticks % 2 == 0) {
+			if(ticks % 2 == 0) {
 				for(Iterator<Particle> iterator = Map.particles.iterator(); iterator.hasNext();) {
 					iterator.next().update(iterator);
 				}
 			}
 			
-			if(Map.ticks % 20 == 0) {
+			if(ticks % 20 == 0) {
 				for(int k = 0; k < Map.zones.length; ++k) {
 					MapZone zone = Map.zones[k];
 					if(zone instanceof MapZoneEmpty == false && MapZone.isEmpty(Map.xCoords[k], Map.yCoords[k] + 64) && Main.rand.nextInt(100) == 3) {

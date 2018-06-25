@@ -6,7 +6,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.lang.invoke.MethodHandle;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -17,7 +16,6 @@ import javax.imageio.ImageIO;
 
 import frutty.Main;
 import frutty.entity.Entity;
-import frutty.entity.EntityApple;
 import frutty.entity.EntityEnemy;
 import frutty.entity.EntityPlayer;
 import frutty.entity.zone.EntityAppleZone;
@@ -47,17 +45,12 @@ public final class Map{
 		score = 0;
 		ticks = 0;
 		
-		MapInitEvent loadEvent = new MapInitEvent(w, h, txts, entities);
-		for(MethodHandle handles : Main.mapLoadEvents) {
-			loadEvent.invoke(handles);
-		}
+		Main.handleEvent(new MapInitEvent(w, h, txts, entities), Main.mapLoadEvents);
 		
 		int zoneCount = (w / 64) * (h / 64);
 		zones = new MapZone[zoneCount];
 		width = w - 64;
 		height = h - 64;
-		loadTextures(textures = txts);
-		loadSkyTexture(skyTextureName = skyName);
 		
 		xCoords = new int[zoneCount];
 		yCoords = new int[zoneCount];
@@ -83,6 +76,8 @@ public final class Map{
 			players = new EntityPlayer[]{new EntityPlayer(p1X, p1Y, true)};
 		}
 		
+		loadTextures(textures = txts);
+		loadSkyTexture(skyTextureName = skyName);
 		Particle.precacheParticles();
 	}
 	

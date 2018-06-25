@@ -2,17 +2,17 @@ package frutty.plugin;
 
 import java.awt.image.BufferedImage;
 import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodHandles.Lookup;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
 import frutty.Main;
 import frutty.map.MapZone;
+import frutty.plugin.EventHandler.EnumPriority;
 import frutty.plugin.event.MapInitEvent;
+import frutty.tools.internal.EventHandleObject;
 
 public final class PluginRegistry {
-	private static final Lookup lookup = MethodHandles.lookup();
-
+	
 	/**
 	 * @param zoneID Zone ID
 	 * @param zone The zone object
@@ -30,15 +30,14 @@ public final class PluginRegistry {
 	}
 	
 	public static void registerEventClass(Class<?> eventClass) {
-		Method[] methods = eventClass.getMethods();
+		Method[] methods = eventClass.getDeclaredMethods();
 		
 		for(Method method : methods) {
 			if(method.isAnnotationPresent(EventHandler.class)) {
 				if((method.getModifiers() & Modifier.STATIC) != 0 && method.getParameterCount() == 1) {
-					Class<?> eventType = method.getParameterTypes()[0];
-					if(eventType == MapInitEvent.class) {
+					if(method.getParameterTypes()[0] == MapInitEvent.class) {
 						try {
-							Main.mapLoadEvents.add(lookup.unreflect(method));
+							Main.mapLoadEvents.add(new EventHandleObject(MethodHandles.publicLookup().unreflect(method), EnumPriority.ordinal(method.getAnnotation(EventHandler.class).priority())));
 						} catch (IllegalAccessException e) {
 							e.printStackTrace();
 						}

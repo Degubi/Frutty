@@ -1,4 +1,4 @@
-package frutty.stuff;
+package frutty.tools;
 
 import java.util.Objects;
 import java.util.function.Supplier;

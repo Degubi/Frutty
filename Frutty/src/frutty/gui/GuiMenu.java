@@ -21,7 +21,7 @@ import frutty.gui.editor.GuiEditor;
 import frutty.map.Map;
 import frutty.map.MapZone;
 import frutty.map.interfaces.ITransparentZone;
-import frutty.stuff.Version;
+import frutty.tools.Version;
 
 public final class GuiMenu extends JPanel implements ActionListener{
 	private final JComboBox<String> mapList = new JComboBox<>();
@@ -58,7 +58,7 @@ public final class GuiMenu extends JPanel implements ActionListener{
 			}
 		}
 		
-		mapList.addItem("Generate");  //Legeslegrosszabb esetben is tudunk generálni mapot
+		mapList.addItem("Generate");
 		add(mapSizeField);
 		mapList.setSelectedItem(Settings.lastMap);
 		add(mapList);

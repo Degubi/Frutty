@@ -4,7 +4,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.lang.invoke.MethodHandle;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -41,13 +40,15 @@ import frutty.map.zones.MapZoneSpawner;
 import frutty.map.zones.MapZoneWater;
 import frutty.plugin.FruttyPlugin;
 import frutty.plugin.FruttyPluginMain;
-import frutty.stuff.Plugin;
-import frutty.stuff.Version;
+import frutty.tools.Version;
+import frutty.tools.internal.EventBase;
+import frutty.tools.internal.EventHandleObject;
+import frutty.tools.internal.Plugin;
 
 public final class Main {
 	public static final HashMap<String, MapZone> zoneRegistry = new HashMap<>(8);
 	public static final ArrayList<Plugin> pluginList = new ArrayList<>(2);
-	public static final ArrayList<MethodHandle> mapLoadEvents = new ArrayList<>(0);
+	public static final ArrayList<EventHandleObject> mapLoadEvents = new ArrayList<>(0);
 	
 	public static final Random rand = new Random();
 	public static final Plugin gamePluginContainer = new Plugin("Frutty", "Base plugin for the game", null, Version.from(1, 0, 0), "https://pastebin.com/raw/m5qJbnks");
@@ -83,6 +84,8 @@ public final class Main {
 		pluginList.add(gamePluginContainer);
 		pluginList.add(Plugin.pluginLoaderPlugin);
 		loadPlugins();
+		
+		mapLoadEvents.sort(EventHandleObject.PRIORITY_COMPARATOR);
 	}
 	
 	public static String getZoneName(MapZone zone) {
@@ -115,7 +118,7 @@ public final class Main {
 		try{
 			return ImageIO.read(Files.newInputStream(Paths.get("./textures/" + prefix + "/" + name)));
 		}catch(IOException e){
-			System.err.println("Can't find texture: " + prefix + "/" + name + ", returning null. Have fun :)");
+			System.err.println("Can't find texture: " + prefix + "/" + name + " from class: " + Thread.currentThread().getStackTrace()[3].getClassName());
 			return null;
 		}
 	}
@@ -217,5 +220,9 @@ public final class Main {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	public static void handleEvent(EventBase event, ArrayList<EventHandleObject> methods) {
+		for(EventHandleObject handles : methods) event.invoke(handles.handle);
 	}
 }

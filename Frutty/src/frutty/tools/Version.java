@@ -1,4 +1,4 @@
-package frutty.stuff;
+package frutty.tools;
 
 import java.io.IOException;
 import java.io.InputStream;

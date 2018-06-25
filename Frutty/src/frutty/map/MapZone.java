@@ -13,7 +13,7 @@ import frutty.entity.zone.EntityZone;
 import frutty.gui.GuiHelper;
 import frutty.gui.GuiStats;
 import frutty.gui.Settings;
-import frutty.stuff.Lazy;
+import frutty.tools.Lazy;
 
 @SuppressWarnings("unused")
 public abstract class MapZone implements Serializable{
