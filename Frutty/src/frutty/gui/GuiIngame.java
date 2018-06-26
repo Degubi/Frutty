@@ -25,7 +25,7 @@ import frutty.entity.Entity;
 import frutty.entity.EntityEnemy;
 import frutty.entity.EntityPlayer;
 import frutty.map.Map;
-import frutty.map.MapZone;
+import frutty.map.MapZoneBase;
 import frutty.map.Particle;
 import frutty.map.interfaces.ITransparentZone;
 import frutty.map.zones.MapZoneEmpty;
@@ -54,7 +54,7 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 	protected void paintComponent(Graphics graphics) {
 		super.paintComponent(graphics);
 		
-		MapZone[] zones = Map.zones;
+		MapZoneBase[] zones = Map.zones;
 		
 		for(int k = 0; k < zones.length; ++k) zones[k].render(Map.xCoords[k], Map.yCoords[k], Map.textureData[k], graphics);
 		for(EntityPlayer players : Map.players) players.handleRender(graphics);
@@ -74,7 +74,7 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 		for(Particle particles : Map.particles) particles.render(graphics);
 		
 		for(int k = 0; k < zones.length; ++k) {
-			MapZone zone = zones[k];
+			MapZoneBase zone = zones[k];
 			if(zone instanceof ITransparentZone) {
 				((ITransparentZone)zone).drawAfter(Map.xCoords[k], Map.yCoords[k], Map.textureData[k], graphics);
 			}
@@ -155,8 +155,8 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 			
 			if(ticks % 20 == 0) {
 				for(int k = 0; k < Map.zones.length; ++k) {
-					MapZone zone = Map.zones[k];
-					if(zone instanceof MapZoneEmpty == false && MapZone.isEmpty(Map.xCoords[k], Map.yCoords[k] + 64) && Main.rand.nextInt(100) == 3) {
+					MapZoneBase zone = Map.zones[k];
+					if(zone instanceof MapZoneEmpty == false && MapZoneBase.isEmpty(Map.xCoords[k], Map.yCoords[k] + 64) && Main.rand.nextInt(100) == 3) {
 						Particle.addParticles(2 + Main.rand.nextInt(5), Map.xCoords[k], Map.yCoords[k], Map.textureData[k]);
 					}
 					

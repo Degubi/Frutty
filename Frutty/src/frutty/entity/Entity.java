@@ -8,7 +8,7 @@ import frutty.Main;
 import frutty.gui.GuiIngame;
 import frutty.gui.Settings;
 import frutty.map.Map;
-import frutty.map.MapZone;
+import frutty.map.MapZoneBase;
 
 public abstract class Entity implements Serializable{
 	private static final long serialVersionUID = 2876462867774051456L;
@@ -22,12 +22,12 @@ public abstract class Entity implements Serializable{
 		renderPosY = y;
 		serverPosX = x;
 		serverPosY = y;
-		moveRate = getServerUpdate() / getClientUpdate();
+		moveRate = getServerUpdateRate() / getClientUpdateRate();
 	}
 	
 	protected EnumFacing findFreeFacing() {
 		for(var randomFacing = EnumFacing.randomFacing(); ; randomFacing = EnumFacing.randomFacing()) {
-			if(MapZone.isEmpty(serverPosX + randomFacing.xOffset, serverPosY + randomFacing.yOffset)) {
+			if(MapZoneBase.isEmpty(serverPosX + randomFacing.xOffset, serverPosY + randomFacing.yOffset)) {
 				return randomFacing;
 			}
 			continue;
@@ -80,16 +80,16 @@ public abstract class Entity implements Serializable{
 	public abstract void render(Graphics graphics);
 	public abstract void updateClient();
 	public abstract void updateServer();
-	public abstract int getClientUpdate();
-	public abstract int getServerUpdate();
+	public abstract int getClientUpdateRate();
+	public abstract int getServerUpdateRate();
 	
 	public final void update(int ticks) {
-		if(ticks % getClientUpdate() == 0) {
+		if(ticks % getClientUpdateRate() == 0) {
 			updateClient();
 			renderPosX += motionX / moveRate;
 			renderPosY += motionY / moveRate;
 		}
-		if(ticks % getServerUpdate() == 0) {
+		if(ticks % getServerUpdateRate() == 0) {
 			updateServer();
 			serverPosX += motionX;
 			serverPosY += motionY;

@@ -1,16 +1,15 @@
 package frutty.map.zones;
 
 import java.awt.Graphics;
-import java.awt.Image;
 
 import javax.swing.ImageIcon;
 
 import frutty.gui.GuiIngame;
-import frutty.gui.editor.GuiToolSelector.GuiTextureSelector;
-import frutty.map.MapZone;
+import frutty.gui.editor.GuiTextureSelector;
+import frutty.map.MapZoneBase;
 import frutty.map.interfaces.ITexturable;
 
-public final class MapZoneNormal extends MapZone implements ITexturable{
+public final class MapZoneNormal extends MapZoneBase implements ITexturable{
 	public MapZoneNormal() {
 		super(true);
 	}
@@ -27,6 +26,6 @@ public final class MapZoneNormal extends MapZone implements ITexturable{
 
 	@Override
 	protected ImageIcon getEditorIcon() {
-		return new ImageIcon(new ImageIcon("./textures/map/normal.png").getImage().getScaledInstance(64, 64, Image.SCALE_DEFAULT));
+		return new ImageIcon("./textures/map/normal.png");
 	}
 }

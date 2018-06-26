@@ -12,12 +12,12 @@ import frutty.entity.zone.EntityAppleZone;
 import frutty.entity.zone.EntityZone;
 import frutty.gui.GuiIngame;
 import frutty.gui.GuiStats;
-import frutty.gui.editor.GuiToolSelector.GuiTextureSelector;
+import frutty.gui.editor.GuiTextureSelector;
 import frutty.map.Map;
-import frutty.map.MapZone;
+import frutty.map.MapZoneBase;
 import frutty.map.interfaces.ITexturable;
 
-public final class MapZoneFruit extends MapZone implements ITexturable{
+public final class MapZoneFruit extends MapZoneBase implements ITexturable{
 	public static final BufferedImage cherryTexture = Main.loadTexture("fruit", "cherry.png");
 	
 	public final EnumFruit fruitType;

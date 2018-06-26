@@ -1,6 +1,5 @@
 package frutty.gui.editor;
 
-import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.Toolkit;
@@ -20,6 +19,7 @@ import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -34,24 +34,30 @@ import frutty.Main;
 import frutty.gui.GuiHelper;
 import frutty.gui.GuiMenu;
 import frutty.gui.editor.GuiProperties.EnumProperty;
-import frutty.gui.editor.ZoneSelectorButton.TextureSelectorButton;
+import frutty.map.MapZoneBase;
+import frutty.map.interfaces.IInternalZone;
+import frutty.map.interfaces.ITexturable;
 
 public final class GuiEditor extends JPanel{
 	public final ArrayList<ZoneButton> zoneButtons = new ArrayList<>();
-	protected final GuiProperties mapProperties;
-	protected final ZoneSelectorButton zoneSelectorButton;
+	public final GuiProperties mapProperties;
 	protected final TextureSelectorButton textureSelectorButton;
+	protected final JComboBox<String> zoneList;
 	
 	private GuiEditor(String fileName, boolean isBackground, String skyName, int... data) {
 		setLayout(null);
 		
 		if(fileName != null) {
 			mapProperties = new GuiProperties(fileName, skyName, isBackground, data);
-			add(zoneSelectorButton = new ZoneSelectorButton(data[0], this));
+			zoneList = new JComboBox<>(Main.zoneRegistry.keySet().toArray(new String[Main.zoneRegistry.size()]));
+			zoneList.setSelectedItem("normalZone");
+			zoneList.setBounds(data[0] * 64 + 20, 80, 120, 30);
+			
+			add(zoneList);
 			add(textureSelectorButton = new TextureSelectorButton(data[0], this));
 		}else{
 			mapProperties = null;
-			zoneSelectorButton = null;
+			zoneList = null;
 			textureSelectorButton = null;
 		}
 	}
@@ -80,7 +86,7 @@ public final class GuiEditor extends JPanel{
 	 			if(!zoneIDs.contains(writeButton.zoneID)) {
 	 				zoneIDs.add(writeButton.zoneID);
 	 			}
-	 			if(Main.hasTextureInfo(writeButton.zoneID)) {
+	 			if(Main.zoneRegistry.get(writeButton.zoneID) instanceof ITexturable) {
 	 				if(!writeButton.zoneTexture.isEmpty() && !textures.contains(writeButton.zoneTexture)) {
 	 					textures.add(writeButton.zoneTexture);
 	 				}
@@ -112,7 +118,7 @@ public final class GuiEditor extends JPanel{
 	 		for(var writeButton : zoneButtons) {
 	 			output.writeByte(zoneIDs.indexOf(writeButton.zoneID));
 	 			
-	 			if(Main.hasTextureInfo(writeButton.zoneID)) {
+	 			if(Main.zoneRegistry.get(writeButton.zoneID) instanceof ITexturable) {
 	 				output.writeByte(textures.indexOf(writeButton.zoneTexture));
 	 			}
 	 		}
@@ -167,7 +173,8 @@ public final class GuiEditor extends JPanel{
 				
 				for(int y = 0; y < mapHeight; ++y) {
 					for(int x = 0; x < mapWidth; ++x) {
-						Main.handleEditorReading(editor, zoneIDS[input.readByte()], input, x, y, textures);
+						String zoneID = zoneIDS[input.readByte()];
+						Main.zoneRegistry.get(zoneID).handleEditorReading(editor, zoneID, input, x, y, textures);
 					}
 				}
 				showEditorFrame(editor, mapWidth * 64, mapHeight * 64);
@@ -295,30 +302,23 @@ public final class GuiEditor extends JPanel{
 		public void mousePressed(MouseEvent event) {
 			ZoneButton button = (ZoneButton)event.getComponent();
 			if(event.getButton() == MouseEvent.BUTTON1) {
-				button.zoneID = editorInstance.zoneSelectorButton.activeZone; button.setIcon(editorInstance.zoneSelectorButton.getIcon());
+				String activeZoneName = (String) editorInstance.zoneList.getSelectedItem();
+				MapZoneBase activeZone = Main.zoneRegistry.get(activeZoneName);
+				
+				button.zoneID = activeZoneName; button.setIcon(Main.zoneRegistry.get(activeZoneName).editorTexture.get());
 						
-				if(Main.hasTextureInfo(editorInstance.zoneSelectorButton.activeZone)) {
+				if(activeZone instanceof ITexturable) {
 					button.setIcon(Main.getEditorTextureVariants(button.zoneID)[editorInstance.textureSelectorButton.activeTextureIndex]);
 					button.zoneTexture = editorInstance.textureSelectorButton.activeTexture;
-				}else if(editorInstance.zoneSelectorButton.activeZone.equals("player1Zone")) {
-					editorInstance.mapProperties.setPlayer1Pos(button.getX(), button.getY());
-				}else if(editorInstance.zoneSelectorButton.activeZone.equals("player2Zone")) {
-					editorInstance.mapProperties.setPlayer2Pos(button.getX(), button.getY());
+				}if(activeZone instanceof IInternalZone) {
+					((IInternalZone) activeZone).handleEditorPlacement(editorInstance, button.getX(), button.getY());
 				}
 			}else if(event.getButton() == MouseEvent.BUTTON3) {
-				if(Main.hasTextureInfo(button.zoneID)) {
+				if(Main.zoneRegistry.get(button.zoneID) instanceof ITexturable) {
 					button.setIcon(Main.getEditorTextureVariants(button.zoneID)[editorInstance.textureSelectorButton.activeTextureIndex]);
 					button.zoneTexture = editorInstance.textureSelectorButton.activeTexture;
 				}
 			}
-		}
-		
-		@Override
-		public void paint(Graphics graphics) {
-			super.paint(graphics);
-			
-			graphics.setColor(Color.WHITE);
-			graphics.drawString(zoneTexture, 10, 60);
 		}
 		
 		@Override

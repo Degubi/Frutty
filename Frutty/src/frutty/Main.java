@@ -3,7 +3,6 @@ package frutty;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -13,8 +12,8 @@ import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Random;
+import java.util.TreeMap;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
@@ -24,17 +23,14 @@ import javax.swing.ImageIcon;
 import frutty.gui.GuiMenu;
 import frutty.gui.GuiStats;
 import frutty.gui.Settings;
-import frutty.gui.editor.GuiEditor;
-import frutty.gui.editor.GuiEditor.ZoneButton;
-import frutty.gui.editor.GuiToolSelector;
-import frutty.gui.editor.GuiToolSelector.GuiTextureSelector;
-import frutty.map.MapZone;
+import frutty.map.MapZoneBase;
 import frutty.map.interfaces.ITexturable;
 import frutty.map.zones.MapZoneChest;
 import frutty.map.zones.MapZoneEmpty;
 import frutty.map.zones.MapZoneFruit;
 import frutty.map.zones.MapZoneFruit.EnumFruit;
 import frutty.map.zones.MapZoneNormal;
+import frutty.map.zones.MapZonePlayer;
 import frutty.map.zones.MapZoneSky;
 import frutty.map.zones.MapZoneSpawner;
 import frutty.map.zones.MapZoneWater;
@@ -46,7 +42,7 @@ import frutty.tools.internal.EventHandleObject;
 import frutty.tools.internal.Plugin;
 
 public final class Main {
-	public static final HashMap<String, MapZone> zoneRegistry = new HashMap<>(8);
+	public static final TreeMap<String, MapZoneBase> zoneRegistry = new TreeMap<>();
 	public static final ArrayList<Plugin> pluginList = new ArrayList<>(2);
 	public static final ArrayList<EventHandleObject> mapLoadEvents = new ArrayList<>(0);
 	
@@ -55,6 +51,8 @@ public final class Main {
 
 	public static final MapZoneNormal normalZone = new MapZoneNormal();
 	public static final MapZoneEmpty emptyZone = new MapZoneEmpty();
+	public static final MapZonePlayer player1Zone = new MapZonePlayer(1);
+	public static final MapZonePlayer player2Zone = new MapZonePlayer(2);
 	public static final MapZoneFruit appleZone = new MapZoneFruit(EnumFruit.APPLE);
 	public static final MapZoneFruit cherryZone = new MapZoneFruit(EnumFruit.CHERRY);
 	public static final MapZoneSpawner spawnerZone = new MapZoneSpawner();
@@ -66,6 +64,8 @@ public final class Main {
 		zoneRegistry.put("normalZone", normalZone);
 		zoneRegistry.put("emptyZone", emptyZone);
 		zoneRegistry.put("appleZone", appleZone);
+		zoneRegistry.put("player1Zone", player1Zone);
+		zoneRegistry.put("player2Zone", player2Zone);
 		zoneRegistry.put("cherryZone", cherryZone);
 		zoneRegistry.put("spawnerZone", spawnerZone);
 		zoneRegistry.put("chestZone", chestZone);
@@ -88,7 +88,7 @@ public final class Main {
 		mapLoadEvents.sort(EventHandleObject.PRIORITY_COMPARATOR);
 	}
 	
-	public static String getZoneName(MapZone zone) {
+	public static String getZoneName(MapZoneBase zone) {
 		var entries = zoneRegistry.entrySet();
 		
 		for(var entry : entries) {
@@ -99,19 +99,8 @@ public final class Main {
 		return null;
 	}
 	
-	public static boolean hasTextureInfo(String ID) {
-		return zoneRegistry.get(ID) instanceof ITexturable;
-	}
-	
 	public static ImageIcon[] getEditorTextureVariants(String ID) {
 		return ((ITexturable)zoneRegistry.get(ID)).getEditorTextureVars();
-	}
-	
-	public static MapZone handleMapReading(String ID) {
-		if(ID.equals("player1Zone") || ID.equals("player2Zone")) {
-			return Main.emptyZone;
-		}
-		return zoneRegistry.get(ID);
 	}
 	
 	public static BufferedImage loadTexture(String prefix, String name) {
@@ -120,35 +109,6 @@ public final class Main {
 		}catch(IOException e){
 			System.err.println("Can't find texture: " + prefix + "/" + name + " from class: " + Thread.currentThread().getStackTrace()[3].getClassName());
 			return null;
-		}
-	}
-	
-	public static void handleEditorReading(GuiEditor editor, String zoneID, ObjectInputStream input, int x, int y, String[] textures) throws IOException {
-		if(zoneID.equals("player1Zone")) {
-			var button = new ZoneButton(GuiToolSelector.player1Texture, editor);
-			button.setBounds(x * 64, y * 64, 64, 64);
-			button.zoneID = zoneID;
-			editor.zoneButtons.add(button);
-			editor.add(button);
-		}else if(zoneID.equals("player2Zone")) {
-			var button = new ZoneButton(GuiToolSelector.player2Texture, editor);
-			button.setBounds(x * 64, y * 64, 64, 64);
-			button.zoneID = zoneID;
-			editor.zoneButtons.add(button);
-			editor.add(button);
-		}else{
-			var zone = zoneRegistry.get(zoneID);
-			
-			var button = new ZoneButton(zone.editorTexture.get(), editor);
-			button.setBounds(x * 64, y * 64, 64, 64);
-			button.zoneID = zoneID;
-			if(zone instanceof ITexturable){
-				int textureData = input.readByte();
-				button.zoneTexture = textures[textureData];
-				button.setIcon(((ITexturable)zone).getEditorTextureVars()[GuiTextureSelector.indexOf(textures[textureData] + ".png")]);
-			}
-			editor.zoneButtons.add(button);
-			editor.add(button);
 		}
 	}
 	

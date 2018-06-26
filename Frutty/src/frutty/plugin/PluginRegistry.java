@@ -6,7 +6,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
 import frutty.Main;
-import frutty.map.MapZone;
+import frutty.map.MapZoneBase;
 import frutty.plugin.EventHandler.EnumPriority;
 import frutty.plugin.event.MapInitEvent;
 import frutty.tools.internal.EventHandleObject;
@@ -18,7 +18,7 @@ public final class PluginRegistry {
 	 * @param zone The zone object
 	 * @param editorTextureName Name of the texture used in editor, put it in the dev folder
 	 */
-	public static void registerZone(String zoneID, MapZone zone) {
+	public static void registerZone(String zoneID, MapZoneBase zone) {
 		if(Main.zoneRegistry.containsKey(zoneID)) {
 			throw new IllegalArgumentException("Zone already registered with ID: " + zoneID);
 		}

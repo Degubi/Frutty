@@ -19,7 +19,7 @@ import javax.swing.WindowConstants;
 import frutty.Main;
 import frutty.gui.editor.GuiEditor;
 import frutty.map.Map;
-import frutty.map.MapZone;
+import frutty.map.MapZoneBase;
 import frutty.map.interfaces.ITransparentZone;
 import frutty.tools.Version;
 
@@ -28,7 +28,7 @@ public final class GuiMenu extends JPanel implements ActionListener{
 	private final JTextField mapSizeField = GuiHelper.newTextField("8x8", 500, 20);
 	private final JCheckBox coopBox = GuiHelper.newCheckBox("Coop mode", 445, 130, Color.WHITE, false);
 	
-	private final MapZone[] zones = new MapZone[140];
+	private final MapZoneBase[] zones = new MapZoneBase[140];
 	private final int[] xCoords = new int[140], yCoords = new int[140], textureData = new int[140];
 	
 	public GuiMenu() {
@@ -96,7 +96,7 @@ public final class GuiMenu extends JPanel implements ActionListener{
 		super.paintComponent(graphics);
 		
 		for(int k = 0; k < zones.length; ++k) {
-			MapZone zone = zones[k];
+			MapZoneBase zone = zones[k];
 			zone.render(xCoords[k], yCoords[k], textureData[k], graphics);
 			if(zone instanceof ITransparentZone) {
 				((ITransparentZone) zone).drawAfter(xCoords[k], yCoords[k], textureData[k], graphics);

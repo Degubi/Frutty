@@ -23,12 +23,13 @@ import frutty.entity.zone.EntityZone;
 import frutty.gui.GuiHelper;
 import frutty.gui.GuiIngame;
 import frutty.gui.Settings;
+import frutty.map.interfaces.IInternalZone;
 import frutty.map.interfaces.ITexturable;
 import frutty.plugin.event.MapInitEvent;
 
 public final class Map{
 	public static EntityPlayer[] players;
-	public static MapZone[] zones;
+	public static MapZoneBase[] zones;
 	public static ArrayList<Entity> entities = new ArrayList<>();
 	public static ArrayList<Particle> particles = new ArrayList<>();
 	public static EntityEnemy[] enemies;
@@ -48,7 +49,7 @@ public final class Map{
 		Main.handleEvent(new MapInitEvent(w, h, txts, entities), Main.mapLoadEvents);
 		
 		int zoneCount = (w / 64) * (h / 64);
-		zones = new MapZone[zoneCount];
+		zones = new MapZoneBase[zoneCount];
 		width = w - 64;
 		height = h - 64;
 		
@@ -201,7 +202,12 @@ public final class Map{
 			
 			for(int y = 0; y < height; y += 64) {
 				for(int x = 0; x < width; x += 64) {
-					MapZone zone = Main.handleMapReading(zoneIDS[input.readByte()]);
+					MapZoneBase zone = Main.zoneRegistry.get(zoneIDS[input.readByte()]);
+					
+					if(zone instanceof IInternalZone) {
+						zone = ((IInternalZone) zone).getReplacementZone();
+					}
+					
 					zone.onZoneAdded(false, x, y);
 					
 					if(zone instanceof ITexturable) {
@@ -224,7 +230,7 @@ public final class Map{
 		GuiHelper.mapSizeCheck(width / 64 + 1, height / 64 + 1);
 	}
 	
-	public static void loadBackground(MapZone[] backZones, int[] backXCoords, int[] backYCoords, int[] backTextureData) {
+	public static void loadBackground(MapZoneBase[] backZones, int[] backXCoords, int[] backYCoords, int[] backTextureData) {
 		try(var input = new ObjectInputStream(new FileInputStream("./maps/background" + Main.rand.nextInt(4) + ".deg"))){
 			String[] textures = new String[input.readByte()];
 			
@@ -248,7 +254,12 @@ public final class Map{
 			
 			for(int y = 0; y < 640; y += 64) {
 				for(int x = 0; x < 896; x += 64) {
-					MapZone zone = Main.handleMapReading(zoneIDS[input.readByte()]);
+					MapZoneBase zone = Main.zoneRegistry.get(zoneIDS[input.readByte()]);
+					
+					if(zone instanceof IInternalZone) {
+						zone = ((IInternalZone) zone).getReplacementZone();
+					}
+					
 					if(zone instanceof ITexturable) {
 						backTextureData[zoneIndex] = input.readByte();
 					}
@@ -289,7 +300,7 @@ public final class Map{
 				var zoneIDS = new HashMap<Integer, String>();
 				
 				var entries = Main.zoneRegistry.entrySet();
-				for(MapZone zone : zones) {
+				for(MapZoneBase zone : zones) {
 					for(var entry : entries) {
 						if(entry.getValue() == zone && !zoneIDS.containsValue(entry.getKey())) {
 							zoneIDS.put(zoneIDS.size(), entry.getKey());
@@ -303,7 +314,7 @@ public final class Map{
 					output.writeUTF(zoneIDS.get(k));
 				}
 				
-				for(MapZone zone : zones) {
+				for(MapZoneBase zone : zones) {
 					String zoneName = Main.getZoneName(zone);
 					
 					for(var meh : zoneIDS.entrySet()) {
@@ -337,7 +348,7 @@ public final class Map{
 	public static boolean loadSave(String fileName) {
 		if(fileName != null) {
 			try(var input = new ObjectInputStream(new FileInputStream("./saves/" + fileName))){
-				zones = new MapZone[input.readShort()];
+				zones = new MapZoneBase[input.readShort()];
 				String[] zoneIDs = new String[input.readByte()];
 				
 				for(int k = 0; k < zoneIDs.length; ++k) {
@@ -373,7 +384,7 @@ public final class Map{
 		return false;
 	}
 	
-	public static MapZone getZoneAtPos(int x, int y) {
+	public static MapZoneBase getZoneAtPos(int x, int y) {
 		for(int k = 0; k < zones.length; ++k) {
 			if(xCoords[k] == x && yCoords[k] == y) {
 				return zones[k];
@@ -382,7 +393,7 @@ public final class Map{
 		return null;
 	}
 	
-	public static MapZone getZoneAtIndex(int index) {
+	public static MapZoneBase getZoneAtIndex(int index) {
 		if(index < 0 || index > zones.length - 1) {
 			return null;
 		}

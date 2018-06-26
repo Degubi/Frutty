@@ -78,7 +78,7 @@ public final class GuiProperties extends JPanel{
 	}
 	
 	public String getProperty(EnumProperty prop) {
-		return (String) table.getValueAt(prop.index, 1);
+		return table.getValueAt(prop.index, 1).toString();
 	}
 	
 	public int getIntProperty(EnumProperty prop) {

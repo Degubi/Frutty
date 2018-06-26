@@ -11,13 +11,13 @@ import frutty.entity.effects.EntityEffectInvisible;
 import frutty.entity.zone.EntityAppleZone;
 import frutty.gui.GuiIngame;
 import frutty.gui.GuiStats;
-import frutty.gui.editor.GuiToolSelector.GuiTextureSelector;
+import frutty.gui.editor.GuiTextureSelector;
 import frutty.map.Map;
-import frutty.map.MapZone;
+import frutty.map.MapZoneBase;
 import frutty.map.Particle;
 import frutty.map.interfaces.ITexturable;
 
-public final class MapZoneChest extends MapZone implements ITexturable{
+public final class MapZoneChest extends MapZoneBase implements ITexturable{
 	public static final BufferedImage chestTexture = Main.loadTexture("map/special", "chest.png");
 
 	public MapZoneChest() {
@@ -35,7 +35,7 @@ public final class MapZoneChest extends MapZone implements ITexturable{
 		player.entityEffects.add(new EntityEffectInvisible());
 		Map.setZoneEmptyAt(zoneIndex);
 		int upZoneIndex = x / 64 + ((y - 64) / 64 * ((Map.width + 64) / 64));
-		MapZone up = Map.getZoneAtIndex(upZoneIndex);
+		MapZoneBase up = Map.getZoneAtIndex(upZoneIndex);
 		++GuiStats.zoneCount;
 		if(up != null && up == Main.appleZone) {
 			((EntityAppleZone)Map.zoneEntities[upZoneIndex]).notified = true;

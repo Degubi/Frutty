@@ -6,9 +6,9 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
 
-import frutty.map.MapZone;
+import frutty.map.MapZoneBase;
 
-public final class MapZoneEmpty extends MapZone{
+public final class MapZoneEmpty extends MapZoneBase{
 	public MapZoneEmpty() {
 		super(false);
 	}

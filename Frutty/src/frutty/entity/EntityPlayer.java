@@ -113,12 +113,12 @@ public final class EntityPlayer extends Entity implements KeyListener{
 	}
 
 	@Override
-	public int getClientUpdate() {
+	public int getClientUpdateRate() {
 		return 1;
 	}
 
 	@Override
-	public int getServerUpdate() {
+	public int getServerUpdateRate() {
 		return 32;
 	}
 }

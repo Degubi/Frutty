@@ -7,9 +7,9 @@ import javax.swing.ImageIcon;
 
 import frutty.entity.EntityEnemy;
 import frutty.map.Map;
-import frutty.map.MapZone;
+import frutty.map.MapZoneBase;
 
-public final class MapZoneSpawner extends MapZone{
+public final class MapZoneSpawner extends MapZoneBase{
 	private static final Color[] colorCache = new Color[32];
 	private boolean decrease = false;
 	private int colorIndexer = 0;

@@ -6,14 +6,14 @@ import frutty.entity.Entity;
 import frutty.tools.internal.EventBase;
 
 public final class MapInitEvent extends EventBase{
-	public final int width, height;
-	public final String[] textures;
-	public final ArrayList<Entity> entities;
+	public final int mapWidth, mapHeight;
+	public final String[] mapTextureCache;
+	public final ArrayList<Entity> mapEntities;
 	
 	public MapInitEvent(int w, int h, String[] text, ArrayList<Entity> ents) {
-		width = w;
-		height = h;
-		textures = text;
-		entities = ents;
+		mapWidth = w;
+		mapHeight = h;
+		mapTextureCache = text;
+		mapEntities = ents;
 	}
 }

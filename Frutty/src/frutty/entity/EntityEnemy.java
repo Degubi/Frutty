@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 
 import frutty.Main;
 import frutty.map.Map;
-import frutty.map.MapZone;
+import frutty.map.MapZoneBase;
 
 public final class EntityEnemy extends Entity {
 	private static final BufferedImage[] fastTextures = {Main.loadTexture("enemy", "fast_side.png"), Main.loadTexture("enemy", "fast_front.png"), Main.loadTexture("enemy", "fast_back.png")};
@@ -40,7 +40,7 @@ public final class EntityEnemy extends Entity {
 	@Override
 	public void updateServer() {
 		animSwitch = !animSwitch;
-		if(serverPosX + motionX > Map.width || serverPosX + motionX < 0 || !MapZone.isEmptyAt(coordsToIndex(serverPosX + motionX, serverPosY + motionY))) {
+		if(serverPosX + motionX > Map.width || serverPosX + motionX < 0 || !MapZoneBase.isEmptyAt(coordsToIndex(serverPosX + motionX, serverPosY + motionY))) {
 			EnumFacing facing = findFreeFacing();
 			motionX = facing.xOffset;
 			motionY = facing.yOffset;
@@ -49,7 +49,7 @@ public final class EntityEnemy extends Entity {
 	}
 
 	@Override
-	public int getClientUpdate() { return isFast ? 1 : 2; }
+	public int getClientUpdateRate() { return isFast ? 1 : 2; }
 	@Override
-	public int getServerUpdate() { return isFast ? 16 : 32; }
+	public int getServerUpdateRate() { return isFast ? 16 : 32; }
 }
