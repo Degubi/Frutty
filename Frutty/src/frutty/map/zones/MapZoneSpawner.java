@@ -6,8 +6,9 @@ import java.awt.Graphics;
 import javax.swing.ImageIcon;
 
 import frutty.entity.EntityEnemy;
+import frutty.gui.Settings;
 import frutty.map.Map;
-import frutty.map.MapZoneBase;
+import frutty.map.interfaces.MapZoneBase;
 
 public final class MapZoneSpawner extends MapZoneBase{
 	private static final Color[] colorCache = new Color[32];
@@ -39,6 +40,19 @@ public final class MapZoneSpawner extends MapZoneBase{
 
 	@Override
 	public void onZoneAdded(boolean isBackground, int x, int y) {
+		int enemyCount = 0, zoneCount = Map.zones.length;
+		if(!Settings.disableEnemies) {
+			if(Settings.difficulty == 0) {
+				enemyCount += zoneCount < 70 ? 1 : zoneCount / 70;
+			}else if(Settings.difficulty == 1) {
+				enemyCount += zoneCount / 50;
+			}else{
+				enemyCount += zoneCount / 30;
+			}
+		}
+		
+		Map.enemies = new EntityEnemy[enemyCount];
+		
 		if(!isBackground) {
 			for(int k = 0; k < +Map.enemies.length; ++k) {
 				Map.enemies[k] = new EntityEnemy(x, y);
@@ -47,7 +61,7 @@ public final class MapZoneSpawner extends MapZoneBase{
 	}
 	
 	@Override
-	public boolean isBreakable(int x, int y) {
+	public boolean isPassable(int x, int y) {
 		return false;
 	}
 

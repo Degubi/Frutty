@@ -6,7 +6,7 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
 
-import frutty.map.MapZoneBase;
+import frutty.map.interfaces.MapZoneBase;
 
 public final class MapZoneEmpty extends MapZoneBase{
 	public MapZoneEmpty() {
@@ -21,7 +21,7 @@ public final class MapZoneEmpty extends MapZoneBase{
 
 	@Override
 	public boolean isBreakable(int x, int y) {
-		return true;
+		return false;
 	}
 
 	@Override

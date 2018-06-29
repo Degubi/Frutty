@@ -8,7 +8,7 @@ import frutty.Main;
 import frutty.gui.GuiIngame;
 import frutty.gui.Settings;
 import frutty.map.Map;
-import frutty.map.MapZoneBase;
+import frutty.map.interfaces.MapZoneBase;
 
 public abstract class Entity implements Serializable{
 	private static final long serialVersionUID = 2876462867774051456L;

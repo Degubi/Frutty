@@ -1,4 +1,4 @@
-package frutty.map;
+package frutty.map.interfaces;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -19,7 +19,8 @@ import frutty.gui.Settings;
 import frutty.gui.editor.GuiEditor;
 import frutty.gui.editor.GuiEditor.ZoneButton;
 import frutty.gui.editor.GuiTextureSelector;
-import frutty.map.interfaces.ITexturable;
+import frutty.map.Map;
+import frutty.map.Particle;
 import frutty.tools.Lazy;
 
 @SuppressWarnings("unused")
@@ -34,22 +35,16 @@ public abstract class MapZoneBase implements Serializable{
 	}
 	
 	public abstract void draw(int x, int y, int textureIndex, Graphics graphics);
-	
 	protected abstract ImageIcon getEditorIcon();
-	private final ImageIcon getEditorIconInternal() {
-		ImageIcon icon = getEditorIcon();
-		return (icon.getIconWidth() == 64 && icon.getIconHeight() == 64) ? icon : new ImageIcon(icon.getImage().getScaledInstance(64, 64, Image.SCALE_DEFAULT));
-	}
 	
 	public boolean hasZoneEntity() {return false;}
-	public boolean isBreakable(int x, int y) {return true;}
+	public boolean isBreakable(int x, int y) {return isPassable(x, y);}
+	public boolean isPassable(int x, int y) {return true;}
 	public void onZoneAdded(boolean isBackground, int x, int y) {}
 	public EntityZone getZoneEntity(int x, int y, int zoneIndex) {return null;}
 	
-	/**Call super.onBreak if you want a normal breakable zone
-	 * @param player Player obj used in subclasses */
 	public void onBreak(int x, int y, int zoneIndex, int textureIndex, EntityPlayer player) {
-		if(isBreakable(x, y) && this != Main.emptyZone && this != Main.waterZone) {
+		if(isBreakable(x, y)) {
 			Map.setZoneEmptyAt(zoneIndex);
 			++GuiStats.zoneCount;
 			
@@ -62,18 +57,8 @@ public abstract class MapZoneBase implements Serializable{
 		}
 	}
 	
-	public final void handleEditorReading(GuiEditor editor, String zoneID, ObjectInputStream input, int x, int y, String[] textures) throws IOException {
-		ZoneButton button = new ZoneButton(editorTexture.get(), editor);
-		button.setBounds(x * 64, y * 64, 64, 64);
-		button.zoneID = zoneID;
-		if(this instanceof ITexturable){
-			int textureData = input.readByte();
-			button.zoneTexture = textures[textureData];
-			button.setIcon(((ITexturable)this).getEditorTextureVars()[GuiTextureSelector.indexOf(textures[textureData] + ".png")]);
-		}
-		editor.zoneButtons.add(button);
-		editor.add(button);
-	}
+	
+	
 	
 	public final void render(int x, int y, int textureIndex, Graphics graphics) {
 		draw(x, y, textureIndex, graphics);
@@ -91,6 +76,24 @@ public abstract class MapZoneBase implements Serializable{
 			graphics.setColor(Color.WHITE);
 			graphics.drawRect(x, y, 64, 64);
 		}
+	}
+	
+	private final ImageIcon getEditorIconInternal() {
+		ImageIcon icon = getEditorIcon();
+		return (icon.getIconWidth() == 64 && icon.getIconHeight() == 64) ? icon : new ImageIcon(icon.getImage().getScaledInstance(64, 64, Image.SCALE_DEFAULT));
+	}
+	
+	public final void handleEditorReading(GuiEditor editor, String zoneID, ObjectInputStream input, int x, int y, String[] textures) throws IOException {
+		ZoneButton button = new ZoneButton(editorTexture.get(), editor);
+		button.setBounds(x * 64, y * 64, 64, 64);
+		button.zoneID = zoneID;
+		if(this instanceof ITexturable){
+			int textureData = input.readByte();
+			button.zoneTexture = textures[textureData];
+			button.setIcon(((ITexturable)this).getEditorTextureVars()[GuiTextureSelector.indexOf(textures[textureData] + ".png")]);
+		}
+		editor.zoneButtons.add(button);
+		editor.add(button);
 	}
 	
 	public static boolean isEmpty(int x, int y) {

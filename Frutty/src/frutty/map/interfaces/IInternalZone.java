@@ -1,7 +1,6 @@
 package frutty.map.interfaces;
 
 import frutty.gui.editor.GuiEditor;
-import frutty.map.MapZoneBase;
 
 public interface IInternalZone {
 	MapZoneBase getReplacementZone();

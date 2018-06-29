@@ -25,9 +25,9 @@ import frutty.entity.Entity;
 import frutty.entity.EntityEnemy;
 import frutty.entity.EntityPlayer;
 import frutty.map.Map;
-import frutty.map.MapZoneBase;
 import frutty.map.Particle;
 import frutty.map.interfaces.ITransparentZone;
+import frutty.map.interfaces.MapZoneBase;
 import frutty.map.zones.MapZoneEmpty;
 import frutty.map.zones.MapZoneWater;
 

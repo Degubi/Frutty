@@ -14,8 +14,8 @@ import frutty.gui.GuiIngame;
 import frutty.gui.GuiStats;
 import frutty.gui.editor.GuiTextureSelector;
 import frutty.map.Map;
-import frutty.map.MapZoneBase;
 import frutty.map.interfaces.ITexturable;
+import frutty.map.interfaces.MapZoneBase;
 
 public final class MapZoneFruit extends MapZoneBase implements ITexturable{
 	public static final BufferedImage cherryTexture = Main.loadTexture("fruit", "cherry.png");
@@ -72,6 +72,11 @@ public final class MapZoneFruit extends MapZoneBase implements ITexturable{
 	
 	@Override
 	public boolean isBreakable(int x, int y) {
+		return fruitType == EnumFruit.CHERRY;
+	}
+	
+	@Override
+	public boolean isPassable(int x, int y) {
 		return fruitType == EnumFruit.CHERRY;
 	}
 	

@@ -38,7 +38,6 @@ public final class Settings{
 	private static DebugOptions debugInstance;
 	private static VideoOptions videoInstance;
 	private static GameOptions gameInstance;
-	private static WorldOptions worldInstance;
 	
 	public static void loadSettings() {
 		try(BufferedReader input = Files.newBufferedReader(Paths.get("settings.cfg"))){
@@ -95,7 +94,6 @@ public final class Settings{
 		var tabbed = new JTabbedPane();
 		tabbed.addTab("Gameplay", gameInstance = new GameOptions());
 		tabbed.addTab("Graphics", videoInstance = new VideoOptions(menu));
-		tabbed.addTab("World", worldInstance = new WorldOptions());
 		tabbed.addTab("Debug", debugInstance = new DebugOptions(menu));
 		
 		EventQueue.invokeLater(() -> {

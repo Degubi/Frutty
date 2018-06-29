@@ -80,6 +80,7 @@ public final class GuiPlugins implements ListSelectionListener, HyperlinkListene
 	}
 	
 	protected static final class PluginListRenderer extends DefaultListCellRenderer{
+		
 		@Override
 		public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
 			var comp = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);

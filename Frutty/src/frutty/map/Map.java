@@ -22,9 +22,9 @@ import frutty.entity.zone.EntityAppleZone;
 import frutty.entity.zone.EntityZone;
 import frutty.gui.GuiHelper;
 import frutty.gui.GuiIngame;
-import frutty.gui.Settings;
 import frutty.map.interfaces.IInternalZone;
 import frutty.map.interfaces.ITexturable;
+import frutty.map.interfaces.MapZoneBase;
 import frutty.plugin.event.MapInitEvent;
 
 public final class Map{
@@ -58,19 +58,6 @@ public final class Map{
 		textureData = new int[zoneCount];
 		zoneEntities = new EntityZone[zoneCount];
 		
-		int enemyCount = 0;
-		if(!Settings.disableEnemies) {
-			if(Settings.difficulty == 0) {
-				enemyCount += zoneCount < 70 ? 1 : zoneCount / 70;
-			}else if(Settings.difficulty == 1) {
-				enemyCount += zoneCount / 50;
-			}else{
-				enemyCount += zoneCount / 30;
-			}
-		}
-		
-		enemies = new EntityEnemy[enemyCount];
-		
 		if(isMulti) {
 			players = new EntityPlayer[]{new EntityPlayer(p1X, p1Y, true), new EntityPlayer(p2X, p2Y, false)};
 		}else{
@@ -88,8 +75,7 @@ public final class Map{
 			for(int k = 0; k < textureNames.length; ++k) {
 				GuiIngame.textures[k] = ImageIO.read(Files.newInputStream(Paths.get("./textures/map/" + textureNames[k] + ".png")));
 			}
-		}catch (IOException e) {
-		}
+		}catch (IOException e) {}
 	}
 	
 	public static void loadSkyTexture(String textureName) {

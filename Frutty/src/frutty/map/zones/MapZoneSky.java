@@ -5,7 +5,7 @@ import java.awt.Graphics;
 import javax.swing.ImageIcon;
 
 import frutty.gui.GuiIngame;
-import frutty.map.MapZoneBase;
+import frutty.map.interfaces.MapZoneBase;
 
 public final class MapZoneSky extends MapZoneBase{
 	public MapZoneSky() {
@@ -18,7 +18,7 @@ public final class MapZoneSky extends MapZoneBase{
 	}
 	
 	@Override
-	public boolean isBreakable(int x, int y) {
+	public boolean isPassable(int x, int y) {
 		return false;
 	}
 

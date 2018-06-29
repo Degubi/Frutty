@@ -34,9 +34,9 @@ import frutty.Main;
 import frutty.gui.GuiHelper;
 import frutty.gui.GuiMenu;
 import frutty.gui.editor.GuiProperties.EnumProperty;
-import frutty.map.MapZoneBase;
 import frutty.map.interfaces.IInternalZone;
 import frutty.map.interfaces.ITexturable;
+import frutty.map.interfaces.MapZoneBase;
 
 public final class GuiEditor extends JPanel{
 	public final ArrayList<ZoneButton> zoneButtons = new ArrayList<>();
@@ -306,16 +306,16 @@ public final class GuiEditor extends JPanel{
 				MapZoneBase activeZone = Main.zoneRegistry.get(activeZoneName);
 				
 				button.zoneID = activeZoneName; button.setIcon(Main.zoneRegistry.get(activeZoneName).editorTexture.get());
-						
+				
 				if(activeZone instanceof ITexturable) {
-					button.setIcon(Main.getEditorTextureVariants(button.zoneID)[editorInstance.textureSelectorButton.activeTextureIndex]);
+					button.setIcon(((ITexturable)Main.zoneRegistry.get(button.zoneID)).getEditorTextureVars()[editorInstance.textureSelectorButton.activeTextureIndex]);
 					button.zoneTexture = editorInstance.textureSelectorButton.activeTexture;
 				}if(activeZone instanceof IInternalZone) {
 					((IInternalZone) activeZone).handleEditorPlacement(editorInstance, button.getX(), button.getY());
 				}
 			}else if(event.getButton() == MouseEvent.BUTTON3) {
 				if(Main.zoneRegistry.get(button.zoneID) instanceof ITexturable) {
-					button.setIcon(Main.getEditorTextureVariants(button.zoneID)[editorInstance.textureSelectorButton.activeTextureIndex]);
+					button.setIcon(((ITexturable)Main.zoneRegistry.get(button.zoneID)).getEditorTextureVars()[editorInstance.textureSelectorButton.activeTextureIndex]);
 					button.zoneTexture = editorInstance.textureSelectorButton.activeTexture;
 				}
 			}

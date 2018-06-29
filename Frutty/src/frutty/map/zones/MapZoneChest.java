@@ -13,9 +13,9 @@ import frutty.gui.GuiIngame;
 import frutty.gui.GuiStats;
 import frutty.gui.editor.GuiTextureSelector;
 import frutty.map.Map;
-import frutty.map.MapZoneBase;
 import frutty.map.Particle;
 import frutty.map.interfaces.ITexturable;
+import frutty.map.interfaces.MapZoneBase;
 
 public final class MapZoneChest extends MapZoneBase implements ITexturable{
 	public static final BufferedImage chestTexture = Main.loadTexture("map/special", "chest.png");

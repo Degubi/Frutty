@@ -39,7 +39,7 @@ public final class EntityPlayer extends Entity implements KeyListener{
 	}
 
 	private static boolean isFree(int x, int y) {
-		if(!Map.getZoneAtIndex(coordsToIndex(x, y)).isBreakable(x, y)) {
+		if(!Map.getZoneAtIndex(coordsToIndex(x, y)).isPassable(x, y)) {
 			return false;
 		}
 		

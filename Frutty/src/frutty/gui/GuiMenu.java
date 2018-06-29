@@ -19,8 +19,8 @@ import javax.swing.WindowConstants;
 import frutty.Main;
 import frutty.gui.editor.GuiEditor;
 import frutty.map.Map;
-import frutty.map.MapZoneBase;
 import frutty.map.interfaces.ITransparentZone;
+import frutty.map.interfaces.MapZoneBase;
 import frutty.tools.Version;
 
 public final class GuiMenu extends JPanel implements ActionListener{
@@ -76,7 +76,7 @@ public final class GuiMenu extends JPanel implements ActionListener{
 		
 		if(checkUpdate) {
 			new Thread(() -> {
-				if(Version.fromURL("https://pastebin.com/raw/m5qJbnks").isNewerThan(Main.gamePluginContainer.version)) {
+				if(Version.fromURL(Main.gamePluginContainer.versionURL).isNewerThan(Main.gamePluginContainer.version)) {
 					JButton updaterButton = new JButton("Click here to Update...");
 					updaterButton.setActionCommand("Update");
 					updaterButton.setBounds(660, 600, 240, 40);
@@ -148,11 +148,11 @@ public final class GuiMenu extends JPanel implements ActionListener{
 			GuiStats.openStatsGui();
 		}else if(command.equals("Update")){
 			try {
-				JOptionPane.showMessageDialog(null, "Exiting game to Updater", "Frutty Updater", 1);
-				
-				Runtime.getRuntime().exec(System.getProperty("java.version").startsWith("10.") ? "javaw bin/FruttyUpdater"
-										  : "runtime\\bin\\javaw bin/FruttyUpdater");
-				System.exit(0);
+				if(JOptionPane.showConfirmDialog(this, "Exiting game to Updater. Game will restart.", "Frutty Updater", JOptionPane.OK_CANCEL_OPTION) == 0) {
+					Runtime.getRuntime().exec(System.getProperty("java.version").startsWith("10.") ? "javaw bin/FruttyUpdater"
+							  																	   : "runtime\\bin\\javaw bin/FruttyUpdater");
+					System.exit(0);
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			} 

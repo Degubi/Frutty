@@ -9,8 +9,8 @@ import javax.swing.ImageIcon;
 import frutty.Main;
 import frutty.gui.GuiHelper;
 import frutty.gui.Settings;
-import frutty.map.MapZoneBase;
 import frutty.map.interfaces.ITransparentZone;
+import frutty.map.interfaces.MapZoneBase;
 
 public final class MapZoneWater extends MapZoneBase implements ITransparentZone{
 	public static final BufferedImage waterTexture = Main.loadTexture("map/special", "water.png");
@@ -39,6 +39,16 @@ public final class MapZoneWater extends MapZoneBase implements ITransparentZone{
 				graphics.fillRect(x, y, 64, 64);
 			}
 		}
+	}
+	
+	@Override
+	public boolean isPassable(int x, int y) {
+		return true;
+	}
+	
+	@Override
+	public boolean isBreakable(int x, int y) {
+		return false;
 	}
 	
 	public static void updateWaterUV() {
