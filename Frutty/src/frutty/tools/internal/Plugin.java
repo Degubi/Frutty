@@ -3,7 +3,7 @@ package frutty.tools.internal;
 import frutty.tools.Version;
 
 public final class Plugin {
-	public static final Plugin pluginLoaderPlugin = new Plugin("Plugin Loader", "Base plugin loading module for Frutty", null, Version.from(1, 0, 0), null);
+	public static final Plugin pluginLoaderPlugin = new Plugin("Plugin Loader", "Base plugin loading module for Frutty", null, Version.from(1, 0, 0), "");
 	
 	public final String description, ID, updateURL, versionURL;
 	public final Version version;

@@ -27,7 +27,7 @@ public final class GuiInfo extends JPanel{
 		int size = 0;
 		
  		for(var writeButton : editor.zoneButtons) {
- 			if(Main.zoneRegistry.get(writeButton.zoneID) instanceof ITexturable) {
+ 			if(Main.getZoneFromName(writeButton.zoneID) instanceof ITexturable) {
  				String texture = "textures/map/" + writeButton.zoneTexture + ".png";
  				if(!textures.contains(texture)) {
  					try {

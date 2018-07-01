@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodHandles.Lookup;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -14,7 +15,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.TreeMap;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
@@ -43,36 +43,12 @@ import frutty.tools.internal.EventHandleObject;
 import frutty.tools.internal.Plugin;
 
 public final class Main {
-	public static final TreeMap<String, MapZoneBase> zoneRegistry = new TreeMap<>();
+	public static final Random rand = new Random();
+	public static final Plugin gamePluginContainer = new Plugin("Frutty", "Base plugin for the game", null, Version.from(1, 1, 0), "https://pastebin.com/raw/m5qJbnks");
 	public static final ArrayList<Plugin> pluginList = new ArrayList<>(2);
 	public static final ArrayList<EventHandleObject> mapLoadEvents = new ArrayList<>(0);
 	
-	public static final Random rand = new Random();
-	public static final Plugin gamePluginContainer = new Plugin("Frutty", "Base plugin for the game", null, Version.from(1, 1, 0), "https://pastebin.com/raw/m5qJbnks");
-
-	public static final MapZoneNormal normalZone = new MapZoneNormal();
-	public static final MapZoneEmpty emptyZone = new MapZoneEmpty();
-	public static final MapZonePlayer player1Zone = new MapZonePlayer(1);
-	public static final MapZonePlayer player2Zone = new MapZonePlayer(2);
-	public static final MapZoneFruit appleZone = new MapZoneFruit(EnumFruit.APPLE);
-	public static final MapZoneFruit cherryZone = new MapZoneFruit(EnumFruit.CHERRY);
-	public static final MapZoneSpawner spawnerZone = new MapZoneSpawner();
-	public static final MapZoneChest chestZone = new MapZoneChest();
-	public static final MapZoneWater waterZone = new MapZoneWater();
-	public static final MapZoneSky skyZone = new MapZoneSky();
-	
 	public static void main(String[] args){
-		zoneRegistry.put("normalZone", normalZone);
-		zoneRegistry.put("emptyZone", emptyZone);
-		zoneRegistry.put("appleZone", appleZone);
-		zoneRegistry.put("player1Zone", player1Zone);
-		zoneRegistry.put("player2Zone", player2Zone);
-		zoneRegistry.put("cherryZone", cherryZone);
-		zoneRegistry.put("spawnerZone", spawnerZone);
-		zoneRegistry.put("chestZone", chestZone);
-		zoneRegistry.put("waterZone", waterZone);
-		zoneRegistry.put("skyZone", skyZone);
-		
 		GuiMenu.showMenu(true);
 		Settings.loadSettings();
 		GuiStats.loadStats();
@@ -87,21 +63,8 @@ public final class Main {
 		pluginList.add(gamePluginContainer);
 		pluginList.add(Plugin.pluginLoaderPlugin);
 		loadPlugins();
-			
-		mapLoadEvents.sort(EventHandleObject.PRIORITY_COMPARATOR);
-	}
-	
-	
-	
-	public static String getZoneName(MapZoneBase zone) {
-		var entries = zoneRegistry.entrySet();
 		
-		for(var entry : entries) {
-			if(entry.getValue() == zone) {
-				return entry.getKey();
-			}
-		}
-		return null;
+		mapLoadEvents.sort(EventHandleObject.PRIORITY_COMPARATOR);
 	}
 	
 	public static BufferedImage loadTexture(String prefix, String name) {
@@ -173,18 +136,20 @@ public final class Main {
 										
 								if(eventClass != void.class) {
 									Method[] eventMethods = eventClass.getDeclaredMethods();
-										
+									
+									Lookup lookup = MethodHandles.publicLookup();
+									
 									for(Method eventMts : eventMethods) {
 										if(eventMts.isAnnotationPresent(FruttyEvent.class)) {
 											if((eventMts.getModifiers() & Modifier.STATIC) != 0 && eventMts.getParameterCount() == 1) {
 												Class<?> eventTypeClass = eventMts.getParameterTypes()[0];
 												
-												if(!eventTypeClass.isAssignableFrom(EventBase.class)) {
+												if(eventTypeClass.getSuperclass() != EventBase.class) {
 													throw new IllegalArgumentException("Illegal type of argument for method: " + eventMts.getName());
 												}
 												if(eventTypeClass == MapInitEvent.class) {
 													try {
-														Main.mapLoadEvents.add(new EventHandleObject(MethodHandles.publicLookup().unreflect(eventMts), EventHandleObject.ordinal(eventMts.getAnnotation(FruttyEvent.class).priority())));
+														Main.mapLoadEvents.add(new EventHandleObject(lookup.unreflect(eventMts), EventHandleObject.ordinal(eventMts.getAnnotation(FruttyEvent.class).priority())));
 													} catch (IllegalAccessException e) {
 														e.printStackTrace();
 													}
@@ -195,7 +160,7 @@ public final class Main {
 										}
 									}
 								}
-									
+								
 								method.invoke(null);
 								ranMain = true;
 								break;
@@ -208,7 +173,7 @@ public final class Main {
 						System.err.println("Can't find main method annotated with @FruttyPluginMain from plugin: " + pluginNames[k] + ", ignoring");
 					}
 				}
-			} catch (IOException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | ClassNotFoundException e) {
+			} catch (IOException | SecurityException | IllegalArgumentException | ClassNotFoundException | IllegalAccessException | InvocationTargetException e) {
 				e.printStackTrace();
 			}
 		}
@@ -216,5 +181,30 @@ public final class Main {
 	
 	public static void handleEvent(EventBase event, ArrayList<EventHandleObject> methods) {
 		for(EventHandleObject handles : methods) event.invoke(handles.handle);
+	}
+	
+	public static final MapZoneNormal normalZone = new MapZoneNormal();
+	public static final MapZoneEmpty emptyZone = new MapZoneEmpty();
+	public static final MapZonePlayer player1Zone = new MapZonePlayer(1);
+	public static final MapZonePlayer player2Zone = new MapZonePlayer(2);
+	public static final MapZoneFruit appleZone = new MapZoneFruit(EnumFruit.APPLE);
+	public static final MapZoneFruit cherryZone = new MapZoneFruit(EnumFruit.CHERRY);
+	public static final MapZoneSpawner spawnerZone = new MapZoneSpawner();
+	public static final MapZoneChest chestZone = new MapZoneChest();
+	public static final MapZoneWater waterZone = new MapZoneWater();
+	public static final MapZoneSky skyZone = new MapZoneSky();
+	
+	private Main() {}
+	public static Object[] zoneStorage = {"normalZone", normalZone, "emptyZone", emptyZone, "appleZone", appleZone, "player1Zone", player1Zone, "player2Zone", player2Zone,
+										   "cherryZone", cherryZone, "spawnerZone", spawnerZone, "chestZone", chestZone, "waterZone", waterZone, "skyZone", skyZone};
+	public static int zoneIndex = 20;
+	
+	public static MapZoneBase getZoneFromName(String name) {
+		for(int k = 0; k < zoneIndex; k += 2) {
+			if(zoneStorage[k].equals(name)) {
+				return (MapZoneBase) zoneStorage[k + 1];
+			}
+		}
+		return null;
 	}
 }

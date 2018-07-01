@@ -2,14 +2,11 @@ package frutty.map;
 
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
@@ -188,7 +185,7 @@ public final class Map{
 			
 			for(int y = 0; y < height; y += 64) {
 				for(int x = 0; x < width; x += 64) {
-					MapZoneBase zone = Main.zoneRegistry.get(zoneIDS[input.readByte()]);
+					MapZoneBase zone = Main.getZoneFromName(zoneIDS[input.readByte()]);
 					
 					if(zone instanceof IInternalZone) {
 						zone = ((IInternalZone) zone).getReplacementZone();
@@ -240,7 +237,7 @@ public final class Map{
 			
 			for(int y = 0; y < 640; y += 64) {
 				for(int x = 0; x < 896; x += 64) {
-					MapZoneBase zone = Main.zoneRegistry.get(zoneIDS[input.readByte()]);
+					MapZoneBase zone = Main.getZoneFromName(zoneIDS[input.readByte()]);
 					
 					if(zone instanceof IInternalZone) {
 						zone = ((IInternalZone) zone).getReplacementZone();
@@ -280,7 +277,7 @@ public final class Map{
 	
 	public static void createSave(String fileName) {
 		if(fileName != null) {
-			try(var output = new ObjectOutputStream(new FileOutputStream("./saves/" + fileName + ".sav"))){
+			/*try(var output = new ObjectOutputStream(new FileOutputStream("./saves/" + fileName + ".sav"))){
 				output.writeShort(zones.length);
 				
 				var zoneIDS = new HashMap<Integer, String>();
@@ -328,6 +325,7 @@ public final class Map{
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			*/
 		}
 	}
 	
@@ -342,7 +340,7 @@ public final class Map{
 				}
 				
 				for(int k = 0; k < zones.length; ++k) {
-					zones[k] = Main.zoneRegistry.get(zoneIDs[input.readByte()]);
+					zones[k] = Main.getZoneFromName(zoneIDs[input.readByte()]);
 				}
 				
 				players = (EntityPlayer[]) input.readObject();

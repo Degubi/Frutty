@@ -40,8 +40,8 @@ public final class Version{
 	}
 	
 	public static Version fromURL(String url) {
-		if(url != null) {
-			try(InputStream stream = new URL("https://pastebin.com/raw/m5qJbnks").openConnection().getInputStream()){
+		if(!url.isEmpty()) {
+			try(InputStream stream = new URL(url).openConnection().getInputStream()){
 				int first = stream.read() - 48;
 				stream.read();
 				int second = stream.read() - 48;

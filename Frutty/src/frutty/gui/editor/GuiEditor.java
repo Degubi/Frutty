@@ -49,7 +49,7 @@ public final class GuiEditor extends JPanel{
 		
 		if(fileName != null) {
 			mapProperties = new GuiProperties(fileName, skyName, isBackground, data);
-			zoneList = new JComboBox<>(Main.zoneRegistry.keySet().toArray(new String[Main.zoneRegistry.size()]));
+			zoneList = new JComboBox<>(zoneNames());
 			zoneList.setSelectedItem("normalZone");
 			zoneList.setBounds(data[0] * 64 + 20, 80, 120, 30);
 			
@@ -60,6 +60,14 @@ public final class GuiEditor extends JPanel{
 			zoneList = null;
 			textureSelectorButton = null;
 		}
+	}
+	
+	public static String[] zoneNames() {
+		String[] names = new String[Main.zoneIndex / 2];
+		for(int k = 0, localIndex = 0; k < Main.zoneIndex; k += 2) {
+			names[localIndex++] = (String) Main.zoneStorage[k];
+		}
+		return names;
 	}
 	
 	@Override
@@ -86,7 +94,7 @@ public final class GuiEditor extends JPanel{
 	 			if(!zoneIDs.contains(writeButton.zoneID)) {
 	 				zoneIDs.add(writeButton.zoneID);
 	 			}
-	 			if(Main.zoneRegistry.get(writeButton.zoneID) instanceof ITexturable) {
+	 			if(Main.getZoneFromName(writeButton.zoneID) instanceof ITexturable) {
 	 				if(!writeButton.zoneTexture.isEmpty() && !textures.contains(writeButton.zoneTexture)) {
 	 					textures.add(writeButton.zoneTexture);
 	 				}
@@ -118,7 +126,7 @@ public final class GuiEditor extends JPanel{
 	 		for(var writeButton : zoneButtons) {
 	 			output.writeByte(zoneIDs.indexOf(writeButton.zoneID));
 	 			
-	 			if(Main.zoneRegistry.get(writeButton.zoneID) instanceof ITexturable) {
+	 			if(Main.getZoneFromName(writeButton.zoneID) instanceof ITexturable) {
 	 				output.writeByte(textures.indexOf(writeButton.zoneTexture));
 	 			}
 	 		}
@@ -174,7 +182,7 @@ public final class GuiEditor extends JPanel{
 				for(int y = 0; y < mapHeight; ++y) {
 					for(int x = 0; x < mapWidth; ++x) {
 						String zoneID = zoneIDS[input.readByte()];
-						Main.zoneRegistry.get(zoneID).handleEditorReading(editor, zoneID, input, x, y, textures);
+						Main.getZoneFromName(zoneID).handleEditorReading(editor, zoneID, input, x, y, textures);
 					}
 				}
 				showEditorFrame(editor, mapWidth * 64, mapHeight * 64);
@@ -303,19 +311,19 @@ public final class GuiEditor extends JPanel{
 			ZoneButton button = (ZoneButton)event.getComponent();
 			if(event.getButton() == MouseEvent.BUTTON1) {
 				String activeZoneName = (String) editorInstance.zoneList.getSelectedItem();
-				MapZoneBase activeZone = Main.zoneRegistry.get(activeZoneName);
+				MapZoneBase activeZone = Main.getZoneFromName(activeZoneName);
 				
-				button.zoneID = activeZoneName; button.setIcon(Main.zoneRegistry.get(activeZoneName).editorTexture.get());
+				button.zoneID = activeZoneName; button.setIcon(Main.getZoneFromName(activeZoneName).editorTexture.get());
 				
 				if(activeZone instanceof ITexturable) {
-					button.setIcon(((ITexturable)Main.zoneRegistry.get(button.zoneID)).getEditorTextureVars()[editorInstance.textureSelectorButton.activeTextureIndex]);
+					button.setIcon(((ITexturable)Main.getZoneFromName(button.zoneID)).getEditorTextureVars()[editorInstance.textureSelectorButton.activeTextureIndex]);
 					button.zoneTexture = editorInstance.textureSelectorButton.activeTexture;
 				}if(activeZone instanceof IInternalZone) {
 					((IInternalZone) activeZone).handleEditorPlacement(editorInstance, button.getX(), button.getY());
 				}
 			}else if(event.getButton() == MouseEvent.BUTTON3) {
-				if(Main.zoneRegistry.get(button.zoneID) instanceof ITexturable) {
-					button.setIcon(((ITexturable)Main.zoneRegistry.get(button.zoneID)).getEditorTextureVars()[editorInstance.textureSelectorButton.activeTextureIndex]);
+				if(Main.getZoneFromName(button.zoneID) instanceof ITexturable) {
+					button.setIcon(((ITexturable)Main.getZoneFromName(button.zoneID)).getEditorTextureVars()[editorInstance.textureSelectorButton.activeTextureIndex]);
 					button.zoneTexture = editorInstance.textureSelectorButton.activeTexture;
 				}
 			}
