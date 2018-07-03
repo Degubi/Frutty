@@ -24,7 +24,7 @@ import frutty.tools.Version;
 import frutty.tools.internal.Plugin;
 
 public final class GuiPlugins implements ListSelectionListener, HyperlinkListener{
-	protected final JList<Object> pluginList = new JList<>(Main.pluginList.toArray());
+	protected final JList<Object> pluginList = new JList<>(Main.plugins);
 	protected final JTextPane description = new JTextPane();
 
 	public static void showPlugins() {
@@ -53,7 +53,7 @@ public final class GuiPlugins implements ListSelectionListener, HyperlinkListene
 		});
 		
 		new Thread(() -> {
-			for(Plugin plugin : Main.pluginList) {
+			for(Plugin plugin : Main.plugins) {
 				if(plugin.version.isOlderThan(Version.fromURL(plugin.versionURL))) {
 					plugin.needsUpdate = true;
 					pane.repaint();
@@ -65,7 +65,7 @@ public final class GuiPlugins implements ListSelectionListener, HyperlinkListene
 	@Override
 	public void valueChanged(ListSelectionEvent event) {
 		description.setText(null);
-		description.setText(Main.pluginList.get(pluginList.getSelectedIndex()).getInfo());
+		description.setText(Main.plugins[pluginList.getSelectedIndex()].getInfo());
 	}
 
 	@Override

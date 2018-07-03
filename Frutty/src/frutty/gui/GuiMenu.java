@@ -5,7 +5,11 @@ import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -19,6 +23,8 @@ import javax.swing.WindowConstants;
 import frutty.Main;
 import frutty.gui.editor.GuiEditor;
 import frutty.map.Map;
+import frutty.map.interfaces.IInternalZone;
+import frutty.map.interfaces.ITexturable;
 import frutty.map.interfaces.ITransparentZone;
 import frutty.map.interfaces.MapZoneBase;
 import frutty.tools.Version;
@@ -34,8 +40,7 @@ public final class GuiMenu extends JPanel implements ActionListener{
 	public GuiMenu() {
 		setLayout(null);
 		
-		Thread backgroundMapThread = new Thread(() -> Map.loadBackground(zones, xCoords, yCoords, textureData));
-		backgroundMapThread.start();
+		loadBackground();
 		
 		add(GuiHelper.newButton("New Game", 700, 20, this));
 		add(GuiHelper.newButton("Exit", 370, 550, this));
@@ -63,12 +68,6 @@ public final class GuiMenu extends JPanel implements ActionListener{
 		mapList.setSelectedItem(Settings.lastMap);
 		add(mapList);
 		add(coopBox);
-		
-		try {
-			backgroundMapThread.join();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 	}
 	
 	public static void showMenu(boolean checkUpdate) {
@@ -76,7 +75,7 @@ public final class GuiMenu extends JPanel implements ActionListener{
 		
 		if(checkUpdate) {
 			new Thread(() -> {
-				if(Version.fromURL(Main.gamePluginContainer.versionURL).isNewerThan(Main.gamePluginContainer.version)) {
+				if(Version.fromURL(Main.plugins[0].versionURL).isNewerThan(Main.plugins[0].version)) {
 					JButton updaterButton = new JButton("Click here to Update...");
 					updaterButton.setActionCommand("Update");
 					updaterButton.setBounds(660, 600, 240, 40);
@@ -86,7 +85,7 @@ public final class GuiMenu extends JPanel implements ActionListener{
 					menu.add(updaterButton);
 					menu.repaint();
 				}
-			}).start();
+			}, "Menu Version Checker Thread").start();
 		}
 		GuiHelper.showNewFrame(menu, "Frutty", WindowConstants.EXIT_ON_CLOSE, 910, 675);
 	}
@@ -109,7 +108,7 @@ public final class GuiMenu extends JPanel implements ActionListener{
 		graphics.setFont(GuiHelper.thiccFont);
 		graphics.drawString(GuiHelper.recommendedMapSizeString, 330, 80);
 		graphics.drawString("Size:", 455, 40);
-		graphics.drawString("Version: " + Main.gamePluginContainer.version, 10, 625);
+		graphics.drawString("Version: " + Main.plugins[0].version, 10, 625);
 	}
 	
 	@Override
@@ -138,7 +137,7 @@ public final class GuiMenu extends JPanel implements ActionListener{
 				mapSizeField.setText("8x8");
 			}else{
 				mapSizeField.setEditable(false);
-				mapSizeField.setText(Map.loadMapSize((String) mapList.getSelectedItem()));
+				mapSizeField.setText(loadMapSize((String) mapList.getSelectedItem()));
 			}
 		}else if(command.equals("Plugins")) {
 			GuiPlugins.showPlugins();
@@ -168,5 +167,67 @@ public final class GuiMenu extends JPanel implements ActionListener{
 				JOptionPane.showMessageDialog(this, "No saves found in saves directory");
 			}
 		}
+	}
+	
+	private void loadBackground() {
+		try(var input = new ObjectInputStream(new FileInputStream("./maps/background" + Main.rand.nextInt(4) + ".deg"))){
+			String[] textures = new String[input.readByte()];
+			
+			for(int k = 0; k < textures.length; ++k) {
+				textures[k] = input.readUTF();
+			}
+			
+			int zoneIDCount = input.readByte();
+			String[] zoneIDS = new String[zoneIDCount];
+			
+			for(int k = 0; k < zoneIDCount; ++k) {
+				zoneIDS[k] = input.readUTF();
+			}
+			
+			Main.loadTextures(textures);
+			Main.loadSkyTexture(input.readUTF());
+			
+			input.readShort(); input.readShort();
+			
+			int zoneIndex = 0;
+			
+			for(int y = 0; y < 640; y += 64) {
+				for(int x = 0; x < 896; x += 64) {
+					MapZoneBase zone = Main.getZoneFromName(zoneIDS[input.readByte()]);
+					
+					if(zone instanceof IInternalZone) {
+						zone = ((IInternalZone) zone).getReplacementZone();
+					}
+					
+					if(zone instanceof ITexturable) {
+						textureData[zoneIndex] = input.readByte();
+					}
+					xCoords[zoneIndex] = x;
+					yCoords[zoneIndex] = y;
+					zones[zoneIndex++] = zone;
+				}
+			}
+		}catch(IOException e){
+		}
+	}
+	
+	public static String loadMapSize(String fileName) {
+		try(var input = new ObjectInputStream(Files.newInputStream(Paths.get("./maps/" + fileName + ".deg")))){
+			int textureCount = input.readByte();
+			for(int k = 0; k < textureCount; ++k) {
+				input.readUTF();
+			}
+			
+			int idCount = input.readByte();
+			for(int k = 0; k < idCount; ++k) {
+				input.readUTF();
+			}
+			
+			input.readUTF();
+			return input.readShort() + "x" + input.readShort();
+		} catch (IOException e) {
+			System.err.println("Can't load map size for menu: " + fileName + ".deg");
+		}
+		return "";
 	}
 }

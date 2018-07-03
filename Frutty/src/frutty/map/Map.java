@@ -1,15 +1,10 @@
 package frutty.map;
 
-import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Random;
-
-import javax.imageio.ImageIO;
 
 import frutty.Main;
 import frutty.entity.Entity;
@@ -18,7 +13,6 @@ import frutty.entity.EntityPlayer;
 import frutty.entity.zone.EntityAppleZone;
 import frutty.entity.zone.EntityZone;
 import frutty.gui.GuiHelper;
-import frutty.gui.GuiIngame;
 import frutty.map.interfaces.IInternalZone;
 import frutty.map.interfaces.ITexturable;
 import frutty.map.interfaces.MapZoneBase;
@@ -43,7 +37,8 @@ public final class Map{
 		score = 0;
 		ticks = 0;
 		
-		Main.handleEvent(new MapInitEvent(w, h, txts, entities), Main.mapLoadEvents);
+		if(Main.mapLoadEvents != null)
+			Main.handleEvent(new MapInitEvent(w, h, txts, entities), Main.mapLoadEvents);
 		
 		int zoneCount = (w / 64) * (h / 64);
 		zones = new MapZoneBase[zoneCount];
@@ -61,30 +56,11 @@ public final class Map{
 			players = new EntityPlayer[]{new EntityPlayer(p1X, p1Y, true)};
 		}
 		
-		loadTextures(textures = txts);
-		loadSkyTexture(skyTextureName = skyName);
+		Main.loadTextures(textures = txts);
+		Main.loadSkyTexture(skyTextureName = skyName);
 		Particle.precacheParticles();
 	}
 	
-	public static void loadTextures(String[] textureNames) {
-		GuiIngame.textures = new BufferedImage[textureNames.length];
-		try{
-			for(int k = 0; k < textureNames.length; ++k) {
-				GuiIngame.textures[k] = ImageIO.read(Files.newInputStream(Paths.get("./textures/map/" + textureNames[k] + ".png")));
-			}
-		}catch (IOException e) {}
-	}
-	
-	public static void loadSkyTexture(String textureName) {
-		try{
-			if(!textureName.equals("null")) {
-				GuiIngame.skyTexture = ImageIO.read(Files.newInputStream(Paths.get("./textures/map/skybox/" + textureName + ".png")));
-			}
-		}catch (IOException e) {
-			System.err.println("Can't find sky texture: " + textureName);
-		}
-	}
-
 	public static void generateMap(int genWidth, int genHeight, boolean isMultiplayer) {
 		Random rand = Main.rand;
 		int bigWidth = genWidth * 64, bigHeight = genHeight * 64, zoneIndex = 0;
@@ -213,68 +189,6 @@ public final class Map{
 		GuiHelper.mapSizeCheck(width / 64 + 1, height / 64 + 1);
 	}
 	
-	public static void loadBackground(MapZoneBase[] backZones, int[] backXCoords, int[] backYCoords, int[] backTextureData) {
-		try(var input = new ObjectInputStream(new FileInputStream("./maps/background" + Main.rand.nextInt(4) + ".deg"))){
-			String[] textures = new String[input.readByte()];
-			
-			for(int k = 0; k < textures.length; ++k) {
-				textures[k] = input.readUTF();
-			}
-			
-			int zoneIDCount = input.readByte();
-			String[] zoneIDS = new String[zoneIDCount];
-			
-			for(int k = 0; k < zoneIDCount; ++k) {
-				zoneIDS[k] = input.readUTF();
-			}
-			
-			loadTextures(textures);
-			loadSkyTexture(input.readUTF());
-			
-			input.readShort(); input.readShort();
-			
-			int zoneIndex = 0;
-			
-			for(int y = 0; y < 640; y += 64) {
-				for(int x = 0; x < 896; x += 64) {
-					MapZoneBase zone = Main.getZoneFromName(zoneIDS[input.readByte()]);
-					
-					if(zone instanceof IInternalZone) {
-						zone = ((IInternalZone) zone).getReplacementZone();
-					}
-					
-					if(zone instanceof ITexturable) {
-						backTextureData[zoneIndex] = input.readByte();
-					}
-					backXCoords[zoneIndex] = x;
-					backYCoords[zoneIndex] = y;
-					backZones[zoneIndex++] = zone;
-				}
-			}
-		}catch(IOException e){
-		}
-	}
-	
-	public static String loadMapSize(String fileName) {
-		try(var input = new ObjectInputStream(Files.newInputStream(Paths.get("./maps/" + fileName + ".deg")))){
-			int textureCount = input.readByte();
-			for(int k = 0; k < textureCount; ++k) {
-				input.readUTF();
-			}
-			
-			int idCount = input.readByte();
-			for(int k = 0; k < idCount; ++k) {
-				input.readUTF();
-			}
-			
-			input.readUTF();
-			return input.readShort() + "x" + input.readShort();
-		} catch (IOException e) {
-			System.err.println("Can't load map size for menu: " + fileName + ".deg");
-		}
-		return "";
-	}
-	
 	public static void createSave(String fileName) {
 		if(fileName != null) {
 			/*try(var output = new ObjectOutputStream(new FileOutputStream("./saves/" + fileName + ".sav"))){
@@ -356,8 +270,8 @@ public final class Map{
 				yCoords = (int[]) input.readObject();
 				textureData = (int[]) input.readObject();
 				zoneEntities = (EntityZone[]) input.readObject();
-				loadSkyTexture(skyTextureName = input.readUTF());
-				loadTextures(textures = (String[]) input.readObject());
+				Main.loadSkyTexture(skyTextureName = input.readUTF());
+				Main.loadTextures(textures = (String[]) input.readObject());
 				
 				Particle.precacheParticles();
 				return true;

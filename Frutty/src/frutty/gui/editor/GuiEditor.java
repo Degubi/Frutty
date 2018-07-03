@@ -4,8 +4,6 @@ import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.Toolkit;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -17,8 +15,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -34,12 +30,10 @@ import frutty.Main;
 import frutty.gui.GuiHelper;
 import frutty.gui.GuiMenu;
 import frutty.gui.editor.GuiProperties.EnumProperty;
-import frutty.map.interfaces.IInternalZone;
 import frutty.map.interfaces.ITexturable;
-import frutty.map.interfaces.MapZoneBase;
 
 public final class GuiEditor extends JPanel{
-	public final ArrayList<ZoneButton> zoneButtons = new ArrayList<>();
+	public final ArrayList<EditorZoneButton> zoneButtons = new ArrayList<>();
 	public final GuiProperties mapProperties;
 	protected final TextureSelectorButton textureSelectorButton;
 	protected final JComboBox<String> zoneList;
@@ -237,7 +231,7 @@ public final class GuiEditor extends JPanel{
 				
 				for(int yPos = 0; yPos < bigHeight; yPos += 64) {
 					for(int xPos = 0; xPos < bigWidth; xPos += 64) {
-						ZoneButton button = new ZoneButton(Main.normalZone.editorTexture.get(), newEditor);
+						EditorZoneButton button = new EditorZoneButton(Main.normalZone.editorTexture.get(), newEditor);
 						button.zoneID = "normalZone";
 						button.zoneTexture = "normal";
 						button.setBounds(xPos, yPos, 64, 64);
@@ -293,49 +287,5 @@ public final class GuiEditor extends JPanel{
 		item.setEnabled(setEnabled);
 		item.addActionListener(listener);
 		return item;
-	}
-	
-	public static final class ZoneButton extends JButton implements MouseListener{
-		public String zoneTexture, zoneID;
-		private final GuiEditor editorInstance;
-		
-		public ZoneButton(ImageIcon texture, GuiEditor editor) {
-			super(texture);
-			editorInstance = editor;
-			
-			addMouseListener(this);
-		}
-		
-		@Override
-		public void mousePressed(MouseEvent event) {
-			ZoneButton button = (ZoneButton)event.getComponent();
-			if(event.getButton() == MouseEvent.BUTTON1) {
-				String activeZoneName = (String) editorInstance.zoneList.getSelectedItem();
-				MapZoneBase activeZone = Main.getZoneFromName(activeZoneName);
-				
-				button.zoneID = activeZoneName; button.setIcon(Main.getZoneFromName(activeZoneName).editorTexture.get());
-				
-				if(activeZone instanceof ITexturable) {
-					button.setIcon(((ITexturable)Main.getZoneFromName(button.zoneID)).getEditorTextureVars()[editorInstance.textureSelectorButton.activeTextureIndex]);
-					button.zoneTexture = editorInstance.textureSelectorButton.activeTexture;
-				}if(activeZone instanceof IInternalZone) {
-					((IInternalZone) activeZone).handleEditorPlacement(editorInstance, button.getX(), button.getY());
-				}
-			}else if(event.getButton() == MouseEvent.BUTTON3) {
-				if(Main.getZoneFromName(button.zoneID) instanceof ITexturable) {
-					button.setIcon(((ITexturable)Main.getZoneFromName(button.zoneID)).getEditorTextureVars()[editorInstance.textureSelectorButton.activeTextureIndex]);
-					button.zoneTexture = editorInstance.textureSelectorButton.activeTexture;
-				}
-			}
-		}
-		
-		@Override
-		public void mouseClicked(MouseEvent e) {}
-		@Override
-		public void mouseReleased(MouseEvent e) {}
-		@Override
-		public void mouseEntered(MouseEvent e) {}
-		@Override
-		public void mouseExited(MouseEvent e) {}
 	}
 }

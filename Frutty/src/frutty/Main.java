@@ -13,13 +13,15 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Random;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
 import javax.imageio.ImageIO;
 
+import frutty.gui.GuiIngame;
 import frutty.gui.GuiMenu;
 import frutty.gui.GuiStats;
 import frutty.gui.Settings;
@@ -27,7 +29,6 @@ import frutty.map.interfaces.MapZoneBase;
 import frutty.map.zones.MapZoneChest;
 import frutty.map.zones.MapZoneEmpty;
 import frutty.map.zones.MapZoneFruit;
-import frutty.map.zones.MapZoneFruit.EnumFruit;
 import frutty.map.zones.MapZoneNormal;
 import frutty.map.zones.MapZonePlayer;
 import frutty.map.zones.MapZoneSky;
@@ -44,9 +45,6 @@ import frutty.tools.internal.Plugin;
 
 public final class Main {
 	public static final Random rand = new Random();
-	public static final Plugin gamePluginContainer = new Plugin("Frutty", "Base plugin for the game", null, Version.from(1, 1, 0), "https://pastebin.com/raw/m5qJbnks");
-	public static final ArrayList<Plugin> pluginList = new ArrayList<>(2);
-	public static final ArrayList<EventHandleObject> mapLoadEvents = new ArrayList<>(0);
 	
 	public static void main(String[] args){
 		GuiMenu.showMenu(true);
@@ -59,12 +57,14 @@ public final class Main {
 				Files.createDirectory(savePath);
 			} catch (IOException e) {}
 		}
-			
-		pluginList.add(gamePluginContainer);
-		pluginList.add(Plugin.pluginLoaderPlugin);
-		loadPlugins();
 		
-		mapLoadEvents.sort(EventHandleObject.PRIORITY_COMPARATOR);
+		if(new File("./plugins/").list().length > 0) {
+			loadPlugins();
+			
+			if(mapLoadEvents != null) {
+				Arrays.sort(mapLoadEvents, Comparator.comparingInt(EventHandleObject::getPriority));
+			}
+		}
 	}
 	
 	public static BufferedImage loadTexture(String prefix, String name) {
@@ -76,6 +76,11 @@ public final class Main {
 		}
 	}
 	
+	public static Plugin[] plugins = {new Plugin("Frutty", "Base module for the game.", null, Version.from(1, 1, 0), "https://pastebin.com/raw/m5qJbnks")};
+	public static int pluginIndex = 1;
+	public static EventHandleObject[] mapLoadEvents = null;
+	public static int mapLoadEventIndex = 0;
+	
 	public static void loadPlugins() {
 		var pluginPath = Paths.get("plugins");
 		if(!Files.exists(pluginPath)) {
@@ -84,10 +89,11 @@ public final class Main {
 			} catch (IOException e) {}
 		}
 		
-		var pluginNames = new File("./plugins/").listFiles((dir, name) -> name.endsWith(".jar"));
+		File[] pluginNames = new File("./plugins/").listFiles((dir, name) -> name.endsWith(".jar"));
+		
 		if(pluginNames.length > 0) {
-			var mainClassNames = new String[pluginNames.length];
-			var classLoaderNames = new URL[pluginNames.length];
+			String[] mainClassNames = new String[pluginNames.length];
+			URL[] classLoaderNames = new URL[pluginNames.length];
 			
 			for(int k = 0; k < pluginNames.length; ++k) {
 				try {
@@ -96,7 +102,7 @@ public final class Main {
 					e1.printStackTrace();
 				}
 				
-				try(var jar = new JarFile(pluginNames[k])){
+				try(JarFile jar = new JarFile(pluginNames[k])){
 					Manifest mani = jar.getManifest();
 					if(mani == null) {
 						throw new IllegalStateException("Can't find manifest file from plugin: " + pluginNames[k]);
@@ -122,7 +128,12 @@ public final class Main {
 					}
 					
 					FruttyPlugin pluginAnnotation = loaded.getDeclaredAnnotation(FruttyPlugin.class);
-					pluginList.add(new Plugin(pluginAnnotation.name(), pluginAnnotation.description(), pluginAnnotation.updateURL(), Version.fromString(pluginAnnotation.version()), pluginAnnotation.versionURL()));
+					
+					Plugin[] newArray = new Plugin[plugins.length + 1];
+					System.arraycopy(plugins, 0, newArray, 0, plugins.length);
+					newArray[pluginIndex++] = new Plugin(pluginAnnotation.name(), pluginAnnotation.description(), pluginAnnotation.updateURL(), Version.fromString(pluginAnnotation.version()), pluginAnnotation.versionURL());
+					
+					plugins = newArray;
 						
 					Method[] methods = loaded.getDeclaredMethods();
 					boolean ranMain = false;
@@ -149,7 +160,12 @@ public final class Main {
 												}
 												if(eventTypeClass == MapInitEvent.class) {
 													try {
-														Main.mapLoadEvents.add(new EventHandleObject(lookup.unreflect(eventMts), EventHandleObject.ordinal(eventMts.getAnnotation(FruttyEvent.class).priority())));
+														EventHandleObject[] mapLoads = new EventHandleObject[mapLoadEventIndex + 1];
+														if(mapLoadEventIndex > 0) {
+															System.arraycopy(mapLoadEvents, 0, mapLoads, 0, mapLoadEventIndex);
+														}
+														mapLoads[mapLoadEventIndex++] = new EventHandleObject(lookup.unreflect(eventMts), EventHandleObject.ordinal(eventMts.getAnnotation(FruttyEvent.class).priority()));
+														mapLoadEvents = mapLoads;
 													} catch (IllegalAccessException e) {
 														e.printStackTrace();
 													}
@@ -179,7 +195,7 @@ public final class Main {
 		}
 	}
 	
-	public static void handleEvent(EventBase event, ArrayList<EventHandleObject> methods) {
+	public static void handleEvent(EventBase event, EventHandleObject[] methods) {
 		for(EventHandleObject handles : methods) event.invoke(handles.handle);
 	}
 	
@@ -187,8 +203,8 @@ public final class Main {
 	public static final MapZoneEmpty emptyZone = new MapZoneEmpty();
 	public static final MapZonePlayer player1Zone = new MapZonePlayer(1);
 	public static final MapZonePlayer player2Zone = new MapZonePlayer(2);
-	public static final MapZoneFruit appleZone = new MapZoneFruit(EnumFruit.APPLE);
-	public static final MapZoneFruit cherryZone = new MapZoneFruit(EnumFruit.CHERRY);
+	public static final MapZoneFruit appleZone = new MapZoneFruit(MapZoneFruit.APPLE);
+	public static final MapZoneFruit cherryZone = new MapZoneFruit(MapZoneFruit.CHERRY);
 	public static final MapZoneSpawner spawnerZone = new MapZoneSpawner();
 	public static final MapZoneChest chestZone = new MapZoneChest();
 	public static final MapZoneWater waterZone = new MapZoneWater();
@@ -206,5 +222,24 @@ public final class Main {
 			}
 		}
 		return null;
+	}
+	
+	public static void loadTextures(String[] textureNames) {
+		GuiIngame.textures = new BufferedImage[textureNames.length];
+		try{
+			for(int k = 0; k < textureNames.length; ++k) {
+				GuiIngame.textures[k] = ImageIO.read(Files.newInputStream(Paths.get("./textures/map/" + textureNames[k] + ".png")));
+			}
+		}catch (IOException e) {}
+	}
+	
+	public static void loadSkyTexture(String textureName) {
+		try{
+			if(!textureName.equals("null")) {
+				GuiIngame.skyTexture = ImageIO.read(Files.newInputStream(Paths.get("./textures/map/skybox/" + textureName + ".png")));
+			}
+		}catch (IOException e) {
+			System.err.println("Can't find sky texture: " + textureName);
+		}
 	}
 }

@@ -33,6 +33,7 @@ public final class MapZoneChest extends MapZoneBase implements ITexturable{
 	@Override
 	public void onBreak(int x, int y, int zoneIndex, int textureIndex, EntityPlayer player) {
 		player.entityEffects.add(new EntityEffectInvisible());
+		
 		Map.setZoneEmptyAt(zoneIndex);
 		int upZoneIndex = x / 64 + ((y - 64) / 64 * ((Map.width + 64) / 64));
 		MapZoneBase up = Map.getZoneAtIndex(upZoneIndex);

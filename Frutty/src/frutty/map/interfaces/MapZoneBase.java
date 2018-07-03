@@ -16,8 +16,8 @@ import frutty.entity.zone.EntityZone;
 import frutty.gui.GuiHelper;
 import frutty.gui.GuiStats;
 import frutty.gui.Settings;
+import frutty.gui.editor.EditorZoneButton;
 import frutty.gui.editor.GuiEditor;
-import frutty.gui.editor.GuiEditor.ZoneButton;
 import frutty.gui.editor.GuiTextureSelector;
 import frutty.map.Map;
 import frutty.map.Particle;
@@ -84,7 +84,7 @@ public abstract class MapZoneBase implements Serializable{
 	}
 	
 	public final void handleEditorReading(GuiEditor editor, String zoneID, ObjectInputStream input, int x, int y, String[] textures) throws IOException {
-		ZoneButton button = new ZoneButton(editorTexture.get(), editor);
+		EditorZoneButton button = new EditorZoneButton(editorTexture.get(), editor);
 		button.setBounds(x * 64, y * 64, 64, 64);
 		button.zoneID = zoneID;
 		if(this instanceof ITexturable){

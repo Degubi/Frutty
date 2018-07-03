@@ -1,20 +1,21 @@
 package frutty.entity;
 
 import java.awt.Graphics;
-import java.awt.image.BufferedImage;
 
-import frutty.Main;
+import frutty.map.zones.MapZoneFruit;
 
 public final class EntityApple extends EntityFalling{
-	public static final BufferedImage appleTexture = Main.loadTexture("fruit", "apple.png");
-	
 	public EntityApple(int x, int y) {
 		super(x, y);
 	}
 	
+	static {
+		System.out.println("LOAD");
+	}
+	
 	@Override
 	public void render(Graphics graphics) {
-		graphics.drawImage(appleTexture, renderPosX, renderPosY, null);
+		graphics.drawImage(MapZoneFruit.appleTexture, renderPosX, renderPosY, null);
 	}
 
 	@Override

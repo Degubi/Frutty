@@ -6,7 +6,6 @@ import java.awt.image.BufferedImage;
 import javax.swing.ImageIcon;
 
 import frutty.Main;
-import frutty.entity.EntityApple;
 import frutty.entity.EntityPlayer;
 import frutty.entity.zone.EntityAppleZone;
 import frutty.entity.zone.EntityZone;
@@ -19,10 +18,12 @@ import frutty.map.interfaces.MapZoneBase;
 
 public final class MapZoneFruit extends MapZoneBase implements ITexturable{
 	public static final BufferedImage cherryTexture = Main.loadTexture("fruit", "cherry.png");
+	public static final BufferedImage appleTexture = Main.loadTexture("fruit", "apple.png");
+	public static int APPLE = 0, CHERRY = 1;
 	
-	public final EnumFruit fruitType;
+	public final int fruitType;
 	
-	public MapZoneFruit(EnumFruit type) {
+	public MapZoneFruit(int type) {
 		super(true);
 		fruitType = type;
 	}
@@ -41,26 +42,26 @@ public final class MapZoneFruit extends MapZoneBase implements ITexturable{
 	@Override
 	public void draw(int x, int y, int textureIndex, Graphics graphics) {
 		graphics.drawImage(GuiIngame.textures[textureIndex], x, y, 64, 64, null);
-		if(fruitType == EnumFruit.APPLE) {
-			graphics.drawImage(EntityApple.appleTexture, x, y, null);
-		}else if(fruitType == EnumFruit.CHERRY) {
+		if(fruitType == APPLE) {
+			graphics.drawImage(appleTexture, x, y, null);
+		}else if(fruitType == CHERRY) {
 			graphics.drawImage(cherryTexture, x, y, null);
 		}
 	}
 
 	@Override
 	public EntityZone getZoneEntity(int x, int y, int zoneIndex) {
-		return fruitType == EnumFruit.APPLE ? new EntityAppleZone(x, y, zoneIndex) : null;
+		return fruitType == APPLE ? new EntityAppleZone(x, y, zoneIndex) : null;
 	}
 	
 	@Override
 	public boolean hasZoneEntity() {
-		return fruitType == EnumFruit.APPLE;
+		return fruitType == APPLE;
 	}
 	
 	@Override
 	public ImageIcon[] getEditorTextureVars() {
-		return fruitType == EnumFruit.APPLE ? GuiTextureSelector.appleTextures : GuiTextureSelector.cherryTextures;
+		return fruitType == APPLE ? GuiTextureSelector.appleTextures : GuiTextureSelector.cherryTextures;
 	}
 	
 	@Override
@@ -72,17 +73,12 @@ public final class MapZoneFruit extends MapZoneBase implements ITexturable{
 	
 	@Override
 	public boolean isBreakable(int x, int y) {
-		return fruitType == EnumFruit.CHERRY;
+		return fruitType == CHERRY;
 	}
 	
 	@Override
 	public boolean isPassable(int x, int y) {
-		return fruitType == EnumFruit.CHERRY;
-	}
-	
-	public static enum EnumFruit{
-		APPLE,
-		CHERRY;
+		return fruitType == CHERRY;
 	}
 
 	@Override
@@ -90,7 +86,7 @@ public final class MapZoneFruit extends MapZoneBase implements ITexturable{
 		var returnTexture = new BufferedImage(64, 64, BufferedImage.TYPE_INT_RGB);
 		var graphics = returnTexture.getGraphics();
 		graphics.drawImage(Main.normalZone.editorTexture.get().getImage(), 0, 0, null);
-		graphics.drawImage(fruitType == EnumFruit.APPLE ? EntityApple.appleTexture : MapZoneFruit.cherryTexture, 0, 0, null);
+		graphics.drawImage(fruitType == APPLE ? appleTexture : MapZoneFruit.cherryTexture, 0, 0, null);
 		return new ImageIcon(returnTexture);
 	}
 }
