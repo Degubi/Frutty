@@ -1,6 +1,6 @@
 package frutty.map.zones;
 
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 import javax.swing.ImageIcon;
 
@@ -10,12 +10,9 @@ import frutty.map.interfaces.ITexturable;
 import frutty.map.interfaces.MapZoneBase;
 
 public final class MapZoneNormal extends MapZoneBase implements ITexturable{
-	public MapZoneNormal() {
-		super(true);
-	}
 	
 	@Override
-	public void draw(int x, int y, int textureIndex, Graphics graphics) {
+	public void draw(int x, int y, int textureIndex, Graphics2D graphics) {
 		graphics.drawImage(GuiIngame.textures[textureIndex], x, y, 64, 64, null);
 	}
 

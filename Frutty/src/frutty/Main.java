@@ -12,6 +12,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -26,6 +27,7 @@ import frutty.gui.GuiMenu;
 import frutty.gui.GuiStats;
 import frutty.gui.Settings;
 import frutty.map.interfaces.MapZoneBase;
+import frutty.map.zones.MapZoneBush;
 import frutty.map.zones.MapZoneChest;
 import frutty.map.zones.MapZoneEmpty;
 import frutty.map.zones.MapZoneFruit;
@@ -46,7 +48,7 @@ import frutty.tools.internal.Plugin;
 public final class Main {
 	public static final Random rand = new Random();
 	
-	public static void main(String[] args){
+	public static void main(String[] args) throws IOException{
 		GuiMenu.showMenu(true);
 		Settings.loadSettings();
 		GuiStats.loadStats();
@@ -55,6 +57,18 @@ public final class Main {
 		if(!Files.exists(savePath)) {
 			try {
 				Files.createDirectory(savePath);
+			} catch (IOException e) {}
+		}
+		
+		Path installer = Paths.get("./FruttyInstaller.jar");
+		if(Files.exists(installer)) {
+			Files.move(installer, Paths.get("./bin/FruttyInstaller.jar"));
+		}
+		
+		var pluginPath = Paths.get("plugins");
+		if(!Files.exists(pluginPath)) {
+			try {
+				Files.createDirectory(pluginPath);
 			} catch (IOException e) {}
 		}
 		
@@ -76,19 +90,12 @@ public final class Main {
 		}
 	}
 	
-	public static Plugin[] plugins = {new Plugin("Frutty", "Base module for the game.", null, Version.from(1, 1, 0), "https://pastebin.com/raw/m5qJbnks")};
+	public static Plugin[] plugins = {new Plugin("Frutty", "Base module for the game.", null, Version.from(1, 1, 1), "https://pastebin.com/raw/m5qJbnks")};
 	public static int pluginIndex = 1;
 	public static EventHandleObject[] mapLoadEvents = null;
 	public static int mapLoadEventIndex = 0;
 	
 	public static void loadPlugins() {
-		var pluginPath = Paths.get("plugins");
-		if(!Files.exists(pluginPath)) {
-			try {
-				Files.createDirectory(pluginPath);
-			} catch (IOException e) {}
-		}
-		
 		File[] pluginNames = new File("./plugins/").listFiles((dir, name) -> name.endsWith(".jar"));
 		
 		if(pluginNames.length > 0) {
@@ -209,11 +216,12 @@ public final class Main {
 	public static final MapZoneChest chestZone = new MapZoneChest();
 	public static final MapZoneWater waterZone = new MapZoneWater();
 	public static final MapZoneSky skyZone = new MapZoneSky();
+	public static final MapZoneBush bushZone = new MapZoneBush();
 	
 	private Main() {}
 	public static Object[] zoneStorage = {"normalZone", normalZone, "emptyZone", emptyZone, "appleZone", appleZone, "player1Zone", player1Zone, "player2Zone", player2Zone,
-										   "cherryZone", cherryZone, "spawnerZone", spawnerZone, "chestZone", chestZone, "waterZone", waterZone, "skyZone", skyZone};
-	public static int zoneIndex = 20;
+										  "cherryZone", cherryZone, "spawnerZone", spawnerZone, "chestZone", chestZone, "waterZone", waterZone, "skyZone", skyZone, "bushZone", bushZone};
+	public static int zoneIndex = 22;
 	
 	public static MapZoneBase getZoneFromName(String name) {
 		for(int k = 0; k < zoneIndex; k += 2) {

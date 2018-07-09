@@ -61,6 +61,7 @@ public final class GuiEditor extends JPanel{
 		for(int k = 0, localIndex = 0; k < Main.zoneIndex; k += 2) {
 			names[localIndex++] = (String) Main.zoneStorage[k];
 		}
+		
 		return names;
 	}
 	

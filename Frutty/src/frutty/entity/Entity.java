@@ -27,11 +27,19 @@ public abstract class Entity implements Serializable{
 	
 	protected EnumFacing findFreeFacing() {
 		for(var randomFacing = EnumFacing.randomFacing(); ; randomFacing = EnumFacing.randomFacing()) {
-			if(MapZoneBase.isEmpty(serverPosX + randomFacing.xOffset, serverPosY + randomFacing.yOffset)) {
+			if(canGo(serverPosX + randomFacing.xOffset, serverPosY + randomFacing.yOffset)) {
 				return randomFacing;
 			}
 			continue;
 		}
+	}
+	
+	protected boolean canGo(int x, int y) {
+		if(x < 0 || x > Map.width || y < 0 || y > Map.height) {
+			return false;
+		}
+		MapZoneBase zone = Map.getZoneAtIndex(coordsToIndex(x, y));
+		return zone != null && zone.canNPCPass(x, y);
 	}
 	
 	protected boolean doesCollide(int x, int y) {
@@ -41,7 +49,7 @@ public abstract class Entity implements Serializable{
 	
 	protected void checkPlayers(boolean addScore) {
 		for(var player : Map.players) {
-			if(doesCollide(player.serverPosX, player.serverPosY)) {
+			if(!player.hidden && doesCollide(player.serverPosX, player.serverPosY)) {
 				if(Settings.godEnabled || player.isInvicible()) {
 					active = false;
 					if(addScore) {

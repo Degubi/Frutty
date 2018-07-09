@@ -24,7 +24,9 @@ public final class GuiHelper {
 	public static final String recommendedMapSizeString = "Recommended max map size: " + recommendedMaxMapWidth + "x" + recommendedMaxMapHeight;
 	public static final LineBorder menuBorder = new LineBorder(Color.DARK_GRAY, 2);
 	
-	private GuiHelper() {}
+	private GuiHelper() {
+		
+	}
 	
 	public static void mapSizeCheck(int width, int height) {
 		if(width > GuiHelper.recommendedMaxMapWidth || height > GuiHelper.recommendedMaxMapHeight) {

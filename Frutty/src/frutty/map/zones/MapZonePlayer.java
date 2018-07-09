@@ -1,6 +1,6 @@
 package frutty.map.zones;
 
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 import javax.swing.ImageIcon;
 
@@ -13,7 +13,6 @@ public final class MapZonePlayer extends MapZoneBase implements IInternalZone{
 	private final int playerID;
 	
 	public MapZonePlayer(int id) {
-		super(false);
 		playerID = id;
 	}
 	
@@ -23,7 +22,7 @@ public final class MapZonePlayer extends MapZoneBase implements IInternalZone{
 	}
 
 	@Override
-	public void draw(int x, int y, int textureIndex, Graphics graphics) {}
+	public void draw(int x, int y, int textureIndex, Graphics2D graphics) {}
 
 	@Override
 	public MapZoneBase getReplacementZone() {

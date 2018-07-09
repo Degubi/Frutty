@@ -1,7 +1,7 @@
 package frutty.map.interfaces;
 
 import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -28,22 +28,33 @@ public abstract class MapZoneBase implements Serializable{
 	private static final long serialVersionUID = 392316063689927131L;
 	public transient final Lazy<ImageIcon> editorTexture = new Lazy<>(this::getEditorIconInternal);
 	
-	public final boolean hasShadowRender;
+	public final boolean hasShadowRender, hasZoneEntity, hasParticleSpawns;
 	
-	public MapZoneBase(boolean hasDarkening) {
+	public MapZoneBase(boolean hasDarkening, boolean hasZoneEntity, boolean enableParticles) {
 		hasShadowRender = hasDarkening;
+		this.hasZoneEntity = hasZoneEntity;
+		hasParticleSpawns = enableParticles;
 	}
 	
-	public abstract void draw(int x, int y, int textureIndex, Graphics graphics);
+	public MapZoneBase() {
+		hasShadowRender = true;
+		hasZoneEntity = false;
+		hasParticleSpawns = true;
+	}
+	
+	public abstract void draw(int x, int y, int textureIndex, Graphics2D graphics);
 	protected abstract ImageIcon getEditorIcon();
 	
-	public boolean hasZoneEntity() {return false;}
-	public boolean isBreakable(int x, int y) {return isPassable(x, y);}
-	public boolean isPassable(int x, int y) {return true;}
+	public boolean doesHidePlayer(int x, int y) {return false;}
+	public boolean isBreakable(int x, int y) {return canPlayerPass(x, y);}
+	public boolean canPlayerPass(int x, int y) {return true;}
+	public boolean canNPCPass(int x, int y) {return false;}
 	public void onZoneAdded(boolean isBackground, int x, int y) {}
 	public EntityZone getZoneEntity(int x, int y, int zoneIndex) {return null;}
 	
-	public void onBreak(int x, int y, int zoneIndex, int textureIndex, EntityPlayer player) {
+	public void onZoneEntered(int x, int y, int zoneIndex, int textureIndex, EntityPlayer player) {
+		player.hidden = doesHidePlayer(x, y);
+
 		if(isBreakable(x, y)) {
 			Map.setZoneEmptyAt(zoneIndex);
 			++GuiStats.zoneCount;
@@ -60,7 +71,7 @@ public abstract class MapZoneBase implements Serializable{
 	
 	
 	
-	public final void render(int x, int y, int textureIndex, Graphics graphics) {
+	public final void render(int x, int y, int textureIndex, Graphics2D graphics) {
 		draw(x, y, textureIndex, graphics);
 		
 		if(hasShadowRender && Settings.graphicsLevel > 0) {

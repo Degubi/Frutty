@@ -1,7 +1,7 @@
 package frutty.map.zones;
 
 import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
@@ -10,11 +10,11 @@ import frutty.map.interfaces.MapZoneBase;
 
 public final class MapZoneEmpty extends MapZoneBase{
 	public MapZoneEmpty() {
-		super(false);
+		super(false, false, false);
 	}
 
 	@Override
-	public void draw(int x, int y, int textureIndex, Graphics graphics) {
+	public void draw(int x, int y, int textureIndex, Graphics2D graphics) {
 		graphics.setColor(Color.BLACK);
 		graphics.fillRect(x, y, 64, 64);
 	}
@@ -22,6 +22,11 @@ public final class MapZoneEmpty extends MapZoneBase{
 	@Override
 	public boolean isBreakable(int x, int y) {
 		return false;
+	}
+	
+	@Override
+	public boolean canNPCPass(int x, int y) {
+		return true;
 	}
 
 	@Override

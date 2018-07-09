@@ -27,15 +27,16 @@ public final class Map{
 	public static int width, height, pickCount, score, ticks;
 	public static int[] xCoords, yCoords, textureData;
 	public static EntityZone[] zoneEntities;
-	public static String skyTextureName;
+	public static String skyTextureName, mapName;
 	public static String[] textures;
 	
-	private static void init(String[] txts, String skyName, boolean isMulti, int w, int h, int p1X, int p1Y, int p2X, int p2Y) {
+	private static void init(String[] txts, String skyName, boolean isMulti, String levelName, int w, int h, int p1X, int p1Y, int p2X, int p2Y) {
 		entities.clear();
 		particles.clear();
 		pickCount = 0;
 		score = 0;
 		ticks = 0;
+		mapName = levelName;
 		
 		if(Main.mapLoadEvents != null)
 			Main.handleEvent(new MapInitEvent(w, h, txts, entities), Main.mapLoadEvents);
@@ -65,7 +66,7 @@ public final class Map{
 		Random rand = Main.rand;
 		int bigWidth = genWidth * 64, bigHeight = genHeight * 64, zoneIndex = 0;
 		
-		init(new String[] {"normal"}, "null", isMultiplayer, bigWidth, bigHeight, 0, 0, 0, 0);
+		init(new String[] {"normal"}, "null", isMultiplayer, "generated: " + genWidth + "x" + genHeight, bigWidth, bigHeight, 0, 0, 0, 0);
 		
 		for(int y = 0; y < bigHeight; y += 64) {
 			for(int x = 0, rng = rand.nextInt(10); x < bigWidth; x += 64, rng = rand.nextInt(10)) {
@@ -157,7 +158,7 @@ public final class Map{
 				zoneIDS[k] = input.readUTF();
 			}
 			
-			init(textures, input.readUTF(), isMultiplayer, width = input.readShort() * 64, height = input.readShort() * 64, input.readShort(), input.readShort(), input.readShort(), input.readShort());
+			init(textures, input.readUTF(), isMultiplayer, name, width = input.readShort() * 64, height = input.readShort() * 64, input.readShort(), input.readShort(), input.readShort(), input.readShort());
 			
 			for(int y = 0; y < height; y += 64) {
 				for(int x = 0; x < width; x += 64) {
@@ -176,7 +177,7 @@ public final class Map{
 					xCoords[zoneIndex] = x;
 					yCoords[zoneIndex] = y;
 					
-					if(zone.hasZoneEntity()) {
+					if(zone.hasZoneEntity) {
 						zoneEntities[zoneIndex] = zone.getZoneEntity(x, y, zoneIndex);
 					}
 					zones[zoneIndex++] = zone;

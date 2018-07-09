@@ -2,6 +2,7 @@ package frutty.gui;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -96,7 +97,7 @@ public final class GuiMenu extends JPanel implements ActionListener{
 		
 		for(int k = 0; k < zones.length; ++k) {
 			MapZoneBase zone = zones[k];
-			zone.render(xCoords[k], yCoords[k], textureData[k], graphics);
+			zone.render(xCoords[k], yCoords[k], textureData[k], (Graphics2D) graphics);
 			if(zone instanceof ITransparentZone) {
 				((ITransparentZone) zone).drawAfter(xCoords[k], yCoords[k], textureData[k], graphics);
 			}
@@ -148,8 +149,8 @@ public final class GuiMenu extends JPanel implements ActionListener{
 		}else if(command.equals("Update")){
 			try {
 				if(JOptionPane.showConfirmDialog(this, "Exiting game to Updater. Game will restart.", "Frutty Updater", JOptionPane.OK_CANCEL_OPTION) == 0) {
-					Runtime.getRuntime().exec(System.getProperty("java.version").startsWith("10.") ? "javaw bin/FruttyUpdater"
-							  																	   : "runtime\\bin\\javaw bin/FruttyUpdater");
+					Runtime.getRuntime().exec(System.getProperty("java.version").startsWith("10.") ? "javaw -jar bin/FruttyInstaller.jar"
+							  																	   : "runtime\\bin\\javaw -jar bin/FruttyInstaller.jar");
 					System.exit(0);
 				}
 			} catch (IOException e) {

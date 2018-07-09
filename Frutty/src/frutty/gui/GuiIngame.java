@@ -3,6 +3,7 @@ package frutty.gui;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -28,7 +29,6 @@ import frutty.map.Map;
 import frutty.map.Particle;
 import frutty.map.interfaces.ITransparentZone;
 import frutty.map.interfaces.MapZoneBase;
-import frutty.map.zones.MapZoneEmpty;
 import frutty.map.zones.MapZoneWater;
 
 public final class GuiIngame extends JPanel implements Runnable, KeyListener{
@@ -56,7 +56,7 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 		
 		MapZoneBase[] zones = Map.zones;
 		
-		for(int k = 0; k < zones.length; ++k) zones[k].render(Map.xCoords[k], Map.yCoords[k], Map.textureData[k], graphics);
+		for(int k = 0; k < zones.length; ++k) zones[k].render(Map.xCoords[k], Map.yCoords[k], Map.textureData[k], (Graphics2D) graphics);
 		for(EntityPlayer players : Map.players) players.handleRender(graphics);
 		
 		for(Entity entity : Map.entities) {
@@ -109,8 +109,9 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 			graphics.setColor(Color.WHITE);
 			
 			//Right
-			graphics.drawString("render delay: " + renderDelay + " ms", Map.width - 80, 20);
-			graphics.drawString("fps: " + 1000 / (System.currentTimeMillis() - renderLastUpdate), Map.width - 80, 40);
+			graphics.drawString("current map: " + Map.mapName, Map.width - 100, 20);
+			graphics.drawString("render delay: " + renderDelay + " ms", Map.width - 100, 40);
+			graphics.drawString("fps: " + 1000 / (System.currentTimeMillis() - renderLastUpdate), Map.width - 100, 60);
 			
 			renderDelay = (int) (System.currentTimeMillis() - renderLastUpdate);
 			renderLastUpdate = System.currentTimeMillis();
@@ -156,11 +157,11 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 			if(ticks % 20 == 0) {
 				for(int k = 0; k < Map.zones.length; ++k) {
 					MapZoneBase zone = Map.zones[k];
-					if(zone instanceof MapZoneEmpty == false && MapZoneBase.isEmpty(Map.xCoords[k], Map.yCoords[k] + 64) && Main.rand.nextInt(100) == 3) {
+					if(zone.hasParticleSpawns && MapZoneBase.isEmpty(Map.xCoords[k], Map.yCoords[k] + 64) && Main.rand.nextInt(100) == 3) {
 						Particle.addParticles(2 + Main.rand.nextInt(5), Map.xCoords[k], Map.yCoords[k], Map.textureData[k]);
 					}
 					
-					if(zone.hasZoneEntity()) {
+					if(zone.hasZoneEntity) {
 						Map.getZoneEntity(k).update();
 					}
 				}

@@ -19,6 +19,7 @@ public final class EntityPlayer extends Entity implements KeyListener{
 	
 	private int textureIndex;
 	private long lastPressTime;
+	public boolean hidden = false;
 	
 	private final int leftKey, rightKey, upKey, downKey;
 	
@@ -39,7 +40,7 @@ public final class EntityPlayer extends Entity implements KeyListener{
 	}
 
 	private static boolean isFree(int x, int y) {
-		if(!Map.getZoneAtIndex(coordsToIndex(x, y)).isPassable(x, y)) {
+		if(!Map.getZoneAtIndex(coordsToIndex(x, y)).canPlayerPass(x, y)) {
 			return false;
 		}
 		
@@ -59,7 +60,7 @@ public final class EntityPlayer extends Entity implements KeyListener{
 		textureIndex = facing.textureIndex;
 		
 		int zoneIndex = coordsToIndex(renderPosX, renderPosY);
-		Map.zones[zoneIndex].onBreak(renderPosX, renderPosY, zoneIndex, Map.textureData[zoneIndex], this);
+		Map.zones[zoneIndex].onZoneEntered(renderPosX, renderPosY, zoneIndex, Map.textureData[zoneIndex], this);
 		lastPressTime = System.currentTimeMillis();
 	}
 	

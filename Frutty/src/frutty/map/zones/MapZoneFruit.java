@@ -1,6 +1,6 @@
 package frutty.map.zones;
 
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
@@ -24,13 +24,13 @@ public final class MapZoneFruit extends MapZoneBase implements ITexturable{
 	public final int fruitType;
 	
 	public MapZoneFruit(int type) {
-		super(true);
+		super(true, type == APPLE, true);
 		fruitType = type;
 	}
 
 	@Override
-	public void onBreak(int x, int y, int zoneIndex, int textureIndex, EntityPlayer player) {
-		super.onBreak(x, y, zoneIndex, textureIndex, player);
+	public void onZoneEntered(int x, int y, int zoneIndex, int textureIndex, EntityPlayer player) {
+		super.onZoneEntered(x, y, zoneIndex, textureIndex, player);
 		
 		Map.score += 50;
 		if(--Map.pickCount == 0) {
@@ -40,7 +40,7 @@ public final class MapZoneFruit extends MapZoneBase implements ITexturable{
 	}
 	
 	@Override
-	public void draw(int x, int y, int textureIndex, Graphics graphics) {
+	public void draw(int x, int y, int textureIndex, Graphics2D graphics) {
 		graphics.drawImage(GuiIngame.textures[textureIndex], x, y, 64, 64, null);
 		if(fruitType == APPLE) {
 			graphics.drawImage(appleTexture, x, y, null);
@@ -52,11 +52,6 @@ public final class MapZoneFruit extends MapZoneBase implements ITexturable{
 	@Override
 	public EntityZone getZoneEntity(int x, int y, int zoneIndex) {
 		return fruitType == APPLE ? new EntityAppleZone(x, y, zoneIndex) : null;
-	}
-	
-	@Override
-	public boolean hasZoneEntity() {
-		return fruitType == APPLE;
 	}
 	
 	@Override
@@ -77,7 +72,7 @@ public final class MapZoneFruit extends MapZoneBase implements ITexturable{
 	}
 	
 	@Override
-	public boolean isPassable(int x, int y) {
+	public boolean canPlayerPass(int x, int y) {
 		return fruitType == CHERRY;
 	}
 

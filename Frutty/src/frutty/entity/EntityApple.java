@@ -9,10 +9,6 @@ public final class EntityApple extends EntityFalling{
 		super(x, y);
 	}
 	
-	static {
-		System.out.println("LOAD");
-	}
-	
 	@Override
 	public void render(Graphics graphics) {
 		graphics.drawImage(MapZoneFruit.appleTexture, renderPosX, renderPosY, null);

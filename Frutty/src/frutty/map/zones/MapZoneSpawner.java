@@ -1,7 +1,7 @@
 package frutty.map.zones;
 
 import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 import javax.swing.ImageIcon;
 
@@ -23,11 +23,11 @@ public final class MapZoneSpawner extends MapZoneBase{
 	}
 
 	public MapZoneSpawner() {
-		super(false);
+		super(false, false, false);
 	}
 	
 	@Override
-	public void draw(int x, int y, int textureIndex, Graphics graphics) {
+	public void draw(int x, int y, int textureIndex, Graphics2D graphics) {
 		if(colorIndexer == 31) {
 			decrease = true;
 		}
@@ -61,7 +61,7 @@ public final class MapZoneSpawner extends MapZoneBase{
 	}
 	
 	@Override
-	public boolean isPassable(int x, int y) {
+	public boolean canPlayerPass(int x, int y) {
 		return false;
 	}
 
