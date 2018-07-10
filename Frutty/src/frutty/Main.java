@@ -90,7 +90,7 @@ public final class Main {
 		}
 	}
 	
-	public static Plugin[] plugins = {new Plugin("Frutty", "Base module for the game.", null, Version.from(1, 1, 1), "https://pastebin.com/raw/m5qJbnks")};
+	public static Plugin[] plugins = {new Plugin("Frutty", "Base module for the game.", null, Version.from(1, 2, 0), "https://pastebin.com/raw/m5qJbnks")};
 	public static int pluginIndex = 1;
 	public static EventHandleObject[] mapLoadEvents = null;
 	public static int mapLoadEventIndex = 0;
