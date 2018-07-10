@@ -5,16 +5,11 @@ import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Arrays;
 
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -99,17 +94,16 @@ public final class GuiMapSelection extends JPanel implements ListSelectionListen
 			Map.loadMap(mapList.getSelectedValue(), coopBox.isSelected());
 			//}
 			GuiIngame.showIngame();
-			((JFrame)getTopLevelAncestor()).dispose();
+			GuiMenu.mainFrame.dispose();
 		}else if(actionCommand.equals("Menu")) {
-			GuiMenu.showMenu(false);
-			((JFrame)getTopLevelAncestor()).dispose();
+			GuiHelper.switchMenuPanel(new GuiMenu());
 		}else if(actionCommand.equals("Enable Dev Maps")) {
 			setModel();
 		}
 	}
 	
 	
-	public static String loadMapSize(String fileName) {
+	/*public static String loadMapSize(String fileName) {
 		try(var input = new ObjectInputStream(Files.newInputStream(Paths.get("./maps/" + fileName + ".deg")))){
 			int textureCount = input.readByte();
 			for(int k = 0; k < textureCount; ++k) {
@@ -127,5 +121,5 @@ public final class GuiMapSelection extends JPanel implements ListSelectionListen
 			System.err.println("Can't load map size for menu: " + fileName + ".deg");
 		}
 		return "";
-	}
+	}*/
 }

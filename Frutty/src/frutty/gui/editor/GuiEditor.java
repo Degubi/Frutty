@@ -260,11 +260,11 @@ public final class GuiEditor extends JPanel{
 	    	fileMenu.add(newMenuItem("Delete History", '0', true, event -> new File("editorhistory.txt").delete()));
 	    	fileMenu.addSeparator();
 	    	fileMenu.add(newMenuItem("Close map", '0', true, event -> {openEditor(); ((JFrame)editor.getTopLevelAncestor()).dispose();}));
-	    	fileMenu.add(newMenuItem("Exit to menu", '0', true, event -> {frame.dispose(); GuiMenu.showMenu(false);}));
+	    	fileMenu.add(newMenuItem("Exit to menu", '0', true, event -> {frame.dispose(); GuiMenu.createMainFrame(false);}));
 	    	fileMenu.add(newMenuItem("Exit app", '0', true, event -> System.exit(0)));
 	    	
-	    	mapMenu.add(newMenuItem("Map Properties", 'P', true, event -> GuiHelper.showNewFrame(editor.mapProperties, "Map Properties", WindowConstants.DISPOSE_ON_CLOSE, 350, 350)));
-	    	mapMenu.add(newMenuItem("Map Information", 'I', true, event -> GuiHelper.showNewFrame(new GuiInfo(editor), "Map Info", WindowConstants.DISPOSE_ON_CLOSE, 350, 350)));
+	    	mapMenu.add(newMenuItem("Map Properties", 'P', true, event -> GuiHelper.showNewGui(editor.mapProperties, "Map Properties", 350, 350)));
+	    	mapMenu.add(newMenuItem("Map Information", 'I', true, event -> GuiHelper.showNewGui(new GuiInfo(editor), "Map Info", 350, 350)));
 	    	
 	    	menuBar.add(fileMenu);
 	    	menuBar.add(history);

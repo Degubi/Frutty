@@ -1,7 +1,6 @@
 package frutty.gui;
 
 import java.awt.Color;
-import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,9 +13,7 @@ import java.nio.file.Paths;
 import java.util.Hashtable;
 
 import javax.swing.ButtonGroup;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -24,19 +21,36 @@ import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.WindowConstants;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
 
-public final class Settings{
+public class Settings extends JPanel implements ActionListener{
 	public static int difficulty, upKey, downKey, leftKey, rightKey, graphicsLevel = 2, fps = 50, renderDebugLevel;
 	public static boolean godEnabled, disableEnemies, debugCollisions, mapDebug, debugLevels;
 	
-	private static DebugOptions debugInstance;
-	private static VideoOptions videoInstance;
 	private static GameOptions gameInstance;
+	
+	public Settings() {
+		setLayout(null);
+		add(GuiHelper.newButton("Save", 350, 500, this));
+	}
+	
+	@Override
+	protected void paintComponent(Graphics graphics) {
+		super.paintComponent(graphics);
+		graphics.setColor(Color.LIGHT_GRAY);
+		graphics.fillRect(0, 0, 910, 675);
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent event) {
+		if(event.getActionCommand().equals("Save")) {
+			Settings.saveSettings();
+			GuiHelper.switchMenuPanel(new GuiMenu());
+		}
+	}
 	
 	public static void loadSettings() {
 		try(BufferedReader input = Files.newBufferedReader(Paths.get("settings.cfg"))){
@@ -88,33 +102,24 @@ public final class Settings{
 		}
 	}
 	
-	public static void showGuiSettings(GuiMenu menu) {
+	public static void showGuiSettings() {
 		Settings.loadSettings();
-		var tabbed = new JTabbedPane();
+		JTabbedPane tabbed = new JTabbedPane();
 		tabbed.addTab("Gameplay", gameInstance = new GameOptions());
-		tabbed.addTab("Graphics", videoInstance = new VideoOptions(menu));
-		tabbed.addTab("Debug", debugInstance = new DebugOptions(menu));
+		tabbed.addTab("Graphics", getVideoSettings());
+		tabbed.addTab("Debug", getDebugOptions());
 		
-		EventQueue.invokeLater(() -> {
-			JFrame returnFrame = new JFrame("Frutty Options");
-			returnFrame.setContentPane(tabbed);
-			returnFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-			returnFrame.setResizable(false);
-			returnFrame.setBounds(0, 0, 576, 480);
-			returnFrame.setLocationRelativeTo(null);
-			returnFrame.setFocusable(true);
-			returnFrame.setVisible(true);
-		});
+		GuiHelper.switchMenuPanel(tabbed);
 	}
 	
 	public static void saveSettings() {
-		Settings.mapDebug = debugInstance.showMapDebug.isSelected();
-		Settings.debugCollisions = debugInstance.showCollisionBoxes.isSelected();
-		Settings.godEnabled = debugInstance.godMode.isSelected();
-		Settings.renderDebugLevel = debugInstance.renderDebugLevelSlider.getValue();
-		Settings.disableEnemies = debugInstance.enemiesDisabled.isSelected();
-		Settings.graphicsLevel = videoInstance.graphicsSlider.getValue();
-		Settings.fps = videoInstance.fpsSlider.getValue();
+		Settings.mapDebug = showMapDebug.isSelected();
+		Settings.debugCollisions = showCollisionBoxes.isSelected();
+		Settings.godEnabled = godMode.isSelected();
+		Settings.renderDebugLevel = renderDebugLevelSlider.getValue();
+		Settings.disableEnemies = enemiesDisabled.isSelected();
+		Settings.graphicsLevel = graphicsSlider.getValue();
+		Settings.fps = fpsSlider.getValue();
 		if(gameInstance.easyButton.isSelected()) {
 			Settings.difficulty = 0;
 		}
@@ -161,122 +166,79 @@ public final class Settings{
 		}
 	}
 	
-	static void addSaveButton(JPanel panel) {
-		JButton saveButton = new JButton("Save");
-		saveButton.setBounds(230, 370, 120, 30);
-		saveButton.addActionListener((ActionListener) panel);
-		panel.add(saveButton);
+	private static JLabel newLabel(String text, int x, int y, int width, int height) {
+		JLabel label = new JLabel(text);
+		label.setBounds(x, y, width, height);
+		return label;
 	}
+	
+	private static final JCheckBox godMode = GuiHelper.newCheckBox("Enable God Mode", 20, 80, Color.BLACK, Settings.godEnabled);
+	private static final JCheckBox enemiesDisabled = GuiHelper.newCheckBox("Disable Enemies", 20, 110, Color.BLACK, Settings.disableEnemies);
+	private static final JCheckBox showCollisionBoxes = GuiHelper.newCheckBox("Show Collision Boxes", 20, 140, Color.BLACK, Settings.debugCollisions);
+	private static final JCheckBox showMapDebug = GuiHelper.newCheckBox("Enable Map Debug", 20, 170, Color.BLACK, Settings.mapDebug);
+	private static final JSlider renderDebugLevelSlider = new JSlider(SwingConstants.HORIZONTAL, 0, 3, Settings.renderDebugLevel);
 	
 	@SuppressWarnings("boxing")
-	protected static final class DebugOptions extends JPanel implements ActionListener{
-		protected final JCheckBox godMode = GuiHelper.newCheckBox("Enable God Mode", 20, 80, Color.BLACK, Settings.godEnabled);
-		protected final JCheckBox enemiesDisabled = GuiHelper.newCheckBox("Disable Enemies", 20, 110, Color.BLACK, Settings.disableEnemies);
-		protected final JCheckBox showCollisionBoxes = GuiHelper.newCheckBox("Show Collision Boxes", 20, 140, Color.BLACK, Settings.debugCollisions);
-		protected final JCheckBox showMapDebug = GuiHelper.newCheckBox("Enable Map Debug", 20, 170, Color.BLACK, Settings.mapDebug);
+	private static Settings getDebugOptions() {
+		Settings settings = new Settings();
 		
-		protected final JSlider renderDebugLevelSlider = new JSlider(SwingConstants.HORIZONTAL, 0, 3, Settings.renderDebugLevel);
-		private final GuiMenu menuInstance;
+		renderDebugLevelSlider.setBounds(20, 20, 300, 40);
+		renderDebugLevelSlider.setSnapToTicks(true);
+		renderDebugLevelSlider.setOpaque(false);
+		renderDebugLevelSlider.setPaintLabels(true);
+		renderDebugLevelSlider.setPaintTicks(true);
 		
-		protected DebugOptions(GuiMenu menu) {
-			setLayout(null);
-			menuInstance = menu;
-			
-			renderDebugLevelSlider.setBounds(20, 20, 300, 40);
-			renderDebugLevelSlider.setSnapToTicks(true);
-			renderDebugLevelSlider.setOpaque(false);
-			renderDebugLevelSlider.setPaintLabels(true);
-			renderDebugLevelSlider.setPaintTicks(true);
-			
-			var renderTable = new Hashtable<Integer, JLabel>(4);
-			renderTable.put(0, new JLabel("None"));
-			renderTable.put(1, new JLabel("FPS Debug"));
-			renderTable.put(2, new JLabel("Zone Bounds"));
-			renderTable.put(3, new JLabel("All"));
-			renderDebugLevelSlider.setLabelTable(renderTable);
-			
-			addSaveButton(this);
-			add(godMode);
-			add(enemiesDisabled);
-			add(showCollisionBoxes);
-			add(showMapDebug);
-			add(renderDebugLevelSlider);
-		}
+		var renderTable = new Hashtable<Integer, JLabel>(4);
+		renderTable.put(0, new JLabel("None"));
+		renderTable.put(1, new JLabel("FPS Debug"));
+		renderTable.put(2, new JLabel("Zone Bounds"));
+		renderTable.put(3, new JLabel("All"));
+		renderDebugLevelSlider.setLabelTable(renderTable);
 		
-		@Override
-		protected void paintComponent(Graphics graphics) {
-			super.paintComponent(graphics);
-			graphics.setColor(Color.LIGHT_GRAY);
-			graphics.fillRect(0, 0, 576, 480);
-		}
+		settings.add(godMode);
+		settings.add(enemiesDisabled);
+		settings.add(showCollisionBoxes);
+		settings.add(showMapDebug);
+		settings.add(renderDebugLevelSlider);
 		
-		@Override
-		public void actionPerformed(ActionEvent event) {
-			if(event.getActionCommand().equals("Save")) {
-				Settings.saveSettings();
-				((JFrame)getTopLevelAncestor()).dispose();
-			}
-			menuInstance.repaint();
-		}
+		return settings;
 	}
+	
+	private static final JSlider graphicsSlider = new JSlider(SwingConstants.HORIZONTAL, 0, 2, Settings.graphicsLevel);
+	private static final JSlider fpsSlider = new JSlider(SwingConstants.HORIZONTAL, 10, 100, Settings.fps);
 	
 	@SuppressWarnings("boxing")
-	protected static final class VideoOptions extends JPanel implements ActionListener{
-		private final GuiMenu menuInstance;
-		protected final JSlider graphicsSlider = new JSlider(SwingConstants.HORIZONTAL, 0, 2, Settings.graphicsLevel);
-		protected final JSlider fpsSlider = new JSlider(SwingConstants.HORIZONTAL, 10, 100, Settings.fps);
+	private static Settings getVideoSettings() {
+		Settings settings = new Settings();
 		
-		protected VideoOptions(GuiMenu menu) {
-			setLayout(null);
-			menuInstance = menu;
-			
-			graphicsSlider.setPaintLabels(true);
-			graphicsSlider.setBounds(30, 40, 150, 40);
-			graphicsSlider.setOpaque(false);
-			graphicsSlider.setSnapToTicks(true);
-			
-			var table = new Hashtable<Integer, JLabel>(3);
-			table.put(0, new JLabel("Low"));
-			table.put(1, new JLabel("Medium"));
-			table.put(2, new JLabel("High"));
-			graphicsSlider.setLabelTable(table);
-			
-			fpsSlider.setBounds(0, 150, 250, 40);
-			fpsSlider.setOpaque(false);
-			fpsSlider.setSnapToTicks(true);
-			fpsSlider.setMajorTickSpacing(10);
-			fpsSlider.setMinorTickSpacing(10);
-			fpsSlider.setPaintTicks(true);
-			fpsSlider.setPaintLabels(true);
-			
-			addSaveButton(this);
-			add(graphicsSlider);
-			add(fpsSlider);
-		}
+		graphicsSlider.setPaintLabels(true);
+		graphicsSlider.setBounds(30, 40, 150, 40);
+		graphicsSlider.setOpaque(false);
+		graphicsSlider.setSnapToTicks(true);
 		
-		@Override
-		protected void paintComponent(Graphics graphics) {
-			super.paintComponent(graphics);
-			graphics.setColor(Color.LIGHT_GRAY);
-			graphics.fillRect(0, 0, 576, 480);
-			
-			graphics.setColor(Color.DARK_GRAY);
-			graphics.setFont(GuiHelper.thiccFont);
-			graphics.drawString("Graphics level:", 50, 40);
-			graphics.drawString("Render Framerate:", 50, 140);
-		}
+		var table = new Hashtable<Integer, JLabel>(3);
+		table.put(0, new JLabel("Low"));
+		table.put(1, new JLabel("Medium"));
+		table.put(2, new JLabel("High"));
+		graphicsSlider.setLabelTable(table);
 		
-		@Override
-		public void actionPerformed(ActionEvent event) {
-			if(event.getActionCommand().equals("Save")) {
-				Settings.saveSettings();
-				((JFrame)getTopLevelAncestor()).dispose();
-			}
-			menuInstance.repaint();
-		}
+		fpsSlider.setBounds(0, 150, 250, 40);
+		fpsSlider.setOpaque(false);
+		fpsSlider.setSnapToTicks(true);
+		fpsSlider.setMajorTickSpacing(10);
+		fpsSlider.setMinorTickSpacing(10);
+		fpsSlider.setPaintTicks(true);
+		fpsSlider.setPaintLabels(true);
+		
+		settings.add(newLabel("Graphics Level", 65, 15, 120, 40));
+		settings.add(graphicsSlider);
+		settings.add(fpsSlider);
+		settings.add(newLabel("FPS", 100, 110, 60, 40));
+		
+		return settings;
 	}
 	
-	protected static final class GameOptions extends JPanel implements ActionListener{
+	protected static final class GameOptions extends Settings{
 		protected final JRadioButton easyButton = new JRadioButton("Easy"), normalButton = new JRadioButton("Normal"), hardButton = new JRadioButton("Hard");
 		protected final JTextField upKeyField = newTextField(Settings.upKey, 100, 245), downKeyField = newTextField(Settings.downKey, 100, 275);
 		protected final JTextField leftKeyField = newTextField(Settings.leftKey, 100, 305), rightKeyField = newTextField(Settings.rightKey, 100, 335);
@@ -289,9 +251,6 @@ public final class Settings{
 			hardButton.setBounds(100, 100, 80, 30);
 			
 			var difficultyGroup = new ButtonGroup();
-			easyButton.addActionListener(this);
-			normalButton.addActionListener(this);
-			hardButton.addActionListener(this);
 			difficultyGroup.add(easyButton);
 			difficultyGroup.add(normalButton);
 			difficultyGroup.add(hardButton);
@@ -308,7 +267,6 @@ public final class Settings{
 			hardButton.setOpaque(false);
 			normalButton.setOpaque(false);
 			
-			addSaveButton(this);
 			add(upKeyField);
 			add(downKeyField);
 			add(leftKeyField);
@@ -329,8 +287,6 @@ public final class Settings{
 		@Override
 		protected void paintComponent(Graphics graphics) {
 			super.paintComponent(graphics);
-			graphics.setColor(Color.LIGHT_GRAY);
-			graphics.fillRect(0, 0, 576, 480);
 			
 			graphics.setColor(Color.DARK_GRAY);
 			graphics.setFont(GuiHelper.thiccFont);
@@ -343,14 +299,6 @@ public final class Settings{
 			graphics.drawString("Right:", 40, 350);
 		}
 		
-		@Override
-		public void actionPerformed(ActionEvent event) {
-			if(event.getActionCommand().equals("Save")) {
-				Settings.saveSettings();
-				((JFrame)getTopLevelAncestor()).dispose();
-			}
-		}
-		
 		protected static final class TextFilter extends DocumentFilter{
 			public static final TextFilter filter = new TextFilter();
 			
@@ -360,21 +308,6 @@ public final class Settings{
 				if(offset > 0) {
 					super.remove(fb, 0, 1);
 				}
-			}
-		}
-	}
-	
-	protected static final class WorldOptions extends JPanel implements ActionListener{
-		protected WorldOptions() {
-			setLayout(null);
-			addSaveButton(this);
-		}
-		
-		@Override
-		public void actionPerformed(ActionEvent event) {
-			if(event.getActionCommand().equals("Save")) {
-				Settings.saveSettings();
-				((JFrame)getTopLevelAncestor()).dispose();
 			}
 		}
 	}

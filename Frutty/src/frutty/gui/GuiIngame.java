@@ -173,7 +173,7 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 		ingameGui.updateThread.shutdown();
 		ingameGui.renderThread.shutdown();
 		JOptionPane.showMessageDialog(null, message, "Frutty", JOptionPane.PLAIN_MESSAGE);
-		GuiMenu.showMenu(false);
+		GuiMenu.createMainFrame(false);
 		((JFrame)ingameGui.getTopLevelAncestor()).dispose();
 		GuiStats.saveStats();
 	}
@@ -246,7 +246,7 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 					Map.createSave(JOptionPane.showInputDialog("Enter save name!"));
 				}
 				((JFrame)ingameGui.getTopLevelAncestor()).dispose();
-				GuiMenu.showMenu(false);
+				GuiMenu.createMainFrame(false);
 				GuiStats.saveStats();
 			}else{  //Save
 				ingameGui.paused = true;

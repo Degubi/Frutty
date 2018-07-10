@@ -3,16 +3,13 @@ package frutty.gui;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Desktop;
-import java.awt.EventQueue;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
 import javax.swing.DefaultListCellRenderer;
-import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JSplitPane;
 import javax.swing.JTextPane;
-import javax.swing.WindowConstants;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkEvent.EventType;
 import javax.swing.event.HyperlinkListener;
@@ -24,7 +21,7 @@ import frutty.tools.Version;
 import frutty.tools.internal.Plugin;
 
 public final class GuiPlugins implements ListSelectionListener, HyperlinkListener{
-	protected final JList<Object> pluginList = new JList<>(Main.plugins);
+	protected final JList<Plugin> pluginList = new JList<>(Main.plugins);
 	protected final JTextPane description = new JTextPane();
 
 	public static void showPlugins() {
@@ -41,16 +38,7 @@ public final class GuiPlugins implements ListSelectionListener, HyperlinkListene
 		pane.setResizeWeight(0.5D);
 		pane.setEnabled(false);
 		
-		EventQueue.invokeLater(() -> {
-			JFrame returnFrame = new JFrame("Frutty Plugins");
-			returnFrame.setContentPane(pane);
-			returnFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-			returnFrame.setResizable(false);
-			returnFrame.setBounds(0, 0, 576, 480);
-			returnFrame.setLocationRelativeTo(null);
-			returnFrame.setFocusable(true);
-			returnFrame.setVisible(true);
-		});
+		GuiHelper.showNewGui(pane, "Frutty Plugins", 576, 480);
 		
 		new Thread(() -> {
 			for(Plugin plugin : Main.plugins) {
@@ -83,7 +71,7 @@ public final class GuiPlugins implements ListSelectionListener, HyperlinkListene
 		
 		@Override
 		public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-			var comp = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+			Component comp = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 			if(((Plugin) value).needsUpdate) {
 				comp.setForeground(Color.RED);
 			}

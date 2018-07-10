@@ -49,7 +49,7 @@ public final class Main {
 	public static final Random rand = new Random();
 	
 	public static void main(String[] args) throws IOException{
-		GuiMenu.showMenu(true);
+		GuiMenu.createMainFrame(true);
 		Settings.loadSettings();
 		GuiStats.loadStats();
 			

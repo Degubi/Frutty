@@ -1,6 +1,7 @@
 package frutty.gui;
 
 import java.awt.Color;
+import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
@@ -29,6 +30,8 @@ public final class GuiMenu extends JPanel implements ActionListener{
 	private final MapZoneBase[] zones = new MapZoneBase[140];
 	private final int[] xCoords = new int[140], yCoords = new int[140], textureData = new int[140];
 	
+	public static JFrame mainFrame;
+	
 	public GuiMenu() {
 		setLayout(null);
 		
@@ -43,7 +46,7 @@ public final class GuiMenu extends JPanel implements ActionListener{
 		add(GuiHelper.newButton("Stats", 700, 330, this));
 	}
 	
-	public static void showMenu(boolean checkUpdate) {
+	public static void createMainFrame(boolean checkUpdate) {
 		GuiMenu menu = new GuiMenu();
 		
 		if(checkUpdate) {
@@ -60,7 +63,17 @@ public final class GuiMenu extends JPanel implements ActionListener{
 				}
 			}, "Menu Version Checker Thread").start();
 		}
-		GuiHelper.showNewFrame(menu, "Frutty", WindowConstants.EXIT_ON_CLOSE, 910, 675);
+		
+		EventQueue.invokeLater(() -> {
+			mainFrame = new JFrame("Frutty");
+			mainFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+			mainFrame.setResizable(false);
+			mainFrame.setBounds(0, 0, 910, 675);
+			mainFrame.setLocationRelativeTo(null);
+			mainFrame.setContentPane(menu);
+			mainFrame.setFocusable(true);
+			mainFrame.setVisible(true);
+		});
 	}
 	
 	@Override
@@ -87,18 +100,17 @@ public final class GuiMenu extends JPanel implements ActionListener{
 		String command = event.getActionCommand();
 		
 		if(command.equals("New Game")){
-			GuiHelper.showNewFrame(new GuiMapSelection(), "Map Selection", WindowConstants.DISPOSE_ON_CLOSE, 910, 675);
-			((JFrame)getTopLevelAncestor()).dispose();
+			GuiHelper.switchMenuPanel(new GuiMapSelection());
 		}else if(command.equals("Exit")){
 			System.exit(0);
 		}else if(command.equals("Settings")){
-			Settings.showGuiSettings(this);
+			Settings.showGuiSettings();
 		}else if(command.equals("Plugins")) {
 			GuiPlugins.showPlugins();
 		}else if(command.equals("Editor")){
-			GuiEditor.openEditor(); ((JFrame)getTopLevelAncestor()).dispose();
+			GuiEditor.openEditor(); mainFrame.dispose();
 		}else if(command.equals("Stats")){
-			GuiStats.openStatsGui();
+			GuiHelper.showNewGui(new GuiStats(), "Frutty", 240, 180);
 		}else if(command.equals("Update")){
 			try {
 				if(JOptionPane.showConfirmDialog(this, "Exiting game to Updater. Game will restart.", "Frutty Updater", JOptionPane.OK_CANCEL_OPTION) == 0) {

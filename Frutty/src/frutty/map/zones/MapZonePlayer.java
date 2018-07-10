@@ -29,6 +29,7 @@ public final class MapZonePlayer extends MapZoneBase implements IInternalZone{
 		return Main.emptyZone;
 	}
 
+	@SuppressWarnings("boxing")
 	@Override
 	public void handleEditorPlacement(GuiEditor editorInstance, int buttonX, int buttonY) {
 		if(playerID == 1) {

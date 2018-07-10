@@ -11,7 +11,6 @@ import java.nio.file.Paths;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.WindowConstants;
 
 import frutty.map.Map;
 
@@ -45,11 +44,7 @@ public final class GuiStats extends JPanel implements ActionListener{
 			saveStats();
 		}
 	}
-	
-	public static void openStatsGui() {
-		GuiHelper.showNewFrame(new GuiStats(), "Frutty", WindowConstants.DISPOSE_ON_CLOSE, 240, 180);
-	}
-	
+
 	public static void saveStats() {
 		try(var output = new PrintWriter("stats.prop")){
 			output.print(topScore);

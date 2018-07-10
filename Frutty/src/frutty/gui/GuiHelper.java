@@ -1,6 +1,7 @@
 package frutty.gui;
 
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Toolkit;
@@ -10,9 +11,9 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.WindowConstants;
 import javax.swing.border.LineBorder;
 
 public final class GuiHelper {
@@ -21,12 +22,9 @@ public final class GuiHelper {
 	public static final Color color_128Black = new Color(0, 0, 0, 128), color_84Black = new Color(0, 0, 0, 84);
 	private static final int recommendedMaxMapHeight = Toolkit.getDefaultToolkit().getScreenSize().height / 64 - 1;
 	private static final int recommendedMaxMapWidth = Toolkit.getDefaultToolkit().getScreenSize().width / 64 - 1;
-	public static final String recommendedMapSizeString = "Recommended max map size: " + recommendedMaxMapWidth + "x" + recommendedMaxMapHeight;
 	public static final LineBorder menuBorder = new LineBorder(Color.DARK_GRAY, 2);
 	
-	private GuiHelper() {
-		
-	}
+	private GuiHelper() {}
 	
 	public static void mapSizeCheck(int width, int height) {
 		if(width > GuiHelper.recommendedMaxMapWidth || height > GuiHelper.recommendedMaxMapHeight) {
@@ -34,16 +32,23 @@ public final class GuiHelper {
 		}
 	}
 	
-	public static void showNewFrame(JPanel panel, String name, int closeOperation, int width, int height) {
+	public static void switchMenuPanel(Container panel) {
 		EventQueue.invokeLater(() -> {
-			JFrame returnFrame = new JFrame(name);
-			returnFrame.setContentPane(panel);
-			returnFrame.setDefaultCloseOperation(closeOperation);
-			returnFrame.setResizable(false);
-			returnFrame.setBounds(0, 0, width, height);
-			returnFrame.setLocationRelativeTo(null);
-			returnFrame.setFocusable(true);
-			returnFrame.setVisible(true);
+			GuiMenu.mainFrame.setContentPane(panel);
+			GuiMenu.mainFrame.revalidate();
+		});
+	}
+	
+	public static void showNewGui(Container panel, String name, int width, int height) {
+		EventQueue.invokeLater(() -> {
+			JFrame frame = new JFrame(name);
+			frame.setContentPane(panel);
+			frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+			frame.setResizable(false);
+			frame.setBounds(0, 0, width, height);
+			frame.setLocationRelativeTo(null);
+			frame.setFocusable(true);
+			frame.setVisible(true);
 		});
 	}
 	
