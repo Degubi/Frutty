@@ -38,11 +38,11 @@ public final class GuiEditor extends JPanel{
 	protected final TextureSelectorButton textureSelectorButton;
 	protected final JComboBox<String> zoneList;
 	
-	private GuiEditor(String fileName, boolean isBackground, String skyName, int... data) {
+	private GuiEditor(String fileName, String skyName, int... data) {
 		setLayout(null);
 		
 		if(fileName != null) {
-			mapProperties = new GuiProperties(fileName, skyName, isBackground, data);
+			mapProperties = new GuiProperties(fileName, skyName, data);
 			zoneList = new JComboBox<>(zoneNames());
 			zoneList.setSelectedItem("normalZone");
 			zoneList.setBounds(data[0] * 64 + 20, 80, 120, 30);
@@ -76,7 +76,7 @@ public final class GuiEditor extends JPanel{
 	}
 
 	public static void openEditor() {
-		showEditorFrame(new GuiEditor(null, false, null, 0, 0, 0, 0, 0, 0), 800, 600);
+		showEditorFrame(new GuiEditor(null, null, 0, 0, 0, 0, 0, 0), 800, 600);
 	}
 	
 	private void saveMap() {
@@ -110,13 +110,10 @@ public final class GuiEditor extends JPanel{
 			output.writeUTF(mapProperties.getProperty(EnumProperty.SkyTexture));
 	 		output.writeShort(mapProperties.getIntProperty(EnumProperty.MapWidth));
 	 		output.writeShort(mapProperties.getIntProperty(EnumProperty.MapHeight));
-	 		
-		 	if(!mapProperties.getBooleanProperty(EnumProperty.IsBackground)) {
-		 		output.writeShort(mapProperties.getIntProperty(EnumProperty.Player1PosX));
-		 		output.writeShort(mapProperties.getIntProperty(EnumProperty.Player1PosY));
-		 		output.writeShort(mapProperties.getIntProperty(EnumProperty.Player2PosX));
-		 		output.writeShort(mapProperties.getIntProperty(EnumProperty.Player2PosY));
-	 		}
+	 		output.writeShort(mapProperties.getIntProperty(EnumProperty.Player1PosX));
+	 		output.writeShort(mapProperties.getIntProperty(EnumProperty.Player1PosY));
+	 		output.writeShort(mapProperties.getIntProperty(EnumProperty.Player2PosX));
+	 		output.writeShort(mapProperties.getIntProperty(EnumProperty.Player2PosY));
 		 	
 	 		for(var writeButton : zoneButtons) {
 	 			output.writeByte(zoneIDs.indexOf(writeButton.zoneID));
@@ -170,9 +167,7 @@ public final class GuiEditor extends JPanel{
 				
 				String skyName = input.readUTF();
 				int mapWidth = input.readShort(), mapHeight = input.readShort();
-				GuiEditor editor = fileName.startsWith("background") 
-								 ? new GuiEditor(fileName, true, skyName, mapWidth, mapHeight, 0, 0, 0, 0)
-								 : new GuiEditor(fileName, false, skyName, mapWidth, mapHeight, input.readShort(), input.readShort(), input.readShort(), input.readShort());
+				GuiEditor editor = new GuiEditor(fileName, skyName, mapWidth, mapHeight, input.readShort(), input.readShort(), input.readShort(), input.readShort());
 				
 				for(int y = 0; y < mapHeight; ++y) {
 					for(int x = 0; x < mapWidth; ++x) {
@@ -228,7 +223,7 @@ public final class GuiEditor extends JPanel{
     			var mapSizeString = (input == 0 ? JOptionPane.showInputDialog("Enter map size!", "10x10") : "14x10").split("x");
 				int mapWidth = Integer.parseInt(mapSizeString[0]), bigWidth = mapWidth * 64;
 				int mapHeight = Integer.parseInt(mapSizeString[1]), bigHeight = mapHeight * 64;
-				var newEditor = new GuiEditor(JOptionPane.showInputDialog("Enter map name!", "mapname.deg"), input == 1, "null", mapWidth, mapHeight, 0, 0, 0, 0);
+				var newEditor = new GuiEditor(JOptionPane.showInputDialog("Enter map name!", "mapname.deg"), "null", mapWidth, mapHeight, 0, 0, 0, 0);
 				
 				for(int yPos = 0; yPos < bigHeight; yPos += 64) {
 					for(int xPos = 0; xPos < bigWidth; xPos += 64) {

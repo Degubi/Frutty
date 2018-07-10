@@ -32,8 +32,7 @@ import javax.swing.text.DocumentFilter;
 
 public final class Settings{
 	public static int difficulty, upKey, downKey, leftKey, rightKey, graphicsLevel = 2, fps = 50, renderDebugLevel;
-	public static boolean godEnabled, disableEnemies, debugCollisions, mapDebug;
-	public static String lastMap = "Creepy";
+	public static boolean godEnabled, disableEnemies, debugCollisions, mapDebug, debugLevels;
 	
 	private static DebugOptions debugInstance;
 	private static VideoOptions videoInstance;
@@ -50,7 +49,7 @@ public final class Settings{
 			rightKey = Integer.parseInt(data[5]);
 			disableEnemies = Boolean.parseBoolean(data[6]);
 			debugCollisions = Boolean.parseBoolean(data[7]);
-			lastMap = data[8];
+			debugLevels = Boolean.parseBoolean(data[8]);
 			mapDebug = Boolean.parseBoolean(data[9]);
 			graphicsLevel = Integer.parseInt(data[10]);
 			renderDebugLevel = Integer.parseInt(data[11]);
@@ -148,7 +147,7 @@ public final class Settings{
 			output.print(' ');
 			output.print(debugCollisions);
 			output.print(' ');
-			output.print(lastMap);
+			output.print(debugLevels);
 			output.print(' ');
 			output.print(mapDebug);
 			output.print(' ');

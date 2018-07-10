@@ -158,6 +158,8 @@ public final class Map{
 				zoneIDS[k] = input.readUTF();
 			}
 			
+			boolean isBackround = name.startsWith("background");
+			
 			init(textures, input.readUTF(), isMultiplayer, name, width = input.readShort() * 64, height = input.readShort() * 64, input.readShort(), input.readShort(), input.readShort(), input.readShort());
 			
 			for(int y = 0; y < height; y += 64) {
@@ -168,7 +170,7 @@ public final class Map{
 						zone = ((IInternalZone) zone).getReplacementZone();
 					}
 					
-					zone.onZoneAdded(false, x, y);
+					zone.onZoneAdded(isBackround, x, y);
 					
 					if(zone instanceof ITexturable) {
 						textureData[zoneIndex] = input.readByte();
@@ -184,7 +186,7 @@ public final class Map{
 				}
 			}
 		}catch(IOException e){
-			System.err.println("Can't load invalid map: " + name);
+			System.err.println("Can't load invalid map: " + "./maps/" + name + ".deg");
 		}
 		
 		GuiHelper.mapSizeCheck(width / 64 + 1, height / 64 + 1);

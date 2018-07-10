@@ -32,9 +32,11 @@ public final class MapZonePlayer extends MapZoneBase implements IInternalZone{
 	@Override
 	public void handleEditorPlacement(GuiEditor editorInstance, int buttonX, int buttonY) {
 		if(playerID == 1) {
-			editorInstance.mapProperties.setPlayer1Pos(buttonX, buttonY);
+			editorInstance.mapProperties.table.setValueAt(buttonX, 4, 1);
+			editorInstance.mapProperties.table.setValueAt(buttonY, 5, 1);
 		}else{
-			editorInstance.mapProperties.setPlayer2Pos(buttonX, buttonY);
+			editorInstance.mapProperties.table.setValueAt(buttonX, 6, 1);
+			editorInstance.mapProperties.table.setValueAt(buttonY, 7, 1);
 		}
 	}
 }

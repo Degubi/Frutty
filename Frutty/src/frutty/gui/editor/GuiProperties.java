@@ -14,13 +14,12 @@ public final class GuiProperties extends JPanel{
 	public static enum EnumProperty{
 		MapName("Map Name", 0),
 		SkyTexture("SkyTexture", 1),
-		IsBackground("Is Background?", 2),
-		MapWidth("Map Width", 3),
-		MapHeight("Map Height", 4),
-		Player1PosX("Player1 Pos X", 5),
-		Player1PosY("Player1 Pos Y", 6),
-		Player2PosX("Player2 Pos X", 7),
-		Player2PosY("Player2 Pos Y", 8);
+		MapWidth("Map Width", 2),
+		MapHeight("Map Height", 3),
+		Player1PosX("Player1 Pos X", 4),
+		Player1PosY("Player1 Pos Y", 5),
+		Player2PosX("Player2 Pos X", 6),
+		Player2PosY("Player2 Pos Y", 7);
 		
 		protected static final EnumProperty[] props = values();
 		
@@ -38,9 +37,9 @@ public final class GuiProperties extends JPanel{
 		}
 	}
 	
-	private final JTable table = new JTable(new PropertyTableModel());
+	public final JTable table = new JTable(new PropertyTableModel());
 	
-	public GuiProperties(String mapName, String skyName, boolean isBackground, int[] data) {
+	public GuiProperties(String mapName, String skyName, int[] data) {
 		setLayout(null);
 		
 		table.setBorder(new LineBorder(Color.GRAY, 1, true));
@@ -51,26 +50,15 @@ public final class GuiProperties extends JPanel{
 		
 		EnumProperty.props[0].register(table, mapName);
 		EnumProperty.props[1].register(table, skyName);
-		EnumProperty.props[2].register(table, String.valueOf(isBackground));
-		EnumProperty.props[3].register(table, data[0]);
-		EnumProperty.props[4].register(table, data[1]);
+		EnumProperty.props[2].register(table, data[0]);
+		EnumProperty.props[3].register(table, data[1]);
 		
-		EnumProperty.props[5].register(table, data[2]);
-		EnumProperty.props[6].register(table, data[3]);
-		EnumProperty.props[7].register(table, data[4]);
-		EnumProperty.props[8].register(table, data[5]);
+		EnumProperty.props[4].register(table, data[2]);
+		EnumProperty.props[5].register(table, data[3]);
+		EnumProperty.props[6].register(table, data[4]);
+		EnumProperty.props[7].register(table, data[5]);
 		
 		add(table);
-	}
-	
-	public void setPlayer1Pos(int x, int y) {
-		table.setValueAt(x, 5, 1);
-		table.setValueAt(y, 6, 1);
-	}
-	
-	public void setPlayer2Pos(int x, int y) {
-		table.setValueAt(x, 7, 1);
-		table.setValueAt(y, 8, 1);
 	}
 	
 	public boolean getBooleanProperty(EnumProperty prop) {
