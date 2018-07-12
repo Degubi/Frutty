@@ -1,4 +1,4 @@
-package frutty.map.zones;
+package frutty.world.zones;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -10,11 +10,10 @@ import frutty.entity.EntityPlayer;
 import frutty.entity.zone.EntityAppleZone;
 import frutty.entity.zone.EntityZone;
 import frutty.gui.GuiIngame;
-import frutty.gui.GuiStats;
 import frutty.gui.editor.GuiTextureSelector;
-import frutty.map.Map;
-import frutty.map.interfaces.ITexturable;
-import frutty.map.interfaces.MapZoneBase;
+import frutty.world.World;
+import frutty.world.interfaces.ITexturable;
+import frutty.world.interfaces.MapZoneBase;
 
 public final class MapZoneFruit extends MapZoneBase implements ITexturable{
 	public static final BufferedImage cherryTexture = Main.loadTexture("fruit", "cherry.png");
@@ -32,10 +31,9 @@ public final class MapZoneFruit extends MapZoneBase implements ITexturable{
 	public void onZoneEntered(int x, int y, int zoneIndex, int textureIndex, EntityPlayer player) {
 		super.onZoneEntered(x, y, zoneIndex, textureIndex, player);
 		
-		Map.score += 50;
-		if(--Map.pickCount == 0) {
+		World.score += 50;
+		if(--World.pickCount == 0) {
 			GuiIngame.showMessageAndClose("You won!");
-			GuiStats.compareScores();
 		}
 	}
 	
@@ -62,7 +60,7 @@ public final class MapZoneFruit extends MapZoneBase implements ITexturable{
 	@Override
 	public void onZoneAdded(boolean isBackground, int x, int y) {
 		if(!isBackground && this == Main.cherryZone) {
-			++Map.pickCount;
+			++World.pickCount;
 		}
 	}
 	

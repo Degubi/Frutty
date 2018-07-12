@@ -4,11 +4,12 @@ module frutty.api{
 	exports frutty.entity;
 	exports frutty.entity.zone;
 	
-	exports frutty.map.zones;
-	exports frutty.map.interfaces;
-	
 	exports frutty.plugin;
 	exports frutty.plugin.event;
 	
 	exports frutty.tools;
+	
+	exports frutty.world;
+	exports frutty.world.zones;
+	exports frutty.world.interfaces;
 }

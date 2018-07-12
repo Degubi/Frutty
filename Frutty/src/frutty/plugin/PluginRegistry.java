@@ -3,7 +3,7 @@ package frutty.plugin;
 import java.awt.image.BufferedImage;
 
 import frutty.Main;
-import frutty.map.interfaces.MapZoneBase;
+import frutty.world.interfaces.MapZoneBase;
 
 /**Methods for registering zones, loading textures, etc*/
 public final class PluginRegistry {

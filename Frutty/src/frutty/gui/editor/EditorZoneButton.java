@@ -7,9 +7,9 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
 import frutty.Main;
-import frutty.map.interfaces.IInternalZone;
-import frutty.map.interfaces.ITexturable;
-import frutty.map.interfaces.MapZoneBase;
+import frutty.world.interfaces.IInternalZone;
+import frutty.world.interfaces.ITexturable;
+import frutty.world.interfaces.MapZoneBase;
 
 public final class EditorZoneButton extends JButton implements MouseListener{
 	public String zoneTexture, zoneID;

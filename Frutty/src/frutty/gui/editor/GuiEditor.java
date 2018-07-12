@@ -30,7 +30,7 @@ import frutty.Main;
 import frutty.gui.GuiHelper;
 import frutty.gui.GuiMenu;
 import frutty.gui.editor.GuiProperties.EnumProperty;
-import frutty.map.interfaces.ITexturable;
+import frutty.world.interfaces.ITexturable;
 
 public final class GuiEditor extends JPanel{
 	public final ArrayList<EditorZoneButton> zoneButtons = new ArrayList<>();

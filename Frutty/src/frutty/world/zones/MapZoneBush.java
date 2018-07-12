@@ -1,4 +1,4 @@
-package frutty.map.zones;
+package frutty.world.zones;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -8,8 +8,8 @@ import java.awt.image.BufferedImage;
 import javax.swing.ImageIcon;
 
 import frutty.Main;
-import frutty.map.interfaces.ITransparentZone;
-import frutty.map.interfaces.MapZoneBase;
+import frutty.world.interfaces.ITransparentZone;
+import frutty.world.interfaces.MapZoneBase;
 
 public final class MapZoneBush extends MapZoneBase implements ITransparentZone{
 	public static final BufferedImage texture = Main.loadTexture("map/special", "bush.png");

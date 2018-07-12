@@ -2,7 +2,7 @@ package frutty.entity;
 
 import java.awt.Graphics;
 
-import frutty.map.zones.MapZoneFruit;
+import frutty.world.zones.MapZoneFruit;
 
 public final class EntityApple extends EntityFalling{
 	public EntityApple(int x, int y) {

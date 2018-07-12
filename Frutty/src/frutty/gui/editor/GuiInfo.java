@@ -11,7 +11,7 @@ import javax.swing.JPanel;
 
 import frutty.Main;
 import frutty.gui.GuiHelper;
-import frutty.map.interfaces.ITexturable;
+import frutty.world.interfaces.ITexturable;
 
 public final class GuiInfo extends JPanel{
 	private final GuiEditor editor;

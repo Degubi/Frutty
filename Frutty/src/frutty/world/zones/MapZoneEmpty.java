@@ -1,4 +1,4 @@
-package frutty.map.zones;
+package frutty.world.zones;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -6,7 +6,7 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
 
-import frutty.map.interfaces.MapZoneBase;
+import frutty.world.interfaces.MapZoneBase;
 
 public final class MapZoneEmpty extends MapZoneBase{
 	public MapZoneEmpty() {

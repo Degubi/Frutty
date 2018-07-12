@@ -1,7 +1,7 @@
 package frutty.entity.zone;
 
 import frutty.entity.EntityApple;
-import frutty.map.Map;
+import frutty.world.World;
 
 public final class EntityAppleZone extends EntityZone{
 	public boolean notified;
@@ -15,8 +15,8 @@ public final class EntityAppleZone extends EntityZone{
 	public void update() {
 		if(notified){
 			if(counter > 1) {
-				Map.setZoneEmptyAt(zoneIndex);
-				Map.entities.add(new EntityApple(x, y));
+				World.setZoneEmptyAt(zoneIndex);
+				World.entities.add(new EntityApple(x, y));
 			}else{
 				++counter;
 			}

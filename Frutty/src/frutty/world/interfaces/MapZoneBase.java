@@ -1,4 +1,4 @@
-package frutty.map.interfaces;
+package frutty.world.interfaces;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -19,9 +19,9 @@ import frutty.gui.Settings;
 import frutty.gui.editor.EditorZoneButton;
 import frutty.gui.editor.GuiEditor;
 import frutty.gui.editor.GuiTextureSelector;
-import frutty.map.Map;
-import frutty.map.Particle;
 import frutty.tools.Lazy;
+import frutty.world.Particle;
+import frutty.world.World;
 
 @SuppressWarnings("unused")
 public abstract class MapZoneBase implements Serializable{
@@ -56,13 +56,13 @@ public abstract class MapZoneBase implements Serializable{
 		player.hidden = doesHidePlayer(x, y);
 
 		if(isBreakable(x, y)) {
-			Map.setZoneEmptyAt(zoneIndex);
-			++GuiStats.zoneCount;
+			World.setZoneEmptyAt(zoneIndex);
+			GuiStats.stats.set("zoneCount", GuiStats.stats.getInt("zoneCount") + 1);
 			
-			int checkIndex = zoneIndex - (Map.width / 64) - 1;
-			MapZoneBase up = Map.getZoneAtIndex(checkIndex);
+			int checkIndex = zoneIndex - (World.width / 64) - 1;
+			MapZoneBase up = World.getZoneAtIndex(checkIndex);
 			if(up != null && up == Main.appleZone) {
-				((EntityAppleZone)Map.zoneEntities[checkIndex]).notified = true;
+				((EntityAppleZone)World.zoneEntities[checkIndex]).notified = true;
 			}
 			Particle.addParticles(2 + Main.rand.nextInt(10), x, y, textureIndex);
 		}
@@ -108,12 +108,12 @@ public abstract class MapZoneBase implements Serializable{
 	}
 	
 	public static boolean isEmpty(int x, int y) {
-		MapZoneBase zone = Map.getZoneAtPos(x, y);
+		MapZoneBase zone = World.getZoneAtPos(x, y);
 		return zone != null && zone == Main.emptyZone;
 	}
 	
 	public static boolean isEmptyAt(int index) {
-		MapZoneBase zone = Map.getZoneAtIndex(index);
+		MapZoneBase zone = World.getZoneAtIndex(index);
 		return zone != null && zone == Main.emptyZone;
 	}
 }

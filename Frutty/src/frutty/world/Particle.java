@@ -1,4 +1,4 @@
-package frutty.map;
+package frutty.world;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -30,7 +30,7 @@ public final class Particle implements Serializable{
 	public static void addParticles(int count, int x, int y, int color) {
 		if(Settings.graphicsLevel == 2) {
 			for(int k = 0; k < count; ++k) {
-				Map.particles.add(new Particle(x + Main.rand.nextInt(64), y + 64 + Main.rand.nextInt(32), color));
+				World.particles.add(new Particle(x + Main.rand.nextInt(64), y + 64 + Main.rand.nextInt(32), color));
 			}
 		}
 	}

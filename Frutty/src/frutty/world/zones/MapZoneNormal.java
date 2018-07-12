@@ -1,4 +1,4 @@
-package frutty.map.zones;
+package frutty.world.zones;
 
 import java.awt.Graphics2D;
 
@@ -6,8 +6,8 @@ import javax.swing.ImageIcon;
 
 import frutty.gui.GuiIngame;
 import frutty.gui.editor.GuiTextureSelector;
-import frutty.map.interfaces.ITexturable;
-import frutty.map.interfaces.MapZoneBase;
+import frutty.world.interfaces.ITexturable;
+import frutty.world.interfaces.MapZoneBase;
 
 public final class MapZoneNormal extends MapZoneBase implements ITexturable{
 	

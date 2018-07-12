@@ -1,4 +1,4 @@
-package frutty.map.zones;
+package frutty.world.zones;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -7,8 +7,8 @@ import javax.swing.ImageIcon;
 
 import frutty.entity.EntityEnemy;
 import frutty.gui.Settings;
-import frutty.map.Map;
-import frutty.map.interfaces.MapZoneBase;
+import frutty.world.World;
+import frutty.world.interfaces.MapZoneBase;
 
 public final class MapZoneSpawner extends MapZoneBase{
 	private static final Color[] colorCache = new Color[32];
@@ -40,7 +40,7 @@ public final class MapZoneSpawner extends MapZoneBase{
 
 	@Override
 	public void onZoneAdded(boolean isBackground, int x, int y) {
-		int enemyCount = 0, zoneCount = Map.zones.length;
+		int enemyCount = 0, zoneCount = World.zones.length;
 		if(!Settings.disableEnemies && !isBackground) {
 			if(Settings.difficulty == 0) {
 				enemyCount += zoneCount < 70 ? 1 : zoneCount / 70;
@@ -51,11 +51,11 @@ public final class MapZoneSpawner extends MapZoneBase{
 			}
 		}
 		
-		Map.enemies = new EntityEnemy[enemyCount];
+		World.enemies = new EntityEnemy[enemyCount];
 		
 		if(!isBackground) {
-			for(int k = 0; k < +Map.enemies.length; ++k) {
-				Map.enemies[k] = new EntityEnemy(x, y);
+			for(int k = 0; k < +World.enemies.length; ++k) {
+				World.enemies[k] = new EntityEnemy(x, y);
 			}
 		}
 	}

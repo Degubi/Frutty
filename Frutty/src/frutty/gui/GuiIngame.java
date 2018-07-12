@@ -25,11 +25,11 @@ import frutty.Main;
 import frutty.entity.Entity;
 import frutty.entity.EntityEnemy;
 import frutty.entity.EntityPlayer;
-import frutty.map.Map;
-import frutty.map.Particle;
-import frutty.map.interfaces.ITransparentZone;
-import frutty.map.interfaces.MapZoneBase;
-import frutty.map.zones.MapZoneWater;
+import frutty.world.Particle;
+import frutty.world.World;
+import frutty.world.interfaces.ITransparentZone;
+import frutty.world.interfaces.MapZoneBase;
+import frutty.world.zones.MapZoneWater;
 
 public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 	protected final ScheduledExecutorService updateThread = Executors.newSingleThreadScheduledExecutor();
@@ -41,6 +41,7 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 	public static BufferedImage skyTexture;
 	public static BufferedImage[] textures;
 	
+	private final int topScore = GuiStats.stats.getInt("topScore");
 	private int renderDelay;
 	private long renderLastUpdate = System.currentTimeMillis();
 	
@@ -54,36 +55,36 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 	protected void paintComponent(Graphics graphics) {
 		super.paintComponent(graphics);
 		
-		MapZoneBase[] zones = Map.zones;
+		MapZoneBase[] zones = World.zones;
 		
-		for(int k = 0; k < zones.length; ++k) zones[k].render(Map.xCoords[k], Map.yCoords[k], Map.textureData[k], (Graphics2D) graphics);
-		for(EntityPlayer players : Map.players) players.handleRender(graphics);
+		for(int k = 0; k < zones.length; ++k) zones[k].render(World.xCoords[k], World.yCoords[k], World.textureData[k], (Graphics2D) graphics);
+		for(EntityPlayer players : World.players) players.handleRender(graphics);
 		
-		for(Entity entity : Map.entities) {
+		for(Entity entity : World.entities) {
 			if(entity.active) {
 				entity.handleRender(graphics);
 			}
 		}
 		
-		for(EntityEnemy enemies : Map.enemies) {
+		for(EntityEnemy enemies : World.enemies) {
 			if(enemies.active) {
 				enemies.handleRender(graphics);
 			}
 		}
 		
-		for(Particle particles : Map.particles) particles.render(graphics);
+		for(Particle particles : World.particles) particles.render(graphics);
 		
 		for(int k = 0; k < zones.length; ++k) {
 			MapZoneBase zone = zones[k];
 			if(zone instanceof ITransparentZone) {
-				((ITransparentZone)zone).drawAfter(Map.xCoords[k], Map.yCoords[k], Map.textureData[k], graphics);
+				((ITransparentZone)zone).drawAfter(World.xCoords[k], World.yCoords[k], World.textureData[k], graphics);
 			}
 		}
 		
 		graphics.setColor(Color.BLACK);
 		graphics.setFont(GuiHelper.ingameFont);
-		graphics.drawString("Score: " + Map.score, Map.width + 90, 20);
-		graphics.drawString("Top score: " + GuiStats.topScore, Map.width + 90, 80);
+		graphics.drawString("Score: " + World.score, World.width + 90, 20);
+		graphics.drawString("Top score: " + topScore, World.width + 90, 80);
 		
 		if(Settings.mapDebug) {
 			graphics.setColor(GuiHelper.color_128Black);
@@ -94,51 +95,51 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 			
 			//Left
 			graphics.drawString("zonecount: " + zones.length, 2, 20);
-			graphics.drawString("entities: " + (Map.enemies.length + Map.players.length + Map.entities.size() + Map.particles.size()), 2, 40);
-			graphics.drawString("map_width: " + (Map.width + 64), 2, 60);
-			graphics.drawString("map_height: " + (Map.height + 64), 2, 80);
-			graphics.drawString("playerpos_x: " + Map.players[0].serverPosX, 2, 100);
-			graphics.drawString("playerpos_y: " + Map.players[0].serverPosY, 2, 120);
+			graphics.drawString("entities: " + (World.enemies.length + World.players.length + World.entities.size() + World.particles.size()), 2, 40);
+			graphics.drawString("map_width: " + (World.width + 64), 2, 60);
+			graphics.drawString("map_height: " + (World.height + 64), 2, 80);
+			graphics.drawString("playerpos_x: " + World.players[0].serverPosX, 2, 100);
+			graphics.drawString("playerpos_y: " + World.players[0].serverPosY, 2, 120);
 		}
 		
 		if(Settings.renderDebugLevel == 1 || Settings.renderDebugLevel == 3) {
 			graphics.setColor(GuiHelper.color_128Black);
-			graphics.fillRect(Map.width - 85, 0, 160, 130);
+			graphics.fillRect(World.width - 85, 0, 160, 130);
 			
 			graphics.setFont(GuiHelper.thiccFont);
 			graphics.setColor(Color.WHITE);
 			
 			//Right
-			graphics.drawString("current map: " + Map.mapName, Map.width - 100, 20);
-			graphics.drawString("render delay: " + renderDelay + " ms", Map.width - 100, 40);
-			graphics.drawString("fps: " + 1000 / (System.currentTimeMillis() - renderLastUpdate), Map.width - 100, 60);
+			graphics.drawString("current map: " + World.mapName, World.width - 100, 20);
+			graphics.drawString("render delay: " + renderDelay + " ms", World.width - 100, 40);
+			graphics.drawString("fps: " + 1000 / (System.currentTimeMillis() - renderLastUpdate), World.width - 100, 60);
 			
 			renderDelay = (int) (System.currentTimeMillis() - renderLastUpdate);
 			renderLastUpdate = System.currentTimeMillis();
 		}
 		
 		graphics.setColor(Color.DARK_GRAY);
-		for(int k = 0; k < 20; ++k) graphics.drawLine(Map.width + 64 + k, 0, Map.width + 64 + k, Map.height + 83);
+		for(int k = 0; k < 20; ++k) graphics.drawLine(World.width + 64 + k, 0, World.width + 64 + k, World.height + 83);
 	}
 	
 	@Override
 	public void run() {
 		if(!paused) {
-			++Map.ticks;
+			++World.ticks;
 			
-			int ticks = Map.ticks;
+			int ticks = World.ticks;
 			
-			for(Entity entity : Map.players) {
+			for(Entity entity : World.players) {
 				entity.update(ticks);
 			}
 			
-			for(EntityEnemy monsters : Map.enemies) {
+			for(EntityEnemy monsters : World.enemies) {
 				if(monsters.active) {
 					monsters.update(ticks);
 				}
 			}
 			
-			for(Entity entities : Map.entities) {
+			for(Entity entities : World.entities) {
 				if(entities.active) {
 					entities.update(ticks);
 				}
@@ -149,20 +150,20 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 			}
 			
 			if(ticks % 2 == 0) {
-				for(Iterator<Particle> iterator = Map.particles.iterator(); iterator.hasNext();) {
+				for(Iterator<Particle> iterator = World.particles.iterator(); iterator.hasNext();) {
 					iterator.next().update(iterator);
 				}
 			}
 			
 			if(ticks % 20 == 0) {
-				for(int k = 0; k < Map.zones.length; ++k) {
-					MapZoneBase zone = Map.zones[k];
-					if(zone.hasParticleSpawns && MapZoneBase.isEmpty(Map.xCoords[k], Map.yCoords[k] + 64) && Main.rand.nextInt(100) == 3) {
-						Particle.addParticles(2 + Main.rand.nextInt(5), Map.xCoords[k], Map.yCoords[k], Map.textureData[k]);
+				for(int k = 0; k < World.zones.length; ++k) {
+					MapZoneBase zone = World.zones[k];
+					if(zone.hasParticleSpawns && MapZoneBase.isEmpty(World.xCoords[k], World.yCoords[k] + 64) && Main.rand.nextInt(100) == 3) {
+						Particle.addParticles(2 + Main.rand.nextInt(5), World.xCoords[k], World.yCoords[k], World.textureData[k]);
 					}
 					
 					if(zone.hasZoneEntity) {
-						Map.getZoneEntity(k).update();
+						World.getZoneEntity(k).update();
 					}
 				}
 			}
@@ -175,7 +176,10 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 		JOptionPane.showMessageDialog(null, message, "Frutty", JOptionPane.PLAIN_MESSAGE);
 		GuiMenu.createMainFrame(false);
 		((JFrame)ingameGui.getTopLevelAncestor()).dispose();
-		GuiStats.saveStats();
+		if(GuiStats.stats.getInt("topScore") < World.score) {
+			GuiStats.stats.set("topScore", World.score);
+		}
+		GuiStats.stats.save();
 	}
 	
 	public static void showIngame() {
@@ -183,12 +187,12 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 			JFrame ingameFrame = new JFrame("Frutty");
 			ingameFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 			ingameFrame.setResizable(false);
-			ingameFrame.setBounds(0, 0, Map.width + 288, Map.height + 100);
+			ingameFrame.setBounds(0, 0, World.width + 288, World.height + 100);
 			ingameFrame.setLocationRelativeTo(null);
 			ingameFrame.setContentPane(ingameGui = new GuiIngame());
 			ingameFrame.addKeyListener(ingameGui);
 			ingameFrame.setFocusable(true);
-			for(EntityPlayer players : Map.players) {
+			for(EntityPlayer players : World.players) {
 				ingameFrame.addKeyListener(players);
 			}
 			ingameFrame.setVisible(true);
@@ -235,24 +239,24 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 				ingameGui.renderThread.shutdown();
 				ingameGui.updateThread.shutdown();
 				if(JOptionPane.showConfirmDialog(null, "Save current status?", "Save?", JOptionPane.YES_NO_OPTION, 1) == 0) {
-					Map.createSave(JOptionPane.showInputDialog("Enter save name!"));
+					World.createSave(JOptionPane.showInputDialog("Enter save name!"));
 				}
-				GuiStats.saveStats();
+				GuiStats.stats.save();
 				System.exit(0);
 			}else if(cmd.equals("Menu")) {
 				ingameGui.renderThread.shutdown();
 				ingameGui.updateThread.shutdown();
 				if(JOptionPane.showConfirmDialog(null, "Save current status?", "Save?", JOptionPane.YES_NO_OPTION, 1) == 0) {
-					Map.createSave(JOptionPane.showInputDialog("Enter save name!"));
+					World.createSave(JOptionPane.showInputDialog("Enter save name!"));
 				}
 				((JFrame)ingameGui.getTopLevelAncestor()).dispose();
 				GuiMenu.createMainFrame(false);
-				GuiStats.saveStats();
+				GuiStats.stats.save();
 			}else{  //Save
 				ingameGui.paused = true;
-				Map.createSave(JOptionPane.showInputDialog("Enter save name!"));
+				World.createSave(JOptionPane.showInputDialog("Enter save name!"));
 				ingameGui.paused = false;
-				GuiStats.saveStats();
+				GuiStats.stats.save();
 			}
 			((JFrame)getTopLevelAncestor()).dispose();
 		}

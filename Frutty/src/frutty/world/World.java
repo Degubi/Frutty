@@ -1,4 +1,4 @@
-package frutty.map;
+package frutty.world;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -13,12 +13,12 @@ import frutty.entity.EntityPlayer;
 import frutty.entity.zone.EntityAppleZone;
 import frutty.entity.zone.EntityZone;
 import frutty.gui.GuiHelper;
-import frutty.map.interfaces.IInternalZone;
-import frutty.map.interfaces.ITexturable;
-import frutty.map.interfaces.MapZoneBase;
 import frutty.plugin.event.MapInitEvent;
+import frutty.world.interfaces.IInternalZone;
+import frutty.world.interfaces.ITexturable;
+import frutty.world.interfaces.MapZoneBase;
 
-public final class Map{
+public final class World{
 	public static EntityPlayer[] players;
 	public static MapZoneBase[] zones;
 	public static ArrayList<Entity> entities = new ArrayList<>();

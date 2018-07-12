@@ -17,7 +17,7 @@ import javax.swing.JSplitPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import frutty.map.Map;
+import frutty.world.World;
 
 public final class GuiMapSelection extends JPanel implements ListSelectionListener, ActionListener{
 	private final JCheckBox devMode = GuiHelper.newCheckBox("Enable Dev Maps", 40, 600, Color.BLACK, false);
@@ -91,7 +91,7 @@ public final class GuiMapSelection extends JPanel implements ListSelectionListen
 				Map.generateMap(Integer.parseInt(mapSizeSplit[0]), Integer.parseInt(mapSizeSplit[1]), coopBox.isSelected());
 			}else{
 			*/
-			Map.loadMap(mapList.getSelectedValue(), coopBox.isSelected());
+			World.loadMap(mapList.getSelectedValue(), coopBox.isSelected());
 			//}
 			GuiIngame.showIngame();
 			GuiMenu.mainFrame.dispose();

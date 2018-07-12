@@ -1,4 +1,4 @@
-package frutty.map.zones;
+package frutty.world.zones;
 
 import java.awt.Graphics2D;
 
@@ -6,8 +6,8 @@ import javax.swing.ImageIcon;
 
 import frutty.Main;
 import frutty.gui.editor.GuiEditor;
-import frutty.map.interfaces.IInternalZone;
-import frutty.map.interfaces.MapZoneBase;
+import frutty.world.interfaces.IInternalZone;
+import frutty.world.interfaces.MapZoneBase;
 
 public final class MapZonePlayer extends MapZoneBase implements IInternalZone{
 	private final int playerID;

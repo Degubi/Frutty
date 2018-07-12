@@ -1,4 +1,4 @@
-package frutty.map.interfaces;
+package frutty.world.interfaces;
 
 import frutty.gui.editor.GuiEditor;
 

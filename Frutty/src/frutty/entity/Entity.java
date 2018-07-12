@@ -7,8 +7,8 @@ import java.io.Serializable;
 import frutty.Main;
 import frutty.gui.GuiIngame;
 import frutty.gui.Settings;
-import frutty.map.Map;
-import frutty.map.interfaces.MapZoneBase;
+import frutty.world.World;
+import frutty.world.interfaces.MapZoneBase;
 
 public abstract class Entity implements Serializable{
 	private static final long serialVersionUID = 2876462867774051456L;
@@ -25,7 +25,7 @@ public abstract class Entity implements Serializable{
 		moveRate = getServerUpdateRate() / getClientUpdateRate();
 	}
 	
-	protected EnumFacing findFreeFacing() {
+	protected final EnumFacing findFreeFacing() {
 		for(var randomFacing = EnumFacing.randomFacing(); ; randomFacing = EnumFacing.randomFacing()) {
 			if(canGo(serverPosX + randomFacing.xOffset, serverPosY + randomFacing.yOffset)) {
 				return randomFacing;
@@ -34,26 +34,26 @@ public abstract class Entity implements Serializable{
 		}
 	}
 	
-	protected boolean canGo(int x, int y) {
-		if(x < 0 || x > Map.width || y < 0 || y > Map.height) {
+	protected final boolean canGo(int x, int y) {
+		if(x < 0 || x > World.width || y < 0 || y > World.height) {
 			return false;
 		}
-		MapZoneBase zone = Map.getZoneAtIndex(coordsToIndex(x, y));
+		MapZoneBase zone = World.getZoneAtIndex(coordsToIndex(x, y));
 		return zone != null && zone.canNPCPass(x, y);
 	}
 	
-	protected boolean doesCollide(int x, int y) {
+	protected final boolean doesCollide(int x, int y) {
 		return (serverPosX >= x && serverPosX + 64 <= x + 64) &&
 			   (serverPosY >= y && serverPosY + 64 <= y + 64);
 	}
 	
-	protected void checkPlayers(boolean addScore) {
-		for(var player : Map.players) {
+	protected final void checkPlayers(boolean addScore) {
+		for(var player : World.players) {
 			if(!player.hidden && doesCollide(player.serverPosX, player.serverPosY)) {
 				if(Settings.godEnabled || player.isInvicible()) {
 					active = false;
 					if(addScore) {
-						Map.score += 100;
+						World.score += 100;
 					}
 				}else{
 					GuiIngame.showMessageAndClose("Game over!");
@@ -62,8 +62,8 @@ public abstract class Entity implements Serializable{
 		}
 	}
 	
-	protected void checkEnemies() {
-		for(var enemies : Map.enemies) {
+	protected final void checkEnemies() {
+		for(var enemies : World.enemies) {
 			if(doesCollide(enemies.serverPosX, enemies.serverPosY)) {
 				enemies.active = false;
 			}
@@ -71,7 +71,7 @@ public abstract class Entity implements Serializable{
 	}
 	
 	public static int coordsToIndex(int x, int y) {
-		return x / 64 + (y / 64 * ((Map.width + 64) / 64));
+		return x / 64 + (y / 64 * ((World.width + 64) / 64));
 	}
 	
 	public final void handleRender(Graphics graphics) {

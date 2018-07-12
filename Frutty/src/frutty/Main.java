@@ -24,18 +24,7 @@ import javax.imageio.ImageIO;
 
 import frutty.gui.GuiIngame;
 import frutty.gui.GuiMenu;
-import frutty.gui.GuiStats;
 import frutty.gui.Settings;
-import frutty.map.interfaces.MapZoneBase;
-import frutty.map.zones.MapZoneBush;
-import frutty.map.zones.MapZoneChest;
-import frutty.map.zones.MapZoneEmpty;
-import frutty.map.zones.MapZoneFruit;
-import frutty.map.zones.MapZoneNormal;
-import frutty.map.zones.MapZonePlayer;
-import frutty.map.zones.MapZoneSky;
-import frutty.map.zones.MapZoneSpawner;
-import frutty.map.zones.MapZoneWater;
 import frutty.plugin.FruttyEvent;
 import frutty.plugin.FruttyPlugin;
 import frutty.plugin.FruttyPluginMain;
@@ -44,6 +33,16 @@ import frutty.tools.Version;
 import frutty.tools.internal.EventBase;
 import frutty.tools.internal.EventHandleObject;
 import frutty.tools.internal.Plugin;
+import frutty.world.interfaces.MapZoneBase;
+import frutty.world.zones.MapZoneBush;
+import frutty.world.zones.MapZoneChest;
+import frutty.world.zones.MapZoneEmpty;
+import frutty.world.zones.MapZoneFruit;
+import frutty.world.zones.MapZoneNormal;
+import frutty.world.zones.MapZonePlayer;
+import frutty.world.zones.MapZoneSky;
+import frutty.world.zones.MapZoneSpawner;
+import frutty.world.zones.MapZoneWater;
 
 public final class Main {
 	public static final Random rand = new Random();
@@ -51,7 +50,6 @@ public final class Main {
 	public static void main(String[] args) throws IOException{
 		GuiMenu.createMainFrame(true);
 		Settings.loadSettings();
-		GuiStats.loadStats();
 			
 		var savePath = Paths.get("saves");
 		if(!Files.exists(savePath)) {

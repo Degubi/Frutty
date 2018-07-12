@@ -11,7 +11,7 @@ import frutty.Main;
 import frutty.entity.effects.EntityEffect;
 import frutty.entity.effects.EntityEffectInvisible;
 import frutty.gui.Settings;
-import frutty.map.Map;
+import frutty.world.World;
 
 public final class EntityPlayer extends Entity implements KeyListener{
 	private static final BufferedImage[] textures = {Main.loadTexture("player", "side.png"), Main.loadTexture("player", "front.png"), Main.loadTexture("player", "back.png")};
@@ -40,11 +40,11 @@ public final class EntityPlayer extends Entity implements KeyListener{
 	}
 
 	private static boolean isFree(int x, int y) {
-		if(!Map.getZoneAtIndex(coordsToIndex(x, y)).canPlayerPass(x, y)) {
+		if(!World.getZoneAtIndex(coordsToIndex(x, y)).canPlayerPass(x, y)) {
 			return false;
 		}
 		
-		for(Entity entities : Map.entities) {
+		for(Entity entities : World.entities) {
 			if(entities.renderPosX == x && entities.renderPosY == y) {
 				return false;
 			}
@@ -60,7 +60,7 @@ public final class EntityPlayer extends Entity implements KeyListener{
 		textureIndex = facing.textureIndex;
 		
 		int zoneIndex = coordsToIndex(renderPosX, renderPosY);
-		Map.zones[zoneIndex].onZoneEntered(renderPosX, renderPosY, zoneIndex, Map.textureData[zoneIndex], this);
+		World.zones[zoneIndex].onZoneEntered(renderPosX, renderPosY, zoneIndex, World.textureData[zoneIndex], this);
 		lastPressTime = System.currentTimeMillis();
 	}
 	
@@ -69,11 +69,11 @@ public final class EntityPlayer extends Entity implements KeyListener{
 		if(System.currentTimeMillis() - lastPressTime > 100L) {
 			if(event.getKeyCode() == upKey && renderPosY > 0 && isFree(renderPosX, renderPosY - 64)) {
 				setFacing(EnumFacing.UP);
-			}else if(event.getKeyCode() == downKey && renderPosY < Map.height && isFree(renderPosX, renderPosY + 64)) {
+			}else if(event.getKeyCode() == downKey && renderPosY < World.height && isFree(renderPosX, renderPosY + 64)) {
 				setFacing(EnumFacing.DOWN);
 			}else if(event.getKeyCode() == leftKey && renderPosX > 0 && isFree(renderPosX - 64, renderPosY)) {
 				setFacing(EnumFacing.LEFT);
-			}else if(event.getKeyCode() == rightKey && renderPosX < Map.width && isFree(renderPosX + 64, renderPosY)) {
+			}else if(event.getKeyCode() == rightKey && renderPosX < World.width && isFree(renderPosX + 64, renderPosY)) {
 				setFacing(EnumFacing.RIGHT);
 			}
 		}

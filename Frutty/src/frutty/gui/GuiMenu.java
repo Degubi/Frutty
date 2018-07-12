@@ -19,12 +19,12 @@ import javax.swing.WindowConstants;
 
 import frutty.Main;
 import frutty.gui.editor.GuiEditor;
-import frutty.map.Map;
-import frutty.map.interfaces.IInternalZone;
-import frutty.map.interfaces.ITexturable;
-import frutty.map.interfaces.ITransparentZone;
-import frutty.map.interfaces.MapZoneBase;
 import frutty.tools.Version;
+import frutty.world.World;
+import frutty.world.interfaces.IInternalZone;
+import frutty.world.interfaces.ITexturable;
+import frutty.world.interfaces.ITransparentZone;
+import frutty.world.interfaces.MapZoneBase;
 
 public final class GuiMenu extends JPanel implements ActionListener{
 	private final MapZoneBase[] zones = new MapZoneBase[140];
@@ -125,7 +125,7 @@ public final class GuiMenu extends JPanel implements ActionListener{
 		}else{ //Load
 			var allMapNames = new File("./saves/").list();
 			if(allMapNames.length > 0) {
-				if(Map.loadSave((String) JOptionPane.showInputDialog(this, "Chose map file!", "Saves", JOptionPane.QUESTION_MESSAGE, null, allMapNames, allMapNames[0]))) {
+				if(World.loadSave((String) JOptionPane.showInputDialog(this, "Chose map file!", "Saves", JOptionPane.QUESTION_MESSAGE, null, allMapNames, allMapNames[0]))) {
 					GuiIngame.showIngame();
 					((JFrame)getTopLevelAncestor()).dispose();
 				}
