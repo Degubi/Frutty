@@ -14,8 +14,8 @@ import frutty.entity.EntityPlayer;
 import frutty.entity.zone.EntityAppleZone;
 import frutty.entity.zone.EntityZone;
 import frutty.gui.GuiHelper;
+import frutty.gui.GuiSettings;
 import frutty.gui.GuiStats;
-import frutty.gui.Settings;
 import frutty.gui.editor.EditorZoneButton;
 import frutty.gui.editor.GuiEditor;
 import frutty.gui.editor.GuiTextureSelector;
@@ -26,20 +26,20 @@ import frutty.world.World;
 @SuppressWarnings("unused")
 public abstract class MapZoneBase implements Serializable{
 	private static final long serialVersionUID = 392316063689927131L;
-	public transient final Lazy<ImageIcon> editorTexture = new Lazy<>(this::getEditorIconInternal);
+	public final Lazy<ImageIcon> editorTexture = new Lazy<>(this::getEditorIconInternal);
 	
+	public final String zoneName;
 	public final boolean hasShadowRender, hasZoneEntity, hasParticleSpawns;
 	
-	public MapZoneBase(boolean hasDarkening, boolean hasZoneEntity, boolean enableParticles) {
+	public MapZoneBase(String name, boolean hasDarkening, boolean hasZoneEntity, boolean enableParticles) {
+		zoneName = name;
 		hasShadowRender = hasDarkening;
 		this.hasZoneEntity = hasZoneEntity;
 		hasParticleSpawns = enableParticles;
 	}
 	
-	public MapZoneBase() {
-		hasShadowRender = true;
-		hasZoneEntity = false;
-		hasParticleSpawns = true;
+	public MapZoneBase(String name) {
+		this(name, true, false, true);
 	}
 	
 	public abstract void draw(int x, int y, int textureIndex, Graphics2D graphics);
@@ -57,7 +57,7 @@ public abstract class MapZoneBase implements Serializable{
 
 		if(isBreakable(x, y)) {
 			World.setZoneEmptyAt(zoneIndex);
-			GuiStats.stats.set("zoneCount", GuiStats.stats.getInt("zoneCount") + 1);
+			GuiStats.zoneCount++;
 			
 			int checkIndex = zoneIndex - (World.width / 64) - 1;
 			MapZoneBase up = World.getZoneAtIndex(checkIndex);
@@ -74,7 +74,7 @@ public abstract class MapZoneBase implements Serializable{
 	public final void render(int x, int y, int textureIndex, Graphics2D graphics) {
 		draw(x, y, textureIndex, graphics);
 		
-		if(hasShadowRender && Settings.graphicsLevel > 0) {
+		if(hasShadowRender && GuiSettings.graphicsLevel > 0) {
 			graphics.setColor(GuiHelper.color_84Black);
 			
 			int till = y / 120;
@@ -83,7 +83,7 @@ public abstract class MapZoneBase implements Serializable{
 			}
 		}
 		
-		if(Settings.renderDebugLevel > 1) {
+		if(GuiSettings.renderDebugLevel > 1) {
 			graphics.setColor(Color.WHITE);
 			graphics.drawRect(x, y, 64, 64);
 		}

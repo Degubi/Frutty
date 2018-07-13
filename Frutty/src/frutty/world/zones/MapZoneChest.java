@@ -16,6 +16,10 @@ import frutty.world.interfaces.MapZoneBase;
 public final class MapZoneChest extends MapZoneBase implements ITexturable{
 	public static final BufferedImage chestTexture = Main.loadTexture("map/special", "chest.png");
 
+	public MapZoneChest() {
+		super("chestZone");
+	}
+	
 	@Override
 	public void draw(int x, int y, int textureIndex, Graphics2D graphics) {
 		graphics.drawImage(GuiIngame.textures[textureIndex], x, y, 64, 64, null);

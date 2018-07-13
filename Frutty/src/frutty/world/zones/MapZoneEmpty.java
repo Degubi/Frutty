@@ -10,7 +10,7 @@ import frutty.world.interfaces.MapZoneBase;
 
 public final class MapZoneEmpty extends MapZoneBase{
 	public MapZoneEmpty() {
-		super(false, false, false);
+		super("emptyZone", false, false, false);
 	}
 
 	@Override

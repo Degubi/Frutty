@@ -23,7 +23,7 @@ public final class MapZoneFruit extends MapZoneBase implements ITexturable{
 	public final int fruitType;
 	
 	public MapZoneFruit(int type) {
-		super(true, type == APPLE, true);
+		super(type == APPLE ? "appleZone" : "cherryZone", true, type == APPLE, true);
 		fruitType = type;
 	}
 

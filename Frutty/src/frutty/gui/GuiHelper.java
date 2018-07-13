@@ -1,6 +1,7 @@
 package frutty.gui;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.EventQueue;
 import java.awt.Font;
@@ -11,6 +12,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
@@ -19,6 +21,7 @@ import javax.swing.border.LineBorder;
 public final class GuiHelper {
 	public static final Font ingameFont = new Font("TimesRoman", Font.PLAIN, 22);
 	public static final Font thiccFont = new Font("TimeRoman", Font.BOLD, 14);
+	public static final Font bigFont = new Font("TimesRoman", Font.BOLD, 28);
 	public static final Color color_128Black = new Color(0, 0, 0, 128), color_84Black = new Color(0, 0, 0, 84);
 	private static final int recommendedMaxMapHeight = Toolkit.getDefaultToolkit().getScreenSize().height / 64 - 1;
 	private static final int recommendedMaxMapWidth = Toolkit.getDefaultToolkit().getScreenSize().width / 64 - 1;
@@ -65,6 +68,15 @@ public final class GuiHelper {
 		field.setBounds(x, y, 60, 30);
 		field.setHorizontalAlignment(SwingConstants.CENTER);
 		return field;
+	}
+	
+	public static JSplitPane newSplitPane(int x, int y, int width, int height, Component leftComponent, Component rightComponent, int dividerLocation) {
+		JSplitPane pane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftComponent, rightComponent);
+		pane.setEnabled(false);
+		pane.setBounds(x, y, width, height);
+		pane.setBorder(menuBorder);
+		pane.setDividerLocation(dividerLocation);
+		return pane;
 	}
 	
 	public static JButton newButton(String text, int x, int y, ActionListener listener) {

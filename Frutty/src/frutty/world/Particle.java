@@ -8,7 +8,7 @@ import java.util.Iterator;
 import frutty.Main;
 import frutty.gui.GuiHelper;
 import frutty.gui.GuiIngame;
-import frutty.gui.Settings;
+import frutty.gui.GuiSettings;
 
 public final class Particle implements Serializable{
 	private static final long serialVersionUID = -9182849456014867036L;
@@ -28,7 +28,7 @@ public final class Particle implements Serializable{
 	}
 	
 	public static void addParticles(int count, int x, int y, int color) {
-		if(Settings.graphicsLevel == 2) {
+		if(GuiSettings.graphicsLevel == 2) {
 			for(int k = 0; k < count; ++k) {
 				World.particles.add(new Particle(x + Main.rand.nextInt(64), y + 64 + Main.rand.nextInt(32), color));
 			}

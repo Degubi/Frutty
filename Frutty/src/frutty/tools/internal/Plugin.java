@@ -2,7 +2,7 @@ package frutty.tools.internal;
 
 import frutty.tools.Version;
 
-public final class Plugin {
+public final class Plugin{
 	public final String description, ID, updateURL, versionURL;
 	public final Version version;
 	public boolean needsUpdate = false;

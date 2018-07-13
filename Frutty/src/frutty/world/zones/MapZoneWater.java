@@ -9,7 +9,7 @@ import javax.swing.ImageIcon;
 
 import frutty.Main;
 import frutty.gui.GuiHelper;
-import frutty.gui.Settings;
+import frutty.gui.GuiSettings;
 import frutty.world.interfaces.ITransparentZone;
 import frutty.world.interfaces.MapZoneBase;
 
@@ -19,7 +19,7 @@ public final class MapZoneWater extends MapZoneBase implements ITransparentZone{
 	private static int textureY = 0;
 	
 	public MapZoneWater() {
-		super(false, false, false);
+		super("waterZone", false, false, false);
 	}
 	
 	@Override
@@ -32,7 +32,7 @@ public final class MapZoneWater extends MapZoneBase implements ITransparentZone{
 	public void drawAfter(int x, int y, int textureIndex, Graphics graphics) {
 		graphics.drawImage(waterTexture, x, y, x + 64, y + 64, 0, textureY, 16, textureY + 16, null);
 		
-		if(Settings.graphicsLevel > 0) {
+		if(GuiSettings.graphicsLevel > 0) {
 			graphics.setColor(GuiHelper.color_84Black);
 			
 			int till = y / 120;

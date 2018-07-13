@@ -14,8 +14,9 @@ import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
+import java.util.List;
 import java.util.Random;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
@@ -24,7 +25,6 @@ import javax.imageio.ImageIO;
 
 import frutty.gui.GuiIngame;
 import frutty.gui.GuiMenu;
-import frutty.gui.Settings;
 import frutty.plugin.FruttyEvent;
 import frutty.plugin.FruttyPlugin;
 import frutty.plugin.FruttyPluginMain;
@@ -47,9 +47,24 @@ import frutty.world.zones.MapZoneWater;
 public final class Main {
 	public static final Random rand = new Random();
 	
+	public static final MapZoneNormal normalZone = new MapZoneNormal();
+	public static final MapZoneEmpty emptyZone = new MapZoneEmpty();
+	public static final MapZonePlayer player1Zone = new MapZonePlayer(1);
+	public static final MapZonePlayer player2Zone = new MapZonePlayer(2);
+	public static final MapZoneFruit appleZone = new MapZoneFruit(MapZoneFruit.APPLE);
+	public static final MapZoneFruit cherryZone = new MapZoneFruit(MapZoneFruit.CHERRY);
+	public static final MapZoneSpawner spawnerZone = new MapZoneSpawner();
+	public static final MapZoneChest chestZone = new MapZoneChest();
+	public static final MapZoneWater waterZone = new MapZoneWater();
+	public static final MapZoneSky skyZone = new MapZoneSky();
+	public static final MapZoneBush bushZone = new MapZoneBush();
+	
+	public static final List<MapZoneBase> zoneRegistry = toList(normalZone, emptyZone, appleZone, player1Zone, player2Zone, cherryZone, spawnerZone, chestZone, waterZone, skyZone, bushZone);
+
+	private Main() {}
+	
 	public static void main(String[] args) throws IOException{
 		GuiMenu.createMainFrame(true);
-		Settings.loadSettings();
 			
 		var savePath = Paths.get("saves");
 		if(!Files.exists(savePath)) {
@@ -74,7 +89,7 @@ public final class Main {
 			loadPlugins();
 			
 			if(mapLoadEvents != null) {
-				Arrays.sort(mapLoadEvents, Comparator.comparingInt(EventHandleObject::getPriority));
+				Arrays.sort(mapLoadEvents, EventHandleObject.byPriority);
 			}
 		}
 	}
@@ -88,8 +103,7 @@ public final class Main {
 		}
 	}
 	
-	public static Plugin[] plugins = {new Plugin("Frutty", "Base module for the game.", null, Version.from(1, 2, 0), "https://pastebin.com/raw/m5qJbnks")};
-	public static int pluginIndex = 1;
+	public static ArrayList<Plugin> plugins = toList(new Plugin("Frutty", "Base module for the game.", null, Version.from(1, 2, 0), "https://pastebin.com/raw/m5qJbnks"));
 	public static EventHandleObject[] mapLoadEvents = null;
 	public static int mapLoadEventIndex = 0;
 	
@@ -122,7 +136,7 @@ public final class Main {
 				}
 			}
 			
-			try(URLClassLoader urlClass = new URLClassLoader(classLoaderNames)){
+			try(URLClassLoader urlClass = new URLClassLoader(classLoaderNames, Main.class.getClassLoader())){
 				for(int k = 0; k < mainClassNames.length; ++k) {
 					if(mainClassNames[k] == null) {
 						throw new IllegalStateException("Can't load main class from plugin: " + pluginNames[k]);
@@ -133,13 +147,9 @@ public final class Main {
 					}
 					
 					FruttyPlugin pluginAnnotation = loaded.getDeclaredAnnotation(FruttyPlugin.class);
+					plugins.add(new Plugin(pluginAnnotation.name(), pluginAnnotation.description(), pluginAnnotation.updateURL(), Version.fromString(pluginAnnotation.version()), pluginAnnotation.versionURL()));
+					plugins.trimToSize();
 					
-					Plugin[] newArray = new Plugin[plugins.length + 1];
-					System.arraycopy(plugins, 0, newArray, 0, plugins.length);
-					newArray[pluginIndex++] = new Plugin(pluginAnnotation.name(), pluginAnnotation.description(), pluginAnnotation.updateURL(), Version.fromString(pluginAnnotation.version()), pluginAnnotation.versionURL());
-					
-					plugins = newArray;
-						
 					Method[] methods = loaded.getDeclaredMethods();
 					boolean ranMain = false;
 					for(Method method : methods) {
@@ -169,7 +179,7 @@ public final class Main {
 														if(mapLoadEventIndex > 0) {
 															System.arraycopy(mapLoadEvents, 0, mapLoads, 0, mapLoadEventIndex);
 														}
-														mapLoads[mapLoadEventIndex++] = new EventHandleObject(lookup.unreflect(eventMts), EventHandleObject.ordinal(eventMts.getAnnotation(FruttyEvent.class).priority()));
+														mapLoads[mapLoadEventIndex++] = new EventHandleObject(lookup.unreflect(eventMts), eventMts.getAnnotation(FruttyEvent.class).priority());
 														mapLoadEvents = mapLoads;
 													} catch (IllegalAccessException e) {
 														e.printStackTrace();
@@ -204,27 +214,10 @@ public final class Main {
 		for(EventHandleObject handles : methods) event.invoke(handles.handle);
 	}
 	
-	public static final MapZoneNormal normalZone = new MapZoneNormal();
-	public static final MapZoneEmpty emptyZone = new MapZoneEmpty();
-	public static final MapZonePlayer player1Zone = new MapZonePlayer(1);
-	public static final MapZonePlayer player2Zone = new MapZonePlayer(2);
-	public static final MapZoneFruit appleZone = new MapZoneFruit(MapZoneFruit.APPLE);
-	public static final MapZoneFruit cherryZone = new MapZoneFruit(MapZoneFruit.CHERRY);
-	public static final MapZoneSpawner spawnerZone = new MapZoneSpawner();
-	public static final MapZoneChest chestZone = new MapZoneChest();
-	public static final MapZoneWater waterZone = new MapZoneWater();
-	public static final MapZoneSky skyZone = new MapZoneSky();
-	public static final MapZoneBush bushZone = new MapZoneBush();
-	
-	private Main() {}
-	public static Object[] zoneStorage = {"normalZone", normalZone, "emptyZone", emptyZone, "appleZone", appleZone, "player1Zone", player1Zone, "player2Zone", player2Zone,
-										  "cherryZone", cherryZone, "spawnerZone", spawnerZone, "chestZone", chestZone, "waterZone", waterZone, "skyZone", skyZone, "bushZone", bushZone};
-	public static int zoneIndex = 22;
-	
 	public static MapZoneBase getZoneFromName(String name) {
-		for(int k = 0; k < zoneIndex; k += 2) {
-			if(zoneStorage[k].equals(name)) {
-				return (MapZoneBase) zoneStorage[k + 1];
+		for(MapZoneBase zone : zoneRegistry) {
+			if(zone.zoneName.equals(name)) {
+				return zone;
 			}
 		}
 		return null;
@@ -247,5 +240,15 @@ public final class Main {
 		}catch (IOException e) {
 			System.err.println("Can't find sky texture: " + textureName);
 		}
+	}
+	
+	private static <T> ArrayList<T> toList(@SuppressWarnings("unchecked") T... objs){
+		ArrayList<T> list = new ArrayList<>(objs.length);
+		
+		for(T el : objs) {
+			list.add(el);
+		}
+		
+		return list;
 	}
 }

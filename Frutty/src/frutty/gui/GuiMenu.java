@@ -10,12 +10,16 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.net.URL;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.WindowConstants;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.MatteBorder;
 
 import frutty.Main;
 import frutty.gui.editor.GuiEditor;
@@ -29,6 +33,7 @@ import frutty.world.interfaces.MapZoneBase;
 public final class GuiMenu extends JPanel implements ActionListener{
 	private final MapZoneBase[] zones = new MapZoneBase[140];
 	private final int[] xCoords = new int[140], yCoords = new int[140], textureData = new int[140];
+	private final JTextArea devMessage = new JTextArea();
 	
 	public static JFrame mainFrame;
 	
@@ -37,6 +42,20 @@ public final class GuiMenu extends JPanel implements ActionListener{
 		
 		loadBackground();
 		
+		new Thread(() -> {
+			try(var input = new URL("https://pastebin.com/raw/WvM5LqW5").openStream()){
+				devMessage.setText(new String(input.readAllBytes()));
+				
+				devMessage.setEditable(false);
+				devMessage.setForeground(Color.WHITE);
+				devMessage.setBackground(new Color(0, 0, 0, 192));
+				devMessage.setBorder(new CompoundBorder(new MatteBorder(0, 12, 0, 0, Color.YELLOW), new MatteBorder(4, 4, 4, 4, Color.LIGHT_GRAY)));
+				devMessage.setBounds(20, 40, devMessage.getText().indexOf('\n') * 7, 80);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}).start();
+		
 		add(GuiHelper.newButton("New Game", 700, 20, this));
 		add(GuiHelper.newButton("Exit", 370, 550, this));
 		add(GuiHelper.newButton("Settings", 700, 250, this));
@@ -44,6 +63,7 @@ public final class GuiMenu extends JPanel implements ActionListener{
 		add(GuiHelper.newButton("Editor", 20, 475, this));
 		add(GuiHelper.newButton("Plugins", 20, 400, this));
 		add(GuiHelper.newButton("Stats", 700, 330, this));
+		add(devMessage);
 	}
 	
 	public static void createMainFrame(boolean checkUpdate) {
@@ -51,7 +71,7 @@ public final class GuiMenu extends JPanel implements ActionListener{
 		
 		if(checkUpdate) {
 			new Thread(() -> {
-				if(Version.fromURL(Main.plugins[0].versionURL).isNewerThan(Main.plugins[0].version)) {
+				if(Version.fromURL(Main.plugins.get(0).versionURL).isNewerThan(Main.plugins.get(0).version)) {
 					JButton updaterButton = new JButton("Click here to Update...");
 					updaterButton.setActionCommand("Update");
 					updaterButton.setBounds(660, 600, 240, 40);
@@ -92,7 +112,7 @@ public final class GuiMenu extends JPanel implements ActionListener{
 		graphics.fillRect(0, 0, 910, 675);
 		graphics.setColor(Color.WHITE);
 		graphics.setFont(GuiHelper.thiccFont);
-		graphics.drawString("Version: " + Main.plugins[0].version, 10, 625);
+		graphics.drawString("Version: " + Main.plugins.get(0).version, 10, 625);
 	}
 	
 	@Override
@@ -104,7 +124,7 @@ public final class GuiMenu extends JPanel implements ActionListener{
 		}else if(command.equals("Exit")){
 			System.exit(0);
 		}else if(command.equals("Settings")){
-			Settings.showGuiSettings();
+			GuiSettings.showGuiSettings();
 		}else if(command.equals("Plugins")) {
 			GuiPlugins.showPlugins();
 		}else if(command.equals("Editor")){

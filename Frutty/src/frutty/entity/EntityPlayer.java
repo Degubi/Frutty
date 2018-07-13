@@ -10,7 +10,7 @@ import java.util.Iterator;
 import frutty.Main;
 import frutty.entity.effects.EntityEffect;
 import frutty.entity.effects.EntityEffectInvisible;
-import frutty.gui.Settings;
+import frutty.gui.GuiSettings;
 import frutty.world.World;
 
 public final class EntityPlayer extends Entity implements KeyListener{
@@ -32,10 +32,10 @@ public final class EntityPlayer extends Entity implements KeyListener{
 			upKey = KeyEvent.VK_UP;
 			downKey = KeyEvent.VK_DOWN;
 		}else{
-			leftKey = Settings.leftKey;
-			rightKey = Settings.rightKey;
-			upKey = Settings.upKey;
-			downKey = Settings.downKey;
+			leftKey = GuiSettings.leftKey;
+			rightKey = GuiSettings.rightKey;
+			upKey = GuiSettings.upKey;
+			downKey = GuiSettings.downKey;
 		}
 	}
 

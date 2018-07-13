@@ -14,21 +14,15 @@ public final class PluginRegistry {
 	 * @param zoneID String ID for the zone (format: "pluginID:zoneName")
 	 * @param zone The zone to register
 	 */
-	public static void registerZone(String zoneID, MapZoneBase zone) {
-		if(!zoneID.contains(":")) {
-			throw new IllegalArgumentException("Tried to register zone without plugin ID: " + zoneID);
+	public static void registerZone(MapZoneBase zone) {
+		if(!zone.zoneName.contains(":")) {
+			throw new IllegalArgumentException("Tried to register zone without plugin ID: " + zone.zoneName);
 		}
-		if(isZoneAlreadyRegistered(zoneID)) {
-			throw new IllegalArgumentException("Zone already registered with ID: " + zoneID);
+		if(isZoneAlreadyRegistered(zone.zoneName)) {
+			throw new IllegalArgumentException("Zone already registered with ID: " + zone.zoneName);
 		}
 		
-		if(Main.zoneIndex == Main.zoneStorage.length) {
-			Object[] newArray = new Object[Main.zoneStorage.length + 10];
-			System.arraycopy(Main.zoneStorage, 0, newArray, 0, Main.zoneStorage.length);
-			Main.zoneStorage = newArray;
-		}
-		Main.zoneStorage[Main.zoneIndex++] = zoneID;
-		Main.zoneStorage[Main.zoneIndex++] = zone;
+		Main.zoneRegistry.add(zone);
 	}
 	
 	/**
@@ -42,8 +36,8 @@ public final class PluginRegistry {
 	}
 	
 	private static boolean isZoneAlreadyRegistered(String name) {
-		for(int k = 0; k < Main.zoneIndex; k += 2) {
-			if(Main.zoneStorage[k].equals(name)) {
+		for(MapZoneBase zones : Main.zoneRegistry) {
+			if(zones.zoneName.equals(name)) {
 				return true;
 			}
 		}

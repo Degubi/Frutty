@@ -13,6 +13,7 @@ public final class MapZonePlayer extends MapZoneBase implements IInternalZone{
 	private final int playerID;
 	
 	public MapZonePlayer(int id) {
+		super(id == 1 ? "player1Zone" : "player2Zone");
 		playerID = id;
 	}
 	

@@ -1,28 +1,18 @@
 package frutty.tools.internal;
 
 import java.lang.invoke.MethodHandle;
+import java.util.Comparator;
 
-import frutty.plugin.FruttyEvent.EnumPriority;
+import frutty.plugin.EnumPriority;
 
 public final class EventHandleObject {
+	public static final Comparator<EventHandleObject> byPriority = Comparator.comparingInt(event -> event.priority);
+
 	public final MethodHandle handle;
 	public final int priority;
 	
-	public EventHandleObject(MethodHandle hand, int pri) {
+	public EventHandleObject(MethodHandle hand, EnumPriority pri) {
 		handle = hand;
-		priority = pri;
-	}
-	
-	public int getPriority() {
-		return priority;
-	}
-	
-	public static int ordinal(EnumPriority prop) {
-		if(prop == EnumPriority.NORMAL) {
-			return 1;
-		}else if(prop == EnumPriority.HIGH) {
-			return 2;
-		}
-		return 0;
+		priority = pri.ordinal();
 	}
 }

@@ -41,14 +41,13 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 	public static BufferedImage skyTexture;
 	public static BufferedImage[] textures;
 	
-	private final int topScore = GuiStats.stats.getInt("topScore");
 	private int renderDelay;
 	private long renderLastUpdate = System.currentTimeMillis();
 	
 	public GuiIngame() {
 		setLayout(null);
 		updateThread.scheduleAtFixedRate(this, 0, 20, TimeUnit.MILLISECONDS);
-		renderThread.scheduleAtFixedRate(() -> ingameGui.repaint(), 0, 1000 / Settings.fps, TimeUnit.MILLISECONDS);
+		renderThread.scheduleAtFixedRate(() -> ingameGui.repaint(), 0, 1000 / GuiSettings.settingProperties.getInt("fps", 50), TimeUnit.MILLISECONDS);
 	}
 	
 	@Override
@@ -84,9 +83,9 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 		graphics.setColor(Color.BLACK);
 		graphics.setFont(GuiHelper.ingameFont);
 		graphics.drawString("Score: " + World.score, World.width + 90, 20);
-		graphics.drawString("Top score: " + topScore, World.width + 90, 80);
+		graphics.drawString("Top score: " + GuiStats.topScore, World.width + 90, 80);
 		
-		if(Settings.mapDebug) {
+		if(GuiSettings.enableMapDebug) {
 			graphics.setColor(GuiHelper.color_128Black);
 			graphics.fillRect(0, 0, 130, 130);
 			
@@ -102,7 +101,7 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 			graphics.drawString("playerpos_y: " + World.players[0].serverPosY, 2, 120);
 		}
 		
-		if(Settings.renderDebugLevel == 1 || Settings.renderDebugLevel == 3) {
+		if(GuiSettings.renderDebugLevel == 1 || GuiSettings.renderDebugLevel == 3) {
 			graphics.setColor(GuiHelper.color_128Black);
 			graphics.fillRect(World.width - 85, 0, 160, 130);
 			
@@ -129,9 +128,7 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 			
 			int ticks = World.ticks;
 			
-			for(Entity entity : World.players) {
-				entity.update(ticks);
-			}
+			for(Entity entity : World.players) entity.update(ticks);
 			
 			for(EntityEnemy monsters : World.enemies) {
 				if(monsters.active) {
@@ -145,9 +142,7 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 				}
 			}
 			
-			if(ticks % 4 == 0) {
-				MapZoneWater.updateWaterUV();
-			}
+			if(ticks % 4 == 0) MapZoneWater.updateWaterUV();
 			
 			if(ticks % 2 == 0) {
 				for(Iterator<Particle> iterator = World.particles.iterator(); iterator.hasNext();) {
@@ -176,10 +171,10 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 		JOptionPane.showMessageDialog(null, message, "Frutty", JOptionPane.PLAIN_MESSAGE);
 		GuiMenu.createMainFrame(false);
 		((JFrame)ingameGui.getTopLevelAncestor()).dispose();
-		if(GuiStats.stats.getInt("topScore") < World.score) {
-			GuiStats.stats.set("topScore", World.score);
+		if(GuiStats.topScore < World.score) {
+			GuiStats.topScore = World.score;
 		}
-		GuiStats.stats.save();
+		GuiStats.saveStats();
 	}
 	
 	public static void showIngame() {
@@ -241,7 +236,7 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 				if(JOptionPane.showConfirmDialog(null, "Save current status?", "Save?", JOptionPane.YES_NO_OPTION, 1) == 0) {
 					World.createSave(JOptionPane.showInputDialog("Enter save name!"));
 				}
-				GuiStats.stats.save();
+				GuiStats.saveStats();
 				System.exit(0);
 			}else if(cmd.equals("Menu")) {
 				ingameGui.renderThread.shutdown();
@@ -251,12 +246,12 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 				}
 				((JFrame)ingameGui.getTopLevelAncestor()).dispose();
 				GuiMenu.createMainFrame(false);
-				GuiStats.stats.save();
+				GuiStats.saveStats();
 			}else{  //Save
 				ingameGui.paused = true;
 				World.createSave(JOptionPane.showInputDialog("Enter save name!"));
 				ingameGui.paused = false;
-				GuiStats.stats.save();
+				GuiStats.saveStats();
 			}
 			((JFrame)getTopLevelAncestor()).dispose();
 		}

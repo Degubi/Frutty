@@ -31,6 +31,7 @@ import frutty.gui.GuiHelper;
 import frutty.gui.GuiMenu;
 import frutty.gui.editor.GuiProperties.EnumProperty;
 import frutty.world.interfaces.ITexturable;
+import frutty.world.interfaces.MapZoneBase;
 
 public final class GuiEditor extends JPanel{
 	public final ArrayList<EditorZoneButton> zoneButtons = new ArrayList<>();
@@ -57,9 +58,11 @@ public final class GuiEditor extends JPanel{
 	}
 	
 	public static String[] zoneNames() {
-		String[] names = new String[Main.zoneIndex / 2];
-		for(int k = 0, localIndex = 0; k < Main.zoneIndex; k += 2) {
-			names[localIndex++] = (String) Main.zoneStorage[k];
+		String[] names = new String[Main.zoneRegistry.size()];
+		
+		int index = 0;
+		for(MapZoneBase zones : Main.zoneRegistry) {
+			names[index++] = zones.zoneName;
 		}
 		
 		return names;

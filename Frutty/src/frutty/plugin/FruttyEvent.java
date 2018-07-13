@@ -17,9 +17,4 @@ public @interface FruttyEvent {
 	
 	/**Optional priority for the method, affects event execution ordering, defaults to EnumPriority.NORMAL*/
 	EnumPriority priority() default EnumPriority.NORMAL;
-	
-	/**Enum values for changing the ordering of the event execution*/
-	public static enum EnumPriority{
-		LOW, NORMAL, HIGH;
-	}
 }
