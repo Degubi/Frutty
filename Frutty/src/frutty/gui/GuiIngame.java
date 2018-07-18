@@ -28,6 +28,7 @@ import frutty.entity.EntityPlayer;
 import frutty.world.Particle;
 import frutty.world.World;
 import frutty.world.interfaces.ITransparentZone;
+import frutty.world.interfaces.IZoneEntityProvider;
 import frutty.world.interfaces.MapZoneBase;
 import frutty.world.zones.MapZoneWater;
 
@@ -157,7 +158,7 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 						Particle.addParticles(2 + Main.rand.nextInt(5), World.xCoords[k], World.yCoords[k], World.textureData[k]);
 					}
 					
-					if(zone.hasZoneEntity) {
+					if(zone instanceof IZoneEntityProvider) {
 						World.getZoneEntity(k).update();
 					}
 				}

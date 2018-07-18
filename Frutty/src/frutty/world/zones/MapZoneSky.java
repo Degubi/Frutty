@@ -9,7 +9,7 @@ import frutty.world.interfaces.MapZoneBase;
 
 public final class MapZoneSky extends MapZoneBase{
 	public MapZoneSky() {
-		super("skyZone", false, false, false);
+		super("skyZone", false, false);
 	}
 
 	@Override

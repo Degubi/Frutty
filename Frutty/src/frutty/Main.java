@@ -34,12 +34,14 @@ import frutty.tools.internal.EventBase;
 import frutty.tools.internal.EventHandleObject;
 import frutty.tools.internal.Plugin;
 import frutty.world.interfaces.MapZoneBase;
+import frutty.world.zones.MapZoneApple;
 import frutty.world.zones.MapZoneBush;
+import frutty.world.zones.MapZoneCherry;
 import frutty.world.zones.MapZoneChest;
 import frutty.world.zones.MapZoneEmpty;
-import frutty.world.zones.MapZoneFruit;
 import frutty.world.zones.MapZoneNormal;
 import frutty.world.zones.MapZonePlayer;
+import frutty.world.zones.MapZonePortal;
 import frutty.world.zones.MapZoneSky;
 import frutty.world.zones.MapZoneSpawner;
 import frutty.world.zones.MapZoneWater;
@@ -51,15 +53,16 @@ public final class Main {
 	public static final MapZoneEmpty emptyZone = new MapZoneEmpty();
 	public static final MapZonePlayer player1Zone = new MapZonePlayer(1);
 	public static final MapZonePlayer player2Zone = new MapZonePlayer(2);
-	public static final MapZoneFruit appleZone = new MapZoneFruit(MapZoneFruit.APPLE);
-	public static final MapZoneFruit cherryZone = new MapZoneFruit(MapZoneFruit.CHERRY);
+	public static final MapZoneApple appleZone = new MapZoneApple();
+	public static final MapZoneCherry cherryZone = new MapZoneCherry();
 	public static final MapZoneSpawner spawnerZone = new MapZoneSpawner();
 	public static final MapZoneChest chestZone = new MapZoneChest();
 	public static final MapZoneWater waterZone = new MapZoneWater();
 	public static final MapZoneSky skyZone = new MapZoneSky();
 	public static final MapZoneBush bushZone = new MapZoneBush();
+	public static final MapZonePortal portalZone = new MapZonePortal();
 	
-	public static final List<MapZoneBase> zoneRegistry = toList(normalZone, emptyZone, appleZone, player1Zone, player2Zone, cherryZone, spawnerZone, chestZone, waterZone, skyZone, bushZone);
+	public static final List<MapZoneBase> zoneRegistry = toList(normalZone, emptyZone, appleZone, player1Zone, player2Zone, cherryZone, spawnerZone, chestZone, waterZone, skyZone, bushZone, portalZone);
 
 	private Main() {}
 	
@@ -103,7 +106,7 @@ public final class Main {
 		}
 	}
 	
-	public static ArrayList<Plugin> plugins = toList(new Plugin("Frutty", "Base module for the game.", null, Version.from(1, 2, 0), "https://pastebin.com/raw/m5qJbnks"));
+	public static ArrayList<Plugin> plugins = toList(new Plugin("Frutty", "Base module for the game.", null, Version.from(1, 3, 0), "https://pastebin.com/raw/m5qJbnks"));
 	public static EventHandleObject[] mapLoadEvents = null;
 	public static int mapLoadEventIndex = 0;
 	

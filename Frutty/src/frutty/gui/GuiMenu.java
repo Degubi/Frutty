@@ -43,7 +43,7 @@ public final class GuiMenu extends JPanel implements ActionListener{
 		loadBackground();
 		
 		new Thread(() -> {
-			try(var input = new URL("https://pastebin.com/raw/WvM5LqW5").openStream()){
+			try(var input = new URL("https://pastebin.com/raw/tffU5Vu6").openStream()){
 				devMessage.setText(new String(input.readAllBytes()));
 				
 				devMessage.setEditable(false);
@@ -173,8 +173,8 @@ public final class GuiMenu extends JPanel implements ActionListener{
 			Main.loadTextures(textures);
 			Main.loadSkyTexture(input.readUTF());
 			
-			input.readShort(); input.readShort();
-			input.readShort(); input.readShort(); input.readShort(); input.readShort();
+			input.readShort(); input.readShort();  //Width height felesleges, 14x10 az összes
+			input.readUTF(); //Next map
 			
 			int zoneIndex = 0;
 			

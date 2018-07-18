@@ -16,6 +16,7 @@ import frutty.gui.GuiHelper;
 import frutty.plugin.event.MapInitEvent;
 import frutty.world.interfaces.IInternalZone;
 import frutty.world.interfaces.ITexturable;
+import frutty.world.interfaces.IZoneEntityProvider;
 import frutty.world.interfaces.MapZoneBase;
 
 public final class World{
@@ -27,16 +28,17 @@ public final class World{
 	public static int width, height, pickCount, score, ticks;
 	public static int[] xCoords, yCoords, textureData;
 	public static EntityZone[] zoneEntities;
-	public static String skyTextureName, mapName;
+	public static String skyTextureName, mapName, nextMap;
 	public static String[] textures;
 	
-	private static void init(String[] txts, String skyName, boolean isMulti, String levelName, int w, int h, int p1X, int p1Y, int p2X, int p2Y) {
+	private static void init(String[] txts, boolean isMultiplayer, String skyName, String levelName, int w, int h, String next) {
 		entities.clear();
 		particles.clear();
 		pickCount = 0;
 		score = 0;
 		ticks = 0;
 		mapName = levelName;
+		nextMap = next;
 		
 		if(Main.mapLoadEvents != null)
 			Main.handleEvent(new MapInitEvent(w, h, txts, entities), Main.mapLoadEvents);
@@ -51,10 +53,10 @@ public final class World{
 		textureData = new int[zoneCount];
 		zoneEntities = new EntityZone[zoneCount];
 		
-		if(isMulti) {
-			players = new EntityPlayer[]{new EntityPlayer(p1X, p1Y, true), new EntityPlayer(p2X, p2Y, false)};
-		}else{
-			players = new EntityPlayer[]{new EntityPlayer(p1X, p1Y, true)};
+		if(isMultiplayer) {
+			players = new EntityPlayer[2];
+		}else {
+			players = new EntityPlayer[1];
 		}
 		
 		Main.loadTextures(textures = txts);
@@ -66,7 +68,7 @@ public final class World{
 		Random rand = Main.rand;
 		int bigWidth = genWidth * 64, bigHeight = genHeight * 64, zoneIndex = 0;
 		
-		init(new String[] {"normal"}, "null", isMultiplayer, "generated: " + genWidth + "x" + genHeight, bigWidth, bigHeight, 0, 0, 0, 0);
+		init(new String[] {"normal"}, isMultiplayer, null, "generated: " + genWidth + "x" + genHeight, bigWidth, bigHeight, null);
 		
 		for(int y = 0; y < bigHeight; y += 64) {
 			for(int x = 0, rng = rand.nextInt(10); x < bigWidth; x += 64, rng = rand.nextInt(10)) {
@@ -158,19 +160,16 @@ public final class World{
 				zoneIDS[k] = input.readUTF();
 			}
 			
-			boolean isBackround = name.startsWith("background");
-			
-			init(textures, input.readUTF(), isMultiplayer, name, width = input.readShort() * 64, height = input.readShort() * 64, input.readShort(), input.readShort(), input.readShort(), input.readShort());
+			init(textures, isMultiplayer, input.readUTF(), name, width = input.readShort() * 64, height = input.readShort() * 64, input.readUTF());
 			
 			for(int y = 0; y < height; y += 64) {
 				for(int x = 0; x < width; x += 64) {
 					MapZoneBase zone = Main.getZoneFromName(zoneIDS[input.readByte()]);
 					
+					zone.onZoneAdded(isMultiplayer, x, y);  //Fentre így a player zónák jól müködnek majd elméletileg
 					if(zone instanceof IInternalZone) {
 						zone = ((IInternalZone) zone).getReplacementZone();
 					}
-					
-					zone.onZoneAdded(isBackround, x, y);
 					
 					if(zone instanceof ITexturable) {
 						textureData[zoneIndex] = input.readByte();
@@ -179,12 +178,13 @@ public final class World{
 					xCoords[zoneIndex] = x;
 					yCoords[zoneIndex] = y;
 					
-					if(zone.hasZoneEntity) {
-						zoneEntities[zoneIndex] = zone.getZoneEntity(x, y, zoneIndex);
+					if(zone instanceof IZoneEntityProvider) {
+						zoneEntities[zoneIndex] = ((IZoneEntityProvider) zone).getZoneEntity(x, y, zoneIndex);
 					}
 					zones[zoneIndex++] = zone;
 				}
 			}
+			
 		}catch(IOException e){
 			System.err.println("Can't load invalid map: " + "./maps/" + name + ".deg");
 		}

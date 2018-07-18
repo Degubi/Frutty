@@ -10,7 +10,7 @@ import javax.swing.JPanel;
 import frutty.tools.PropertyFile;
 
 public final class GuiStats extends JPanel implements ActionListener{
-	private static final PropertyFile stats = new PropertyFile("stats.prop");
+	private static final PropertyFile stats = new PropertyFile("stats.prop", 3);
 	public static int topScore = stats.getInt("topScore", 0);
 	public static int enemyCount = stats.getInt("enemyCount", 0);
 	public static int zoneCount = stats.getInt("zoneCount", 0);

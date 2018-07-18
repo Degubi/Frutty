@@ -15,7 +15,7 @@ public final class MapZoneBush extends MapZoneBase implements ITransparentZone{
 	public static final BufferedImage texture = Main.loadTexture("map/special", "bush.png");
 	
 	public MapZoneBush() {
-		super("bushZone", true, false, false);
+		super("bushZone", true, false);
 	}
 	
 	@Override

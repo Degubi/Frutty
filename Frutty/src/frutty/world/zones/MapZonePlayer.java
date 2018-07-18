@@ -5,7 +5,8 @@ import java.awt.Graphics2D;
 import javax.swing.ImageIcon;
 
 import frutty.Main;
-import frutty.gui.editor.GuiEditor;
+import frutty.entity.EntityPlayer;
+import frutty.world.World;
 import frutty.world.interfaces.IInternalZone;
 import frutty.world.interfaces.MapZoneBase;
 
@@ -26,19 +27,22 @@ public final class MapZonePlayer extends MapZoneBase implements IInternalZone{
 	public void draw(int x, int y, int textureIndex, Graphics2D graphics) {}
 
 	@Override
+	public void onZoneAdded(boolean isCoop, int x, int y) {
+		if(isCoop) {
+			if(playerID == 1) {
+				World.players[0] = new EntityPlayer(x, y, true);
+			}else{
+				World.players[1] = new EntityPlayer(x, y, false);
+			}
+		}else{
+			if(playerID == 1) {
+				World.players[0] = new EntityPlayer(x, y, true);
+			}
+		}
+	}
+	
+	@Override
 	public MapZoneBase getReplacementZone() {
 		return Main.emptyZone;
-	}
-
-	@SuppressWarnings("boxing")
-	@Override
-	public void handleEditorPlacement(GuiEditor editorInstance, int buttonX, int buttonY) {
-		if(playerID == 1) {
-			editorInstance.mapProperties.table.setValueAt(buttonX, 4, 1);
-			editorInstance.mapProperties.table.setValueAt(buttonY, 5, 1);
-		}else{
-			editorInstance.mapProperties.table.setValueAt(buttonX, 6, 1);
-			editorInstance.mapProperties.table.setValueAt(buttonY, 7, 1);
-		}
 	}
 }

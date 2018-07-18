@@ -12,7 +12,6 @@ import javax.swing.ImageIcon;
 import frutty.Main;
 import frutty.entity.EntityPlayer;
 import frutty.entity.zone.EntityAppleZone;
-import frutty.entity.zone.EntityZone;
 import frutty.gui.GuiHelper;
 import frutty.gui.GuiSettings;
 import frutty.gui.GuiStats;
@@ -29,17 +28,16 @@ public abstract class MapZoneBase implements Serializable{
 	public final Lazy<ImageIcon> editorTexture = new Lazy<>(this::getEditorIconInternal);
 	
 	public final String zoneName;
-	public final boolean hasShadowRender, hasZoneEntity, hasParticleSpawns;
+	public final boolean hasShadowRender, hasParticleSpawns;
 	
-	public MapZoneBase(String name, boolean hasDarkening, boolean hasZoneEntity, boolean enableParticles) {
+	public MapZoneBase(String name, boolean hasDarkening, boolean enableParticles) {
 		zoneName = name;
 		hasShadowRender = hasDarkening;
-		this.hasZoneEntity = hasZoneEntity;
 		hasParticleSpawns = enableParticles;
 	}
 	
 	public MapZoneBase(String name) {
-		this(name, true, false, true);
+		this(name, true, true);
 	}
 	
 	public abstract void draw(int x, int y, int textureIndex, Graphics2D graphics);
@@ -49,8 +47,7 @@ public abstract class MapZoneBase implements Serializable{
 	public boolean isBreakable(int x, int y) {return canPlayerPass(x, y);}
 	public boolean canPlayerPass(int x, int y) {return true;}
 	public boolean canNPCPass(int x, int y) {return false;}
-	public void onZoneAdded(boolean isBackground, int x, int y) {}
-	public EntityZone getZoneEntity(int x, int y, int zoneIndex) {return null;}
+	public void onZoneAdded(boolean isCoop, int x, int y) {}
 	
 	public void onZoneEntered(int x, int y, int zoneIndex, int textureIndex, EntityPlayer player) {
 		player.hidden = doesHidePlayer(x, y);

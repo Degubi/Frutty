@@ -23,7 +23,7 @@ public final class MapZoneSpawner extends MapZoneBase{
 	}
 
 	public MapZoneSpawner() {
-		super("spawnerZone", false, false, false);
+		super("spawnerZone", false, false);
 	}
 	
 	@Override
@@ -39,9 +39,9 @@ public final class MapZoneSpawner extends MapZoneBase{
 	}
 
 	@Override
-	public void onZoneAdded(boolean isBackground, int x, int y) {
+	public void onZoneAdded(boolean isCoop, int x, int y) {
 		int enemyCount = 0, zoneCount = World.zones.length;
-		if(!GuiSettings.disableEnemies && !isBackground) {
+		if(!GuiSettings.disableEnemies) {
 			int difficulty = GuiSettings.settingProperties.getInt("difficulty", 0);
 			if(difficulty == 0) {
 				enemyCount += zoneCount < 70 ? 1 : zoneCount / 70;
@@ -54,10 +54,8 @@ public final class MapZoneSpawner extends MapZoneBase{
 		
 		World.enemies = new EntityEnemy[enemyCount];
 		
-		if(!isBackground) {
-			for(int k = 0; k < +World.enemies.length; ++k) {
-				World.enemies[k] = new EntityEnemy(x, y);
-			}
+		for(int k = 0; k < +World.enemies.length; ++k) {
+			World.enemies[k] = new EntityEnemy(x, y);
 		}
 	}
 	

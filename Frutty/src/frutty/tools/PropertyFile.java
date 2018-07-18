@@ -7,19 +7,34 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public final class PropertyFile {
-	private final ArrayList<Prop> storage = new ArrayList<>();
+	private final ArrayList<Prop> storage;
 	private final Path path;
 	
-	public PropertyFile(String filePath) {
+	public PropertyFile(String filePath, int estimatePropCount) {
 		path = Paths.get(filePath);
+		storage = new ArrayList<>(estimatePropCount);
 		
 		try(var reader = Files.newBufferedReader(path)){
 			for(String line = reader.readLine(); line != null; line = reader.readLine()) {
-				String[] split = line.split(":");
+				byte[] strBytes = line.getBytes();
 				
-				switch(split[0]) {
-					case "int": storage.add(new PrimitiveProperty(split[1].split("="))); break;
-					case "str": storage.add(new GenericProperty(split[1].split("="))); break;
+				int typeIndex = 0, equalsIndex = 0;
+				for(int index = 0; index < strBytes.length; ++index) {
+					if(typeIndex == 0 && strBytes[index] == ':') {
+						typeIndex = index;
+						continue;
+					}else if(strBytes[index] == '='){
+						equalsIndex = index;
+						break;
+					}
+				}
+				
+				String first = new String(strBytes, typeIndex + 1, equalsIndex - typeIndex - 1);
+				String second = new String(strBytes, equalsIndex + 1, strBytes.length - 1 - equalsIndex);
+				
+				switch(new String(strBytes, 0, typeIndex)) {
+					case "int": storage.add(new PrimitiveProperty(first, Integer.parseInt(second))); break;
+					case "str": storage.add(new GenericProperty(first, second)); break;
 				}
 			}
 		} catch (IOException e) {
@@ -29,6 +44,10 @@ public final class PropertyFile {
 				e1.printStackTrace();
 			}
 		}
+	}
+	
+	public PropertyFile(String filePath) {
+		this(filePath, 10);
 	}
 	
 	public String getString(String key, String defaultValue) {
@@ -121,11 +140,6 @@ public final class PropertyFile {
 			value = val;
 		}
 		
-		public PrimitiveProperty(String[] split) {
-			super(split[0]);
-			value = Integer.parseInt(split[1]);
-		}
-		
 		@Override
 		public String toString() {
 			return "int:" + key + '=' + value;
@@ -138,11 +152,6 @@ public final class PropertyFile {
 		public GenericProperty(String key, String val) {
 			super(key);
 			value = val;
-		}
-		
-		public GenericProperty(String[] split) {
-			super(split[0]);
-			value = split[1];
 		}
 		
 		@Override

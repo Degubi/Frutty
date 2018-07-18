@@ -7,9 +7,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
 import frutty.Main;
-import frutty.world.interfaces.IInternalZone;
 import frutty.world.interfaces.ITexturable;
-import frutty.world.interfaces.MapZoneBase;
 
 public final class EditorZoneButton extends JButton implements MouseListener{
 	public String zoneTexture, zoneID;
@@ -27,16 +25,13 @@ public final class EditorZoneButton extends JButton implements MouseListener{
 		EditorZoneButton button = (EditorZoneButton)event.getComponent();
 		if(event.getButton() == MouseEvent.BUTTON1) {
 			String activeZoneName = (String) editorInstance.zoneList.getSelectedItem();
-			MapZoneBase activeZone = Main.getZoneFromName(activeZoneName);
-			
 			button.zoneID = activeZoneName; button.setIcon(Main.getZoneFromName(activeZoneName).editorTexture.get());
 			
-			if(activeZone instanceof ITexturable) {
+			if(Main.getZoneFromName(activeZoneName) instanceof ITexturable) {
 				button.setIcon(((ITexturable)Main.getZoneFromName(button.zoneID)).getEditorTextureVars()[editorInstance.textureSelectorButton.activeTextureIndex]);
 				button.zoneTexture = editorInstance.textureSelectorButton.activeTexture;
-			}if(activeZone instanceof IInternalZone) {
-				((IInternalZone) activeZone).handleEditorPlacement(editorInstance, button.getX(), button.getY());
 			}
+			
 		}else if(event.getButton() == MouseEvent.BUTTON3) {
 			if(Main.getZoneFromName(button.zoneID) instanceof ITexturable) {
 				button.setIcon(((ITexturable)Main.getZoneFromName(button.zoneID)).getEditorTextureVars()[editorInstance.textureSelectorButton.activeTextureIndex]);

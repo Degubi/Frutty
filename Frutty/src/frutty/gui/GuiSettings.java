@@ -23,7 +23,7 @@ import javax.swing.text.DocumentFilter;
 import frutty.tools.PropertyFile;
 
 public final class GuiSettings extends JPanel implements ActionListener{
-	public static final PropertyFile settingProperties = new PropertyFile("settings.prop");
+	public static final PropertyFile settingProperties = new PropertyFile("settings.prop", 12);
 	public static int graphicsLevel = settingProperties.getInt("graphics", 2);
 	public static int renderDebugLevel = settingProperties.getInt("renderDebug", 0);
 	public static int upKey = settingProperties.getInt("upKey", 'W');

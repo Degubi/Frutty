@@ -19,7 +19,7 @@ public final class MapZoneWater extends MapZoneBase implements ITransparentZone{
 	private static int textureY = 0;
 	
 	public MapZoneWater() {
-		super("waterZone", false, false, false);
+		super("waterZone", false, false);
 	}
 	
 	@Override

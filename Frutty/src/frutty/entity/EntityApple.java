@@ -2,7 +2,7 @@ package frutty.entity;
 
 import java.awt.Graphics;
 
-import frutty.world.zones.MapZoneFruit;
+import frutty.world.zones.MapZoneApple;
 
 public final class EntityApple extends EntityFalling{
 	public EntityApple(int x, int y) {
@@ -11,7 +11,7 @@ public final class EntityApple extends EntityFalling{
 	
 	@Override
 	public void render(Graphics graphics) {
-		graphics.drawImage(MapZoneFruit.appleTexture, renderPosX, renderPosY, null);
+		graphics.drawImage(MapZoneApple.appleTexture, renderPosX, renderPosY, null);
 	}
 
 	@Override
