@@ -18,6 +18,8 @@ import frutty.gui.GuiStats;
 import frutty.gui.editor.EditorZoneButton;
 import frutty.gui.editor.GuiEditor;
 import frutty.gui.editor.GuiTextureSelector;
+import frutty.sound.CachedSoundClip;
+import frutty.sound.StreamedSoundClip;
 import frutty.tools.Lazy;
 import frutty.world.Particle;
 import frutty.world.World;
@@ -27,6 +29,7 @@ public abstract class MapZoneBase implements Serializable{
 	private static final long serialVersionUID = 392316063689927131L;
 	public final Lazy<ImageIcon> editorTexture = new Lazy<>(this::getEditorIconInternal);
 	
+	protected static final CachedSoundClip breakSound = new CachedSoundClip("zonebreak.wav");
 	public final String zoneName;
 	public final boolean hasShadowRender, hasParticleSpawns;
 	
@@ -61,11 +64,14 @@ public abstract class MapZoneBase implements Serializable{
 			if(up != null && up == Main.appleZone) {
 				((EntityAppleZone)World.zoneEntities[checkIndex]).notified = true;
 			}
+			breakSound.start();
+			
 			Particle.addParticles(2 + Main.rand.nextInt(10), x, y, textureIndex);
 		}
 	}
 	
 	
+	/********************************************************INTERNALS***********************************************************/
 	
 	
 	public final void render(int x, int y, int textureIndex, Graphics2D graphics) {

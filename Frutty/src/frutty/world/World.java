@@ -22,8 +22,8 @@ import frutty.world.interfaces.MapZoneBase;
 public final class World{
 	public static EntityPlayer[] players;
 	public static MapZoneBase[] zones;
-	public static ArrayList<Entity> entities = new ArrayList<>();
-	public static ArrayList<Particle> particles = new ArrayList<>();
+	public static ArrayList<Entity> entities = new ArrayList<>(10);
+	public static ArrayList<Particle> particles = new ArrayList<>(10);
 	public static EntityEnemy[] enemies;
 	public static int width, height, pickCount, score, ticks;
 	public static int[] xCoords, yCoords, textureData;
@@ -31,17 +31,28 @@ public final class World{
 	public static String skyTextureName, mapName, nextMap;
 	public static String[] textures;
 	
-	private static void init(String[] txts, boolean isMultiplayer, String skyName, String levelName, int w, int h, String next) {
+	public static void cleanUp() {
 		entities.clear();
 		particles.clear();
+		
 		pickCount = 0;
 		score = 0;
 		ticks = 0;
+		players = null;
+		zones = null;
+		enemies = null;
+		zoneEntities = null;
+		xCoords = null;
+		yCoords = null;
+		textureData = null;
+		textures = null;
+	}
+	
+	private static void init(String[] txts, boolean isMultiplayer, String skyName, String levelName, int w, int h, String next) {
 		mapName = levelName;
 		nextMap = next;
 		
-		if(Main.mapLoadEvents != null)
-			Main.handleEvent(new MapInitEvent(w, h, txts, entities), Main.mapLoadEvents);
+		if(Main.mapLoadEvents != null) Main.handleEvent(new MapInitEvent(w, h, txts, entities), Main.mapLoadEvents);
 		
 		int zoneCount = (w / 64) * (h / 64);
 		zones = new MapZoneBase[zoneCount];

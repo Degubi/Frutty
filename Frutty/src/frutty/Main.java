@@ -29,10 +29,10 @@ import frutty.plugin.FruttyEvent;
 import frutty.plugin.FruttyPlugin;
 import frutty.plugin.FruttyPluginMain;
 import frutty.plugin.event.MapInitEvent;
+import frutty.plugin.internal.EventBase;
+import frutty.plugin.internal.EventHandleObject;
+import frutty.plugin.internal.Plugin;
 import frutty.tools.Version;
-import frutty.tools.internal.EventBase;
-import frutty.tools.internal.EventHandleObject;
-import frutty.tools.internal.Plugin;
 import frutty.world.interfaces.MapZoneBase;
 import frutty.world.zones.MapZoneApple;
 import frutty.world.zones.MapZoneBush;
@@ -106,7 +106,7 @@ public final class Main {
 		}
 	}
 	
-	public static ArrayList<Plugin> plugins = toList(new Plugin("Frutty", "Base module for the game.", null, Version.from(1, 3, 0), "https://pastebin.com/raw/m5qJbnks"));
+	public static ArrayList<Plugin> plugins = toList(new Plugin("Frutty", "Base module for the game.", null, Version.from(1, 4, 0), "https://pastebin.com/raw/m5qJbnks"));
 	public static EventHandleObject[] mapLoadEvents = null;
 	public static int mapLoadEventIndex = 0;
 	
@@ -129,6 +129,7 @@ public final class Main {
 					if(mani == null) {
 						throw new IllegalStateException("Can't find manifest file from plugin: " + pluginNames[k]);
 					}
+					
 					String pluginClass = mani.getMainAttributes().getValue("Plugin-Class");
 					if(pluginClass == null) {
 						throw new IllegalStateException("Can't find \"Plugin-Class\" attribute from plugin: " + pluginNames[k]);
@@ -237,9 +238,7 @@ public final class Main {
 	
 	public static void loadSkyTexture(String textureName) {
 		try{
-			if(!textureName.equals("null")) {
-				GuiIngame.skyTexture = ImageIO.read(Files.newInputStream(Paths.get("./textures/map/skybox/" + textureName + ".png")));
-			}
+			GuiIngame.skyTexture = !textureName.equals("null") ? ImageIO.read(Files.newInputStream(Paths.get("./textures/map/skybox/" + textureName + ".png"))) : null;
 		}catch (IOException e) {
 			System.err.println("Can't find sky texture: " + textureName);
 		}

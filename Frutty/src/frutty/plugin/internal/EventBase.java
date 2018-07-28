@@ -1,4 +1,4 @@
-package frutty.tools.internal;
+package frutty.plugin.internal;
 
 import java.lang.invoke.MethodHandle;
 

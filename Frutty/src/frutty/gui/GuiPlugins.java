@@ -17,8 +17,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import frutty.Main;
+import frutty.plugin.internal.Plugin;
 import frutty.tools.Version;
-import frutty.tools.internal.Plugin;
 
 public final class GuiPlugins implements ListSelectionListener, HyperlinkListener{
 	protected final JList<Plugin> pluginList = new JList<>(Main.plugins.toArray(new Plugin[Main.plugins.size()]));

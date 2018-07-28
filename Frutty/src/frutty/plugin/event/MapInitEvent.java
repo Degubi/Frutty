@@ -3,7 +3,7 @@ package frutty.plugin.event;
 import java.util.ArrayList;
 
 import frutty.entity.Entity;
-import frutty.tools.internal.EventBase;
+import frutty.plugin.internal.EventBase;
 
 /**Event is fired when a map is initialized, can add entities, or change textures*/
 public final class MapInitEvent extends EventBase{

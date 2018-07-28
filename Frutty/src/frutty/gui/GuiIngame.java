@@ -36,7 +36,7 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 	protected final ScheduledExecutorService updateThread = Executors.newSingleThreadScheduledExecutor();
 	protected final ScheduledExecutorService renderThread = Executors.newSingleThreadScheduledExecutor();
 	
-	static GuiIngame ingameGui;
+	public static GuiIngame ingameGui;
 	
 	protected boolean paused = false;
 	public static BufferedImage skyTexture;
@@ -176,6 +176,7 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 			GuiStats.topScore = World.score;
 		}
 		GuiStats.saveStats();
+		World.cleanUp();
 	}
 	
 	public static void showIngame() {
@@ -248,6 +249,7 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 				((JFrame)ingameGui.getTopLevelAncestor()).dispose();
 				GuiMenu.createMainFrame(false);
 				GuiStats.saveStats();
+				World.cleanUp();
 			}else{  //Save
 				ingameGui.paused = true;
 				World.createSave(JOptionPane.showInputDialog("Enter save name!"));

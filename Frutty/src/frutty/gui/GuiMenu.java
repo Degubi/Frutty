@@ -54,7 +54,7 @@ public final class GuiMenu extends JPanel implements ActionListener{
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		}).start();
+		}, "Menu Dev Message Thread").start();
 		
 		add(GuiHelper.newButton("New Game", 700, 20, this));
 		add(GuiHelper.newButton("Exit", 370, 550, this));
