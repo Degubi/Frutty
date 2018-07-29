@@ -6,9 +6,9 @@ import java.io.Serializable;
 import java.util.Iterator;
 
 import frutty.Main;
-import frutty.gui.GuiHelper;
 import frutty.gui.GuiIngame;
 import frutty.gui.GuiSettings;
+import frutty.gui.components.GuiHelper;
 
 public final class Particle implements Serializable{
 	private static final long serialVersionUID = -9182849456014867036L;

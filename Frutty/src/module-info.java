@@ -7,6 +7,7 @@ module frutty.api{
 	exports frutty.plugin;
 	exports frutty.plugin.event;
 	
+	exports frutty.sound;
 	exports frutty.tools;
 	
 	exports frutty.world;

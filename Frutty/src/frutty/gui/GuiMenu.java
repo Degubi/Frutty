@@ -22,7 +22,7 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.MatteBorder;
 
 import frutty.Main;
-import frutty.gui.editor.GuiEditor;
+import frutty.gui.components.GuiHelper;
 import frutty.tools.Version;
 import frutty.world.World;
 import frutty.world.interfaces.IInternalZone;
@@ -44,7 +44,8 @@ public final class GuiMenu extends JPanel implements ActionListener{
 		
 		new Thread(() -> {
 			try(var input = new URL("https://pastebin.com/raw/tffU5Vu6").openStream()){
-				devMessage.setText(new String(input.readAllBytes()));
+				byte[] kek = new byte[255];
+				devMessage.setText(new String(kek, 0, input.readNBytes(kek, 0, 255)));
 				
 				devMessage.setEditable(false);
 				devMessage.setForeground(Color.WHITE);

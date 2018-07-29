@@ -1,4 +1,4 @@
-package frutty.gui.editor;
+package frutty.gui;
 
 import java.awt.EventQueue;
 import java.awt.Graphics;
@@ -27,22 +27,23 @@ import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
 
 import frutty.Main;
-import frutty.gui.GuiHelper;
-import frutty.gui.GuiMenu;
+import frutty.gui.components.EditorZoneButton;
+import frutty.gui.components.GuiHelper;
+import frutty.gui.components.TextureSelectorButton;
 import frutty.world.interfaces.ITexturable;
 import frutty.world.interfaces.MapZoneBase;
 
 public final class GuiEditor extends JPanel{
 	public final ArrayList<EditorZoneButton> zoneButtons = new ArrayList<>();
-	public final GuiProperties mapProperties;
-	protected final TextureSelectorButton textureSelectorButton;
-	protected final JComboBox<String> zoneList;
+	public final GuiEditorProperties mapProperties;
+	public final TextureSelectorButton textureSelectorButton;
+	public final JComboBox<String> zoneList;
 	
 	private GuiEditor(String fileName, String skyName, int width, int height, String nextMap) {
 		setLayout(null);
 		
 		if(fileName != null) {
-			mapProperties = new GuiProperties(fileName, skyName, width, height, nextMap);
+			mapProperties = new GuiEditorProperties(fileName, skyName, width, height, nextMap);
 			zoneList = new JComboBox<>(zoneNames());
 			zoneList.setSelectedItem("normalZone");
 			zoneList.setBounds(width * 64 + 20, 80, 120, 30);
@@ -258,12 +259,12 @@ public final class GuiEditor extends JPanel{
 	    	
 	    	fileMenu.add(newMenuItem("Delete History", '0', true, event -> new File("editorhistory.txt").delete()));
 	    	fileMenu.addSeparator();
-	    	fileMenu.add(newMenuItem("Close map", '0', true, event -> {openEditor(); ((JFrame)editor.getTopLevelAncestor()).dispose();}));
+	    	fileMenu.add(newMenuItem("Close map", '0', !editor.zoneButtons.isEmpty(), event -> {openEditor(); ((JFrame)editor.getTopLevelAncestor()).dispose();}));
 	    	fileMenu.add(newMenuItem("Exit to menu", '0', true, event -> {frame.dispose(); GuiMenu.createMainFrame(false);}));
 	    	fileMenu.add(newMenuItem("Exit app", '0', true, event -> System.exit(0)));
 	    	
 	    	mapMenu.add(newMenuItem("Map Properties", 'P', true, event -> GuiHelper.showNewGui(editor.mapProperties, "Map Properties", 350, 350)));
-	    	mapMenu.add(newMenuItem("Map Information", 'I', true, event -> GuiHelper.showNewGui(new GuiInfo(editor), "Map Info", 350, 350)));
+	    	mapMenu.add(newMenuItem("Map Information", 'I', true, event -> GuiHelper.showNewGui(new GuiEditorInfo(editor), "Map Info", 350, 350)));
 	    	
 	    	menuBar.add(fileMenu);
 	    	menuBar.add(history);

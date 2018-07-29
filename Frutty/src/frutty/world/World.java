@@ -12,7 +12,7 @@ import frutty.entity.EntityEnemy;
 import frutty.entity.EntityPlayer;
 import frutty.entity.zone.EntityAppleZone;
 import frutty.entity.zone.EntityZone;
-import frutty.gui.GuiHelper;
+import frutty.gui.components.GuiHelper;
 import frutty.plugin.event.MapInitEvent;
 import frutty.world.interfaces.IInternalZone;
 import frutty.world.interfaces.ITexturable;

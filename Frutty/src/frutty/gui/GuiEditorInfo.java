@@ -1,4 +1,4 @@
-package frutty.gui.editor;
+package frutty.gui;
 
 import java.awt.Graphics;
 import java.io.IOException;
@@ -10,16 +10,16 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 
 import frutty.Main;
-import frutty.gui.GuiHelper;
+import frutty.gui.components.GuiHelper;
 import frutty.world.interfaces.ITexturable;
 
-public final class GuiInfo extends JPanel{
+public final class GuiEditorInfo extends JPanel{
 	private final GuiEditor editor;
 	private final String textureCount, textureSize;
 	@SuppressWarnings("rawtypes")
 	private final JList textureList;
 	
-	public GuiInfo(GuiEditor edit) {
+	public GuiEditorInfo(GuiEditor edit) {
 		setLayout(null);
 		editor = edit;
 		

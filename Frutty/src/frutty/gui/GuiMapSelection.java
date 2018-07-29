@@ -1,9 +1,8 @@
 package frutty.gui;
 
-import static frutty.gui.GuiHelper.newButton;
-import static frutty.gui.GuiHelper.newCheckBox;
-import static frutty.gui.GuiHelper.newSplitPane;
-import static frutty.gui.GuiHelper.switchMenuPanel;
+import static frutty.gui.components.GuiHelper.newButton;
+import static frutty.gui.components.GuiHelper.newCheckBox;
+import static frutty.gui.components.GuiHelper.switchMenuPanel;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -23,10 +22,12 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JSplitPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import frutty.Main;
+import frutty.gui.components.GuiHelper;
 import frutty.world.World;
 
 public final class GuiMapSelection extends JPanel implements ListSelectionListener, ActionListener{
@@ -47,7 +48,14 @@ public final class GuiMapSelection extends JPanel implements ListSelectionListen
 		
 		add(devMode);
 		add(coopBox);
-		add(newSplitPane(20, 20, 690, 480, mapList, mapImage, 200));
+		
+		JSplitPane pane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, mapList, mapImage);
+		pane.setEnabled(false);
+		pane.setBounds(20, 20, 690, 480);
+		pane.setBorder(GuiHelper.menuBorder);
+		pane.setDividerLocation(200);
+		
+		add(pane);
 		add(newButton("Menu", 725, 475, this));
 		add(newButton("Play", 725, 550, this));
 	}

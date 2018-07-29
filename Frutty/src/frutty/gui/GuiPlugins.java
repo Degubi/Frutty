@@ -17,6 +17,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import frutty.Main;
+import frutty.gui.components.GuiHelper;
 import frutty.plugin.internal.Plugin;
 import frutty.tools.Version;
 

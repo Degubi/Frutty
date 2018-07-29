@@ -10,7 +10,7 @@ import frutty.entity.EntityPlayer;
 import frutty.entity.zone.EntityAppleZone;
 import frutty.entity.zone.EntityZone;
 import frutty.gui.GuiIngame;
-import frutty.gui.editor.GuiTextureSelector;
+import frutty.gui.components.GuiTextureSelector;
 import frutty.world.World;
 import frutty.world.interfaces.ITexturable;
 import frutty.world.interfaces.IZoneEntityProvider;

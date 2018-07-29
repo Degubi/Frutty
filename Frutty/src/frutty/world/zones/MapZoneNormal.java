@@ -5,7 +5,7 @@ import java.awt.Graphics2D;
 import javax.swing.ImageIcon;
 
 import frutty.gui.GuiIngame;
-import frutty.gui.editor.GuiTextureSelector;
+import frutty.gui.components.GuiTextureSelector;
 import frutty.world.interfaces.ITexturable;
 import frutty.world.interfaces.MapZoneBase;
 

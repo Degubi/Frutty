@@ -1,4 +1,4 @@
-package frutty.gui.editor;
+package frutty.gui;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -10,11 +10,11 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 @SuppressWarnings("boxing")
-public final class GuiProperties extends JPanel{
+public final class GuiEditorProperties extends JPanel{
 	public final String mapName, skyName, nextMap;
 	public final int width, height;
 	
-	public GuiProperties(String mapName, String skyName, int width, int height, String nextMap) {
+	public GuiEditorProperties(String mapName, String skyName, int width, int height, String nextMap) {
 		setLayout(null);
 		JTable table = new JTable(PropertyTableModel.tableModel);
 		

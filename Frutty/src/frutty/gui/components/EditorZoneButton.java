@@ -1,4 +1,4 @@
-package frutty.gui.editor;
+package frutty.gui.components;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -7,6 +7,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
 import frutty.Main;
+import frutty.gui.GuiEditor;
 import frutty.world.interfaces.ITexturable;
 
 public final class EditorZoneButton extends JButton implements MouseListener{

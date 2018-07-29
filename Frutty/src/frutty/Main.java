@@ -106,7 +106,8 @@ public final class Main {
 		}
 	}
 	
-	public static ArrayList<Plugin> plugins = toList(new Plugin("Frutty", "Base module for the game.", null, Version.from(1, 4, 0), "https://pastebin.com/raw/m5qJbnks"));
+	public static ArrayList<Plugin> plugins = toList(new Plugin("Frutty", "Base module for the game.", "", Version.from(1, 4, 0), "https://pastebin.com/raw/m5qJbnks"),
+													 new Plugin("Frutty Plugin Loader", "Base module for the plugin loader", "", Version.from(1, 0, 0), ""));
 	public static EventHandleObject[] mapLoadEvents = null;
 	public static int mapLoadEventIndex = 0;
 	

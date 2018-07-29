@@ -8,8 +8,8 @@ import java.awt.image.BufferedImage;
 import javax.swing.ImageIcon;
 
 import frutty.Main;
-import frutty.gui.GuiHelper;
 import frutty.gui.GuiSettings;
+import frutty.gui.components.GuiHelper;
 import frutty.world.interfaces.ITransparentZone;
 import frutty.world.interfaces.MapZoneBase;
 

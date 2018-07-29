@@ -1,4 +1,4 @@
-package frutty.gui.editor;
+package frutty.gui.components;
 
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
@@ -8,8 +8,10 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
+import frutty.gui.GuiEditor;
+
 public final class TextureSelectorButton extends JButton implements ActionListener{
-	protected String activeTexture = "normal";
+	public String activeTexture = "normal";
 	protected int activeTextureIndex = GuiTextureSelector.indexOf("normal.png");
 	private final GuiEditor editorInstance;
 		

@@ -25,6 +25,7 @@ import frutty.Main;
 import frutty.entity.Entity;
 import frutty.entity.EntityEnemy;
 import frutty.entity.EntityPlayer;
+import frutty.gui.components.GuiHelper;
 import frutty.world.Particle;
 import frutty.world.World;
 import frutty.world.interfaces.ITransparentZone;

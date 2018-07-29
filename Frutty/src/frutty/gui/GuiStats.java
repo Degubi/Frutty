@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
+import frutty.gui.components.GuiHelper;
 import frutty.tools.PropertyFile;
 
 public final class GuiStats extends JPanel implements ActionListener{

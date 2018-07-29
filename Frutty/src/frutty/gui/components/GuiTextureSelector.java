@@ -1,4 +1,4 @@
-package frutty.gui.editor;
+package frutty.gui.components;
 
 import java.awt.Graphics;
 import java.awt.Image;
@@ -16,6 +16,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import frutty.Main;
+import frutty.gui.GuiEditor;
 
 public final class GuiTextureSelector extends JPanel implements ActionListener, FocusListener{
 	private final GuiEditor editor;
