@@ -14,7 +14,7 @@ public final class MapZonePortal extends MapZoneBase{
 	public static final BufferedImage portalTexture = Main.loadTexture("map/special", "portal.png");
 	
 	public MapZonePortal() {
-		super("portalZone", false, false);
+		super("portalZone", true, false);
 	}
 
 	@Override

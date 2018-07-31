@@ -49,7 +49,7 @@ public final class MapZoneCherry extends MapZoneBase implements ITexturable{
 	@Override
 	protected ImageIcon getEditorIcon() {
 		var returnTexture = new BufferedImage(64, 64, BufferedImage.TYPE_INT_RGB);
-		var graphics = returnTexture.getGraphics();
+		var graphics = returnTexture.createGraphics();
 		graphics.drawImage(Main.normalZone.editorTexture.get().getImage(), 0, 0, null);
 		graphics.drawImage(cherryTexture, 0, 0, null);
 		return new ImageIcon(returnTexture);

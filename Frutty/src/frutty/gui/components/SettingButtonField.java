@@ -11,6 +11,8 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
 
+import frutty.tools.GuiHelper;
+
 public final class SettingButtonField extends JComponent{
 	public final JTextField dataField;
 	private final String titleText;
@@ -24,25 +26,25 @@ public final class SettingButtonField extends JComponent{
 		dataField.setOpaque(false);
 		dataField.setForeground(Color.WHITE);
 		dataField.setFont(GuiHelper.bigFont);
-		((AbstractDocument) dataField.getDocument()).setDocumentFilter(TextFilter.filter);
 		dataField.setHorizontalAlignment(SwingConstants.CENTER);
 		add(dataField);
 	}
 	
 	public SettingButtonField(int characterData, String displayText, int x, int y) {
 		this(Character.toString((char)characterData), displayText, x, y);
+		
+		((AbstractDocument) dataField.getDocument()).setDocumentFilter(TextFilter.filter);
 	}
 	
 	@Override
 	public void paintComponent(Graphics graphics) {
-		graphics.setColor(Color.BLACK);
-		graphics.drawRect(0, 0, 695, 62);
-		graphics.drawRect(1, 1, 695, 62);
-		
-		graphics.setColor(GuiHelper.color_84Black);
+		graphics.setColor(GuiHelper.color_192Black);
 		graphics.fillRect(4, 4, 692, 58);
 		
 		graphics.setColor(Color.WHITE);
+		graphics.drawRect(0, 0, 695, 62);
+		graphics.drawRect(1, 1, 695, 62);
+		
 		graphics.setFont(GuiHelper.bigFont);
 		graphics.drawString(titleText, 10, 40);
 	}

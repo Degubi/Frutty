@@ -13,12 +13,12 @@ import frutty.Main;
 import frutty.entity.EntityPlayer;
 import frutty.entity.zone.EntityAppleZone;
 import frutty.gui.GuiEditor;
-import frutty.gui.GuiSettings;
+import frutty.gui.GuiSettings.Settings;
 import frutty.gui.GuiStats;
 import frutty.gui.components.EditorZoneButton;
-import frutty.gui.components.GuiHelper;
 import frutty.gui.components.GuiTextureSelector;
 import frutty.sound.CachedSoundClip;
+import frutty.tools.GuiHelper;
 import frutty.tools.Lazy;
 import frutty.world.Particle;
 import frutty.world.World;
@@ -76,7 +76,7 @@ public abstract class MapZoneBase implements Serializable{
 	public final void render(int x, int y, int textureIndex, Graphics2D graphics) {
 		draw(x, y, textureIndex, graphics);
 		
-		if(hasShadowRender && GuiSettings.graphicsLevel > 0) {
+		if(hasShadowRender && Settings.graphicsLevel > 0) {
 			graphics.setColor(GuiHelper.color_84Black);
 			
 			int till = y / 120;
@@ -85,7 +85,7 @@ public abstract class MapZoneBase implements Serializable{
 			}
 		}
 		
-		if(GuiSettings.renderDebugLevel > 1) {
+		if(Settings.renderDebugLevel > 1) {
 			graphics.setColor(Color.WHITE);
 			graphics.drawRect(x, y, 64, 64);
 		}

@@ -32,7 +32,7 @@ public final class MapZoneEmpty extends MapZoneBase{
 	@Override
 	protected ImageIcon getEditorIcon() {
 		var emptyZoneTexture = new BufferedImage(64, 64, BufferedImage.TYPE_INT_RGB);
-		var graphics = emptyZoneTexture.getGraphics();
+		var graphics = emptyZoneTexture.createGraphics();
 		graphics.setColor(Color.BLACK);
 		graphics.fillRect(0, 0, 64, 64);
 		return new ImageIcon(emptyZoneTexture);

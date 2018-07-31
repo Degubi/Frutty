@@ -1,4 +1,4 @@
-package frutty.gui.components;
+package frutty.tools;
 
 import java.awt.Color;
 import java.awt.Container;
@@ -20,7 +20,7 @@ public final class GuiHelper {
 	public static final Font ingameFont = new Font("TimesRoman", Font.PLAIN, 22);
 	public static final Font thiccFont = new Font("TimeRoman", Font.BOLD, 14);
 	public static final Font bigFont = new Font("TimesRoman", Font.BOLD, 28);
-	public static final Color color_128Black = new Color(0, 0, 0, 128), color_84Black = new Color(0, 0, 0, 84);
+	public static final Color color_128Black = new Color(0, 0, 0, 128), color_84Black = new Color(0, 0, 0, 84), color_192Black = new Color(0, 0, 0, 192);
 	private static final int recommendedMaxMapHeight = Toolkit.getDefaultToolkit().getScreenSize().height / 64 - 1;
 	private static final int recommendedMaxMapWidth = Toolkit.getDefaultToolkit().getScreenSize().width / 64 - 1;
 	public static final LineBorder menuBorder = new LineBorder(Color.DARK_GRAY, 2);

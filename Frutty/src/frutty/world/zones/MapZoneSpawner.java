@@ -6,7 +6,7 @@ import java.awt.Graphics2D;
 import javax.swing.ImageIcon;
 
 import frutty.entity.EntityEnemy;
-import frutty.gui.GuiSettings;
+import frutty.gui.GuiSettings.Settings;
 import frutty.world.World;
 import frutty.world.interfaces.MapZoneBase;
 
@@ -41,11 +41,10 @@ public final class MapZoneSpawner extends MapZoneBase{
 	@Override
 	public void onZoneAdded(boolean isCoop, int x, int y) {
 		int enemyCount = 0, zoneCount = World.zones.length;
-		if(!GuiSettings.disableEnemies) {
-			int difficulty = GuiSettings.settingProperties.getInt("difficulty", 0);
-			if(difficulty == 0) {
+		if(!Settings.disableEnemies) {
+			if(Settings.difficulty == 0) {
 				enemyCount += zoneCount < 70 ? 1 : zoneCount / 70;
-			}else if(difficulty == 1) {
+			}else if(Settings.difficulty == 1) {
 				enemyCount += zoneCount / 50;
 			}else{
 				enemyCount += zoneCount / 30;

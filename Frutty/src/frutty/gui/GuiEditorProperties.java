@@ -16,12 +16,15 @@ public final class GuiEditorProperties extends JPanel{
 	
 	public GuiEditorProperties(String mapName, String skyName, int width, int height, String nextMap) {
 		setLayout(null);
-		JTable table = new JTable(PropertyTableModel.tableModel);
+		JTable table = new JTable(new PropertyTableModel());
 		
 		table.setBorder(new LineBorder(Color.GRAY, 1, true));
 		table.setBounds(20, 20, 300, 165);
-		table.getColumnModel().getColumn(1).setCellRenderer(CustomCellRenderer.cellRenderer);
-		table.getColumnModel().getColumn(0).setCellRenderer(CustomCellRenderer.cellRenderer);
+		
+		CustomCellRenderer renderer = new CustomCellRenderer();
+		
+		table.getColumnModel().getColumn(1).setCellRenderer(renderer);
+		table.getColumnModel().getColumn(0).setCellRenderer(renderer);
 		
 		table.setValueAt("Map Name", 0, 0);
 		table.setValueAt(this.mapName = mapName, 0, 1);
@@ -42,7 +45,6 @@ public final class GuiEditorProperties extends JPanel{
 	}
 	
 	protected static final class PropertyTableModel extends DefaultTableModel{
-		public static final PropertyTableModel tableModel = new PropertyTableModel();
 		
 		@Override
 		public int getRowCount() {
@@ -61,16 +63,11 @@ public final class GuiEditorProperties extends JPanel{
 	}
 	
 	protected static final class CustomCellRenderer extends DefaultTableCellRenderer{
-		public static final CustomCellRenderer cellRenderer = new CustomCellRenderer();
 		
 		@Override
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 			var cell = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-			if(row == 2 || row == 3) {
-				cell.setForeground(Color.GRAY);
-			}else{
-				cell.setForeground(null); 	//Kell mert különben rákattintás után az összes szürke fontot kap...
-			}
+			cell.setForeground(row == 2 || row == 3 ? Color.GRAY : null);
 			return cell;
 		}
 	}

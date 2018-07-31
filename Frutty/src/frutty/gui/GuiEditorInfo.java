@@ -10,7 +10,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 
 import frutty.Main;
-import frutty.gui.components.GuiHelper;
+import frutty.tools.GuiHelper;
 import frutty.world.interfaces.ITexturable;
 
 public final class GuiEditorInfo extends JPanel{

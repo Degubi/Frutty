@@ -8,8 +8,8 @@ import java.awt.image.BufferedImage;
 import javax.swing.ImageIcon;
 
 import frutty.Main;
-import frutty.gui.GuiSettings;
-import frutty.gui.components.GuiHelper;
+import frutty.gui.GuiSettings.Settings;
+import frutty.tools.GuiHelper;
 import frutty.world.interfaces.ITransparentZone;
 import frutty.world.interfaces.MapZoneBase;
 
@@ -32,7 +32,7 @@ public final class MapZoneWater extends MapZoneBase implements ITransparentZone{
 	public void drawAfter(int x, int y, int textureIndex, Graphics graphics) {
 		graphics.drawImage(waterTexture, x, y, x + 64, y + 64, 0, textureY, 16, textureY + 16, null);
 		
-		if(GuiSettings.graphicsLevel > 0) {
+		if(Settings.graphicsLevel > 0) {
 			graphics.setColor(GuiHelper.color_84Black);
 			
 			int till = y / 120;
@@ -75,7 +75,7 @@ public final class MapZoneWater extends MapZoneBase implements ITransparentZone{
 	@Override
 	protected ImageIcon getEditorIcon() {
 		var returnTexture = new BufferedImage(64, 64, BufferedImage.TYPE_INT_RGB);
-		var graphics = returnTexture.getGraphics();
+		var graphics = returnTexture.createGraphics();
 		graphics.setColor(Color.BLACK);
 		graphics.fillRect(0, 0, 64, 64);
 		graphics.drawImage(MapZoneWater.waterTexture, 0, 0, 64, 64, 0, 0, 16, 16, null);

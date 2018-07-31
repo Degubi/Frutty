@@ -1,9 +1,14 @@
 package frutty.gui;
 
+import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.HeadlessException;
+import java.awt.Rectangle;
+import java.awt.Robot;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -11,11 +16,18 @@ import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.Iterator;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -25,7 +37,8 @@ import frutty.Main;
 import frutty.entity.Entity;
 import frutty.entity.EntityEnemy;
 import frutty.entity.EntityPlayer;
-import frutty.gui.components.GuiHelper;
+import frutty.gui.GuiSettings.Settings;
+import frutty.tools.GuiHelper;
 import frutty.world.Particle;
 import frutty.world.World;
 import frutty.world.interfaces.ITransparentZone;
@@ -43,13 +56,14 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 	public static BufferedImage skyTexture;
 	public static BufferedImage[] textures;
 	
+	private final LocalTime startTime = LocalTime.now();
 	private int renderDelay;
 	private long renderLastUpdate = System.currentTimeMillis();
 	
 	public GuiIngame() {
 		setLayout(null);
 		updateThread.scheduleAtFixedRate(this, 0, 20, TimeUnit.MILLISECONDS);
-		renderThread.scheduleAtFixedRate(() -> ingameGui.repaint(), 0, 1000 / GuiSettings.settingProperties.getInt("fps", 50), TimeUnit.MILLISECONDS);
+		renderThread.scheduleAtFixedRate(() -> ingameGui.repaint(), 0, 1000 / Settings.fps, TimeUnit.MILLISECONDS);
 	}
 	
 	@Override
@@ -87,7 +101,7 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 		graphics.drawString("Score: " + World.score, World.width + 90, 20);
 		graphics.drawString("Top score: " + GuiStats.topScore, World.width + 90, 80);
 		
-		if(GuiSettings.enableMapDebug) {
+		if(Settings.enableMapDebug) {
 			graphics.setColor(GuiHelper.color_128Black);
 			graphics.fillRect(0, 0, 130, 130);
 			
@@ -103,7 +117,7 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 			graphics.drawString("playerpos_y: " + World.players[0].serverPosY, 2, 120);
 		}
 		
-		if(GuiSettings.renderDebugLevel == 1 || GuiSettings.renderDebugLevel == 3) {
+		if(Settings.renderDebugLevel == 1 || Settings.renderDebugLevel == 3) {
 			graphics.setColor(GuiHelper.color_128Black);
 			graphics.fillRect(World.width - 85, 0, 160, 130);
 			
@@ -176,6 +190,7 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 		if(GuiStats.topScore < World.score) {
 			GuiStats.topScore = World.score;
 		}
+		GuiStats.playTime += ingameGui.startTime.until(LocalTime.now(), ChronoUnit.MINUTES);
 		GuiStats.saveStats();
 		World.cleanUp();
 	}
@@ -199,7 +214,9 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 	
 	@Override
 	public void keyPressed(KeyEvent event) {
-		if(event.getKeyCode() == KeyEvent.VK_ESCAPE) {
+		int keyCode = event.getKeyCode();
+		
+		if(keyCode == KeyEvent.VK_ESCAPE) {
 			paused = true;
 			
 			EventQueue.invokeLater(() -> {
@@ -215,6 +232,14 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 				returnFrame.addWindowListener(menu);
 				returnFrame.setVisible(true);
 			});
+		}else if(keyCode == KeyEvent.VK_F12) {
+			try {
+				new File("./screenshots/").mkdir();
+				ImageIO.write(new Robot().createScreenCapture(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize())), Settings.screenshotFormat, 
+																			new File("./screenshots/" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd_kk_HH_ss")) +"." + Settings.screenshotFormat.toLowerCase()));
+			} catch (HeadlessException | AWTException | IOException e1) {
+				e1.printStackTrace();
+			}
 		}
 	}
 	

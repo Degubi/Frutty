@@ -4,15 +4,18 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 
+import frutty.tools.GuiHelper;
+
 public final class SettingButton extends JComponent implements ActionListener{
 	public static final String[] ON_OFF = {"Off", "On"};
-	private static final ImageIcon leftIcon = new ImageIcon("./textures/gui/arrow_left.png");
-	private static final ImageIcon rightIcon = new ImageIcon("./textures/gui/arrow_right.png");
+	private static final ImageIcon leftIcon = getIcon(true);
+	private static final ImageIcon rightIcon = getIcon(false);
 	
 	private final String titleText;
 	private final String[] options;
@@ -35,16 +38,19 @@ public final class SettingButton extends JComponent implements ActionListener{
 		this(isOn ? 1 : 0, displayText, x, y, options);
 	}
 	
+	public SettingButton(String data, String displayText, int x, int y, String... options) {
+		this(indexOf(data, options), displayText, x, y, options);
+	}
+	
 	@Override
 	public void paintComponent(Graphics graphics) {
-		graphics.setColor(Color.BLACK);
-		graphics.drawRect(0, 0, 695, 62);
-		graphics.drawRect(1, 1, 695, 62);
-		
-		graphics.setColor(GuiHelper.color_84Black);
+		graphics.setColor(GuiHelper.color_192Black);
 		graphics.fillRect(4, 4, 692, 58);
 		
 		graphics.setColor(Color.WHITE);
+		graphics.drawRect(0, 0, 695, 62);
+		graphics.drawRect(1, 1, 695, 62);
+		
 		graphics.setFont(GuiHelper.bigFont);
 		graphics.drawString(titleText, 10, 40);
 		graphics.drawString(options[optionIndex], 500 - options[optionIndex].length() * 8, 40);
@@ -70,7 +76,7 @@ public final class SettingButton extends JComponent implements ActionListener{
 		repaint();
 	}
 	
-	private static JButton newArrowButton(boolean isRight, int x, int y, ActionListener listener) {
+	static JButton newArrowButton(boolean isRight, int x, int y, ActionListener listener) {
 		JButton toReturn = new JButton(isRight ? rightIcon : leftIcon);
 		toReturn.addActionListener(listener);
 		toReturn.setActionCommand(isRight ? "rightButton" : "leftButton");
@@ -94,5 +100,31 @@ public final class SettingButton extends JComponent implements ActionListener{
 			}
 		}
 		throw new IllegalArgumentException("Should not get there...");
+	}
+	
+	private static int indexOf(String value, String[] values) {
+		for(int k = 0; k < values.length; ++k) {
+			if(values[k].equals(value)) {
+				return k;
+			}
+		}
+		throw new IllegalArgumentException("Should not get there...");
+	}
+	
+	private static ImageIcon getIcon(boolean isRight) {
+		var img = new BufferedImage(48, 48, BufferedImage.TYPE_INT_ARGB);
+		var paint = img.createGraphics();
+		
+		if(isRight) {
+			for(int x = 34, y = 2; x > 12; --x, ++y) {
+				paint.drawLine(x, y, x, 47 - y);
+			}
+		}else{
+			for(int x = 15, y = 2; x < 37; ++x, ++y) {
+				paint.drawLine(x, y, x, 47 - y);
+			}
+		}
+		
+		return new ImageIcon(img);
 	}
 }

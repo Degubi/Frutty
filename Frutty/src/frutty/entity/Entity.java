@@ -6,7 +6,7 @@ import java.io.Serializable;
 
 import frutty.Main;
 import frutty.gui.GuiIngame;
-import frutty.gui.GuiSettings;
+import frutty.gui.GuiSettings.Settings;
 import frutty.world.World;
 import frutty.world.interfaces.MapZoneBase;
 
@@ -50,7 +50,7 @@ public abstract class Entity implements Serializable{
 	protected final void checkPlayers(boolean addScore) {
 		for(var player : World.players) {
 			if(!player.hidden && doesCollide(player.serverPosX, player.serverPosY)) {
-				if(GuiSettings.enableGod || player.isInvicible()) {
+				if(Settings.enableGod || player.isInvicible()) {
 					active = false;
 					if(addScore) {
 						World.score += 100;
@@ -77,7 +77,7 @@ public abstract class Entity implements Serializable{
 	public final void handleRender(Graphics graphics) {
 		render(graphics);
 		
-		if(GuiSettings.enableCollisionDebug) {
+		if(Settings.enableCollisionDebug) {
 			graphics.setColor(Color.BLUE);
 			graphics.drawRect(serverPosX, serverPosY, 64, 64);
 			graphics.setColor(Color.RED);

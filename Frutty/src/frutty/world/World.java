@@ -12,8 +12,9 @@ import frutty.entity.EntityEnemy;
 import frutty.entity.EntityPlayer;
 import frutty.entity.zone.EntityAppleZone;
 import frutty.entity.zone.EntityZone;
-import frutty.gui.components.GuiHelper;
 import frutty.plugin.event.MapInitEvent;
+import frutty.plugin.internal.EventHandle;
+import frutty.tools.GuiHelper;
 import frutty.world.interfaces.IInternalZone;
 import frutty.world.interfaces.ITexturable;
 import frutty.world.interfaces.IZoneEntityProvider;
@@ -52,7 +53,7 @@ public final class World{
 		mapName = levelName;
 		nextMap = next;
 		
-		if(Main.mapLoadEvents != null) Main.handleEvent(new MapInitEvent(w, h, txts, entities), Main.mapLoadEvents);
+		if(Main.hasPlugins && !EventHandle.mapLoadEvents.isEmpty()) EventHandle.handleEvent(new MapInitEvent(w, h, txts, entities), EventHandle.mapLoadEvents);
 		
 		int zoneCount = (w / 64) * (h / 64);
 		zones = new MapZoneBase[zoneCount];

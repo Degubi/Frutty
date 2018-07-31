@@ -41,7 +41,7 @@ public final class MapZoneChest extends MapZoneBase implements ITexturable{
 	@Override
 	protected ImageIcon getEditorIcon() {
 		var toReturn = new BufferedImage(64, 64, BufferedImage.TYPE_INT_RGB);
-		var graphics = toReturn.getGraphics();
+		var graphics = toReturn.createGraphics();
 		graphics.drawImage(Main.normalZone.editorTexture.get().getImage(), 0, 0, null);
 		graphics.drawImage(chestTexture, 0, 0, null);
 		return new ImageIcon(toReturn);

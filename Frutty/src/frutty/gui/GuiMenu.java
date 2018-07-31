@@ -1,5 +1,7 @@
 package frutty.gui;
 
+import static frutty.tools.GuiHelper.newButton;
+
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Graphics;
@@ -11,6 +13,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.URL;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -22,7 +25,10 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.MatteBorder;
 
 import frutty.Main;
-import frutty.gui.components.GuiHelper;
+import frutty.plugin.event.gui.GuiMenuEvent;
+import frutty.plugin.internal.EventHandle;
+import frutty.plugin.internal.Plugin;
+import frutty.tools.GuiHelper;
 import frutty.tools.Version;
 import frutty.world.World;
 import frutty.world.interfaces.IInternalZone;
@@ -33,7 +39,7 @@ import frutty.world.interfaces.MapZoneBase;
 public final class GuiMenu extends JPanel implements ActionListener{
 	private final MapZoneBase[] zones = new MapZoneBase[140];
 	private final int[] xCoords = new int[140], yCoords = new int[140], textureData = new int[140];
-	private final JTextArea devMessage = new JTextArea();
+	private static final JTextArea devMessage = new JTextArea();
 	
 	public static JFrame mainFrame;
 	
@@ -42,29 +48,37 @@ public final class GuiMenu extends JPanel implements ActionListener{
 		
 		loadBackground();
 		
-		new Thread(() -> {
-			try(var input = new URL("https://pastebin.com/raw/tffU5Vu6").openStream()){
-				byte[] kek = new byte[255];
-				devMessage.setText(new String(kek, 0, input.readNBytes(kek, 0, 255)));
-				
-				devMessage.setEditable(false);
-				devMessage.setForeground(Color.WHITE);
-				devMessage.setBackground(new Color(0, 0, 0, 192));
-				devMessage.setBorder(new CompoundBorder(new MatteBorder(0, 12, 0, 0, Color.YELLOW), new MatteBorder(4, 4, 4, 4, Color.LIGHT_GRAY)));
-				devMessage.setBounds(20, 40, devMessage.getText().indexOf('\n') * 7, 80);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}, "Menu Dev Message Thread").start();
+		if(devMessage.getText().isEmpty()) {
+			new Thread(() -> {
+				try(var input = new URL("https://pastebin.com/raw/tffU5Vu6").openStream()){
+					byte[] kek = new byte[255];
+					devMessage.setText(new String(kek, 0, input.readNBytes(kek, 0, 255)));
+					
+					devMessage.setEditable(false);
+					devMessage.setForeground(Color.WHITE);
+					devMessage.setBackground(new Color(0, 0, 0, 192));
+					devMessage.setBorder(new CompoundBorder(new MatteBorder(0, 12, 0, 0, Color.YELLOW), new MatteBorder(4, 4, 4, 4, Color.LIGHT_GRAY)));
+					devMessage.setBounds(20, 40, devMessage.getText().indexOf('\n') * 7, 80);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}, "Menu Dev Message Thread").start();
+		}
 		
-		add(GuiHelper.newButton("New Game", 700, 20, this));
-		add(GuiHelper.newButton("Exit", 370, 550, this));
-		add(GuiHelper.newButton("Settings", 700, 250, this));
-		add(GuiHelper.newButton("Load Save", 700, 100, this));
-		add(GuiHelper.newButton("Editor", 20, 475, this));
-		add(GuiHelper.newButton("Plugins", 20, 400, this));
-		add(GuiHelper.newButton("Stats", 700, 330, this));
+		add(newButton("New Game", 700, 20, this));
+		add(newButton("Exit", 370, 550, this));
+		add(newButton("Settings", 700, 250, this));
+		add(newButton("Load Save", 700, 100, this));
+		add(newButton("Editor", 20, 475, this));
+		add(newButton("Plugins", 20, 400, this));
+		add(newButton("Stats", 700, 330, this));
 		add(devMessage);
+		
+		if(Main.hasPlugins && !EventHandle.menuInitEvents.isEmpty()) {
+			ArrayList<JButton> eventButtons = new ArrayList<>(0);
+			EventHandle.handleEvent(new GuiMenuEvent(eventButtons), EventHandle.menuInitEvents);
+			for(JButton butt : eventButtons) add(butt);
+		}
 	}
 	
 	public static void createMainFrame(boolean checkUpdate) {
@@ -72,7 +86,7 @@ public final class GuiMenu extends JPanel implements ActionListener{
 		
 		if(checkUpdate) {
 			new Thread(() -> {
-				if(Version.fromURL(Main.plugins.get(0).versionURL).isNewerThan(Main.plugins.get(0).version)) {
+				if(Version.fromURL(Plugin.plugins.get(0).versionURL).isNewerThan(Plugin.plugins.get(0).version)) {
 					JButton updaterButton = new JButton("Click here to Update...");
 					updaterButton.setActionCommand("Update");
 					updaterButton.setBounds(660, 600, 240, 40);
@@ -113,7 +127,7 @@ public final class GuiMenu extends JPanel implements ActionListener{
 		graphics.fillRect(0, 0, 910, 675);
 		graphics.setColor(Color.WHITE);
 		graphics.setFont(GuiHelper.thiccFont);
-		graphics.drawString("Version: " + Main.plugins.get(0).version, 10, 625);
+		graphics.drawString("Version: " + Plugin.plugins.get(0).version, 10, 625);
 	}
 	
 	@Override
@@ -131,7 +145,7 @@ public final class GuiMenu extends JPanel implements ActionListener{
 		}else if(command.equals("Editor")){
 			GuiEditor.openEditor(); mainFrame.dispose();
 		}else if(command.equals("Stats")){
-			GuiHelper.showNewGui(new GuiStats(), "Frutty", 240, 180);
+			GuiHelper.switchMenuPanel(new GuiStats());
 		}else if(command.equals("Update")){
 			try {
 				if(JOptionPane.showConfirmDialog(this, "Exiting game to Updater. Game will restart.", "Frutty Updater", JOptionPane.OK_CANCEL_OPTION) == 0) {
@@ -172,7 +186,7 @@ public final class GuiMenu extends JPanel implements ActionListener{
 			}
 			
 			Main.loadTextures(textures);
-			Main.loadSkyTexture(input.readUTF());
+			input.readUTF(); //Sky texture
 			
 			input.readShort(); input.readShort();  //Width height felesleges, 14x10 az összes
 			input.readUTF(); //Next map

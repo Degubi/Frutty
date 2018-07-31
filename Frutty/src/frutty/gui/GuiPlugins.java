@@ -16,13 +16,12 @@ import javax.swing.event.HyperlinkListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import frutty.Main;
-import frutty.gui.components.GuiHelper;
 import frutty.plugin.internal.Plugin;
+import frutty.tools.GuiHelper;
 import frutty.tools.Version;
 
 public final class GuiPlugins implements ListSelectionListener, HyperlinkListener{
-	protected final JList<Plugin> pluginList = new JList<>(Main.plugins.toArray(new Plugin[Main.plugins.size()]));
+	protected final JList<Plugin> pluginList = new JList<>(Plugin.plugins.toArray(new Plugin[Plugin.plugins.size()]));
 	protected final JTextPane description = new JTextPane();
 
 	public static void showPlugins() {
@@ -42,19 +41,19 @@ public final class GuiPlugins implements ListSelectionListener, HyperlinkListene
 		GuiHelper.showNewGui(pane, "Frutty Plugins", 576, 480);
 		
 		new Thread(() -> {
-			for(Plugin plugin : Main.plugins) {
+			for(Plugin plugin : Plugin.plugins) {
 				if(plugin.version.isOlderThan(Version.fromURL(plugin.versionURL))) {
 					plugin.needsUpdate = true;
-					pane.repaint();
 				}
 			}
+			pane.repaint();
 		}).start();
 	}
 
 	@Override
 	public void valueChanged(ListSelectionEvent event) {
 		description.setText(null);
-		description.setText(Main.plugins.get(pluginList.getSelectedIndex()).getInfo());
+		description.setText(Plugin.plugins.get(pluginList.getSelectedIndex()).getInfo());
 	}
 
 	@Override
