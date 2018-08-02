@@ -26,8 +26,8 @@ import frutty.Main;
 import frutty.gui.components.EditorZoneButton;
 import frutty.gui.components.TextureSelectorButton;
 import frutty.tools.GuiHelper;
-import frutty.world.interfaces.ITexturable;
 import frutty.world.interfaces.MapZoneBase;
+import frutty.world.interfaces.MapZoneTexturable;
 
 public final class GuiEditor extends JPanel{
 	public final ArrayList<EditorZoneButton> zoneButtons = new ArrayList<>();
@@ -88,7 +88,7 @@ public final class GuiEditor extends JPanel{
 	 			if(!zoneIDs.contains(writeButton.zoneID)) {
 	 				zoneIDs.add(writeButton.zoneID);
 	 			}
-	 			if(Main.getZoneFromName(writeButton.zoneID) instanceof ITexturable) {
+	 			if(Main.getZoneFromName(writeButton.zoneID) instanceof MapZoneTexturable) {
 	 				if(!writeButton.zoneTexture.isEmpty() && !textures.contains(writeButton.zoneTexture)) {
 	 					textures.add(writeButton.zoneTexture);
 	 				}
@@ -114,7 +114,7 @@ public final class GuiEditor extends JPanel{
 	 		for(var writeButton : zoneButtons) {
 	 			output.writeByte(zoneIDs.indexOf(writeButton.zoneID));
 	 			
-	 			if(Main.getZoneFromName(writeButton.zoneID) instanceof ITexturable) {
+	 			if(Main.getZoneFromName(writeButton.zoneID) instanceof MapZoneTexturable) {
 	 				output.writeByte(textures.indexOf(writeButton.zoneTexture));
 	 			}
 	 		}

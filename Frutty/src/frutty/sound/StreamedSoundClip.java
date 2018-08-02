@@ -35,12 +35,13 @@ public final class StreamedSoundClip{
 					soundLine.start();
 					
 					int readBytes = 0;
-					byte[] soundData = new byte[128 * 1024];
+					byte[] soundData = new byte[16 * 1024];
+					
 					while(shouldPlay && readBytes > -1) {
 						readBytes = audioInputStream.read(soundData, 0, soundData.length);
 						if (readBytes >= 0) {
-			               soundLine.write(soundData, 0, readBytes);
-			            }
+							soundLine.write(soundData, 0, readBytes);
+						}
 			         }
 					
 					soundLine.close();

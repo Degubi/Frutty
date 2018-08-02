@@ -31,9 +31,7 @@ public final class CachedSoundClip {
 		if(Settings.enableSound) {
 			try {
 				return AudioSystem.getClip();
-			} catch (LineUnavailableException e) {
-				return null;
-			}
+			} catch (LineUnavailableException e) {}
 		}
 		return null;
 	}

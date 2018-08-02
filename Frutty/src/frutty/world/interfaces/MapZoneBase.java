@@ -12,11 +12,14 @@ import javax.swing.ImageIcon;
 import frutty.Main;
 import frutty.entity.EntityPlayer;
 import frutty.entity.zone.EntityAppleZone;
+import frutty.entity.zone.EntityZone;
 import frutty.gui.GuiEditor;
 import frutty.gui.GuiSettings.Settings;
 import frutty.gui.GuiStats;
 import frutty.gui.components.EditorZoneButton;
 import frutty.gui.components.GuiTextureSelector;
+import frutty.plugin.event.world.ZoneAddedEvent;
+import frutty.plugin.internal.EventHandle;
 import frutty.sound.CachedSoundClip;
 import frutty.tools.GuiHelper;
 import frutty.tools.Lazy;
@@ -49,23 +52,23 @@ public abstract class MapZoneBase implements Serializable{
 	public boolean isBreakable(int x, int y) {return canPlayerPass(x, y);}
 	public boolean canPlayerPass(int x, int y) {return true;}
 	public boolean canNPCPass(int x, int y) {return false;}
-	public void onZoneAdded(boolean isCoop, int x, int y) {}
+	protected void onZoneAdded(boolean isCoop, int x, int y) {}
 	
 	public void onZoneEntered(int x, int y, int zoneIndex, int textureIndex, EntityPlayer player) {
 		player.hidden = doesHidePlayer(x, y);
 
 		if(isBreakable(x, y)) {
 			World.setZoneEmptyAt(zoneIndex);
+			breakSound.start();
 			GuiStats.zoneCount++;
 			
 			int checkIndex = zoneIndex - (World.width / 64) - 1;
 			MapZoneBase up = World.getZoneAtIndex(checkIndex);
-			if(up != null && up == Main.appleZone) {
-				((EntityAppleZone)World.zoneEntities[checkIndex]).notified = true;
+			if(up != null && up instanceof IZoneEntityProvider) {
+				World.zoneEntities[checkIndex].onNotified();
 			}
-			breakSound.start();
 			
-			Particle.addParticles(2 + Main.rand.nextInt(10), x, y, textureIndex);
+			Particle.spawnFallingParticles(2 + Main.rand.nextInt(10), x, y, textureIndex);
 		}
 	}
 	
@@ -91,6 +94,18 @@ public abstract class MapZoneBase implements Serializable{
 		}
 	}
 	
+	public final void onZoneAddedInternal(boolean isCoop, int x, int y) {
+		if(Main.hasPlugins && !EventHandle.zoneAddedEvents.isEmpty()) {
+			ZoneAddedEvent event = new ZoneAddedEvent(this, x, y);
+			EventHandle.handleEvent(event, EventHandle.zoneAddedEvents);
+			if(!event.canceled) {
+				onZoneAdded(isCoop, x, y);
+			}
+		}else{
+			onZoneAdded(isCoop, x, y);
+		}
+	}
+	
 	private final ImageIcon getEditorIconInternal() {
 		ImageIcon icon = getEditorIcon();
 		return (icon.getIconWidth() == 64 && icon.getIconHeight() == 64) ? icon : new ImageIcon(icon.getImage().getScaledInstance(64, 64, Image.SCALE_DEFAULT));
@@ -100,10 +115,10 @@ public abstract class MapZoneBase implements Serializable{
 		EditorZoneButton button = new EditorZoneButton(editorTexture.get(), editor);
 		button.setBounds(x * 64, y * 64, 64, 64);
 		button.zoneID = zoneID;
-		if(this instanceof ITexturable){
+		if(this instanceof MapZoneTexturable){
 			int textureData = input.readByte();
 			button.zoneTexture = textures[textureData];
-			button.setIcon(((ITexturable)this).getEditorTextureVars()[GuiTextureSelector.indexOf(textures[textureData] + ".png")]);
+			button.setIcon(((MapZoneTexturable)this).textureVariants.get()[GuiTextureSelector.indexOf(textures[textureData] + ".png")]);
 		}
 		editor.zoneButtons.add(button);
 		editor.add(button);

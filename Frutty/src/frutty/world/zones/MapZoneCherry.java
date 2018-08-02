@@ -8,12 +8,10 @@ import javax.swing.ImageIcon;
 import frutty.Main;
 import frutty.entity.EntityPlayer;
 import frutty.gui.GuiIngame;
-import frutty.gui.components.GuiTextureSelector;
 import frutty.world.World;
-import frutty.world.interfaces.ITexturable;
-import frutty.world.interfaces.MapZoneBase;
+import frutty.world.interfaces.MapZoneTexturable;
 
-public final class MapZoneCherry extends MapZoneBase implements ITexturable{
+public final class MapZoneCherry extends MapZoneTexturable{
 	public static final BufferedImage cherryTexture = Main.loadTexture("fruit", "cherry.png");
 	
 	public MapZoneCherry() {
@@ -37,11 +35,6 @@ public final class MapZoneCherry extends MapZoneBase implements ITexturable{
 	}
 	
 	@Override
-	public ImageIcon[] getEditorTextureVars() {
-		return GuiTextureSelector.cherryTextures;
-	}
-	
-	@Override
 	public void onZoneAdded(boolean isCoop, int x, int y) {
 		++World.pickCount;
 	}
@@ -53,5 +46,10 @@ public final class MapZoneCherry extends MapZoneBase implements ITexturable{
 		graphics.drawImage(Main.normalZone.editorTexture.get().getImage(), 0, 0, null);
 		graphics.drawImage(cherryTexture, 0, 0, null);
 		return new ImageIcon(returnTexture);
+	}
+
+	@Override
+	public BufferedImage getOverlayTexture() {
+		return cherryTexture;
 	}
 }

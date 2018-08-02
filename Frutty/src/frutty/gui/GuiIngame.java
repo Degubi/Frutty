@@ -37,6 +37,7 @@ import frutty.Main;
 import frutty.entity.Entity;
 import frutty.entity.EntityEnemy;
 import frutty.entity.EntityPlayer;
+import frutty.entity.zone.EntityZone;
 import frutty.gui.GuiSettings.Settings;
 import frutty.tools.GuiHelper;
 import frutty.world.Particle;
@@ -142,39 +143,40 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 		if(!paused) {
 			++World.ticks;
 			
-			int ticks = World.ticks;
-			
-			for(Entity entity : World.players) entity.update(ticks);
+			for(Entity entity : World.players) entity.update(World.ticks);
 			
 			for(EntityEnemy monsters : World.enemies) {
 				if(monsters.active) {
-					monsters.update(ticks);
+					monsters.update(World.ticks);
 				}
 			}
 			
 			for(Entity entities : World.entities) {
 				if(entities.active) {
-					entities.update(ticks);
+					entities.update(World.ticks);
 				}
 			}
 			
-			if(ticks % 4 == 0) MapZoneWater.updateWaterUV();
+			if(World.ticks % 4 == 0) MapZoneWater.updateWaterUV();
 			
-			if(ticks % 2 == 0) {
+			if(World.ticks % 2 == 0) {
 				for(Iterator<Particle> iterator = World.particles.iterator(); iterator.hasNext();) {
 					iterator.next().update(iterator);
 				}
 			}
 			
-			if(ticks % 20 == 0) {
+			if(World.ticks % 20 == 0) {
 				for(int k = 0; k < World.zones.length; ++k) {
 					MapZoneBase zone = World.zones[k];
 					if(zone.hasParticleSpawns && MapZoneBase.isEmpty(World.xCoords[k], World.yCoords[k] + 64) && Main.rand.nextInt(100) == 3) {
-						Particle.addParticles(2 + Main.rand.nextInt(5), World.xCoords[k], World.yCoords[k], World.textureData[k]);
+						Particle.spawnFallingParticles(2 + Main.rand.nextInt(5), World.xCoords[k], World.yCoords[k], World.textureData[k]);
 					}
 					
 					if(zone instanceof IZoneEntityProvider) {
-						World.getZoneEntity(k).update();
+						EntityZone entity = World.getZoneEntity(k);
+						if(entity.shouldUpdate) {
+							entity.update();
+						}
 					}
 				}
 			}

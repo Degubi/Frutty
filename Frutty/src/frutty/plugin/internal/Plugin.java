@@ -20,10 +20,6 @@ import frutty.Main;
 import frutty.plugin.FruttyEvent;
 import frutty.plugin.FruttyPlugin;
 import frutty.plugin.FruttyPluginMain;
-import frutty.plugin.event.MapInitEvent;
-import frutty.plugin.event.gui.GuiMenuEvent;
-import frutty.plugin.event.gui.GuiStatInitEvent;
-import frutty.plugin.event.gui.GuiStatSavedEvent;
 import frutty.tools.Version;
 
 public final class Plugin{
@@ -55,21 +51,6 @@ public final class Plugin{
 				description != null ? ("<br>Description: " + description) : "");
 	}
 	
-	public static void handleEventTypes(Lookup lookup, Method eventMts, Class<?> eventTypeClass) throws IllegalAccessException {
-		var handle = new EventHandle(lookup.unreflect(eventMts), eventMts.getAnnotation(FruttyEvent.class).priority());
-		
-		if(eventTypeClass == MapInitEvent.class) {
-			EventHandle.mapLoadEvents.add(handle);
-		}else if(eventTypeClass == GuiMenuEvent.class) {
-			EventHandle.menuInitEvents.add(handle);
-		}else if(eventTypeClass == GuiStatInitEvent.class) {
-			EventHandle.statInitEvents.add(handle);
-		}else if(eventTypeClass == GuiStatSavedEvent.class) {
-			EventHandle.statSaveEvents.add(handle);
-		}
-	}
-	
-	
 	public static void handlePluginInit() {
 		var pluginPath = Paths.get("plugins");
 		if(!Files.exists(pluginPath)) {
@@ -81,17 +62,7 @@ public final class Plugin{
 		if(Main.hasPlugins) {
 			loadPlugins();
 			
-			if(!EventHandle.mapLoadEvents.isEmpty()) {
-				EventHandle.mapLoadEvents.sort(EventHandle.byPriority);
-			}
-			
-			if(!EventHandle.menuInitEvents.isEmpty()) {
-				EventHandle.menuInitEvents.sort(EventHandle.byPriority);
-			}
-			
-			if(!EventHandle.statInitEvents.isEmpty()) {
-				EventHandle.statInitEvents.sort(EventHandle.byPriority);
-			}
+			EventHandle.sortEvents();
 		}
 	}
 	
@@ -163,7 +134,7 @@ public final class Plugin{
 													throw new IllegalArgumentException("Illegal type of argument for method: " + eventMts.getName());
 												}
 												
-												Plugin.handleEventTypes(lookup, eventMts, eventTypeClass);
+												EventHandle.handleEventTypes(lookup, eventMts, eventTypeClass);
 											}else {
 												throw new IllegalStateException("Method from class: " + eventClass + ", methodName: " + eventMts.getName() + " is not static or has more than 1 parameters");
 											}

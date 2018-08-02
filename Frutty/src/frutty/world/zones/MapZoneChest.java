@@ -9,13 +9,11 @@ import frutty.Main;
 import frutty.entity.EntityPlayer;
 import frutty.entity.effects.EntityEffectInvisible;
 import frutty.gui.GuiIngame;
-import frutty.gui.components.GuiTextureSelector;
-import frutty.world.interfaces.ITexturable;
-import frutty.world.interfaces.MapZoneBase;
+import frutty.world.interfaces.MapZoneTexturable;
 
-public final class MapZoneChest extends MapZoneBase implements ITexturable{
+public final class MapZoneChest extends MapZoneTexturable{
 	public static final BufferedImage chestTexture = Main.loadTexture("map/special", "chest.png");
-
+	
 	public MapZoneChest() {
 		super("chestZone");
 	}
@@ -32,12 +30,7 @@ public final class MapZoneChest extends MapZoneBase implements ITexturable{
 		
 		super.onZoneEntered(x, y, zoneIndex, textureIndex, player);
 	}
-
-	@Override
-	public ImageIcon[] getEditorTextureVars() {
-		return GuiTextureSelector.chestTextures;
-	}
-
+	
 	@Override
 	protected ImageIcon getEditorIcon() {
 		var toReturn = new BufferedImage(64, 64, BufferedImage.TYPE_INT_RGB);
@@ -45,5 +38,10 @@ public final class MapZoneChest extends MapZoneBase implements ITexturable{
 		graphics.drawImage(Main.normalZone.editorTexture.get().getImage(), 0, 0, null);
 		graphics.drawImage(chestTexture, 0, 0, null);
 		return new ImageIcon(toReturn);
+	}
+
+	@Override
+	public BufferedImage getOverlayTexture() {
+		return chestTexture;
 	}
 }

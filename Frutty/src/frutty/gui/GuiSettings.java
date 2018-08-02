@@ -21,9 +21,9 @@ import frutty.gui.components.SettingButtonSlider;
 import frutty.tools.GuiHelper;
 import frutty.tools.PropertyFile;
 import frutty.world.interfaces.IInternalZone;
-import frutty.world.interfaces.ITexturable;
 import frutty.world.interfaces.ITransparentZone;
 import frutty.world.interfaces.MapZoneBase;
+import frutty.world.interfaces.MapZoneTexturable;
 
 public final class GuiSettings extends JPanel implements ActionListener{
 	private static final MapZoneBase[] zones = new MapZoneBase[140];
@@ -59,7 +59,7 @@ public final class GuiSettings extends JPanel implements ActionListener{
 						zone = ((IInternalZone) zone).getReplacementZone();
 					}
 					
-					if(zone instanceof ITexturable) {
+					if(zone instanceof MapZoneTexturable) {
 						textureData[zoneIndex] = input.readByte();
 					}
 					xCoords[zoneIndex] = x;

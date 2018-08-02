@@ -16,7 +16,7 @@ public final class TextureSelectorButton extends JButton implements ActionListen
 	private final GuiEditor editorInstance;
 		
 	public TextureSelectorButton(int width, GuiEditor editor) {
-		super(GuiTextureSelector.bigTextures[GuiTextureSelector.indexOf("normal.png")]);
+		super(GuiTextureSelector.bigScaledTextures[GuiTextureSelector.indexOf("normal.png")]);
 			
 		editorInstance = editor;
 		setToolTipText("Texture Selector Tool");

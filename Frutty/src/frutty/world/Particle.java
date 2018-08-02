@@ -15,22 +15,40 @@ public final class Particle implements Serializable{
 
 	private static Color[] colors;
 	
-	public final int colorIndex;
+	public final Color color;
 	public int lifeTime, posX, posY;
-	public final int motionY;
+	public final int motionX, motionY;
 	
-	public Particle(int x, int y, int colorIndex) {
+	private Particle(int x, int y, int colorIndex) {
 		posX = x;
 		posY = y;
 		lifeTime = 25 + Main.rand.nextInt(20);
+		motionX = 0;
 		motionY = 2 + Main.rand.nextInt(3);
-		this.colorIndex = colorIndex;
+		color = colors[colorIndex];
 	}
 	
-	public static void addParticles(int count, int x, int y, int color) {
+	private Particle(int x, int y, Color color) {
+		posX = x;
+		posY = y;
+		lifeTime = 25 + Main.rand.nextInt(20);
+		motionX = -2 + Main.rand.nextInt(5);
+		motionY = -2 + Main.rand.nextInt(2);
+		this.color = color;
+	}
+	
+	public static void spawnFallingParticles(int count, int x, int y, int color) {
 		if(Settings.graphicsLevel == 2) {
 			for(int k = 0; k < count; ++k) {
 				World.particles.add(new Particle(x + Main.rand.nextInt(64), y + 64 + Main.rand.nextInt(32), color));
+			}
+		}
+	}
+	
+	public static void spawnRandomParticles(int count, int x, int y, Color color) {
+		if(Settings.graphicsLevel == 2) {
+			for(int k = 0; k < count; ++k) {
+				World.particles.add(new Particle(x + 32, y + 60, color));
 			}
 		}
 	}
@@ -44,7 +62,7 @@ public final class Particle implements Serializable{
 	}
 	
 	public void render(Graphics graphics) {
-		graphics.setColor(colors[colorIndex]);
+		graphics.setColor(color);
 		graphics.fillRect(posX, posY, 4, 4);
 		
 		graphics.setColor(GuiHelper.color_84Black);
@@ -56,6 +74,7 @@ public final class Particle implements Serializable{
 	
 	public void update(Iterator<Particle> iterator) {
 		posY += motionY;
+		posX += motionX;
 		if(--lifeTime == 0) {
 			iterator.remove();
 		}

@@ -10,6 +10,7 @@ import java.util.Iterator;
 import frutty.Main;
 import frutty.entity.effects.EntityEffect;
 import frutty.entity.effects.EntityEffectInvisible;
+import frutty.gui.GuiIngame;
 import frutty.gui.GuiSettings.Settings;
 import frutty.world.World;
 
@@ -39,7 +40,7 @@ public final class EntityPlayer extends Entity implements KeyListener{
 		}
 	}
 
-	private static boolean isFree(int x, int y) {
+	private static boolean isPlayerFree(int x, int y) {
 		if(!World.getZoneAtIndex(coordsToIndex(x, y)).canPlayerPass(x, y)) {
 			return false;
 		}
@@ -50,6 +51,11 @@ public final class EntityPlayer extends Entity implements KeyListener{
 			}
 		}
 		return true;
+	}
+	
+	@Override
+	public void onKilled(Entity killer) {
+		GuiIngame.showMessageAndClose("Game over!");
 	}
 	
 	private void setFacing(EnumFacing facing) {
@@ -67,13 +73,13 @@ public final class EntityPlayer extends Entity implements KeyListener{
 	@Override
 	public void keyPressed(KeyEvent event) {
 		if(System.currentTimeMillis() - lastPressTime > 100L) {
-			if(event.getKeyCode() == upKey && renderPosY > 0 && isFree(renderPosX, renderPosY - 64)) {
+			if(event.getKeyCode() == upKey && renderPosY > 0 && isPlayerFree(renderPosX, renderPosY - 64)) {
 				setFacing(EnumFacing.UP);
-			}else if(event.getKeyCode() == downKey && renderPosY < World.height && isFree(renderPosX, renderPosY + 64)) {
+			}else if(event.getKeyCode() == downKey && renderPosY < World.height && isPlayerFree(renderPosX, renderPosY + 64)) {
 				setFacing(EnumFacing.DOWN);
-			}else if(event.getKeyCode() == leftKey && renderPosX > 0 && isFree(renderPosX - 64, renderPosY)) {
+			}else if(event.getKeyCode() == leftKey && renderPosX > 0 && isPlayerFree(renderPosX - 64, renderPosY)) {
 				setFacing(EnumFacing.LEFT);
-			}else if(event.getKeyCode() == rightKey && renderPosX < World.width && isFree(renderPosX + 64, renderPosY)) {
+			}else if(event.getKeyCode() == rightKey && renderPosX < World.width && isPlayerFree(renderPosX + 64, renderPosY)) {
 				setFacing(EnumFacing.RIGHT);
 			}
 		}

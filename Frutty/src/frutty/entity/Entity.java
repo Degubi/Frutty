@@ -5,7 +5,6 @@ import java.awt.Graphics;
 import java.io.Serializable;
 
 import frutty.Main;
-import frutty.gui.GuiIngame;
 import frutty.gui.GuiSettings.Settings;
 import frutty.world.World;
 import frutty.world.interfaces.MapZoneBase;
@@ -25,16 +24,26 @@ public abstract class Entity implements Serializable{
 		moveRate = getServerUpdateRate() / getClientUpdateRate();
 	}
 	
+	public abstract void render(Graphics graphics);
+	public abstract void updateClient();
+	public abstract void updateServer();
+	public abstract int getClientUpdateRate();
+	public abstract int getServerUpdateRate();
+	public void onKilled(@SuppressWarnings("unused") Entity killer) {};
+	
+	/**************************************************INTERNALS**************************************************/
+	
+	
 	protected final EnumFacing findFreeFacing() {
 		for(var randomFacing = EnumFacing.randomFacing(); ; randomFacing = EnumFacing.randomFacing()) {
-			if(canGo(serverPosX + randomFacing.xOffset, serverPosY + randomFacing.yOffset)) {
+			if(isFree(serverPosX + randomFacing.xOffset, serverPosY + randomFacing.yOffset)) {
 				return randomFacing;
 			}
 			continue;
 		}
 	}
 	
-	protected final static boolean canGo(int x, int y) {
+	protected final static boolean isFree(int x, int y) {
 		if(x < 0 || x > World.width || y < 0 || y > World.height) {
 			return false;
 		}
@@ -47,25 +56,17 @@ public abstract class Entity implements Serializable{
 			   (serverPosY >= y && serverPosY + 64 <= y + 64);
 	}
 	
-	protected final void checkPlayers(boolean addScore) {
+	protected final void checkPlayers() {
 		for(var player : World.players) {
 			if(!player.hidden && doesCollide(player.serverPosX, player.serverPosY)) {
 				if(Settings.enableGod || player.isInvicible()) {
-					active = false;
-					if(addScore) {
-						World.score += 100;
-					}
+					onKilled(player);
 				}else{
-					GuiIngame.showMessageAndClose("Game over!");
+					if(this instanceof EntityFalling) {
+						((EntityFalling)this).onFallStopped();
+					}
+					player.onKilled(this);
 				}
-			}
-		}
-	}
-	
-	protected final void checkEnemies() {
-		for(var enemies : World.enemies) {
-			if(doesCollide(enemies.serverPosX, enemies.serverPosY)) {
-				enemies.active = false;
 			}
 		}
 	}
@@ -84,12 +85,6 @@ public abstract class Entity implements Serializable{
 			graphics.drawRect(renderPosX, renderPosY, 64, 64);
 		}
 	}
-	
-	public abstract void render(Graphics graphics);
-	public abstract void updateClient();
-	public abstract void updateServer();
-	public abstract int getClientUpdateRate();
-	public abstract int getServerUpdateRate();
 	
 	public final void update(int ticks) {
 		if(ticks % getClientUpdateRate() == 0) {

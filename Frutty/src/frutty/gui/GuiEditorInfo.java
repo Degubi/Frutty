@@ -11,7 +11,7 @@ import javax.swing.JPanel;
 
 import frutty.Main;
 import frutty.tools.GuiHelper;
-import frutty.world.interfaces.ITexturable;
+import frutty.world.interfaces.MapZoneTexturable;
 
 public final class GuiEditorInfo extends JPanel{
 	private final GuiEditor editor;
@@ -27,7 +27,7 @@ public final class GuiEditorInfo extends JPanel{
 		int size = 0;
 		
  		for(var writeButton : editor.zoneButtons) {
- 			if(Main.getZoneFromName(writeButton.zoneID) instanceof ITexturable) {
+ 			if(Main.getZoneFromName(writeButton.zoneID) instanceof MapZoneTexturable) {
  				String texture = "textures/map/" + writeButton.zoneTexture + ".png";
  				if(!textures.contains(texture)) {
  					try {

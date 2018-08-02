@@ -4,6 +4,7 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 import frutty.Main;
+import frutty.world.World;
 
 public final class EntityEnemy extends Entity {
 	private static final BufferedImage[] fastTextures = {Main.loadTexture("enemy", "fast_side.png"), Main.loadTexture("enemy", "fast_front.png"), Main.loadTexture("enemy", "fast_back.png")};
@@ -31,14 +32,22 @@ public final class EntityEnemy extends Entity {
 	}
 
 	@Override
+	public void onKilled(Entity killer) {
+		if(killer instanceof EntityPlayer) {
+			World.score += 100;
+		}
+		active = false;
+	}
+	
+	@Override
 	public void updateClient() {
-		checkPlayers(true);
+		checkPlayers();
 	}
 
 	@Override
 	public void updateServer() {
 		animSwitch = !animSwitch;
-		if(!canGo(serverPosX + motionX, serverPosY + motionY)) {
+		if(!isFree(serverPosX + motionX, serverPosY + motionY)) {
 			EnumFacing facing = findFreeFacing();
 			motionX = facing.xOffset;
 			motionY = facing.yOffset;

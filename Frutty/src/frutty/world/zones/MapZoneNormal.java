@@ -1,15 +1,16 @@
 package frutty.world.zones;
 
 import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
 
 import frutty.gui.GuiIngame;
 import frutty.gui.components.GuiTextureSelector;
-import frutty.world.interfaces.ITexturable;
-import frutty.world.interfaces.MapZoneBase;
+import frutty.world.interfaces.MapZoneTexturable;
 
-public final class MapZoneNormal extends MapZoneBase implements ITexturable{
+public final class MapZoneNormal extends MapZoneTexturable{
 	
 	public MapZoneNormal() {
 		super("normalZone");
@@ -21,12 +22,21 @@ public final class MapZoneNormal extends MapZoneBase implements ITexturable{
 	}
 
 	@Override
-	public ImageIcon[] getEditorTextureVars() {
-		return GuiTextureSelector.normalTextures;
+	protected ImageIcon getEditorIcon() {
+		return new ImageIcon("./textures/map/normal.png");
 	}
 
 	@Override
-	protected ImageIcon getEditorIcon() {
-		return new ImageIcon("./textures/map/normal.png");
+	public BufferedImage getOverlayTexture() {
+		return null;
+	}
+	
+	@Override
+	public ImageIcon[] getEditorTextures() {
+		ImageIcon[] toReturn = new ImageIcon[GuiTextureSelector.textureNames.length];
+		for(int k = 0; k < GuiTextureSelector.textureNames.length; ++k) {
+			toReturn[k] = new ImageIcon((new ImageIcon("./textures/map/" + GuiTextureSelector.textureNames[k])).getImage().getScaledInstance(64, 64, Image.SCALE_DEFAULT));
+		}
+		return toReturn;
 	}
 }

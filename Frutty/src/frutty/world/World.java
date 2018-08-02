@@ -12,13 +12,13 @@ import frutty.entity.EntityEnemy;
 import frutty.entity.EntityPlayer;
 import frutty.entity.zone.EntityAppleZone;
 import frutty.entity.zone.EntityZone;
-import frutty.plugin.event.MapInitEvent;
+import frutty.plugin.event.world.WorldInitEvent;
 import frutty.plugin.internal.EventHandle;
 import frutty.tools.GuiHelper;
 import frutty.world.interfaces.IInternalZone;
-import frutty.world.interfaces.ITexturable;
 import frutty.world.interfaces.IZoneEntityProvider;
 import frutty.world.interfaces.MapZoneBase;
+import frutty.world.interfaces.MapZoneTexturable;
 
 public final class World{
 	public static EntityPlayer[] players;
@@ -53,7 +53,7 @@ public final class World{
 		mapName = levelName;
 		nextMap = next;
 		
-		if(Main.hasPlugins && !EventHandle.mapLoadEvents.isEmpty()) EventHandle.handleEvent(new MapInitEvent(w, h, txts, entities), EventHandle.mapLoadEvents);
+		if(Main.hasPlugins && !EventHandle.mapLoadEvents.isEmpty()) EventHandle.handleEvent(new WorldInitEvent(w, h, txts, entities), EventHandle.mapLoadEvents);
 		
 		int zoneCount = (w / 64) * (h / 64);
 		zones = new MapZoneBase[zoneCount];
@@ -157,12 +157,12 @@ public final class World{
 	
 	public static void loadMap(String name, boolean isMultiplayer) {
 		try(var input = new ObjectInputStream(new FileInputStream("./maps/" + name + ".deg"))){
-			int width, height, zoneIndex = 0;
+			int loadedWidth, loadedHeight, zoneIndex = 0;
 			int textureCount = input.readByte();
-			String[] textures = new String[textureCount];
+			String[] loadedTextures = new String[textureCount];
 			
 			for(int k = 0; k < textureCount; ++k) {
-				textures[k] = input.readUTF();
+				loadedTextures[k] = input.readUTF();
 			}
 			
 			int zoneIDCount = input.readByte();
@@ -172,18 +172,18 @@ public final class World{
 				zoneIDS[k] = input.readUTF();
 			}
 			
-			init(textures, isMultiplayer, input.readUTF(), name, width = input.readShort() * 64, height = input.readShort() * 64, input.readUTF());
+			init(loadedTextures, isMultiplayer, input.readUTF(), name, loadedWidth = input.readShort() * 64, loadedHeight = input.readShort() * 64, input.readUTF());
 			
-			for(int y = 0; y < height; y += 64) {
-				for(int x = 0; x < width; x += 64) {
+			for(int y = 0; y < loadedHeight; y += 64) {
+				for(int x = 0; x < loadedWidth; x += 64) {
 					MapZoneBase zone = Main.getZoneFromName(zoneIDS[input.readByte()]);
 					
-					zone.onZoneAdded(isMultiplayer, x, y);  //Fentre így a player zónák jól müködnek majd elméletileg
+					zone.onZoneAddedInternal(isMultiplayer, x, y);  //Fentre így a player zónák jól müködnek majd elméletileg
 					if(zone instanceof IInternalZone) {
 						zone = ((IInternalZone) zone).getReplacementZone();
 					}
 					
-					if(zone instanceof ITexturable) {
+					if(zone instanceof MapZoneTexturable) {
 						textureData[zoneIndex] = input.readByte();
 					}
 					
@@ -258,6 +258,7 @@ public final class World{
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static boolean loadSave(String fileName) {
 		if(fileName != null) {
 			try(var input = new ObjectInputStream(new FileInputStream("./saves/" + fileName))){
@@ -319,5 +320,6 @@ public final class World{
 	
 	public static void setZoneEmptyAt(int index) {
 		zones[index] = Main.emptyZone;
+		zoneEntities[index] = null;
 	}
 }
