@@ -1,7 +1,9 @@
+/**Module used for plugin development*/
 module frutty.api{
 	requires transitive java.desktop;
 	
 	exports frutty.entity;
+	exports frutty.entity.effects;
 	exports frutty.entity.zone;
 	
 	exports frutty.plugin;
@@ -11,6 +13,5 @@ module frutty.api{
 	exports frutty.sound;
 	exports frutty.tools;
 	
-	exports frutty.world.zones;
 	exports frutty.world.interfaces;
 }

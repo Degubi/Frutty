@@ -23,7 +23,7 @@ import frutty.plugin.FruttyPluginMain;
 import frutty.tools.Version;
 
 public final class Plugin{
-	public static ArrayList<Plugin> plugins = Main.toList(new Plugin("Frutty", "Base module for the game.", "", Version.from(1, 4, 0), "https://pastebin.com/raw/m5qJbnks"),
+	public static ArrayList<Plugin> plugins = Main.toList(new Plugin("Frutty", "Base module for the game.", "", Version.from(1, 4, 1), "https://pastebin.com/raw/m5qJbnks"),
 			 new Plugin("Frutty Plugin Loader", "Base module for the plugin loader", "", Version.from(1, 0, 0), ""));
 	
 	public final String description, ID, updateURL, versionURL;

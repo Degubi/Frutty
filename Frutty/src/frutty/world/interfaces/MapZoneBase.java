@@ -11,8 +11,6 @@ import javax.swing.ImageIcon;
 
 import frutty.Main;
 import frutty.entity.EntityPlayer;
-import frutty.entity.zone.EntityAppleZone;
-import frutty.entity.zone.EntityZone;
 import frutty.gui.GuiEditor;
 import frutty.gui.GuiSettings.Settings;
 import frutty.gui.GuiStats;
@@ -111,6 +109,7 @@ public abstract class MapZoneBase implements Serializable{
 		return (icon.getIconWidth() == 64 && icon.getIconHeight() == 64) ? icon : new ImageIcon(icon.getImage().getScaledInstance(64, 64, Image.SCALE_DEFAULT));
 	}
 	
+	@SuppressWarnings("exports")
 	public final void handleEditorReading(GuiEditor editor, String zoneID, ObjectInputStream input, int x, int y, String[] textures) throws IOException {
 		EditorZoneButton button = new EditorZoneButton(editorTexture.get(), editor);
 		button.setBounds(x * 64, y * 64, 64, 64);

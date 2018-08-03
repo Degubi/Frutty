@@ -57,7 +57,7 @@ public final class Particle implements Serializable{
 		colors = new Color[GuiIngame.textures.length];
 		
 		for(int k = 0; k < GuiIngame.textures.length; ++k) {
-			colors[k] = new Color(GuiIngame.textures[k].getRGB(2, 2), true);
+			colors[k] = new Color(GuiIngame.textures[k].getRGB(2, 2));
 		}
 	}
 	
