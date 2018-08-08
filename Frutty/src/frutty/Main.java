@@ -4,7 +4,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +48,7 @@ public final class Main {
 
 	private Main() {}
 	
-	public static void main(String[] args) throws IOException{
+	public static void main(String[] args){
 		Plugin.handlePluginInit();
 		
 		GuiMenu.createMainFrame(true);
@@ -59,11 +58,6 @@ public final class Main {
 			try {
 				Files.createDirectory(savePath);
 			} catch (IOException e) {}
-		}
-		
-		Path installer = Paths.get("./FruttyInstaller.jar");
-		if(Files.exists(installer)) {
-			Files.move(installer, Paths.get("./bin/FruttyInstaller.jar"));
 		}
 	}
 

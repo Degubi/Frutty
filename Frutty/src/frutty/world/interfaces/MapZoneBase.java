@@ -96,6 +96,7 @@ public abstract class MapZoneBase implements Serializable{
 		if(Main.hasPlugins && !EventHandle.zoneAddedEvents.isEmpty()) {
 			ZoneAddedEvent event = new ZoneAddedEvent(this, x, y);
 			EventHandle.handleEvent(event, EventHandle.zoneAddedEvents);
+			
 			if(!event.canceled) {
 				onZoneAdded(isCoop, x, y);
 			}
