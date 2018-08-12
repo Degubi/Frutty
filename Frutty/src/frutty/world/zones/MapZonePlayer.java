@@ -7,8 +7,8 @@ import javax.swing.ImageIcon;
 import frutty.Main;
 import frutty.entity.EntityPlayer;
 import frutty.world.World;
-import frutty.world.interfaces.IInternalZone;
-import frutty.world.interfaces.MapZoneBase;
+import frutty.world.base.IInternalZone;
+import frutty.world.base.MapZoneBase;
 
 public final class MapZonePlayer extends MapZoneBase implements IInternalZone{
 	private final int playerID;

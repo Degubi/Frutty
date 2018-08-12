@@ -23,11 +23,13 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
+import javax.swing.JTextField;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import frutty.Main;
+import frutty.gui.components.SettingButton;
 import frutty.tools.GuiHelper;
+import frutty.tools.IOHelper;
 import frutty.world.World;
 
 public final class GuiMapSelection extends JPanel implements ListSelectionListener, ActionListener{
@@ -66,7 +68,7 @@ public final class GuiMapSelection extends JPanel implements ListSelectionListen
 			String path = "./textures/gui/" + mapList.getSelectedValue() + ".jpg";
 
 			if(Files.exists(Paths.get(path))) {
-				BufferedImage image = Main.loadTexture("gui", mapList.getSelectedValue() + ".jpg");
+				BufferedImage image = IOHelper.loadTexture("gui", mapList.getSelectedValue() + ".jpg");
 				var graph = image.createGraphics();
 				graph.setColor(Color.BLACK);
 				graph.fillRect(380, 420, 100, 60);
@@ -90,7 +92,7 @@ public final class GuiMapSelection extends JPanel implements ListSelectionListen
 	}
 	
 	private void setModel() {
-		var model = new DefaultListModel<String>();
+		DefaultListModel<String> model = new DefaultListModel<>();
 		var files = Arrays.stream(new File("./maps").list()).filter(name -> name.endsWith(".deg")).map(name -> name.substring(0, name.length() - 4));
 		
 		if(devMode.isSelected()) {
@@ -98,6 +100,8 @@ public final class GuiMapSelection extends JPanel implements ListSelectionListen
 		}else{
 			files.filter(name -> !name.startsWith("background")).filter(name -> !name.startsWith("dev_")).forEach(map -> model.addElement(map));
 		}
+		
+		model.addElement("Generate Map");
 		
 		mapList.setModel(model);
 		mapList.setSelectedValue("Creepy", false);
@@ -108,15 +112,13 @@ public final class GuiMapSelection extends JPanel implements ListSelectionListen
 		String actionCommand = event.getActionCommand();
 		
 		if(actionCommand.equals("Play")) {
-			/*if(mapName.equals("Generate")) {
-				String[] mapSizeSplit = mapSizeField.getText().split("x");
-				Map.generateMap(Integer.parseInt(mapSizeSplit[0]), Integer.parseInt(mapSizeSplit[1]), coopBox.isSelected());
+			if(mapList.getSelectedValue().equals("Generate Map")) {
+				GuiHelper.switchMenuPanel(new GuiGenerateMap());
 			}else{
-			*/
-			World.loadMap(mapList.getSelectedValue(), coopBox.isSelected());
-			//}
-			GuiIngame.showIngame();
-			GuiMenu.mainFrame.dispose();
+				World.loadMap(mapList.getSelectedValue(), coopBox.isSelected());
+				GuiIngame.showIngame();
+				GuiMenu.mainFrame.dispose();
+			}
 		}else if(actionCommand.equals("Menu")) {
 			switchMenuPanel(new GuiMenu());
 		}else if(actionCommand.equals("Enable Dev Maps")) {
@@ -144,5 +146,34 @@ public final class GuiMapSelection extends JPanel implements ListSelectionListen
 			System.err.println("Can't load map size for map: " + path);
 		}
 		return "";
+	}
+	
+	static class GuiGenerateMap extends JPanel implements ActionListener{
+		private final JTextField sizeField = new JTextField("10x10");
+		
+		public GuiGenerateMap() {
+			setLayout(null);
+			
+			sizeField.setBounds(50, 50, 120, 40);
+			add(sizeField);
+			
+			add(new SettingButton(false, "Enable Water", 50, 80));
+			add(newButton("Menu", 725, 475, this));
+			add(newButton("Play", 725, 550, this));
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent event) {
+			String actionCommand = event.getActionCommand();
+			
+			if(actionCommand.equals("Play")) {
+				var mapSize = sizeField.getText().split("x");
+				World.generateMap(Integer.parseInt(mapSize[0]), Integer.parseInt(mapSize[1]), false);
+				GuiIngame.showIngame();
+				GuiMenu.mainFrame.dispose();
+			}else if(actionCommand.equals("Menu")) {
+				switchMenuPanel(new GuiMenu());
+			}
+		}
 	}
 }

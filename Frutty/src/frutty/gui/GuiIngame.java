@@ -8,7 +8,6 @@ import java.awt.Graphics2D;
 import java.awt.HeadlessException;
 import java.awt.Rectangle;
 import java.awt.Robot;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -40,11 +39,12 @@ import frutty.entity.EntityPlayer;
 import frutty.entity.zone.EntityZone;
 import frutty.gui.GuiSettings.Settings;
 import frutty.tools.GuiHelper;
+import frutty.tools.IOHelper;
 import frutty.world.Particle;
 import frutty.world.World;
-import frutty.world.interfaces.ITransparentZone;
-import frutty.world.interfaces.IZoneEntityProvider;
-import frutty.world.interfaces.MapZoneBase;
+import frutty.world.base.ITransparentZone;
+import frutty.world.base.IZoneEntityProvider;
+import frutty.world.base.MapZoneBase;
 import frutty.world.zones.MapZoneWater;
 
 public final class GuiIngame extends JPanel implements Runnable, KeyListener{
@@ -236,8 +236,9 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 			});
 		}else if(keyCode == KeyEvent.VK_F12) {
 			try {
-				new File("./screenshots/").mkdir();
-				ImageIO.write(new Robot().createScreenCapture(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize())), Settings.screenshotFormat, 
+				IOHelper.createDirectory("screenshots");
+				var window = ((JFrame)getTopLevelAncestor()).getLocationOnScreen();
+				ImageIO.write(new Robot().createScreenCapture(new Rectangle(window.x + 7, window.y + 30, World.width + 64, World.height + 64)), Settings.screenshotFormat, 
 																			new File("./screenshots/" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd_kk_HH_ss")) +"." + Settings.screenshotFormat.toLowerCase()));
 			} catch (HeadlessException | AWTException | IOException e1) {
 				e1.printStackTrace();

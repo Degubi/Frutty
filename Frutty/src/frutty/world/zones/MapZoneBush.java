@@ -7,12 +7,12 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
 
-import frutty.Main;
-import frutty.world.interfaces.ITransparentZone;
-import frutty.world.interfaces.MapZoneBase;
+import frutty.tools.IOHelper;
+import frutty.world.base.ITransparentZone;
+import frutty.world.base.MapZoneBase;
 
 public final class MapZoneBush extends MapZoneBase implements ITransparentZone{
-	public static final BufferedImage texture = Main.loadTexture("map/special", "bush.png");
+	public static final BufferedImage texture = IOHelper.loadTexture("map/special", "bush.png");
 	
 	public MapZoneBush() {
 		super("bushZone", true, false);

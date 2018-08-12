@@ -10,16 +10,14 @@ import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
 import frutty.Main;
 import frutty.plugin.FruttyEvent;
 import frutty.plugin.FruttyPlugin;
 import frutty.plugin.FruttyPluginMain;
+import frutty.tools.IOHelper;
 import frutty.tools.Version;
 
 public final class Plugin{
@@ -52,12 +50,7 @@ public final class Plugin{
 	}
 	
 	public static void handlePluginInit() {
-		var pluginPath = Paths.get("plugins");
-		if(!Files.exists(pluginPath)) {
-			try {
-				Files.createDirectory(pluginPath);
-			} catch (IOException e) {}
-		}
+		IOHelper.createDirectory("plugins");
 		
 		if(Main.hasPlugins) {
 			loadPlugins();
@@ -80,20 +73,17 @@ public final class Plugin{
 					e1.printStackTrace();
 				}
 				
-				try(JarFile jar = new JarFile(pluginNames[k])){
-					Manifest mani = jar.getManifest();
-					if(mani == null) {
-						throw new IllegalStateException("Can't find manifest file from plugin: " + pluginNames[k]);
-					}
-					
-					String pluginClass = mani.getMainAttributes().getValue("Plugin-Class");
-					if(pluginClass == null) {
-						throw new IllegalStateException("Can't find \"Plugin-Class\" attribute from plugin: " + pluginNames[k]);
-					}
-					mainClassNames[k] = pluginClass;
-				} catch (IOException e) {
-					e.printStackTrace();
+				Manifest mani = IOHelper.getManifestFromJar(pluginNames[k]);
+				
+				if(mani == null) {
+					throw new IllegalStateException("Can't find manifest file from plugin: " + pluginNames[k]);
 				}
+					
+				String pluginClass = mani.getMainAttributes().getValue("Plugin-Class");
+				if(pluginClass == null) {
+					throw new IllegalStateException("Can't find \"Plugin-Class\" attribute from plugin: " + pluginNames[k]);
+				}
+				mainClassNames[k] = pluginClass;
 			}
 			
 			try(URLClassLoader urlClass = new URLClassLoader(classLoaderNames, Main.class.getClassLoader())){

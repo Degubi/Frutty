@@ -13,5 +13,6 @@ module frutty.api{
 	exports frutty.sound;
 	exports frutty.tools;
 	
-	exports frutty.world.interfaces;
+	exports frutty.world.zones;
+	exports frutty.world.base;
 }

@@ -1,20 +1,15 @@
 package frutty;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import javax.imageio.ImageIO;
-
 import frutty.gui.GuiIngame;
 import frutty.gui.GuiMenu;
 import frutty.plugin.internal.Plugin;
-import frutty.world.interfaces.MapZoneBase;
+import frutty.tools.IOHelper;
+import frutty.world.base.MapZoneBase;
 import frutty.world.zones.MapZoneApple;
 import frutty.world.zones.MapZoneBush;
 import frutty.world.zones.MapZoneCherry;
@@ -29,7 +24,7 @@ import frutty.world.zones.MapZoneWater;
 
 public final class Main {
 	public static final Random rand = new Random();
-	public static final boolean hasPlugins = new File("./plugins/").list().length > 0;
+	public static final boolean hasPlugins = IOHelper.fileCount("plugins") > 0;
 	
 	public static final MapZoneNormal normalZone = new MapZoneNormal();
 	public static final MapZoneEmpty emptyZone = new MapZoneEmpty();
@@ -50,26 +45,10 @@ public final class Main {
 	
 	public static void main(String[] args){
 		Plugin.handlePluginInit();
-		
 		GuiMenu.createMainFrame(true);
-			
-		var savePath = Paths.get("saves");
-		if(!Files.exists(savePath)) {
-			try {
-				Files.createDirectory(savePath);
-			} catch (IOException e) {}
-		}
+		IOHelper.createDirectory("saves");
 	}
 
-	public static BufferedImage loadTexture(String prefix, String name) {
-		try{
-			return ImageIO.read(Files.newInputStream(Paths.get("./textures/" + prefix + "/" + name)));
-		}catch(IOException e){
-			System.err.println("Can't find texture: " + prefix + "/" + name + " from class: " + Thread.currentThread().getStackTrace()[3].getClassName());
-			return null;
-		}
-	}
-	
 	public static MapZoneBase getZoneFromName(String name) {
 		for(MapZoneBase zone : zoneRegistry) {
 			if(zone.zoneName.equals(name)) {
@@ -81,22 +60,16 @@ public final class Main {
 	
 	public static void loadTextures(String[] textureNames) {
 		GuiIngame.textures = new BufferedImage[textureNames.length];
-		try{
-			for(int k = 0; k < textureNames.length; ++k) {
-				GuiIngame.textures[k] = ImageIO.read(Files.newInputStream(Paths.get("./textures/map/" + textureNames[k] + ".png")));
-			}
-		}catch (IOException e) {}
-	}
-	
-	public static void loadSkyTexture(String textureName) {
-		try{
-			GuiIngame.skyTexture = !textureName.equals("null") ? ImageIO.read(Files.newInputStream(Paths.get("./textures/map/skybox/" + textureName + ".png"))) : null;
-		}catch (IOException e) {
-			System.err.println("Can't find sky texture: " + textureName);
+		for(int k = 0; k < textureNames.length; ++k) {
+			GuiIngame.textures[k] = IOHelper.loadTexture("map", textureNames[k] + ".png");
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
+	public static void loadSkyTexture(String textureName) {
+		GuiIngame.skyTexture = !textureName.equals("null") ? IOHelper.loadTexture("map/skybox", textureName + ".png") : null;
+	}
+	
+	@SafeVarargs
 	public static <T> ArrayList<T> toList(T... objs){
 		ArrayList<T> list = new ArrayList<>(objs.length);
 		

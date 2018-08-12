@@ -8,10 +8,9 @@ import javax.swing.ImageIcon;
 
 import frutty.gui.GuiIngame;
 import frutty.gui.components.GuiTextureSelector;
-import frutty.world.interfaces.MapZoneTexturable;
+import frutty.world.base.MapZoneTexturable;
 
 public final class MapZoneNormal extends MapZoneTexturable{
-	
 	public MapZoneNormal() {
 		super("normalZone");
 	}

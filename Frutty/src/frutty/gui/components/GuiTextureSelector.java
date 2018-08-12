@@ -6,7 +6,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusEvent.Cause;
 import java.awt.event.FocusListener;
-import java.io.File;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -14,11 +13,12 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import frutty.gui.GuiEditor;
+import frutty.tools.IOHelper;
 
 public final class GuiTextureSelector extends JPanel implements ActionListener, FocusListener{
 	private final GuiEditor editor;
 	
-	public static final String[] textureNames = new File("./textures/map").list((file, name) -> name.endsWith(".png"));
+	public static final String[] textureNames = IOHelper.fileNameList("./textures/map", name -> name.endsWith(".png"));
 	public static final ImageIcon[] bigScaledTextures = getUpscaledTextures();
 	
 	private static ImageIcon[] getUpscaledTextures() {

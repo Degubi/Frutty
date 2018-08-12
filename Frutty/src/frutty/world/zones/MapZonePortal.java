@@ -5,13 +5,13 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
 
-import frutty.Main;
 import frutty.entity.EntityPlayer;
+import frutty.tools.IOHelper;
 import frutty.world.World;
-import frutty.world.interfaces.MapZoneBase;
+import frutty.world.base.MapZoneBase;
 
 public final class MapZonePortal extends MapZoneBase{
-	public static final BufferedImage portalTexture = Main.loadTexture("map/special", "portal.png");
+	public static final BufferedImage portalTexture = IOHelper.loadTexture("map/special", "portal.png");
 	
 	public MapZonePortal() {
 		super("portalZone", true, false);

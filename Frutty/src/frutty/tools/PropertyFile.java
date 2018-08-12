@@ -38,11 +38,7 @@ public final class PropertyFile {
 				}
 			}
 		} catch (IOException e) {
-			try {
-				Files.createFile(path);
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
+			IOHelper.createFile(filePath);
 		}
 	}
 	

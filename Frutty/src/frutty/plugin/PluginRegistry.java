@@ -1,9 +1,7 @@
 package frutty.plugin;
 
-import java.awt.image.BufferedImage;
-
 import frutty.Main;
-import frutty.world.interfaces.MapZoneBase;
+import frutty.world.base.MapZoneBase;
 
 /**Methods for registering zones, loading textures, etc*/
 public final class PluginRegistry {
@@ -18,21 +16,12 @@ public final class PluginRegistry {
 		if(!zone.zoneName.contains(":")) {
 			throw new IllegalArgumentException("Tried to register zone without plugin ID: " + zone.zoneName);
 		}
+		
 		if(isZoneAlreadyRegistered(zone.zoneName)) {
 			throw new IllegalArgumentException("Zone already registered with ID: " + zone.zoneName);
 		}
 		
 		Main.zoneRegistry.add(zone);
-	}
-	
-	/**
-	 * Load texture
-	 * @param prefix Folder of the texture
-	 * @param name Name of the texture including format
-	 * @return The texture object
-	 */
-	public static BufferedImage loadTexture(String prefix, String name) {
-		return Main.loadTexture(prefix, name);
 	}
 	
 	private static boolean isZoneAlreadyRegistered(String name) {

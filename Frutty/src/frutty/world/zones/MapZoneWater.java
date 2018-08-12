@@ -7,14 +7,14 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
 
-import frutty.Main;
 import frutty.gui.GuiSettings.Settings;
 import frutty.tools.GuiHelper;
-import frutty.world.interfaces.ITransparentZone;
-import frutty.world.interfaces.MapZoneBase;
+import frutty.tools.IOHelper;
+import frutty.world.base.ITransparentZone;
+import frutty.world.base.MapZoneBase;
 
 public final class MapZoneWater extends MapZoneBase implements ITransparentZone{
-	public static final BufferedImage waterTexture = Main.loadTexture("map/special", "water.png");
+	public static final BufferedImage waterTexture = IOHelper.loadTexture("map/special", "water.png");
 	private static boolean decrease = false;
 	private static int textureY = 0;
 	

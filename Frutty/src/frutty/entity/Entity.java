@@ -7,7 +7,7 @@ import java.io.Serializable;
 import frutty.Main;
 import frutty.gui.GuiSettings.Settings;
 import frutty.world.World;
-import frutty.world.interfaces.MapZoneBase;
+import frutty.world.base.MapZoneBase;
 
 public abstract class Entity implements Serializable{
 	private static final long serialVersionUID = 2876462867774051456L;

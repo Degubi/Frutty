@@ -1,4 +1,4 @@
-package frutty.world.interfaces;
+package frutty.world.base;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
@@ -9,7 +9,7 @@ import frutty.Main;
 import frutty.tools.Lazy;
 
 public abstract class MapZoneTexturable extends MapZoneBase{
-	public final Lazy<ImageIcon[]> textureVariants = new Lazy<>(this::getEditorTextures);
+	public transient final Lazy<ImageIcon[]> textureVariants = new Lazy<>(this::getEditorTextures);
 	
 	public MapZoneTexturable(String name) {
 		super(name);

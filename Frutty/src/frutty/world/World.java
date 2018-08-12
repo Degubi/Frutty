@@ -1,8 +1,10 @@
 package frutty.world;
 
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -15,10 +17,10 @@ import frutty.entity.zone.EntityZone;
 import frutty.plugin.event.world.WorldInitEvent;
 import frutty.plugin.internal.EventHandle;
 import frutty.tools.GuiHelper;
-import frutty.world.interfaces.IInternalZone;
-import frutty.world.interfaces.IZoneEntityProvider;
-import frutty.world.interfaces.MapZoneBase;
-import frutty.world.interfaces.MapZoneTexturable;
+import frutty.world.base.IInternalZone;
+import frutty.world.base.IZoneEntityProvider;
+import frutty.world.base.MapZoneBase;
+import frutty.world.base.MapZoneTexturable;
 
 public final class World{
 	public static EntityPlayer[] players;
@@ -206,55 +208,33 @@ public final class World{
 	
 	public static void createSave(String fileName) {
 		if(fileName != null) {
-			/*try(var output = new ObjectOutputStream(new FileOutputStream("./saves/" + fileName + ".sav"))){
-				output.writeShort(zones.length);
-				
-				var zoneIDS = new HashMap<Integer, String>();
-				
-				var entries = Main.zoneRegistry.entrySet();
-				for(MapZoneBase zone : zones) {
-					for(var entry : entries) {
-						if(entry.getValue() == zone && !zoneIDS.containsValue(entry.getKey())) {
-							zoneIDS.put(zoneIDS.size(), entry.getKey());
-							break;
-						}
-					}
-				}
-				output.writeByte(zoneIDS.size());
-				
-				for(int k = 0; k < zoneIDS.size(); ++k) {
-					output.writeUTF(zoneIDS.get(k));
-				}
-				
-				for(MapZoneBase zone : zones) {
-					String zoneName = Main.getZoneName(zone);
-					
-					for(var meh : zoneIDS.entrySet()) {
-						if(meh.getValue() == zoneName) {
-							output.writeByte(meh.getKey());
-						}
-					}
-				}
-				
+			try(var output = new ObjectOutputStream(new FileOutputStream("./saves/" + fileName + ".sav"))){
 				output.writeObject(players);
+				
+				output.writeShort(zones.length);
+				for(int k = 0; k < zones.length; ++k) {
+					output.writeUTF(zones[k].zoneName);
+				}
+				
 				output.writeObject(entities);
 				output.writeObject(particles);
 				output.writeObject(enemies);
-				output.writeInt(width);
-				output.writeInt(height);
-				output.writeInt(pickCount);
-				output.writeInt(score);
+				output.writeShort(width);
+				output.writeShort(height);
+				output.writeByte(pickCount);
+				output.writeShort(score);
 				output.writeInt(ticks);
 				output.writeObject(xCoords);
 				output.writeObject(yCoords);
 				output.writeObject(textureData);
 				output.writeObject(zoneEntities);
 				output.writeUTF(skyTextureName);
+				output.writeUTF(mapName);
+				output.writeUTF(nextMap);
 				output.writeObject(textures);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			*/
 		}
 	}
 	
@@ -262,31 +242,28 @@ public final class World{
 	public static boolean loadSave(String fileName) {
 		if(fileName != null) {
 			try(var input = new ObjectInputStream(new FileInputStream("./saves/" + fileName))){
-				zones = new MapZoneBase[input.readShort()];
-				String[] zoneIDs = new String[input.readByte()];
-				
-				for(int k = 0; k < zoneIDs.length; ++k) {
-					zoneIDs[k] = input.readUTF();
-				}
-				
-				for(int k = 0; k < zones.length; ++k) {
-					zones[k] = Main.getZoneFromName(zoneIDs[input.readByte()]);
-				}
-				
 				players = (EntityPlayer[]) input.readObject();
+				
+				zones = new MapZoneBase[input.readShort()];
+				for(int k = 0; k < zones.length; ++k) {
+					zones[k] = Main.getZoneFromName(input.readUTF());
+				}
+				
 				entities = (ArrayList<Entity>) input.readObject();
 				particles = (ArrayList<Particle>) input.readObject();
 				enemies = (EntityEnemy[]) input.readObject();
-				width = input.readInt();
-				height = input.readInt();
-				pickCount = input.readInt();
-				score = input.readInt();
+				width = input.readShort();
+				height = input.readShort();
+				pickCount = input.readByte();
+				score = input.readShort();
 				ticks = input.readInt();
 				xCoords = (int[]) input.readObject();
 				yCoords = (int[]) input.readObject();
 				textureData = (int[]) input.readObject();
 				zoneEntities = (EntityZone[]) input.readObject();
 				Main.loadSkyTexture(skyTextureName = input.readUTF());
+				mapName = input.readUTF();
+				nextMap = input.readUTF();
 				Main.loadTextures(textures = (String[]) input.readObject());
 				
 				Particle.precacheParticles();

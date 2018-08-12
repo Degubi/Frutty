@@ -20,10 +20,10 @@ import frutty.gui.components.SettingButtonField;
 import frutty.gui.components.SettingButtonSlider;
 import frutty.tools.GuiHelper;
 import frutty.tools.PropertyFile;
-import frutty.world.interfaces.IInternalZone;
-import frutty.world.interfaces.ITransparentZone;
-import frutty.world.interfaces.MapZoneBase;
-import frutty.world.interfaces.MapZoneTexturable;
+import frutty.world.base.IInternalZone;
+import frutty.world.base.ITransparentZone;
+import frutty.world.base.MapZoneBase;
+import frutty.world.base.MapZoneTexturable;
 
 public final class GuiSettings extends JPanel implements ActionListener{
 	private static final MapZoneBase[] zones = new MapZoneBase[140];
@@ -147,12 +147,12 @@ public final class GuiSettings extends JPanel implements ActionListener{
 	private static final SettingButton screenshotFormatButton = new SettingButton(Settings.screenshotFormat, "Screenshot Format", 100, 180, screenshotFormats);
 	
 	private static final SettingButton renderDebugLevelButton = new SettingButton(Settings.renderDebugLevel, "Render Debug Level", 100, 20, "None", "FPS Debug", "Zone Bounds", "All");
-	private static final SettingButton godModeButton = new SettingButton(Settings.enableGod, "Enable God Mode", 100, 100, SettingButton.ON_OFF);
-	private static final SettingButton disableEnemiesButton = new SettingButton(Settings.disableEnemies, "Disable Enemies", 100, 180, SettingButton.ON_OFF);
-	private static final SettingButton collisionBoxButton = new SettingButton(Settings.enableCollisionDebug, "Draw Collision Boxes", 100, 260, SettingButton.ON_OFF);
-	private static final SettingButton showMapDebugInfo = new SettingButton(Settings.enableMapDebug, "Show Map Debug Info", 100, 340, SettingButton.ON_OFF);
+	private static final SettingButton godModeButton = new SettingButton(Settings.enableGod, "Enable God Mode", 100, 100);
+	private static final SettingButton disableEnemiesButton = new SettingButton(Settings.disableEnemies, "Disable Enemies", 100, 180);
+	private static final SettingButton collisionBoxButton = new SettingButton(Settings.enableCollisionDebug, "Draw Collision Boxes", 100, 260);
+	private static final SettingButton showMapDebugInfo = new SettingButton(Settings.enableMapDebug, "Show Map Debug Info", 100, 340);
 
-	private static final SettingButton enableSoundButton = new SettingButton(Settings.enableSound, "Enable Sound", 100, 20, SettingButton.ON_OFF);
+	private static final SettingButton enableSoundButton = new SettingButton(Settings.enableSound, "Enable Sound", 100, 20);
 	private static final SettingButtonSlider volumeSlider = new SettingButtonSlider(Settings.volume, "Volume", 100, 100);
 	
 	//Separate class to avoid loading settings background map and loads of Button objects

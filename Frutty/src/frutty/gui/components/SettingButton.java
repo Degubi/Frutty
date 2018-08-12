@@ -13,7 +13,7 @@ import javax.swing.JComponent;
 import frutty.tools.GuiHelper;
 
 public final class SettingButton extends JComponent implements ActionListener{
-	public static final String[] ON_OFF = {"Off", "On"};
+	private static final String[] ON_OFF = {"Off", "On"};
 	private static final ImageIcon leftIcon = getIcon(true);
 	private static final ImageIcon rightIcon = getIcon(false);
 	
@@ -34,8 +34,8 @@ public final class SettingButton extends JComponent implements ActionListener{
 		this(selectedIndex, displayText, x, y, toStringArray(values));
 	}
 	
-	public SettingButton(boolean isOn, String displayText, int x, int y, String... options) {
-		this(isOn ? 1 : 0, displayText, x, y, options);
+	public SettingButton(boolean isOn, String displayText, int x, int y) {
+		this(isOn ? 1 : 0, displayText, x, y, ON_OFF);
 	}
 	
 	public SettingButton(String data, String displayText, int x, int y, String... options) {

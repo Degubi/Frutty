@@ -4,11 +4,12 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 import frutty.Main;
+import frutty.tools.IOHelper;
 import frutty.world.World;
 
 public final class EntityEnemy extends Entity {
-	private static final BufferedImage[] fastTextures = {Main.loadTexture("enemy", "fast_side.png"), Main.loadTexture("enemy", "fast_front.png"), Main.loadTexture("enemy", "fast_back.png")};
-	private static final BufferedImage[] normalTextures = {Main.loadTexture("enemy", "side.png"), Main.loadTexture("enemy", "front.png"), Main.loadTexture("enemy", "back.png")};
+	private static final BufferedImage[] fastTextures = {IOHelper.loadTexture("enemy", "fast_side.png"), IOHelper.loadTexture("enemy", "fast_front.png"), IOHelper.loadTexture("enemy", "fast_back.png")};
+	private static final BufferedImage[] normalTextures = {IOHelper.loadTexture("enemy", "side.png"), IOHelper.loadTexture("enemy", "front.png"), IOHelper.loadTexture("enemy", "back.png")};
 	
 	private int textureIndex;
 	private boolean animSwitch;

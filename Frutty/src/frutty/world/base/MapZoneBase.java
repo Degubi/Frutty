@@ -1,4 +1,4 @@
-package frutty.world.interfaces;
+package frutty.world.base;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -27,7 +27,7 @@ import frutty.world.World;
 @SuppressWarnings("unused")
 public abstract class MapZoneBase implements Serializable{
 	private static final long serialVersionUID = 392316063689927131L;
-	public final Lazy<ImageIcon> editorTexture = new Lazy<>(this::getEditorIconInternal);
+	public transient final Lazy<ImageIcon> editorTexture = new Lazy<>(this::getEditorIconInternal);
 	
 	protected static final CachedSoundClip breakSound = new CachedSoundClip("zonebreak.wav");
 	public final String zoneName;
@@ -110,8 +110,7 @@ public abstract class MapZoneBase implements Serializable{
 		return (icon.getIconWidth() == 64 && icon.getIconHeight() == 64) ? icon : new ImageIcon(icon.getImage().getScaledInstance(64, 64, Image.SCALE_DEFAULT));
 	}
 	
-	@SuppressWarnings("exports")
-	public final void handleEditorReading(GuiEditor editor, String zoneID, ObjectInputStream input, int x, int y, String[] textures) throws IOException {
+	public final void handleEditorReading(@SuppressWarnings("exports") GuiEditor editor, String zoneID, ObjectInputStream input, int x, int y, String[] textures) throws IOException {
 		EditorZoneButton button = new EditorZoneButton(editorTexture.get(), editor);
 		button.setBounds(x * 64, y * 64, 64, 64);
 		button.zoneID = zoneID;

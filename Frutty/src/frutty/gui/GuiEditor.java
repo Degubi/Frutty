@@ -26,8 +26,8 @@ import frutty.Main;
 import frutty.gui.components.EditorZoneButton;
 import frutty.gui.components.TextureSelectorButton;
 import frutty.tools.GuiHelper;
-import frutty.world.interfaces.MapZoneBase;
-import frutty.world.interfaces.MapZoneTexturable;
+import frutty.world.base.MapZoneBase;
+import frutty.world.base.MapZoneTexturable;
 
 public final class GuiEditor extends JPanel{
 	public final ArrayList<EditorZoneButton> zoneButtons = new ArrayList<>();

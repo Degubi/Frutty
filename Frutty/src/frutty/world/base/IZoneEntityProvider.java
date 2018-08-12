@@ -1,4 +1,4 @@
-package frutty.world.interfaces;
+package frutty.world.base;
 
 import frutty.entity.zone.EntityZone;
 

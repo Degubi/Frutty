@@ -6,7 +6,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Objects;
 
 public final class Version{
 	public final int majorVersion, minorVersion, patchVersion;
@@ -97,6 +96,6 @@ public final class Version{
 	
 	@Override
 	public int hashCode() {
-		return Objects.hash(Integer.valueOf(majorVersion), Integer.valueOf(minorVersion), Integer.valueOf(patchVersion));
+		return 12 + (31 * majorVersion + minorVersion - patchVersion);
 	}
 }

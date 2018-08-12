@@ -12,10 +12,7 @@ public final class Lazy<T>{
 	}
 	
 	public T get() {
-		if(value == null) {
-			value = mkFunction.get();
-		}
-		return value;
+		return value == null ? value = mkFunction.get() : value;
 	}
 	
 	@Override

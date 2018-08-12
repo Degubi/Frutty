@@ -9,10 +9,11 @@ import frutty.Main;
 import frutty.entity.EntityPlayer;
 import frutty.entity.effects.EntityEffectInvisible;
 import frutty.gui.GuiIngame;
-import frutty.world.interfaces.MapZoneTexturable;
+import frutty.tools.IOHelper;
+import frutty.world.base.MapZoneTexturable;
 
 public final class MapZoneChest extends MapZoneTexturable{
-	public static final BufferedImage chestTexture = Main.loadTexture("map/special", "chest.png");
+	public static final BufferedImage chestTexture = IOHelper.loadTexture("map/special", "chest.png");
 	
 	public MapZoneChest() {
 		super("chestZone");

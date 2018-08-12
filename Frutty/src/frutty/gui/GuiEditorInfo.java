@@ -11,7 +11,7 @@ import javax.swing.JPanel;
 
 import frutty.Main;
 import frutty.tools.GuiHelper;
-import frutty.world.interfaces.MapZoneTexturable;
+import frutty.world.base.MapZoneTexturable;
 
 public final class GuiEditorInfo extends JPanel{
 	private final GuiEditor editor;

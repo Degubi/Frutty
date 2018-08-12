@@ -8,11 +8,12 @@ import javax.swing.ImageIcon;
 import frutty.Main;
 import frutty.entity.EntityPlayer;
 import frutty.gui.GuiIngame;
+import frutty.tools.IOHelper;
 import frutty.world.World;
-import frutty.world.interfaces.MapZoneTexturable;
+import frutty.world.base.MapZoneTexturable;
 
 public final class MapZoneCherry extends MapZoneTexturable{
-	public static final BufferedImage cherryTexture = Main.loadTexture("fruit", "cherry.png");
+	public static final BufferedImage cherryTexture = IOHelper.loadTexture("fruit", "cherry.png");
 	
 	public MapZoneCherry() {
 		super("cherryZone");

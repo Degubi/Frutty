@@ -1,6 +1,6 @@
 package frutty.plugin.event.world;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import frutty.entity.Entity;
 import frutty.plugin.internal.EventBase;
@@ -9,9 +9,9 @@ import frutty.plugin.internal.EventBase;
 public final class WorldInitEvent extends EventBase{
 	public final int mapWidth, mapHeight;
 	public final String[] mapTextureCache;
-	public final ArrayList<Entity> mapEntities;
+	public final List<Entity> mapEntities;
 	
-	public WorldInitEvent(int w, int h, String[] text, ArrayList<Entity> ents) {
+	public WorldInitEvent(int w, int h, String[] text, List<Entity> ents) {
 		mapWidth = w;
 		mapHeight = h;
 		mapTextureCache = text;

@@ -8,7 +8,7 @@ import javax.swing.ImageIcon;
 import frutty.entity.EntityEnemy;
 import frutty.gui.GuiSettings.Settings;
 import frutty.world.World;
-import frutty.world.interfaces.MapZoneBase;
+import frutty.world.base.MapZoneBase;
 
 public final class MapZoneSpawner extends MapZoneBase{
 	private static final Color[] colorCache = new Color[32];

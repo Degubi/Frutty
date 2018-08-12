@@ -7,15 +7,15 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import frutty.Main;
 import frutty.entity.effects.EntityEffect;
 import frutty.entity.effects.EntityEffectInvisible;
 import frutty.gui.GuiIngame;
 import frutty.gui.GuiSettings.Settings;
+import frutty.tools.IOHelper;
 import frutty.world.World;
 
 public final class EntityPlayer extends Entity implements KeyListener{
-	private static final BufferedImage[] textures = {Main.loadTexture("player", "side.png"), Main.loadTexture("player", "front.png"), Main.loadTexture("player", "back.png")};
+	private static final BufferedImage[] textures = {IOHelper.loadTexture("player", "side.png"), IOHelper.loadTexture("player", "front.png"), IOHelper.loadTexture("player", "back.png")};
 	public final ArrayList<EntityEffect> entityEffects = new ArrayList<>();
 	
 	private int textureIndex;

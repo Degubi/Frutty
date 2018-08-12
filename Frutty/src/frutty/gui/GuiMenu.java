@@ -31,10 +31,10 @@ import frutty.plugin.internal.Plugin;
 import frutty.tools.GuiHelper;
 import frutty.tools.Version;
 import frutty.world.World;
-import frutty.world.interfaces.IInternalZone;
-import frutty.world.interfaces.ITransparentZone;
-import frutty.world.interfaces.MapZoneBase;
-import frutty.world.interfaces.MapZoneTexturable;
+import frutty.world.base.IInternalZone;
+import frutty.world.base.ITransparentZone;
+import frutty.world.base.MapZoneBase;
+import frutty.world.base.MapZoneTexturable;
 
 public final class GuiMenu extends JPanel implements ActionListener{
 	private final MapZoneBase[] zones = new MapZoneBase[140];
@@ -86,9 +86,9 @@ public final class GuiMenu extends JPanel implements ActionListener{
 		
 		if(checkUpdate) {
 			new Thread(() -> {
-				if(Version.fromURL(Plugin.plugins.get(0).versionURL).isNewerThan(Plugin.plugins.get(0).version)) {
-					JButton updaterButton = new JButton("Click here to Update...");
-					updaterButton.setActionCommand("Update");
+				var netVersion = Version.fromURL(Plugin.plugins.get(0).versionURL);
+				if(netVersion.isNewerThan(Plugin.plugins.get(0).version)) {
+					JButton updaterButton = new JButton("New Update available: " + netVersion);
 					updaterButton.setBounds(660, 600, 240, 40);
 					updaterButton.addActionListener(menu);
 					updaterButton.setBackground(Color.GREEN);
@@ -146,17 +146,6 @@ public final class GuiMenu extends JPanel implements ActionListener{
 			GuiEditor.openEditor(); mainFrame.dispose();
 		}else if(command.equals("Stats")){
 			GuiHelper.switchMenuPanel(new GuiStats());
-		}else if(command.equals("Update")){
-			try {
-				if(JOptionPane.showConfirmDialog(this, "Exiting game to Updater. Game will restart.", "Frutty Updater", JOptionPane.OK_CANCEL_OPTION) == 0) {
-					Runtime.getRuntime().exec(System.getProperty("java.version").startsWith("10.") ? "javaw -jar bin/FruttyInstaller.jar"
-							  																	   : "runtime\\bin\\javaw -jar bin/FruttyInstaller.jar");
-					System.exit(0);
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			} 
-			
 		}else{ //Load
 			var allMapNames = new File("./saves/").list();
 			if(allMapNames.length > 0) {

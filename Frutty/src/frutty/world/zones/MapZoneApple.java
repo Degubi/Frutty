@@ -10,12 +10,13 @@ import frutty.entity.EntityPlayer;
 import frutty.entity.zone.EntityAppleZone;
 import frutty.entity.zone.EntityZone;
 import frutty.gui.GuiIngame;
+import frutty.tools.IOHelper;
 import frutty.world.World;
-import frutty.world.interfaces.IZoneEntityProvider;
-import frutty.world.interfaces.MapZoneTexturable;
+import frutty.world.base.IZoneEntityProvider;
+import frutty.world.base.MapZoneTexturable;
 
 public final class MapZoneApple extends MapZoneTexturable implements IZoneEntityProvider{
-	public static final BufferedImage appleTexture = Main.loadTexture("fruit", "apple.png");
+	public static final BufferedImage appleTexture = IOHelper.loadTexture("fruit", "apple.png");
 
 	public MapZoneApple() {
 		super("appleZone");

@@ -5,7 +5,7 @@ import java.awt.Graphics2D;
 import javax.swing.ImageIcon;
 
 import frutty.gui.GuiIngame;
-import frutty.world.interfaces.MapZoneBase;
+import frutty.world.base.MapZoneBase;
 
 public final class MapZoneSky extends MapZoneBase{
 	public MapZoneSky() {
