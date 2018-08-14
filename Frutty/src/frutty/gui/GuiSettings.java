@@ -5,9 +5,6 @@ import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -20,54 +17,15 @@ import frutty.gui.components.SettingButtonField;
 import frutty.gui.components.SettingButtonSlider;
 import frutty.tools.GuiHelper;
 import frutty.tools.PropertyFile;
-import frutty.world.base.IInternalZone;
 import frutty.world.base.ITransparentZone;
 import frutty.world.base.MapZoneBase;
-import frutty.world.base.MapZoneTexturable;
 
 public final class GuiSettings extends JPanel implements ActionListener{
 	private static final MapZoneBase[] zones = new MapZoneBase[140];
 	private static final int[] xCoords = new int[140], yCoords = new int[140], textureData = new int[140];
-	private static final String[] textures = new String[2];
 	
 	static {
-		try(var input = new ObjectInputStream(new FileInputStream("./maps/dev_settings.deg"))){
-			input.readByte();
-			
-			for(int k = 0; k < textures.length; ++k) {
-				textures[k] = input.readUTF();
-			}
-			
-			int zoneIDCount = input.readByte();
-			String[] zoneIDS = new String[zoneIDCount];
-			
-			for(int k = 0; k < zoneIDCount; ++k) {
-				zoneIDS[k] = input.readUTF();
-			}
-			
-			input.readUTF();
-			input.readShort(); input.readShort();  //Width height felesleges, 14x10 az összes
-			input.readUTF(); //Next map
-			
-			int zoneIndex = 0;
-			
-			for(int y = 0; y < 640; y += 64) {
-				for(int x = 0; x < 896; x += 64) {
-					MapZoneBase zone = Main.getZoneFromName(zoneIDS[input.readByte()]);
-					
-					if(zone instanceof IInternalZone) {
-						zone = ((IInternalZone) zone).getReplacementZone();
-					}
-					
-					if(zone instanceof MapZoneTexturable) {
-						textureData[zoneIndex] = input.readByte();
-					}
-					xCoords[zoneIndex] = x;
-					yCoords[zoneIndex] = y;
-					zones[zoneIndex++] = zone;
-				}
-			}
-		}catch(IOException e){}
+		GuiMenu.loadBackgroundMap("./maps/dev_settings.deg", xCoords, yCoords, textureData, zones);
 	}
 	
 	private GuiSettings(JComponent... components) {
@@ -129,7 +87,7 @@ public final class GuiSettings extends JPanel implements ActionListener{
 		insets.bottom = -1;
 		UIManager.put("TabbedPane.contentBorderInsets", insets);
 		
-		Main.loadTextures(textures);
+		Main.loadTextures(new String[] {"dirt", "stone"});
 		
 		GuiHelper.switchMenuPanel(tabbed);
 	}

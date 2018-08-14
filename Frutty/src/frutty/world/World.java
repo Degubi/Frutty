@@ -160,25 +160,15 @@ public final class World{
 	public static void loadMap(String name, boolean isMultiplayer) {
 		try(var input = new ObjectInputStream(new FileInputStream("./maps/" + name + ".deg"))){
 			int loadedWidth, loadedHeight, zoneIndex = 0;
-			int textureCount = input.readByte();
-			String[] loadedTextures = new String[textureCount];
 			
-			for(int k = 0; k < textureCount; ++k) {
-				loadedTextures[k] = input.readUTF();
-			}
+			String[] zoneIDCache = (String[]) input.readObject();
+			String[] textureCache = (String[]) input.readObject();
 			
-			int zoneIDCount = input.readByte();
-			String[] zoneIDS = new String[zoneIDCount];
-			
-			for(int k = 0; k < zoneIDCount; ++k) {
-				zoneIDS[k] = input.readUTF();
-			}
-			
-			init(loadedTextures, isMultiplayer, input.readUTF(), name, loadedWidth = input.readShort() * 64, loadedHeight = input.readShort() * 64, input.readUTF());
+			init(textureCache, isMultiplayer, input.readUTF(), name, loadedWidth = input.readShort() * 64, loadedHeight = input.readShort() * 64, input.readUTF());
 			
 			for(int y = 0; y < loadedHeight; y += 64) {
 				for(int x = 0; x < loadedWidth; x += 64) {
-					MapZoneBase zone = Main.getZoneFromName(zoneIDS[input.readByte()]);
+					MapZoneBase zone = Main.getZoneFromName(zoneIDCache[input.readByte()]);
 					
 					zone.onZoneAddedInternal(isMultiplayer, x, y);  //Fentre így a player zónák jól müködnek majd elméletileg
 					if(zone instanceof IInternalZone) {
@@ -199,7 +189,7 @@ public final class World{
 				}
 			}
 			
-		}catch(IOException e){
+		}catch(IOException | ClassNotFoundException e){
 			System.err.println("Can't load invalid map: " + "./maps/" + name + ".deg");
 		}
 		

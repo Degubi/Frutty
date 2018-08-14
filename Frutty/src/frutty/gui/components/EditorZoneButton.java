@@ -33,6 +33,8 @@ public final class EditorZoneButton extends JButton implements MouseListener{
 			if(Main.getZoneFromName(activeZoneName) instanceof MapZoneTexturable) {
 				button.setIcon(((MapZoneTexturable)Main.getZoneFromName(button.zoneID)).textureVariants.get()[editorInstance.textureSelectorButton.activeTextureIndex]);
 				button.zoneTexture = editorInstance.textureSelectorButton.activeTexture;
+			}else{
+				button.zoneTexture = null;
 			}
 			
 		}else if(pressedButton == MouseEvent.BUTTON3) {

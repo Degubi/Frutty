@@ -81,41 +81,21 @@ public final class GuiEditor extends JPanel{
 	private void saveMap() {
 		var mapName = mapProperties.mapName;
 		try(var output = new ObjectOutputStream(new FileOutputStream("./maps/" + mapName))){
-	 		var textures = new ArrayList<String>();
-	 		var zoneIDs = new ArrayList<String>();
-			
-	 		for(var writeButton : zoneButtons) {
-	 			if(!zoneIDs.contains(writeButton.zoneID)) {
-	 				zoneIDs.add(writeButton.zoneID);
-	 			}
-	 			if(Main.getZoneFromName(writeButton.zoneID) instanceof MapZoneTexturable) {
-	 				if(!writeButton.zoneTexture.isEmpty() && !textures.contains(writeButton.zoneTexture)) {
-	 					textures.add(writeButton.zoneTexture);
-	 				}
-	 			}
-	 		}
-	 		output.writeByte(textures.size());
+	 		String[] zoneIDCache = zoneButtons.stream().map(button -> button.zoneID).distinct().toArray(String[]::new);
+	 		String[] textureCache = zoneButtons.stream().map(button -> button.zoneTexture).filter(texture -> texture != null).distinct().toArray(String[]::new);
 	 		
-	 		for(int k = 0; k < textures.size(); ++k) {
-	 			output.writeUTF(textures.get(k));
-	 		}
-	 		
-	 		output.writeByte(zoneIDs.size());
-	 		
-	 		for(int k = 0; k < zoneIDs.size(); ++k) {
-	 			output.writeUTF(zoneIDs.get(k));
-	 		}
-	 		
+	 		output.writeObject(zoneIDCache);
+	 		output.writeObject(textureCache);
 			output.writeUTF(mapProperties.skyName);
 	 		output.writeShort(mapProperties.width);
 	 		output.writeShort(mapProperties.height);
 	 		output.writeUTF(mapProperties.nextMap);
 	 		
 	 		for(var writeButton : zoneButtons) {
-	 			output.writeByte(zoneIDs.indexOf(writeButton.zoneID));
+	 			output.writeByte(indexOf(zoneIDCache, writeButton.zoneID));
 	 			
 	 			if(Main.getZoneFromName(writeButton.zoneID) instanceof MapZoneTexturable) {
-	 				output.writeByte(textures.indexOf(writeButton.zoneTexture));
+	 				output.writeByte(indexOf(textureCache, writeButton.zoneTexture));
 	 			}
 	 		}
 		} catch (IOException e) {
@@ -125,36 +105,34 @@ public final class GuiEditor extends JPanel{
 	 	JOptionPane.showMessageDialog(null, "Map saved as: " + mapName);
 	}
 	
+	private static<T> int indexOf(T[] array, T element) {
+		for(int k = 0; k < array.length; ++k) {
+			if(array[k].equals(element)) {
+				return k;
+			}
+		}
+		return -1;
+	}
+	
 	private static void loadMap(String fileName) {
 		if(fileName != null && !fileName.isEmpty()) {
 			try(var input = new ObjectInputStream(new FileInputStream("./maps/" + fileName))){
-				int textureCount = input.readByte();
-				String[] textures = new String[textureCount];
-				
-				for(int k = 0; k < textureCount; ++k) {
-					textures[k] = input.readUTF();
-				}
-				
-				int zoneIDCount = input.readByte();
-				String[] zoneIDS = new String[zoneIDCount];
-				
-				for(int k = 0; k < zoneIDCount; ++k) {
-					zoneIDS[k] = input.readUTF();
-				}
-				
+				String[] zoneIDCache = (String[]) input.readObject();
+				String[] textureCache = (String[]) input.readObject();
 				String skyName = input.readUTF();
 				int mapWidth = input.readShort(), mapHeight = input.readShort();
+				
 				GuiEditor editor = new GuiEditor(fileName, skyName, mapWidth, mapHeight, input.readUTF());
 				
 				for(int y = 0; y < mapHeight; ++y) {
 					for(int x = 0; x < mapWidth; ++x) {
-						String zoneID = zoneIDS[input.readByte()];
-						Main.getZoneFromName(zoneID).handleEditorReading(editor, zoneID, input, x, y, textures);
+						String zoneID = zoneIDCache[input.readByte()];
+						Main.getZoneFromName(zoneID).handleEditorReading(editor, zoneID, input, x, y, textureCache);
 					}
 				}
 				showEditorFrame(editor, mapWidth * 64, mapHeight * 64);
 				
-			} catch (IOException e) {
+			} catch (IOException | ClassNotFoundException e) {
 				JOptionPane.showMessageDialog(null, "Map file deleted...");
 			}
 		}

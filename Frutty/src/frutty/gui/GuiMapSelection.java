@@ -130,19 +130,10 @@ public final class GuiMapSelection extends JPanel implements ListSelectionListen
 	public static String loadMapSize(String fileName) {
 		String path = "./maps/" + fileName + ".deg";
 		try(var input = new ObjectInputStream(Files.newInputStream(Paths.get(path)))){
-			int textureCount = input.readByte();
-			for(int k = 0; k < textureCount; ++k) {
-				input.readUTF();
-			}
-			
-			int idCount = input.readByte();
-			for(int k = 0; k < idCount; ++k) {
-				input.readUTF();
-			}
-			
+			input.readObject(); input.readObject();
 			input.readUTF();
 			return input.readShort() + "x" + input.readShort();
-		} catch (IOException e) {
+		} catch (IOException | ClassNotFoundException e) {
 			System.err.println("Can't load map size for map: " + path);
 		}
 		return "";

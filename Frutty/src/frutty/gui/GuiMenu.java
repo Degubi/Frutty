@@ -46,7 +46,7 @@ public final class GuiMenu extends JPanel implements ActionListener{
 	public GuiMenu() {
 		setLayout(null);
 		
-		loadBackground();
+		loadBackgroundMap("./maps/background" + Main.rand.nextInt(4) + ".deg", xCoords, yCoords, textureData, zones);
 		
 		if(devMessage.getText().isEmpty()) {
 			new Thread(() -> {
@@ -159,32 +159,18 @@ public final class GuiMenu extends JPanel implements ActionListener{
 		}
 	}
 	
-	private void loadBackground() {
-		try(var input = new ObjectInputStream(new FileInputStream("./maps/background" + Main.rand.nextInt(4) + ".deg"))){
-			String[] textures = new String[input.readByte()];
+	public static void loadBackgroundMap(String mapName, int[] xCoords, int[] yCoords, int[] textureData, MapZoneBase[] zones) {
+		try(var input = new ObjectInputStream(new FileInputStream(mapName))){
+			String[] zoneIDCache = (String[]) input.readObject();
 			
-			for(int k = 0; k < textures.length; ++k) {
-				textures[k] = input.readUTF();
-			}
-			
-			int zoneIDCount = input.readByte();
-			String[] zoneIDS = new String[zoneIDCount];
-			
-			for(int k = 0; k < zoneIDCount; ++k) {
-				zoneIDS[k] = input.readUTF();
-			}
-			
-			Main.loadTextures(textures);
+			Main.loadTextures((String[]) input.readObject());
 			input.readUTF(); //Sky texture
-			
 			input.readShort(); input.readShort();  //Width height felesleges, 14x10 az összes
 			input.readUTF(); //Next map
 			
-			int zoneIndex = 0;
-			
-			for(int y = 0; y < 640; y += 64) {
+			for(int y = 0, zoneIndex = 0; y < 640; y += 64) {
 				for(int x = 0; x < 896; x += 64) {
-					MapZoneBase zone = Main.getZoneFromName(zoneIDS[input.readByte()]);
+					MapZoneBase zone = Main.getZoneFromName(zoneIDCache[input.readByte()]);
 					
 					if(zone instanceof IInternalZone) {
 						zone = ((IInternalZone) zone).getReplacementZone();
@@ -198,7 +184,6 @@ public final class GuiMenu extends JPanel implements ActionListener{
 					zones[zoneIndex++] = zone;
 				}
 			}
-		}catch(IOException e){
-		}
+		}catch(IOException | ClassNotFoundException e){}
 	}
 }
