@@ -9,18 +9,18 @@ import java.io.Serializable;
 
 import javax.swing.ImageIcon;
 
-import frutty.Main;
+import frutty.FruttyMain;
 import frutty.entity.EntityPlayer;
 import frutty.gui.GuiEditor;
+import frutty.gui.GuiEditor.EditorZoneButton;
 import frutty.gui.GuiSettings.Settings;
 import frutty.gui.GuiStats;
-import frutty.gui.components.EditorZoneButton;
-import frutty.gui.components.GuiTextureSelector;
 import frutty.plugin.event.world.ZoneAddedEvent;
 import frutty.plugin.internal.EventHandle;
 import frutty.sound.CachedSoundClip;
 import frutty.tools.GuiHelper;
 import frutty.tools.Lazy;
+import frutty.tools.Material;
 import frutty.world.Particle;
 import frutty.world.World;
 
@@ -43,7 +43,7 @@ public abstract class MapZoneBase implements Serializable{
 		this(name, true, true);
 	}
 	
-	public abstract void draw(int x, int y, int textureIndex, Graphics2D graphics);
+	public abstract void draw(int x, int y, Material material, Graphics2D graphics);
 	protected abstract ImageIcon getEditorIcon();
 	
 	public boolean doesHidePlayer(int x, int y) {return false;}
@@ -52,7 +52,7 @@ public abstract class MapZoneBase implements Serializable{
 	public boolean canNPCPass(int x, int y) {return false;}
 	protected void onZoneAdded(boolean isCoop, int x, int y) {}
 	
-	public void onZoneEntered(int x, int y, int zoneIndex, int textureIndex, EntityPlayer player) {
+	public void onZoneEntered(int x, int y, int zoneIndex, Material material, EntityPlayer player) {
 		player.hidden = doesHidePlayer(x, y);
 
 		if(isBreakable(x, y)) {
@@ -66,7 +66,7 @@ public abstract class MapZoneBase implements Serializable{
 				World.zoneEntities[checkIndex].onNotified();
 			}
 			
-			Particle.spawnFallingParticles(2 + Main.rand.nextInt(10), x, y, textureIndex);
+			Particle.spawnFallingParticles(2 + FruttyMain.rand.nextInt(10), x, y, material);
 		}
 	}
 	
@@ -74,8 +74,8 @@ public abstract class MapZoneBase implements Serializable{
 	/********************************************************INTERNALS***********************************************************/
 	
 	
-	public final void render(int x, int y, int textureIndex, Graphics2D graphics) {
-		draw(x, y, textureIndex, graphics);
+	public final void render(int x, int y, Material material, Graphics2D graphics) {
+		draw(x, y, material, graphics);
 		
 		if(hasShadowRender && Settings.graphicsLevel > 0) {
 			graphics.setColor(GuiHelper.color_84Black);
@@ -93,7 +93,7 @@ public abstract class MapZoneBase implements Serializable{
 	}
 	
 	public final void onZoneAddedInternal(boolean isCoop, int x, int y) {
-		if(Main.hasPlugins && !EventHandle.zoneAddedEvents.isEmpty()) {
+		if(FruttyMain.hasPlugins && !EventHandle.zoneAddedEvents.isEmpty()) {
 			ZoneAddedEvent event = new ZoneAddedEvent(this, x, y);
 			EventHandle.handleEvent(event, EventHandle.zoneAddedEvents);
 			
@@ -117,7 +117,7 @@ public abstract class MapZoneBase implements Serializable{
 		if(this instanceof MapZoneTexturable){
 			int textureData = input.readByte();
 			button.zoneTexture = textures[textureData];
-			button.setIcon(((MapZoneTexturable)this).textureVariants.get()[GuiTextureSelector.indexOf(textures[textureData] + ".png")]);
+			button.setIcon(((MapZoneTexturable)this).textureVariants.get()[Material.materialRegistry.get(textures[textureData]).index]);
 		}
 		editor.zoneButtons.add(button);
 		editor.add(button);
@@ -125,11 +125,11 @@ public abstract class MapZoneBase implements Serializable{
 	
 	public static boolean isEmpty(int x, int y) {
 		MapZoneBase zone = World.getZoneAtPos(x, y);
-		return zone != null && zone == Main.emptyZone;
+		return zone != null && zone == FruttyMain.emptyZone;
 	}
 	
 	public static boolean isEmptyAt(int index) {
 		MapZoneBase zone = World.getZoneAtIndex(index);
-		return zone != null && zone == Main.emptyZone;
+		return zone != null && zone == FruttyMain.emptyZone;
 	}
 }

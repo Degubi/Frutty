@@ -3,7 +3,7 @@ package frutty.entity;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
-import frutty.Main;
+import frutty.FruttyMain;
 import frutty.tools.IOHelper;
 import frutty.world.World;
 
@@ -13,7 +13,7 @@ public final class EntityEnemy extends Entity {
 	
 	private int textureIndex;
 	private boolean animSwitch;
-	private final boolean isFast = Main.rand.nextBoolean();
+	private final boolean isFast = FruttyMain.rand.nextBoolean();
 	
 	public EntityEnemy(int x, int y) {
 		super(x, y);

@@ -8,7 +8,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Random;
 
-import frutty.Main;
+import frutty.FruttyMain;
 import frutty.entity.Entity;
 import frutty.entity.EntityEnemy;
 import frutty.entity.EntityPlayer;
@@ -17,6 +17,7 @@ import frutty.entity.zone.EntityZone;
 import frutty.plugin.event.world.WorldInitEvent;
 import frutty.plugin.internal.EventHandle;
 import frutty.tools.GuiHelper;
+import frutty.tools.Material;
 import frutty.world.base.IInternalZone;
 import frutty.world.base.IZoneEntityProvider;
 import frutty.world.base.MapZoneBase;
@@ -29,10 +30,11 @@ public final class World{
 	public static ArrayList<Particle> particles = new ArrayList<>(10);
 	public static EntityEnemy[] enemies;
 	public static int width, height, pickCount, score, ticks;
-	public static int[] xCoords, yCoords, textureData;
+	public static int[] xCoords, yCoords;
 	public static EntityZone[] zoneEntities;
 	public static String skyTextureName, mapName, nextMap;
 	public static String[] textures;
+	public static Material[] materials;
 	
 	public static void cleanUp() {
 		entities.clear();
@@ -47,7 +49,7 @@ public final class World{
 		zoneEntities = null;
 		xCoords = null;
 		yCoords = null;
-		textureData = null;
+		materials = null;
 		textures = null;
 	}
 	
@@ -55,7 +57,7 @@ public final class World{
 		mapName = levelName;
 		nextMap = next;
 		
-		if(Main.hasPlugins && !EventHandle.mapLoadEvents.isEmpty()) EventHandle.handleEvent(new WorldInitEvent(w, h, txts, entities), EventHandle.mapLoadEvents);
+		if(FruttyMain.hasPlugins && !EventHandle.mapLoadEvents.isEmpty()) EventHandle.handleEvent(new WorldInitEvent(w, h, txts, entities), EventHandle.mapLoadEvents);
 		
 		int zoneCount = (w / 64) * (h / 64);
 		zones = new MapZoneBase[zoneCount];
@@ -64,7 +66,7 @@ public final class World{
 		
 		xCoords = new int[zoneCount];
 		yCoords = new int[zoneCount];
-		textureData = new int[zoneCount];
+		materials = new Material[zoneCount];
 		zoneEntities = new EntityZone[zoneCount];
 		
 		if(isMultiplayer) {
@@ -73,13 +75,12 @@ public final class World{
 			players = new EntityPlayer[1];
 		}
 		
-		Main.loadTextures(textures = txts);
-		Main.loadSkyTexture(skyTextureName = skyName);
-		Particle.precacheParticles();
+		FruttyMain.loadTextures(textures = txts);
+		FruttyMain.loadSkyTexture(skyTextureName = skyName);
 	}
 	
 	public static void generateMap(int genWidth, int genHeight, boolean isMultiplayer) {
-		Random rand = Main.rand;
+		Random rand = FruttyMain.rand;
 		int bigWidth = genWidth * 64, bigHeight = genHeight * 64, zoneIndex = 0;
 		
 		init(new String[] {"normal"}, isMultiplayer, null, "generated: " + genWidth + "x" + genHeight, bigWidth, bigHeight, null);
@@ -90,15 +91,15 @@ public final class World{
 				yCoords[zoneIndex] = y;
 				
 				if(rng < 6) {
-					zones[zoneIndex++] = Main.normalZone;
+					zones[zoneIndex++] = FruttyMain.normalZone;
 				}else if(rng >= 6 && rng < 9) {
-					zones[zoneIndex++] = Main.emptyZone;
+					zones[zoneIndex++] = FruttyMain.emptyZone;
 				}else if(rng == 9) {
 					if(rand.nextBoolean()) {   //isApple
 						zoneEntities[zoneIndex] = new EntityAppleZone(x, y, zoneIndex);
-						zones[zoneIndex++] = Main.appleZone;
+						zones[zoneIndex++] = FruttyMain.appleZone;
 					}else {
-						zones[zoneIndex++] = Main.cherryZone;
+						zones[zoneIndex++] = FruttyMain.cherryZone;
 						++pickCount;
 					}
 				}
@@ -107,9 +108,9 @@ public final class World{
 		
 		outerLoop:
 		for(int randIndex = rand.nextInt(zoneIndex), loopState = 0; ; randIndex = rand.nextInt(zoneIndex)) {
-			if(zones[randIndex] == Main.emptyZone) {
+			if(zones[randIndex] == FruttyMain.emptyZone) {
 				if(loopState == 0) {
-					zones[randIndex] = Main.spawnerZone;
+					zones[randIndex] = FruttyMain.spawnerZone;
 					loopState = 1;
 					
 					//TODO tisztítást itt megcsinálni újra
@@ -168,7 +169,7 @@ public final class World{
 			
 			for(int y = 0; y < loadedHeight; y += 64) {
 				for(int x = 0; x < loadedWidth; x += 64) {
-					MapZoneBase zone = Main.getZoneFromName(zoneIDCache[input.readByte()]);
+					MapZoneBase zone = FruttyMain.getZoneFromName(zoneIDCache[input.readByte()]);
 					
 					zone.onZoneAddedInternal(isMultiplayer, x, y);  //Fentre így a player zónák jól müködnek majd elméletileg
 					if(zone instanceof IInternalZone) {
@@ -176,7 +177,7 @@ public final class World{
 					}
 					
 					if(zone instanceof MapZoneTexturable) {
-						textureData[zoneIndex] = input.readByte();
+						materials[zoneIndex] = Material.materialRegistry.get(textureCache[input.readByte()]);
 					}
 					
 					xCoords[zoneIndex] = x;
@@ -216,7 +217,7 @@ public final class World{
 				output.writeInt(ticks);
 				output.writeObject(xCoords);
 				output.writeObject(yCoords);
-				output.writeObject(textureData);
+				output.writeObject(materials);
 				output.writeObject(zoneEntities);
 				output.writeUTF(skyTextureName);
 				output.writeUTF(mapName);
@@ -236,7 +237,7 @@ public final class World{
 				
 				zones = new MapZoneBase[input.readShort()];
 				for(int k = 0; k < zones.length; ++k) {
-					zones[k] = Main.getZoneFromName(input.readUTF());
+					zones[k] = FruttyMain.getZoneFromName(input.readUTF());
 				}
 				
 				entities = (ArrayList<Entity>) input.readObject();
@@ -249,14 +250,12 @@ public final class World{
 				ticks = input.readInt();
 				xCoords = (int[]) input.readObject();
 				yCoords = (int[]) input.readObject();
-				textureData = (int[]) input.readObject();
+				materials = (Material[]) input.readObject();
 				zoneEntities = (EntityZone[]) input.readObject();
-				Main.loadSkyTexture(skyTextureName = input.readUTF());
+				FruttyMain.loadSkyTexture(skyTextureName = input.readUTF());
 				mapName = input.readUTF();
 				nextMap = input.readUTF();
-				Main.loadTextures(textures = (String[]) input.readObject());
-				
-				Particle.precacheParticles();
+				FruttyMain.loadTextures(textures = (String[]) input.readObject());
 				return true;
 			} catch (ClassNotFoundException | IOException e) {
 				e.printStackTrace();
@@ -286,7 +285,7 @@ public final class World{
 	}
 	
 	public static void setZoneEmptyAt(int index) {
-		zones[index] = Main.emptyZone;
+		zones[index] = FruttyMain.emptyZone;
 		zoneEntities[index] = null;
 	}
 }

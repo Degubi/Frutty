@@ -4,8 +4,9 @@ import java.awt.Graphics2D;
 
 import javax.swing.ImageIcon;
 
-import frutty.Main;
+import frutty.FruttyMain;
 import frutty.entity.EntityPlayer;
+import frutty.tools.Material;
 import frutty.world.World;
 import frutty.world.base.IInternalZone;
 import frutty.world.base.MapZoneBase;
@@ -24,7 +25,7 @@ public final class MapZonePlayer extends MapZoneBase implements IInternalZone{
 	}
 
 	@Override
-	public void draw(int x, int y, int textureIndex, Graphics2D graphics) {}
+	public void draw(int x, int y, Material material, Graphics2D graphics) {}
 
 	@Override
 	public void onZoneAdded(boolean isCoop, int x, int y) {
@@ -43,6 +44,6 @@ public final class MapZonePlayer extends MapZoneBase implements IInternalZone{
 	
 	@Override
 	public MapZoneBase getReplacementZone() {
-		return Main.emptyZone;
+		return FruttyMain.emptyZone;
 	}
 }

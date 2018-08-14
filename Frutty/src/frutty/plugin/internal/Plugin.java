@@ -13,7 +13,7 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.jar.Manifest;
 
-import frutty.Main;
+import frutty.FruttyMain;
 import frutty.plugin.FruttyEvent;
 import frutty.plugin.FruttyPlugin;
 import frutty.plugin.FruttyPluginMain;
@@ -21,7 +21,7 @@ import frutty.tools.IOHelper;
 import frutty.tools.Version;
 
 public final class Plugin{
-	public static ArrayList<Plugin> plugins = Main.toList(new Plugin("Frutty", "Base module for the game.", "", Version.from(1, 4, 1), "https://pastebin.com/raw/m5qJbnks"),
+	public static ArrayList<Plugin> plugins = FruttyMain.toList(new Plugin("Frutty", "Base module for the game.", "", Version.from(1, 4, 1), "https://pastebin.com/raw/m5qJbnks"),
 			 new Plugin("Frutty Plugin Loader", "Base module for the plugin loader", "", Version.from(1, 0, 0), ""));
 	
 	public final String description, ID, updateURL, versionURL;
@@ -52,7 +52,7 @@ public final class Plugin{
 	public static void handlePluginInit() {
 		IOHelper.createDirectory("plugins");
 		
-		if(Main.hasPlugins) {
+		if(FruttyMain.hasPlugins) {
 			loadPlugins();
 			
 			EventHandle.sortEvents();
@@ -86,7 +86,7 @@ public final class Plugin{
 				mainClassNames[k] = pluginClass;
 			}
 			
-			try(URLClassLoader urlClass = new URLClassLoader(classLoaderNames, Main.class.getClassLoader())){
+			try(URLClassLoader urlClass = new URLClassLoader(classLoaderNames, FruttyMain.class.getClassLoader())){
 				for(int k = 0; k < mainClassNames.length; ++k) {
 					if(mainClassNames[k] == null) {
 						throw new IllegalStateException("Can't load main class from plugin: " + pluginNames[k]);

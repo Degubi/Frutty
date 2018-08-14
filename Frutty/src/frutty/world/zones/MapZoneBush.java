@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 import javax.swing.ImageIcon;
 
 import frutty.tools.IOHelper;
+import frutty.tools.Material;
 import frutty.world.base.ITransparentZone;
 import frutty.world.base.MapZoneBase;
 
@@ -19,12 +20,12 @@ public final class MapZoneBush extends MapZoneBase implements ITransparentZone{
 	}
 	
 	@Override
-	public void drawAfter(int x, int y, int textureIndex, Graphics graphics) {
+	public void drawAfter(int x, int y, Material material, Graphics graphics) {
 		graphics.drawImage(texture, x, y, 64, 64, null);
 	}
 
 	@Override
-	public void draw(int x, int y, int textureIndex, Graphics2D graphics) {
+	public void draw(int x, int y, Material material, Graphics2D graphics) {
 		graphics.setColor(Color.BLACK);
 		graphics.fillRect(x, y, 64, 64);
 	}

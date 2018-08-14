@@ -22,7 +22,7 @@ import frutty.world.zones.MapZoneSky;
 import frutty.world.zones.MapZoneSpawner;
 import frutty.world.zones.MapZoneWater;
 
-public final class Main {
+public final class FruttyMain {
 	public static final Random rand = new Random();
 	public static final boolean hasPlugins = IOHelper.fileCount("plugins") > 0;
 	
@@ -40,8 +40,8 @@ public final class Main {
 	public static final MapZonePortal portalZone = new MapZonePortal();
 	
 	public static final List<MapZoneBase> zoneRegistry = toList(normalZone, emptyZone, appleZone, player1Zone, player2Zone, cherryZone, spawnerZone, chestZone, waterZone, skyZone, bushZone, portalZone);
-
-	private Main() {}
+	
+	private FruttyMain() {}
 	
 	public static void main(String[] args){
 		Plugin.handlePluginInit();

@@ -5,42 +5,38 @@ import java.awt.Graphics;
 import java.io.Serializable;
 import java.util.Iterator;
 
-import frutty.Main;
-import frutty.gui.GuiIngame;
+import frutty.FruttyMain;
 import frutty.gui.GuiSettings.Settings;
 import frutty.tools.GuiHelper;
+import frutty.tools.Material;
 
 public final class Particle implements Serializable{
 	private static final long serialVersionUID = -9182849456014867036L;
 
-	private static Color[] colors;
-	
 	public final Color color;
 	public int lifeTime, posX, posY;
 	public final int motionX, motionY;
 	
-	private Particle(int x, int y, int colorIndex) {
+	private Particle(int x, int y, boolean fall, Color color) {
 		posX = x;
 		posY = y;
-		lifeTime = 25 + Main.rand.nextInt(20);
-		motionX = 0;
-		motionY = 2 + Main.rand.nextInt(3);
-		color = colors[colorIndex];
-	}
-	
-	private Particle(int x, int y, Color color) {
-		posX = x;
-		posY = y;
-		lifeTime = 25 + Main.rand.nextInt(20);
-		motionX = -2 + Main.rand.nextInt(5);
-		motionY = -2 + Main.rand.nextInt(2);
+		
+		if(fall) {
+			motionX = 0;
+			motionY = 2 + FruttyMain.rand.nextInt(3);
+		}else{
+			motionX = -2 + FruttyMain.rand.nextInt(5);
+			motionY = -2 + FruttyMain.rand.nextInt(2);
+		}
+		
+		lifeTime = 25 + FruttyMain.rand.nextInt(20);
 		this.color = color;
 	}
 	
-	public static void spawnFallingParticles(int count, int x, int y, int color) {
+	public static void spawnFallingParticles(int count, int x, int y, Material material) {
 		if(Settings.graphicsLevel == 2) {
 			for(int k = 0; k < count; ++k) {
-				World.particles.add(new Particle(x + Main.rand.nextInt(64), y + 64 + Main.rand.nextInt(32), color));
+				World.particles.add(new Particle(x + FruttyMain.rand.nextInt(64), y + 64 + FruttyMain.rand.nextInt(32), true, material.particleColor));
 			}
 		}
 	}
@@ -48,16 +44,8 @@ public final class Particle implements Serializable{
 	public static void spawnRandomParticles(int count, int x, int y, Color color) {
 		if(Settings.graphicsLevel == 2) {
 			for(int k = 0; k < count; ++k) {
-				World.particles.add(new Particle(x + 32, y + 60, color));
+				World.particles.add(new Particle(x + 32, y + 60, false, color));
 			}
-		}
-	}
-	
-	public static void precacheParticles() {
-		colors = new Color[GuiIngame.textures.length];
-		
-		for(int k = 0; k < GuiIngame.textures.length; ++k) {
-			colors[k] = new Color(GuiIngame.textures[k].getRGB(2, 2));
 		}
 	}
 	

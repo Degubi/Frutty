@@ -1,13 +1,11 @@
 package frutty.world.zones;
 
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
 
-import frutty.gui.GuiIngame;
-import frutty.gui.components.GuiTextureSelector;
+import frutty.tools.Material;
 import frutty.world.base.MapZoneTexturable;
 
 public final class MapZoneNormal extends MapZoneTexturable{
@@ -16,8 +14,8 @@ public final class MapZoneNormal extends MapZoneTexturable{
 	}
 	
 	@Override
-	public void draw(int x, int y, int textureIndex, Graphics2D graphics) {
-		graphics.drawImage(GuiIngame.textures[textureIndex], x, y, 64, 64, null);
+	public void draw(int x, int y, Material material, Graphics2D graphics) {
+		graphics.drawImage(material.texture, x, y, 64, 64, null);
 	}
 
 	@Override
@@ -32,10 +30,6 @@ public final class MapZoneNormal extends MapZoneTexturable{
 	
 	@Override
 	public ImageIcon[] getEditorTextures() {
-		ImageIcon[] toReturn = new ImageIcon[GuiTextureSelector.textureNames.length];
-		for(int k = 0; k < GuiTextureSelector.textureNames.length; ++k) {
-			toReturn[k] = new ImageIcon((new ImageIcon("./textures/map/" + GuiTextureSelector.textureNames[k])).getImage().getScaledInstance(64, 64, Image.SCALE_DEFAULT));
-		}
-		return toReturn;
+		return new ImageIcon[] {Material.NORMAL.editorTexture.get(), Material.STONE.editorTexture.get(), Material.DIRT.editorTexture.get(), Material.BRICK.editorTexture.get()};
 	}
 }

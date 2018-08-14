@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
 
+import frutty.tools.Material;
 import frutty.world.base.MapZoneBase;
 
 public final class MapZoneEmpty extends MapZoneBase{
@@ -14,7 +15,7 @@ public final class MapZoneEmpty extends MapZoneBase{
 	}
 
 	@Override
-	public void draw(int x, int y, int textureIndex, Graphics2D graphics) {
+	public void draw(int x, int y, Material material, Graphics2D graphics) {
 		graphics.setColor(Color.BLACK);
 		graphics.fillRect(x, y, 64, 64);
 	}

@@ -7,6 +7,7 @@ import javax.swing.ImageIcon;
 
 import frutty.entity.EntityPlayer;
 import frutty.tools.IOHelper;
+import frutty.tools.Material;
 import frutty.world.World;
 import frutty.world.base.MapZoneBase;
 
@@ -18,12 +19,12 @@ public final class MapZonePortal extends MapZoneBase{
 	}
 
 	@Override
-	public void draw(int x, int y, int textureIndex, Graphics2D graphics) {
+	public void draw(int x, int y, Material material, Graphics2D graphics) {
 		graphics.drawImage(portalTexture, x, y, 64, 64, null);
 	}
 
 	@Override
-	public void onZoneEntered(int x, int y, int zoneIndex, int textureIndex, EntityPlayer player) {
+	public void onZoneEntered(int x, int y, int zoneIndex, Material material, EntityPlayer player) {
 		World.loadMap(World.nextMap, World.players.length == 2);
 	}
 	

@@ -4,6 +4,8 @@ import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.Toolkit;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -11,6 +13,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -22,25 +26,23 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
 
-import frutty.Main;
-import frutty.gui.components.EditorZoneButton;
-import frutty.gui.components.TextureSelectorButton;
+import frutty.FruttyMain;
+import frutty.gui.GuiEditorProperties.GuiEditorInfo;
+import frutty.gui.GuiTextureSelector.TextureSelectorButton;
 import frutty.tools.GuiHelper;
-import frutty.world.base.MapZoneBase;
 import frutty.world.base.MapZoneTexturable;
 
 public final class GuiEditor extends JPanel{
 	public final ArrayList<EditorZoneButton> zoneButtons = new ArrayList<>();
 	public final GuiEditorProperties mapProperties;
 	public final TextureSelectorButton textureSelectorButton;
-	public final JComboBox<String> zoneList;
+	public final JComboBox<String> zoneList = new JComboBox<>(FruttyMain.zoneRegistry.stream().map(zone -> zone.zoneName).toArray(String[]::new));
 	
 	private GuiEditor(String fileName, String skyName, int width, int height, String nextMap) {
 		setLayout(null);
 		
 		if(fileName != null) {
 			mapProperties = new GuiEditorProperties(fileName, skyName, width, height, nextMap);
-			zoneList = new JComboBox<>(zoneNames());
 			zoneList.setSelectedItem("normalZone");
 			zoneList.setBounds(width * 64 + 20, 80, 120, 30);
 			
@@ -48,20 +50,8 @@ public final class GuiEditor extends JPanel{
 			add(textureSelectorButton = new TextureSelectorButton(width, this));
 		}else{
 			mapProperties = null;
-			zoneList = null;
 			textureSelectorButton = null;
 		}
-	}
-	
-	public static String[] zoneNames() {
-		String[] names = new String[Main.zoneRegistry.size()];
-		
-		int index = 0;
-		for(MapZoneBase zones : Main.zoneRegistry) {
-			names[index++] = zones.zoneName;
-		}
-		
-		return names;
 	}
 	
 	@Override
@@ -70,7 +60,7 @@ public final class GuiEditor extends JPanel{
 		
 		if(!zoneButtons.isEmpty()) {
 			graphics.setFont(GuiHelper.thiccFont);
-			graphics.drawString("Current texture: " + textureSelectorButton.activeTexture, getWidth() - 175, 190);
+			graphics.drawString("Current texture: " + textureSelectorButton.activeMaterial.name, getWidth() - 175, 190);
 		}
 	}
 
@@ -79,10 +69,9 @@ public final class GuiEditor extends JPanel{
 	}
 	
 	private void saveMap() {
-		var mapName = mapProperties.mapName;
-		try(var output = new ObjectOutputStream(new FileOutputStream("./maps/" + mapName))){
-	 		String[] zoneIDCache = zoneButtons.stream().map(button -> button.zoneID).distinct().toArray(String[]::new);
-	 		String[] textureCache = zoneButtons.stream().map(button -> button.zoneTexture).filter(texture -> texture != null).distinct().toArray(String[]::new);
+		try(var output = new ObjectOutputStream(new FileOutputStream("./maps/" + mapProperties.mapName))){
+	 		var zoneIDCache = zoneButtons.stream().map(button -> button.zoneID).distinct().toArray(String[]::new);
+	 		var textureCache = zoneButtons.stream().map(button -> button.zoneTexture).filter(texture -> texture != null).distinct().toArray(String[]::new);
 	 		
 	 		output.writeObject(zoneIDCache);
 	 		output.writeObject(textureCache);
@@ -91,10 +80,10 @@ public final class GuiEditor extends JPanel{
 	 		output.writeShort(mapProperties.height);
 	 		output.writeUTF(mapProperties.nextMap);
 	 		
-	 		for(var writeButton : zoneButtons) {
+	 		for(EditorZoneButton writeButton : zoneButtons) {
 	 			output.writeByte(indexOf(zoneIDCache, writeButton.zoneID));
 	 			
-	 			if(Main.getZoneFromName(writeButton.zoneID) instanceof MapZoneTexturable) {
+	 			if(FruttyMain.getZoneFromName(writeButton.zoneID) instanceof MapZoneTexturable) {
 	 				output.writeByte(indexOf(textureCache, writeButton.zoneTexture));
 	 			}
 	 		}
@@ -102,16 +91,7 @@ public final class GuiEditor extends JPanel{
 			e.printStackTrace();
 		}
 		
-	 	JOptionPane.showMessageDialog(null, "Map saved as: " + mapName);
-	}
-	
-	private static<T> int indexOf(T[] array, T element) {
-		for(int k = 0; k < array.length; ++k) {
-			if(array[k].equals(element)) {
-				return k;
-			}
-		}
-		return -1;
+	 	JOptionPane.showMessageDialog(null, "Map saved as: " + mapProperties.mapName);
 	}
 	
 	private static void loadMap(String fileName) {
@@ -127,7 +107,7 @@ public final class GuiEditor extends JPanel{
 				for(int y = 0; y < mapHeight; ++y) {
 					for(int x = 0; x < mapWidth; ++x) {
 						String zoneID = zoneIDCache[input.readByte()];
-						Main.getZoneFromName(zoneID).handleEditorReading(editor, zoneID, input, x, y, textureCache);
+						FruttyMain.getZoneFromName(zoneID).handleEditorReading(editor, zoneID, input, x, y, textureCache);
 					}
 				}
 				showEditorFrame(editor, mapWidth * 64, mapHeight * 64);
@@ -168,7 +148,7 @@ public final class GuiEditor extends JPanel{
 				if(mapName != null) {
 					for(int yPos = 0; yPos < bigHeight; yPos += 64) {
 						for(int xPos = 0; xPos < bigWidth; xPos += 64) {
-							EditorZoneButton button = new EditorZoneButton(Main.normalZone.editorTexture.get(), newEditor);
+							EditorZoneButton button = new EditorZoneButton(FruttyMain.normalZone.editorTexture.get(), newEditor);
 							button.zoneID = "normalZone";
 							button.zoneTexture = "normal";
 							button.setBounds(xPos, yPos, 64, 64);
@@ -196,7 +176,7 @@ public final class GuiEditor extends JPanel{
 	    		for(var localButton : editor.zoneButtons) {
 			 		localButton.zoneID = "normalZone";
 			 		localButton.zoneTexture = "normal";
-			 		localButton.setIcon(Main.normalZone.editorTexture.get());
+			 		localButton.setIcon(FruttyMain.normalZone.editorTexture.get());
 	    	};}));
 	    	
 	    	fileMenu.addSeparator();
@@ -223,5 +203,59 @@ public final class GuiEditor extends JPanel{
 		item.setEnabled(setEnabled);
 		item.addActionListener(listener);
 		return item;
+	}
+	
+	private static<T> int indexOf(T[] array, T element) {
+		for(int k = 0; k < array.length; ++k) {
+			if(array[k].equals(element)) {
+				return k;
+			}
+		}
+		return -1;
+	}
+	
+	public static final class EditorZoneButton extends JButton implements MouseListener{
+		public String zoneTexture, zoneID;
+		private final GuiEditor editorInstance;
+		
+		public EditorZoneButton(ImageIcon texture, GuiEditor editor) {
+			super(texture);
+			editorInstance = editor;
+			
+			addMouseListener(this);
+		}
+		
+		@Override
+		public void mousePressed(MouseEvent event) {
+			EditorZoneButton button = (EditorZoneButton)event.getComponent();
+			int pressedButton = event.getButton();
+			
+			if(pressedButton == MouseEvent.BUTTON1) {
+				String activeZoneName = (String) editorInstance.zoneList.getSelectedItem();
+				button.zoneID = activeZoneName; button.setIcon(FruttyMain.getZoneFromName(activeZoneName).editorTexture.get());
+				
+				if(FruttyMain.getZoneFromName(activeZoneName) instanceof MapZoneTexturable) {
+					button.setIcon(((MapZoneTexturable)FruttyMain.getZoneFromName(button.zoneID)).textureVariants.get()[editorInstance.textureSelectorButton.activeMaterial.index]);
+					button.zoneTexture = editorInstance.textureSelectorButton.activeMaterial.name;
+				}else{
+					button.zoneTexture = null;
+				}
+				
+			}else if(pressedButton == MouseEvent.BUTTON3) {
+				if(FruttyMain.getZoneFromName(button.zoneID) instanceof MapZoneTexturable) {
+					button.setIcon(((MapZoneTexturable)FruttyMain.getZoneFromName(button.zoneID)).textureVariants.get()[editorInstance.textureSelectorButton.activeMaterial.index]);
+					button.zoneTexture = editorInstance.textureSelectorButton.activeMaterial.name;
+				}
+			}
+		}
+		
+		@Override
+		public void mouseClicked(MouseEvent e) {}
+		@Override
+		public void mouseReleased(MouseEvent e) {}
+		@Override
+		public void mouseEntered(MouseEvent e) {}
+		@Override
+		public void mouseExited(MouseEvent e) {}
 	}
 }

@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.io.Serializable;
 
-import frutty.Main;
+import frutty.FruttyMain;
 import frutty.gui.GuiSettings.Settings;
 import frutty.world.World;
 import frutty.world.base.MapZoneBase;
@@ -113,7 +113,7 @@ public abstract class Entity implements Serializable{
 		}
 
 		public static EnumFacing randomFacing() {
-			switch(Main.rand.nextInt(4)) {
+			switch(FruttyMain.rand.nextInt(4)) {
 				case 0: return UP;
 				case 1: return DOWN;
 				case 2: return LEFT;

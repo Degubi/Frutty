@@ -1,6 +1,6 @@
 package frutty.plugin;
 
-import frutty.Main;
+import frutty.FruttyMain;
 import frutty.world.base.MapZoneBase;
 
 /**Methods for registering zones, loading textures, etc*/
@@ -21,11 +21,11 @@ public final class PluginRegistry {
 			throw new IllegalArgumentException("Zone already registered with ID: " + zone.zoneName);
 		}
 		
-		Main.zoneRegistry.add(zone);
+		FruttyMain.zoneRegistry.add(zone);
 	}
 	
 	private static boolean isZoneAlreadyRegistered(String name) {
-		for(MapZoneBase zones : Main.zoneRegistry) {
+		for(MapZoneBase zones : FruttyMain.zoneRegistry) {
 			if(zones.zoneName.equals(name)) {
 				return true;
 			}

@@ -7,6 +7,7 @@ import javax.swing.ImageIcon;
 
 import frutty.entity.EntityEnemy;
 import frutty.gui.GuiSettings.Settings;
+import frutty.tools.Material;
 import frutty.world.World;
 import frutty.world.base.MapZoneBase;
 
@@ -27,7 +28,7 @@ public final class MapZoneSpawner extends MapZoneBase{
 	}
 	
 	@Override
-	public void draw(int x, int y, int textureIndex, Graphics2D graphics) {
+	public void draw(int x, int y, Material material, Graphics2D graphics) {
 		if(colorIndexer == 31) {
 			decrease = true;
 		}

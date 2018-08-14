@@ -32,7 +32,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
-import frutty.Main;
+import frutty.FruttyMain;
 import frutty.entity.Entity;
 import frutty.entity.EntityEnemy;
 import frutty.entity.EntityPlayer;
@@ -48,18 +48,17 @@ import frutty.world.base.MapZoneBase;
 import frutty.world.zones.MapZoneWater;
 
 public final class GuiIngame extends JPanel implements Runnable, KeyListener{
-	protected final ScheduledExecutorService updateThread = Executors.newSingleThreadScheduledExecutor();
-	protected final ScheduledExecutorService renderThread = Executors.newSingleThreadScheduledExecutor();
-	
 	public static GuiIngame ingameGui;
 	
+	protected final ScheduledExecutorService updateThread = Executors.newSingleThreadScheduledExecutor();
+	protected final ScheduledExecutorService renderThread = Executors.newSingleThreadScheduledExecutor();
 	protected boolean paused = false;
-	public static BufferedImage skyTexture;
-	public static BufferedImage[] textures;
-	
 	private final LocalTime startTime = LocalTime.now();
 	private int renderDelay;
 	private long renderLastUpdate = System.currentTimeMillis();
+	
+	public static BufferedImage skyTexture;
+	public static BufferedImage[] textures;
 	
 	public GuiIngame() {
 		setLayout(null);
@@ -73,7 +72,7 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 		
 		MapZoneBase[] zones = World.zones;
 		
-		for(int k = 0; k < zones.length; ++k) zones[k].render(World.xCoords[k], World.yCoords[k], World.textureData[k], (Graphics2D) graphics);
+		for(int k = 0; k < zones.length; ++k) zones[k].render(World.xCoords[k], World.yCoords[k], World.materials[k], (Graphics2D) graphics);
 		for(EntityPlayer players : World.players) players.handleRender(graphics);
 		
 		for(Entity entity : World.entities) {
@@ -93,7 +92,7 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 		for(int k = 0; k < zones.length; ++k) {
 			MapZoneBase zone = zones[k];
 			if(zone instanceof ITransparentZone) {
-				((ITransparentZone)zone).drawAfter(World.xCoords[k], World.yCoords[k], World.textureData[k], graphics);
+				((ITransparentZone)zone).drawAfter(World.xCoords[k], World.yCoords[k], World.materials[k], graphics);
 			}
 		}
 		
@@ -168,8 +167,8 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 			if(World.ticks % 20 == 0) {
 				for(int k = 0; k < World.zones.length; ++k) {
 					MapZoneBase zone = World.zones[k];
-					if(zone.hasParticleSpawns && MapZoneBase.isEmpty(World.xCoords[k], World.yCoords[k] + 64) && Main.rand.nextInt(100) == 3) {
-						Particle.spawnFallingParticles(2 + Main.rand.nextInt(5), World.xCoords[k], World.yCoords[k], World.textureData[k]);
+					if(zone.hasParticleSpawns && MapZoneBase.isEmpty(World.xCoords[k], World.yCoords[k] + 64) && FruttyMain.rand.nextInt(100) == 3) {
+						Particle.spawnFallingParticles(2 + FruttyMain.rand.nextInt(5), World.xCoords[k], World.yCoords[k], World.materials[k]);
 					}
 					
 					if(zone instanceof IZoneEntityProvider) {

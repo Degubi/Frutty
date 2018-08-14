@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
 
-import frutty.Main;
+import frutty.FruttyMain;
 import frutty.tools.Lazy;
 
 public abstract class MapZoneTexturable extends MapZoneBase{
@@ -22,7 +22,7 @@ public abstract class MapZoneTexturable extends MapZoneBase{
 	public abstract BufferedImage getOverlayTexture();
 	
 	public ImageIcon[] getEditorTextures() {
-		ImageIcon[] all = Main.normalZone.textureVariants.get();
+		ImageIcon[] all = FruttyMain.normalZone.textureVariants.get();
 		ImageIcon[] toReturn = new ImageIcon[all.length];
 		BufferedImage overlay = getOverlayTexture();
 		

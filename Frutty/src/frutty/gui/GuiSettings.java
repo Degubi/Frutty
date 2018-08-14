@@ -11,21 +11,23 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
 
-import frutty.Main;
+import frutty.FruttyMain;
 import frutty.gui.components.SettingButton;
 import frutty.gui.components.SettingButtonField;
 import frutty.gui.components.SettingButtonSlider;
 import frutty.tools.GuiHelper;
+import frutty.tools.Material;
 import frutty.tools.PropertyFile;
 import frutty.world.base.ITransparentZone;
 import frutty.world.base.MapZoneBase;
 
 public final class GuiSettings extends JPanel implements ActionListener{
 	private static final MapZoneBase[] zones = new MapZoneBase[140];
-	private static final int[] xCoords = new int[140], yCoords = new int[140], textureData = new int[140];
+	private static final int[] xCoords = new int[140], yCoords = new int[140];
+	private static final Material[] materials = new Material[140];
 	
 	static {
-		GuiMenu.loadBackgroundMap("./maps/dev_settings.deg", xCoords, yCoords, textureData, zones);
+		GuiMenu.loadBackgroundMap("./maps/dev_settings.deg", xCoords, yCoords, materials, zones);
 	}
 	
 	private GuiSettings(JComponent... components) {
@@ -41,9 +43,9 @@ public final class GuiSettings extends JPanel implements ActionListener{
 		
 		for(int k = 0; k < zones.length; ++k) {
 			MapZoneBase zone = zones[k];
-			zone.render(xCoords[k], yCoords[k], textureData[k], (Graphics2D) graphics);
+			zone.render(xCoords[k], yCoords[k], materials[k], (Graphics2D) graphics);
 			if(zone instanceof ITransparentZone) {
-				((ITransparentZone) zone).drawAfter(xCoords[k], yCoords[k], textureData[k], graphics);
+				((ITransparentZone) zone).drawAfter(xCoords[k], yCoords[k], materials[k], graphics);
 			}
 		}
 		
@@ -87,7 +89,7 @@ public final class GuiSettings extends JPanel implements ActionListener{
 		insets.bottom = -1;
 		UIManager.put("TabbedPane.contentBorderInsets", insets);
 		
-		Main.loadTextures(new String[] {"dirt", "stone"});
+		FruttyMain.loadTextures(new String[] {"dirt", "stone"});
 		
 		GuiHelper.switchMenuPanel(tabbed);
 	}
