@@ -3,16 +3,12 @@ package frutty.world.base;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.Serializable;
 
 import javax.swing.ImageIcon;
 
 import frutty.FruttyMain;
 import frutty.entity.EntityPlayer;
-import frutty.gui.GuiEditor;
-import frutty.gui.GuiEditor.EditorZoneButton;
 import frutty.gui.GuiSettings.Settings;
 import frutty.gui.GuiStats;
 import frutty.plugin.event.world.ZoneAddedEvent;
@@ -108,19 +104,6 @@ public abstract class MapZoneBase implements Serializable{
 	private final ImageIcon getEditorIconInternal() {
 		ImageIcon icon = getEditorIcon();
 		return (icon.getIconWidth() == 64 && icon.getIconHeight() == 64) ? icon : new ImageIcon(icon.getImage().getScaledInstance(64, 64, Image.SCALE_DEFAULT));
-	}
-	
-	public final void handleEditorReading(@SuppressWarnings("exports") GuiEditor editor, String zoneID, ObjectInputStream input, int x, int y, String[] textures) throws IOException {
-		EditorZoneButton button = new EditorZoneButton(editorTexture.get(), editor);
-		button.setBounds(x * 64, y * 64, 64, 64);
-		button.zoneID = zoneID;
-		if(this instanceof MapZoneTexturable){
-			int textureData = input.readByte();
-			button.zoneTexture = textures[textureData];
-			button.setIcon(((MapZoneTexturable)this).textureVariants.get()[Material.materialRegistry.get(textures[textureData]).index]);
-		}
-		editor.zoneButtons.add(button);
-		editor.add(button);
 	}
 	
 	public static boolean isEmpty(int x, int y) {

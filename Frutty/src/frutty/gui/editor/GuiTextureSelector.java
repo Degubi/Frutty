@@ -1,4 +1,4 @@
-package frutty.gui;
+package frutty.gui.editor;
 
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
@@ -56,7 +56,7 @@ public final class GuiTextureSelector extends JPanel implements ActionListener, 
 		}
 	}
 	
-	public static final class TextureSelectorButton extends JButton implements ActionListener{
+	static final class TextureSelectorButton extends JButton implements ActionListener{
 		public Material activeMaterial = Material.NORMAL;
 		private final GuiEditor editorInstance;
 			

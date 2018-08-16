@@ -159,7 +159,7 @@ public final class World{
 	}
 	
 	public static void loadMap(String name, boolean isMultiplayer) {
-		try(var input = new ObjectInputStream(new FileInputStream("./maps/" + name + ".deg"))){
+		try(var input = new ObjectInputStream(new FileInputStream("./maps/" + name + ".fmap"))){
 			int loadedWidth, loadedHeight, zoneIndex = 0;
 			
 			String[] zoneIDCache = (String[]) input.readObject();
@@ -191,7 +191,7 @@ public final class World{
 			}
 			
 		}catch(IOException | ClassNotFoundException e){
-			System.err.println("Can't load invalid map: " + "./maps/" + name + ".deg");
+			System.err.println("Can't load invalid map: " + "./maps/" + name + ".fmap");
 		}
 		
 		GuiHelper.mapSizeCheck(width / 64 + 1, height / 64 + 1);

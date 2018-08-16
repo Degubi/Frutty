@@ -25,6 +25,7 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.MatteBorder;
 
 import frutty.FruttyMain;
+import frutty.gui.editor.GuiEditor;
 import frutty.plugin.event.gui.GuiMenuEvent;
 import frutty.plugin.internal.EventHandle;
 import frutty.plugin.internal.Plugin;
@@ -48,7 +49,7 @@ public final class GuiMenu extends JPanel implements ActionListener{
 	public GuiMenu() {
 		setLayout(null);
 		
-		loadBackgroundMap("./maps/background" + FruttyMain.rand.nextInt(4) + ".deg", xCoords, yCoords, materials, zones);
+		loadBackgroundMap("./maps/background" + FruttyMain.rand.nextInt(4) + ".fmap", xCoords, yCoords, materials, zones);
 		
 		if(devMessage.getText().isEmpty()) {
 			new Thread(() -> {
@@ -145,7 +146,7 @@ public final class GuiMenu extends JPanel implements ActionListener{
 		}else if(command.equals("Plugins")) {
 			GuiPlugins.showPlugins();
 		}else if(command.equals("Editor")){
-			GuiEditor.openEditor(); mainFrame.dispose();
+			GuiEditor.openEmptyEditor(); mainFrame.dispose();
 		}else if(command.equals("Stats")){
 			GuiHelper.switchMenuPanel(new GuiStats());
 		}else{ //Load

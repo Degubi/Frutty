@@ -27,7 +27,7 @@ public final class GuiSettings extends JPanel implements ActionListener{
 	private static final Material[] materials = new Material[140];
 	
 	static {
-		GuiMenu.loadBackgroundMap("./maps/dev_settings.deg", xCoords, yCoords, materials, zones);
+		GuiMenu.loadBackgroundMap("./maps/dev_settings.fmap", xCoords, yCoords, materials, zones);
 	}
 	
 	private GuiSettings(JComponent... components) {

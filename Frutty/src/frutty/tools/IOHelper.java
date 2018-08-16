@@ -31,6 +31,15 @@ public final class IOHelper {
 		}
 	}
 	
+	public static int fileSize(String path) {
+		try {
+			return (int) Files.size(Paths.get(path));
+		} catch (IOException e) {
+			e.printStackTrace();
+			return -1;
+		}
+	}
+	
 	public static void createFile(String path) {
 		Path filePath = Paths.get(path);
 		

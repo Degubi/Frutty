@@ -93,7 +93,7 @@ public final class GuiMapSelection extends JPanel implements ListSelectionListen
 	
 	private void setModel() {
 		DefaultListModel<String> model = new DefaultListModel<>();
-		var files = Arrays.stream(new File("./maps").list()).filter(name -> name.endsWith(".deg")).map(name -> name.substring(0, name.length() - 4));
+		var files = Arrays.stream(new File("./maps").list()).filter(name -> name.endsWith(".fmap")).map(name -> name.substring(0, name.indexOf('.')));
 		
 		if(devMode.isSelected()) {
 			files.forEach(map -> model.addElement(map));
@@ -128,7 +128,7 @@ public final class GuiMapSelection extends JPanel implements ListSelectionListen
 	
 	
 	public static String loadMapSize(String fileName) {
-		String path = "./maps/" + fileName + ".deg";
+		String path = "./maps/" + fileName + ".fmap";
 		try(var input = new ObjectInputStream(Files.newInputStream(Paths.get(path)))){
 			input.readObject(); input.readObject();
 			input.readUTF();

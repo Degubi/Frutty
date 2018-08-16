@@ -1,12 +1,10 @@
-package frutty.gui;
+package frutty.gui.editor;
 
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -15,9 +13,9 @@ import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
-import frutty.FruttyMain;
+import frutty.gui.editor.GuiEditor.EditorZoneButton;
 import frutty.tools.GuiHelper;
-import frutty.world.base.MapZoneTexturable;
+import frutty.tools.IOHelper;
 
 @SuppressWarnings("boxing")
 public final class GuiEditorProperties extends JPanel{
@@ -52,7 +50,7 @@ public final class GuiEditorProperties extends JPanel{
 		add(table);
 	}
 	
-	protected static final class PropertyTableModel extends DefaultTableModel{
+	static final class PropertyTableModel extends DefaultTableModel{
 		
 		@Override
 		public int getRowCount() {
@@ -70,7 +68,7 @@ public final class GuiEditorProperties extends JPanel{
 		}
 	}
 	
-	protected static final class CustomCellRenderer extends DefaultTableCellRenderer{
+	static final class CustomCellRenderer extends DefaultTableCellRenderer{
 		
 		@Override
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -81,33 +79,21 @@ public final class GuiEditorProperties extends JPanel{
 	}
 	
 	static final class GuiEditorInfo extends JPanel{
-		private final GuiEditor editor;
 		private final String textureCount, textureSize;
-		@SuppressWarnings("rawtypes")
-		private final JList textureList;
 		
-		public GuiEditorInfo(GuiEditor edit) {
+		public GuiEditorInfo(List<EditorZoneButton> buttons) {
 			setLayout(null);
-			editor = edit;
 			
-			var textures = new ArrayList<String>();
-			int size = 0;
-			
-	 		for(var writeButton : editor.zoneButtons) {
-	 			if(FruttyMain.getZoneFromName(writeButton.zoneID) instanceof MapZoneTexturable) {
-	 				String texture = "textures/map/" + writeButton.zoneTexture + ".png";
-	 				if(!textures.contains(texture)) {
-	 					try {
-							size += Files.size(Paths.get("./" + texture));
-						} catch (IOException e) {}
-	 					textures.add(texture);
-	 				}
-	 			}
-	 		}
-	 		textureSize = "Texture size: " + size + " bytes";
-	 		textureCount = "Texture Count: " + textures.size();
+			var textures = buttons.stream()
+					  			  .filter(button -> button.zoneTexture != null)
+					  			  .map(button -> "./textures/map/" + button.zoneTexture + ".png")
+					  			  .distinct()
+					  			  .toArray(String[]::new);
+
+			textureSize = "Texture size: " + Arrays.stream(textures).mapToInt(IOHelper::fileSize).sum() + " bytes";
+	 		textureCount = "Texture Count: " + textures.length;
 	 		
-	 		textureList = new JList<>(textures.toArray());
+	 		JList<String> textureList = new JList<>(textures);
 			textureList.setBounds(60, 150, 200, 120);
 			textureList.setBorder(GuiHelper.menuBorder);
 	 		
