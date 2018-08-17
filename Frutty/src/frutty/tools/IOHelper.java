@@ -1,11 +1,16 @@
 package frutty.tools;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.function.Predicate;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
@@ -15,10 +20,6 @@ import javax.imageio.ImageIO;
 public final class IOHelper {
 	private IOHelper() {}
 	
-	/**
-	 * Create a directory at the given path
-	 * @param path The directory path
-	 */
 	public static void createDirectory(String path) {
 		Path filePath = Paths.get(path);
 		
@@ -31,12 +32,61 @@ public final class IOHelper {
 		}
 	}
 	
+	public static boolean fileExists(String filePath) {
+		return Files.exists(Paths.get(filePath));
+	}
+	
+	public static String[] listFiles(String path) {
+		try {
+			return Files.list(Paths.get(path)).map(Path::getFileName).map(Path::toString).toArray(String[]::new);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
 	public static int fileSize(String path) {
 		try {
 			return (int) Files.size(Paths.get(path));
 		} catch (IOException e) {
 			e.printStackTrace();
 			return -1;
+		}
+	}
+	
+	public static ObjectOutputStream newObjectOS(String filePath) {
+		try {
+			return new ObjectOutputStream(Files.newOutputStream(Paths.get(filePath), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING));
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public static ObjectInputStream newObjectIS(String filePath) {
+		try {
+			return new ObjectInputStream(Files.newInputStream(Paths.get(filePath)));
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public static BufferedWriter newBufferedWriter(String filePath) {
+		try {
+			return Files.newBufferedWriter(Paths.get(filePath), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public static BufferedReader newBufferedReader(String filePath) {
+		try {
+			return Files.newBufferedReader(Paths.get(filePath));
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
 		}
 	}
 	
@@ -79,11 +129,6 @@ public final class IOHelper {
 		return -1;
 	}
 	
-	/*** Load texture from the given folder and name
-	 * @param prefix Folder of the texture
-	 * @param name Name of the texture including format
-	 * @return The texture object
-	 */
 	public static BufferedImage loadTexture(String prefix, String name) {
 		try(var inputStream = Files.newInputStream(Paths.get("./textures/" + prefix + '/' + name))){
 			return ImageIO.read(inputStream);

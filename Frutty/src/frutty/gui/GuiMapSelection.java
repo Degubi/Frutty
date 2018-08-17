@@ -11,9 +11,6 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Arrays;
 
 import javax.swing.DefaultListModel;
@@ -67,7 +64,7 @@ public final class GuiMapSelection extends JPanel implements ListSelectionListen
 		if(!event.getValueIsAdjusting()){
 			String path = "./textures/gui/" + mapList.getSelectedValue() + ".jpg";
 
-			if(Files.exists(Paths.get(path))) {
+			if(IOHelper.fileExists(path)) {
 				BufferedImage image = IOHelper.loadTexture("gui", mapList.getSelectedValue() + ".jpg");
 				var graph = image.createGraphics();
 				graph.setColor(Color.BLACK);
@@ -128,15 +125,14 @@ public final class GuiMapSelection extends JPanel implements ListSelectionListen
 	
 	
 	public static String loadMapSize(String fileName) {
-		String path = "./maps/" + fileName + ".fmap";
-		try(var input = new ObjectInputStream(Files.newInputStream(Paths.get(path)))){
+		try(var input = IOHelper.newObjectIS("./maps/" + fileName + ".fmap")){
 			input.readObject(); input.readObject();
 			input.readUTF();
 			return input.readShort() + "x" + input.readShort();
+			
 		} catch (IOException | ClassNotFoundException e) {
-			System.err.println("Can't load map size for map: " + path);
+			return "Can't determine map size!";
 		}
-		return "";
 	}
 	
 	static class GuiGenerateMap extends JPanel implements ActionListener{

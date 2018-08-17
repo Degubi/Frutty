@@ -6,12 +6,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +28,7 @@ import frutty.gui.GuiMenu;
 import frutty.gui.editor.GuiEditorProperties.GuiEditorInfo;
 import frutty.gui.editor.GuiTextureSelector.TextureSelectorButton;
 import frutty.tools.GuiHelper;
+import frutty.tools.IOHelper;
 import frutty.tools.Material;
 import frutty.world.base.MapZoneBase;
 import frutty.world.base.MapZoneTexturable;
@@ -74,7 +70,7 @@ public final class GuiEditor extends JPanel{
 	}
 	
 	private void renderMap() {
-		try(var output = new ObjectOutputStream(new FileOutputStream("./maps/" + mapProperties.mapName + ".fmap"))){
+		try(var output = IOHelper.newObjectOS("./maps/" + mapProperties.mapName + ".fmap")){
 	 		var zoneIDCache = zoneButtons.stream().map(button -> button.zoneID).distinct().toArray(String[]::new);
 	 		var textureCache = zoneButtons.stream().map(button -> button.zoneTexture).filter(texture -> texture != null).distinct().toArray(String[]::new);
 	 		
@@ -100,7 +96,7 @@ public final class GuiEditor extends JPanel{
 	}
 	
 	private void saveMap() {
-		try(var output = Files.newBufferedWriter(Paths.get("./mapsrc/" + mapProperties.mapName + ".fmf"), StandardOpenOption.CREATE)){
+		try(var output = IOHelper.newBufferedWriter("./mapsrc/" + mapProperties.mapName + ".fmf")){
 			output.write(Integer.toString(mapProperties.width) + '\n');
 			output.write(Integer.toString(mapProperties.height) + '\n');
 			output.write(mapProperties.skyName + '\n');
@@ -114,7 +110,7 @@ public final class GuiEditor extends JPanel{
 			output.write("\n");
 			
 			for(var button : zoneButtons) {
-				output.write(button.zoneID + (button.zoneTexture != null ? " " + indexOf(textures, button.zoneTexture) : "") + '\n');
+				output.write(button.zoneID + (button.zoneTexture != null ? (" " + indexOf(textures, button.zoneTexture)) : "") + '\n');
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -125,7 +121,7 @@ public final class GuiEditor extends JPanel{
 	
 	private static void loadMap(String fileName) {
 		if(fileName != null && !fileName.isEmpty()) {
-			try(var input = Files.newBufferedReader(Paths.get("./mapsrc/" + fileName))){
+			try(var input = IOHelper.newBufferedReader("./mapsrc/" + fileName)){
 				int mapWidth = Integer.parseInt(input.readLine());
 				int mapHeight = Integer.parseInt(input.readLine());
 				GuiEditor editor = new GuiEditor(fileName.substring(0, fileName.indexOf('.')), mapWidth, mapHeight, input.readLine(), input.readLine());

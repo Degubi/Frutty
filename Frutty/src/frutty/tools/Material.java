@@ -26,9 +26,9 @@ public final class Material implements Serializable{
 	
 	public final int index = indexer++;
 	public final String name;
-	public final BufferedImage texture;
-	public final Color particleColor;
-	public final Lazy<ImageIcon> editorTexture, editorUpscaledTexture;
+	public final transient BufferedImage texture;
+	public final transient Color particleColor;
+	public final transient Lazy<ImageIcon> editorTexture, editorUpscaledTexture;
 	
 	Material(String texturePath) {
 		name = texturePath;

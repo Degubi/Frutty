@@ -1,10 +1,6 @@
 package frutty.world;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -17,6 +13,7 @@ import frutty.entity.zone.EntityZone;
 import frutty.plugin.event.world.WorldInitEvent;
 import frutty.plugin.internal.EventHandle;
 import frutty.tools.GuiHelper;
+import frutty.tools.IOHelper;
 import frutty.tools.Material;
 import frutty.world.base.IInternalZone;
 import frutty.world.base.IZoneEntityProvider;
@@ -159,7 +156,7 @@ public final class World{
 	}
 	
 	public static void loadMap(String name, boolean isMultiplayer) {
-		try(var input = new ObjectInputStream(new FileInputStream("./maps/" + name + ".fmap"))){
+		try(var input = IOHelper.newObjectIS("./maps/" + name + ".fmap")){
 			int loadedWidth, loadedHeight, zoneIndex = 0;
 			
 			String[] zoneIDCache = (String[]) input.readObject();
@@ -199,7 +196,7 @@ public final class World{
 	
 	public static void createSave(String fileName) {
 		if(fileName != null) {
-			try(var output = new ObjectOutputStream(new FileOutputStream("./saves/" + fileName + ".sav"))){
+			try(var output = IOHelper.newObjectOS("./saves/" + fileName + ".sav")){
 				output.writeObject(players);
 				
 				output.writeShort(zones.length);
@@ -232,7 +229,7 @@ public final class World{
 	@SuppressWarnings("unchecked")
 	public static boolean loadSave(String fileName) {
 		if(fileName != null) {
-			try(var input = new ObjectInputStream(new FileInputStream("./saves/" + fileName))){
+			try(var input = IOHelper.newObjectIS("./saves/" + fileName)){
 				players = (EntityPlayer[]) input.readObject();
 				
 				zones = new MapZoneBase[input.readShort()];

@@ -8,10 +8,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -30,6 +27,7 @@ import frutty.plugin.event.gui.GuiMenuEvent;
 import frutty.plugin.internal.EventHandle;
 import frutty.plugin.internal.Plugin;
 import frutty.tools.GuiHelper;
+import frutty.tools.IOHelper;
 import frutty.tools.Material;
 import frutty.tools.Version;
 import frutty.world.World;
@@ -150,9 +148,9 @@ public final class GuiMenu extends JPanel implements ActionListener{
 		}else if(command.equals("Stats")){
 			GuiHelper.switchMenuPanel(new GuiStats());
 		}else{ //Load
-			var allMapNames = new File("./saves/").list();
-			if(allMapNames.length > 0) {
-				if(World.loadSave((String) JOptionPane.showInputDialog(this, "Chose map file!", "Saves", JOptionPane.QUESTION_MESSAGE, null, allMapNames, allMapNames[0]))) {
+			var saveFolderList = IOHelper.listFiles("./saves/");
+			if(saveFolderList.length > 0) {
+				if(World.loadSave((String) JOptionPane.showInputDialog(this, "Chose map file!", "Saves", JOptionPane.QUESTION_MESSAGE, null, saveFolderList, saveFolderList[0]))) {
 					GuiIngame.showIngame();
 					((JFrame)getTopLevelAncestor()).dispose();
 				}
@@ -163,7 +161,7 @@ public final class GuiMenu extends JPanel implements ActionListener{
 	}
 	
 	public static void loadBackgroundMap(String mapName, int[] xCoords, int[] yCoords, Material[] materials, MapZoneBase[] zones) {
-		try(var input = new ObjectInputStream(new FileInputStream(mapName))){
+		try(var input = IOHelper.newObjectIS(mapName)){
 			String[] zoneIDCache = (String[]) input.readObject();
 			String[] textureCache = (String[]) input.readObject();
 			
