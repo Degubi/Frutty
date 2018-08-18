@@ -1,36 +1,24 @@
 package frutty.gui;
 
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JComponent;
-import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
 
-import frutty.FruttyMain;
+import frutty.gui.components.GuiMapBackground;
 import frutty.gui.components.SettingButton;
 import frutty.gui.components.SettingButtonField;
 import frutty.gui.components.SettingButtonSlider;
 import frutty.tools.GuiHelper;
-import frutty.tools.Material;
 import frutty.tools.PropertyFile;
-import frutty.world.base.ITransparentZone;
-import frutty.world.base.MapZoneBase;
 
-public final class GuiSettings extends JPanel implements ActionListener{
-	private static final MapZoneBase[] zones = new MapZoneBase[140];
-	private static final int[] xCoords = new int[140], yCoords = new int[140];
-	private static final Material[] materials = new Material[140];
-	
-	static {
-		GuiMenu.loadBackgroundMap("./maps/dev_settings.fmap", xCoords, yCoords, materials, zones);
-	}
-	
+public final class GuiSettings extends GuiMapBackground implements ActionListener{
 	private GuiSettings(JComponent... components) {
+		super("./maps/dev_settings.fmap");
 		setLayout(null);
 		
 		for(JComponent comp : components) add(comp);
@@ -40,14 +28,6 @@ public final class GuiSettings extends JPanel implements ActionListener{
 	@Override
 	protected void paintComponent(Graphics graphics) {
 		super.paintComponent(graphics);
-		
-		for(int k = 0; k < zones.length; ++k) {
-			MapZoneBase zone = zones[k];
-			zone.render(xCoords[k], yCoords[k], materials[k], (Graphics2D) graphics);
-			if(zone instanceof ITransparentZone) {
-				((ITransparentZone) zone).drawAfter(xCoords[k], yCoords[k], materials[k], graphics);
-			}
-		}
 		
 		graphics.setColor(GuiHelper.color_84Black);
 		graphics.fillRect(0, 0, 910, 675);
@@ -88,8 +68,6 @@ public final class GuiSettings extends JPanel implements ActionListener{
 		insets.right = -1;
 		insets.bottom = -1;
 		UIManager.put("TabbedPane.contentBorderInsets", insets);
-		
-		FruttyMain.loadTextures(new String[] {"dirt", "stone"});
 		
 		GuiHelper.switchMenuPanel(tabbed);
 	}

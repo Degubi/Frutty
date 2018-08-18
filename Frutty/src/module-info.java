@@ -2,6 +2,9 @@
 module frutty.api{
 	requires transitive java.desktop;
 	
+	exports frutty.gui;
+	exports frutty.gui.components;
+	
 	exports frutty.entity;
 	exports frutty.entity.effects;
 	exports frutty.entity.zone;

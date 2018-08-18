@@ -11,7 +11,6 @@ import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
-import frutty.FruttyMain;
 import frutty.plugin.event.gui.GuiStatInitEvent;
 import frutty.plugin.event.gui.GuiStatSavedEvent;
 import frutty.plugin.internal.EventHandle;
@@ -49,7 +48,7 @@ public final class GuiStats extends JPanel implements ActionListener{
 		statTree.setOpaque(false);
 		statTree.setBounds(50, 50, 800, 400);
 		
-		if(FruttyMain.hasPlugins && !EventHandle.statInitEvents.isEmpty()) {
+		if(!EventHandle.statInitEvents.isEmpty()) {
 			EventHandle.handleEvent(new GuiStatInitEvent(stats, basic, zones, enemies, top), EventHandle.statInitEvents);
 		}
 		
@@ -77,7 +76,7 @@ public final class GuiStats extends JPanel implements ActionListener{
 		stats.setInt("enemyCount", enemyCount);
 		stats.setInt("zoneCount", zoneCount);
 		
-		if(FruttyMain.hasPlugins && !EventHandle.statSaveEvents.isEmpty()) EventHandle.handleEvent(new GuiStatSavedEvent(stats), EventHandle.statSaveEvents);
+		if(!EventHandle.statSaveEvents.isEmpty()) EventHandle.handleEvent(new GuiStatSavedEvent(stats), EventHandle.statSaveEvents);
 		stats.save();
 	}
 	

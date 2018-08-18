@@ -4,7 +4,6 @@ import java.awt.Graphics2D;
 
 import javax.swing.ImageIcon;
 
-import frutty.FruttyMain;
 import frutty.entity.EntityPlayer;
 import frutty.tools.Material;
 import frutty.world.World;
@@ -44,6 +43,6 @@ public final class MapZonePlayer extends MapZoneBase implements IInternalZone{
 	
 	@Override
 	public MapZoneBase getReplacementZone() {
-		return FruttyMain.emptyZone;
+		return MapZoneBase.emptyZone;
 	}
 }

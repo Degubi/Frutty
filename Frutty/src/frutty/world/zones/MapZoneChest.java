@@ -5,11 +5,11 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
 
-import frutty.FruttyMain;
 import frutty.entity.EntityPlayer;
 import frutty.entity.effects.EntityEffectInvisible;
 import frutty.tools.IOHelper;
 import frutty.tools.Material;
+import frutty.world.base.MapZoneBase;
 import frutty.world.base.MapZoneTexturable;
 
 public final class MapZoneChest extends MapZoneTexturable{
@@ -36,7 +36,7 @@ public final class MapZoneChest extends MapZoneTexturable{
 	protected ImageIcon getEditorIcon() {
 		var toReturn = new BufferedImage(64, 64, BufferedImage.TYPE_INT_RGB);
 		var graphics = toReturn.createGraphics();
-		graphics.drawImage(FruttyMain.normalZone.editorTexture.get().getImage(), 0, 0, null);
+		graphics.drawImage(MapZoneBase.normalZone.editorTexture.get().getImage(), 0, 0, null);
 		graphics.drawImage(chestTexture, 0, 0, null);
 		return new ImageIcon(toReturn);
 	}

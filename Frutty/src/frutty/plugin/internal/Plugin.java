@@ -1,7 +1,6 @@
 package frutty.plugin.internal;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodHandles.Lookup;
 import java.lang.reflect.InvocationTargetException;
@@ -10,7 +9,7 @@ import java.lang.reflect.Modifier;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.jar.Manifest;
 
 import frutty.FruttyMain;
@@ -21,8 +20,7 @@ import frutty.tools.IOHelper;
 import frutty.tools.Version;
 
 public final class Plugin{
-	public static ArrayList<Plugin> plugins = FruttyMain.toList(new Plugin("Frutty", "Base module for the game.", "", Version.from(1, 4, 1), "https://pastebin.com/raw/m5qJbnks"),
-			 new Plugin("Frutty Plugin Loader", "Base module for the plugin loader", "", Version.from(1, 0, 0), ""));
+	public static List<Plugin> plugins = FruttyMain.toList(new Plugin("Frutty", "Base module for the game.", "", Version.from(1, 4, 1), "https://pastebin.com/raw/m5qJbnks"), new Plugin("Frutty Plugin Loader", "Base module for the plugin loader", "", Version.from(1, 0, 0), ""));
 	
 	public final String description, ID, updateURL, versionURL;
 	public final Version version;
@@ -51,16 +49,12 @@ public final class Plugin{
 	
 	public static void handlePluginInit() {
 		IOHelper.createDirectory("plugins");
-		
-		if(FruttyMain.hasPlugins) {
-			loadPlugins();
-			
-			EventHandle.sortEvents();
-		}
+		loadPlugins();
+		EventHandle.sortEvents();
 	}
 	
 	public static void loadPlugins() {
-		File[] pluginNames = new File("./plugins/").listFiles((dir, name) -> name.endsWith(".jar"));
+		File[] pluginNames = new File("plugins").listFiles((dir, name) -> name.endsWith(".jar"));
 		
 		if(pluginNames.length > 0) {
 			String[] mainClassNames = new String[pluginNames.length];
@@ -86,7 +80,10 @@ public final class Plugin{
 				mainClassNames[k] = pluginClass;
 			}
 			
-			try(URLClassLoader urlClass = new URLClassLoader(classLoaderNames, FruttyMain.class.getClassLoader())){
+			try{
+				@SuppressWarnings("resource")
+				URLClassLoader urlClass = new URLClassLoader(classLoaderNames, FruttyMain.class.getClassLoader());
+				
 				for(int k = 0; k < mainClassNames.length; ++k) {
 					if(mainClassNames[k] == null) {
 						throw new IllegalStateException("Can't load main class from plugin: " + pluginNames[k]);
@@ -98,7 +95,6 @@ public final class Plugin{
 					
 					FruttyPlugin pluginAnnotation = loaded.getDeclaredAnnotation(FruttyPlugin.class);
 					plugins.add(new Plugin(pluginAnnotation.name(), pluginAnnotation.description(), pluginAnnotation.updateURL(), Version.fromString(pluginAnnotation.version()), pluginAnnotation.versionURL()));
-					plugins.trimToSize();
 					
 					Method[] methods = loaded.getDeclaredMethods();
 					boolean ranMain = false;
@@ -144,7 +140,7 @@ public final class Plugin{
 						System.err.println("Can't find main method annotated with @FruttyPluginMain from plugin: " + pluginNames[k] + ", ignoring");
 					}
 				}
-			} catch (IOException | SecurityException | IllegalArgumentException | ClassNotFoundException | IllegalAccessException | InvocationTargetException e) {
+			} catch (SecurityException | IllegalArgumentException | ClassNotFoundException | IllegalAccessException | InvocationTargetException e) {
 				e.printStackTrace();
 			}
 		}

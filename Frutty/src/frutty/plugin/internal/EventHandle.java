@@ -53,22 +53,27 @@ public final class EventHandle {
 	
 	static void sortEvents() {
 		if(!mapLoadEvents.isEmpty()) {
+			mapLoadEvents.trimToSize();
 			mapLoadEvents.sort(byPriority);
 		}
 		
 		if(!menuInitEvents.isEmpty()) {
+			menuInitEvents.trimToSize();
 			menuInitEvents.sort(byPriority);
 		}
 		
 		if(!statInitEvents.isEmpty()) {
+			statInitEvents.trimToSize();
 			statInitEvents.sort(byPriority);
 		}
 		
 		if(!statSaveEvents.isEmpty()) {
+			statSaveEvents.trimToSize();
 			statSaveEvents.sort(byPriority);
 		}
 		
 		if(!zoneAddedEvents.isEmpty()) {
+			zoneAddedEvents.trimToSize();
 			zoneAddedEvents.sort(byPriority);
 		}
 	}

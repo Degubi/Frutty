@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.io.Serializable;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 
@@ -19,6 +20,17 @@ import frutty.tools.Lazy;
 import frutty.tools.Material;
 import frutty.world.Particle;
 import frutty.world.World;
+import frutty.world.zones.MapZoneApple;
+import frutty.world.zones.MapZoneBush;
+import frutty.world.zones.MapZoneCherry;
+import frutty.world.zones.MapZoneChest;
+import frutty.world.zones.MapZoneEmpty;
+import frutty.world.zones.MapZoneNormal;
+import frutty.world.zones.MapZonePlayer;
+import frutty.world.zones.MapZonePortal;
+import frutty.world.zones.MapZoneSky;
+import frutty.world.zones.MapZoneSpawner;
+import frutty.world.zones.MapZoneWater;
 
 @SuppressWarnings("unused")
 public abstract class MapZoneBase implements Serializable{
@@ -89,7 +101,7 @@ public abstract class MapZoneBase implements Serializable{
 	}
 	
 	public final void onZoneAddedInternal(boolean isCoop, int x, int y) {
-		if(FruttyMain.hasPlugins && !EventHandle.zoneAddedEvents.isEmpty()) {
+		if(!EventHandle.zoneAddedEvents.isEmpty()) {
 			ZoneAddedEvent event = new ZoneAddedEvent(this, x, y);
 			EventHandle.handleEvent(event, EventHandle.zoneAddedEvents);
 			
@@ -108,11 +120,65 @@ public abstract class MapZoneBase implements Serializable{
 	
 	public static boolean isEmpty(int x, int y) {
 		MapZoneBase zone = World.getZoneAtPos(x, y);
-		return zone != null && zone == FruttyMain.emptyZone;
+		return zone != null && zone == emptyZone;
 	}
 	
 	public static boolean isEmptyAt(int index) {
 		MapZoneBase zone = World.getZoneAtIndex(index);
-		return zone != null && zone == FruttyMain.emptyZone;
+		return zone != null && zone == emptyZone;
+	}
+	
+	public static final MapZoneNormal normalZone = new MapZoneNormal();
+	public static final MapZoneEmpty emptyZone = new MapZoneEmpty();
+	public static final MapZonePlayer player1Zone = new MapZonePlayer(1);
+	public static final MapZonePlayer player2Zone = new MapZonePlayer(2);
+	public static final MapZoneApple appleZone = new MapZoneApple();
+	public static final MapZoneCherry cherryZone = new MapZoneCherry();
+	public static final MapZoneSpawner spawnerZone = new MapZoneSpawner();
+	public static final MapZoneChest chestZone = new MapZoneChest();
+	public static final MapZoneWater waterZone = new MapZoneWater();
+	public static final MapZoneSky skyZone = new MapZoneSky();
+	public static final MapZoneBush bushZone = new MapZoneBush();
+	public static final MapZonePortal portalZone = new MapZonePortal();
+	
+	private static final List<MapZoneBase> zoneRegistry = FruttyMain.toList(normalZone, emptyZone, appleZone, player1Zone, player2Zone, cherryZone, spawnerZone, chestZone, waterZone, skyZone, bushZone, portalZone);
+	
+	/**
+	 * Register zone
+	 * @param zoneID String ID for the zone (format: "pluginID:zoneName")
+	 * @param zone The zone to register
+	 */
+	public static void registerZone(MapZoneBase zone) {
+		if(!zone.zoneName.contains(":")) {
+			throw new IllegalArgumentException("Tried to register zone without plugin ID: " + zone.zoneName);
+		}
+		
+		if(isZoneAlreadyRegistered(zone.zoneName)) {
+			throw new IllegalArgumentException("Zone already registered with ID: " + zone.zoneName);
+		}
+		
+		zoneRegistry.add(zone);
+	}
+	
+	public static MapZoneBase getZoneFromName(String name) {
+		for(MapZoneBase zone : zoneRegistry) {
+			if(zone.zoneName.equals(name)) {
+				return zone;
+			}
+		}
+		return null;
+	}
+	
+	public static String[] zoneNames() {
+		return zoneRegistry.stream().map(zone -> zone.zoneName).toArray(String[]::new);
+	}
+	
+	private static boolean isZoneAlreadyRegistered(String name) {
+		for(MapZoneBase zones : zoneRegistry) {
+			if(zones.zoneName.equals(name)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

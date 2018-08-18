@@ -5,7 +5,6 @@ import static frutty.tools.GuiHelper.newButton;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -15,39 +14,28 @@ import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.WindowConstants;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.MatteBorder;
 
 import frutty.FruttyMain;
-import frutty.gui.editor.GuiEditor;
+import frutty.gui.components.GuiMapBackground;
 import frutty.plugin.event.gui.GuiMenuEvent;
 import frutty.plugin.internal.EventHandle;
 import frutty.plugin.internal.Plugin;
 import frutty.tools.GuiHelper;
 import frutty.tools.IOHelper;
-import frutty.tools.Material;
 import frutty.tools.Version;
 import frutty.world.World;
-import frutty.world.base.IInternalZone;
-import frutty.world.base.ITransparentZone;
-import frutty.world.base.MapZoneBase;
-import frutty.world.base.MapZoneTexturable;
 
-public final class GuiMenu extends JPanel implements ActionListener{
-	private final MapZoneBase[] zones = new MapZoneBase[140];
-	private final int[] xCoords = new int[140], yCoords = new int[140];
-	private final Material[] materials = new Material[140];
+public final class GuiMenu extends GuiMapBackground implements ActionListener{
 	private static final JTextArea devMessage = new JTextArea();
-	
 	public static JFrame mainFrame;
 	
 	public GuiMenu() {
+		super("./maps/background" + FruttyMain.rand.nextInt(4) + ".fmap");
 		setLayout(null);
-		
-		loadBackgroundMap("./maps/background" + FruttyMain.rand.nextInt(4) + ".fmap", xCoords, yCoords, materials, zones);
 		
 		if(devMessage.getText().isEmpty()) {
 			new Thread(() -> {
@@ -70,12 +58,11 @@ public final class GuiMenu extends JPanel implements ActionListener{
 		add(newButton("Exit", 370, 550, this));
 		add(newButton("Settings", 700, 250, this));
 		add(newButton("Load Save", 700, 100, this));
-		add(newButton("Editor", 20, 475, this));
 		add(newButton("Plugins", 20, 400, this));
 		add(newButton("Stats", 700, 330, this));
 		add(devMessage);
 		
-		if(FruttyMain.hasPlugins && !EventHandle.menuInitEvents.isEmpty()) {
+		if(!EventHandle.menuInitEvents.isEmpty()) {
 			ArrayList<JButton> eventButtons = new ArrayList<>(0);
 			EventHandle.handleEvent(new GuiMenuEvent(eventButtons), EventHandle.menuInitEvents);
 			for(JButton butt : eventButtons) add(butt);
@@ -116,14 +103,6 @@ public final class GuiMenu extends JPanel implements ActionListener{
 	protected void paintComponent(Graphics graphics) {
 		super.paintComponent(graphics);
 		
-		for(int k = 0; k < zones.length; ++k) {
-			MapZoneBase zone = zones[k];
-			zone.render(xCoords[k], yCoords[k], materials[k], (Graphics2D) graphics);
-			if(zone instanceof ITransparentZone) {
-				((ITransparentZone) zone).drawAfter(xCoords[k], yCoords[k], materials[k], graphics);
-			}
-		}
-		
 		graphics.setColor(GuiHelper.color_84Black);
 		graphics.fillRect(0, 0, 910, 675);
 		graphics.setColor(Color.WHITE);
@@ -143,8 +122,6 @@ public final class GuiMenu extends JPanel implements ActionListener{
 			GuiSettings.showGuiSettings();
 		}else if(command.equals("Plugins")) {
 			GuiPlugins.showPlugins();
-		}else if(command.equals("Editor")){
-			GuiEditor.openEmptyEditor(); mainFrame.dispose();
 		}else if(command.equals("Stats")){
 			GuiHelper.switchMenuPanel(new GuiStats());
 		}else{ //Load
@@ -158,34 +135,5 @@ public final class GuiMenu extends JPanel implements ActionListener{
 				JOptionPane.showMessageDialog(this, "No saves found in saves directory");
 			}
 		}
-	}
-	
-	public static void loadBackgroundMap(String mapName, int[] xCoords, int[] yCoords, Material[] materials, MapZoneBase[] zones) {
-		try(var input = IOHelper.newObjectIS(mapName)){
-			String[] zoneIDCache = (String[]) input.readObject();
-			String[] textureCache = (String[]) input.readObject();
-			
-			FruttyMain.loadTextures(textureCache);
-			input.readUTF(); //Sky texture
-			input.readShort(); input.readShort();  //Width height felesleges, 14x10 az összes
-			input.readUTF(); //Next map
-			
-			for(int y = 0, zoneIndex = 0; y < 640; y += 64) {
-				for(int x = 0; x < 896; x += 64) {
-					MapZoneBase zone = FruttyMain.getZoneFromName(zoneIDCache[input.readByte()]);
-					
-					if(zone instanceof IInternalZone) {
-						zone = ((IInternalZone) zone).getReplacementZone();
-					}
-					
-					if(zone instanceof MapZoneTexturable) {
-						materials[zoneIndex] = Material.materialRegistry.get(textureCache[input.readByte()]);
-					}
-					xCoords[zoneIndex] = x;
-					yCoords[zoneIndex] = y;
-					zones[zoneIndex++] = zone;
-				}
-			}
-		}catch(IOException | ClassNotFoundException e){}
 	}
 }

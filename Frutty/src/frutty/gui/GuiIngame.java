@@ -14,7 +14,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -56,9 +55,6 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 	private final LocalTime startTime = LocalTime.now();
 	private int renderDelay;
 	private long renderLastUpdate = System.currentTimeMillis();
-	
-	public static BufferedImage skyTexture;
-	public static BufferedImage[] textures;
 	
 	public GuiIngame() {
 		setLayout(null);
@@ -172,7 +168,7 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 					}
 					
 					if(zone instanceof IZoneEntityProvider) {
-						EntityZone entity = World.getZoneEntity(k);
+						EntityZone entity = World.zoneEntities[k];
 						if(entity.shouldUpdate) {
 							entity.update();
 						}

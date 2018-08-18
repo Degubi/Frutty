@@ -5,7 +5,6 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
 
-import frutty.FruttyMain;
 import frutty.entity.EntityPlayer;
 import frutty.entity.zone.EntityAppleZone;
 import frutty.entity.zone.EntityZone;
@@ -14,6 +13,7 @@ import frutty.tools.IOHelper;
 import frutty.tools.Material;
 import frutty.world.World;
 import frutty.world.base.IZoneEntityProvider;
+import frutty.world.base.MapZoneBase;
 import frutty.world.base.MapZoneTexturable;
 
 public final class MapZoneApple extends MapZoneTexturable implements IZoneEntityProvider{
@@ -58,7 +58,7 @@ public final class MapZoneApple extends MapZoneTexturable implements IZoneEntity
 	protected ImageIcon getEditorIcon() {
 		var returnTexture = new BufferedImage(64, 64, BufferedImage.TYPE_INT_RGB);
 		var graphics = returnTexture.createGraphics();
-		graphics.drawImage(FruttyMain.normalZone.editorTexture.get().getImage(), 0, 0, null);
+		graphics.drawImage(MapZoneBase.normalZone.editorTexture.get().getImage(), 0, 0, null);
 		graphics.drawImage(appleTexture, 0, 0, null);
 		return new ImageIcon(returnTexture);
 	}
