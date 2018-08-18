@@ -21,7 +21,7 @@ public final class FruttyMain {
 	
 	@SafeVarargs
 	public static <T> List<T> toList(T... objs){
-		ArrayList<T> list = new ArrayList<>(objs.length);
+		List<T> list = new ArrayList<>(objs.length);
 		
 		for(T el : objs) {
 			list.add(el);
