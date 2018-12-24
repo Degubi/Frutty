@@ -1,16 +1,10 @@
 package frutty.gui.components;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
-
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-
-import frutty.tools.GuiHelper;
+import frutty.tools.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.image.*;
+import javax.swing.*;
 
 public final class SettingButtonSlider extends JComponent implements ActionListener{
 	private static final ImageIcon RED_ICON = getColoredImage(Color.RED);

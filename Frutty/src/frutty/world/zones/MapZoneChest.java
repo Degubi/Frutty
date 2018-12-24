@@ -1,16 +1,12 @@
 package frutty.world.zones;
 
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-
-import javax.swing.ImageIcon;
-
-import frutty.entity.EntityPlayer;
-import frutty.entity.effects.EntityEffectInvisible;
-import frutty.tools.IOHelper;
-import frutty.tools.Material;
-import frutty.world.base.MapZoneBase;
-import frutty.world.base.MapZoneTexturable;
+import frutty.entity.*;
+import frutty.entity.effects.*;
+import frutty.tools.*;
+import frutty.world.base.*;
+import java.awt.*;
+import java.awt.image.*;
+import javax.swing.*;
 
 public final class MapZoneChest extends MapZoneTexturable{
 	public static final BufferedImage chestTexture = IOHelper.loadTexture("map/special", "chest.png");

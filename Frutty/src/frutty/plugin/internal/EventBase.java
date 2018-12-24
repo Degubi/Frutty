@@ -1,6 +1,6 @@
 package frutty.plugin.internal;
 
-import java.lang.invoke.MethodHandle;
+import java.lang.invoke.*;
 
 public abstract class EventBase {
 	

@@ -1,20 +1,10 @@
 package frutty.gui;
 
-import java.awt.Graphics;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JComponent;
-import javax.swing.JTabbedPane;
-import javax.swing.UIManager;
-
-import frutty.gui.components.GuiMapBackground;
-import frutty.gui.components.SettingButton;
-import frutty.gui.components.SettingButtonField;
-import frutty.gui.components.SettingButtonSlider;
-import frutty.tools.GuiHelper;
-import frutty.tools.PropertyFile;
+import frutty.gui.components.*;
+import frutty.tools.*;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
 
 public final class GuiSettings extends GuiMapBackground implements ActionListener{
 	private GuiSettings(JComponent... components) {

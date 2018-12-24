@@ -1,8 +1,7 @@
 package frutty.world.base;
 
-import java.awt.Graphics;
-
-import frutty.tools.Material;
+import frutty.tools.*;
+import java.awt.*;
 
 /**Interface for transparent zones. It adds a second layer to the zone.*/
 public interface ITransparentZone {

@@ -1,12 +1,9 @@
 package frutty;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
-import frutty.gui.GuiMenu;
-import frutty.plugin.internal.Plugin;
-import frutty.tools.IOHelper;
+import frutty.gui.*;
+import frutty.plugin.internal.*;
+import frutty.tools.*;
+import java.util.*;
 
 public final class FruttyMain {
 	public static final Random rand = new Random();

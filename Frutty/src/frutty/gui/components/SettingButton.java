@@ -1,16 +1,10 @@
 package frutty.gui.components;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
-
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-
-import frutty.tools.GuiHelper;
+import frutty.tools.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.image.*;
+import javax.swing.*;
 
 public final class SettingButton extends JComponent implements ActionListener{
 	private static final String[] ON_OFF = {"Off", "On"};
@@ -28,10 +22,6 @@ public final class SettingButton extends JComponent implements ActionListener{
 		optionIndex = selectedIndex;
 		add(newArrowButton(false, 340, 8, this));
 		add(newArrowButton(true, 620, 8, this));
-	}
-	
-	public SettingButton(int selectedIndex, String displayText, int x, int y, int[] values) {
-		this(selectedIndex, displayText, x, y, toStringArray(values));
 	}
 	
 	public SettingButton(boolean isOn, String displayText, int x, int y) {
@@ -83,14 +73,6 @@ public final class SettingButton extends JComponent implements ActionListener{
 		toReturn.setContentAreaFilled(false);
 		toReturn.setBounds(x, y, 48, 48);
 		return toReturn;
-	}
-	
-	private static String[] toStringArray(int[] values) {
-		String[] toStr = new String[values.length];
-		for(int k = 0; k < values.length; ++k) {
-			toStr[k] = Integer.toString(values[k]);
-		}
-		return toStr;
 	}
 	
 	public static int indexOf(int value, int[] values) {

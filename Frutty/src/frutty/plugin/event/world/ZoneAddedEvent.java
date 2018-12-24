@@ -1,7 +1,7 @@
 package frutty.plugin.event.world;
 
-import frutty.plugin.internal.EventBase;
-import frutty.world.base.MapZoneBase;
+import frutty.plugin.internal.*;
+import frutty.world.base.*;
 
 public final class ZoneAddedEvent extends EventBase{
 	public final MapZoneBase zone;

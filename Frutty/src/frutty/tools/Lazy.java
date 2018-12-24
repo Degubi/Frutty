@@ -1,7 +1,7 @@
 package frutty.tools;
 
-import java.util.Objects;
-import java.util.function.Supplier;
+import java.util.*;
+import java.util.function.*;
 
 public final class Lazy<T>{
 	private final Supplier<T> mkFunction;

@@ -1,21 +1,11 @@
 package frutty.tools;
 
-import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.util.function.Predicate;
-import java.util.jar.JarFile;
-import java.util.jar.Manifest;
-
-import javax.imageio.ImageIO;
+import java.awt.image.*;
+import java.io.*;
+import java.nio.file.*;
+import java.util.function.*;
+import java.util.jar.*;
+import javax.imageio.*;
 
 public final class IOHelper {
 	private IOHelper() {}

@@ -1,36 +1,16 @@
 package degubi.editor;
 
-import java.awt.EventQueue;
-import java.awt.Graphics;
-import java.awt.Toolkit;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.io.IOException;
-import java.util.ArrayList;
+import degubi.editor.GuiEditorProperties.*;
+import degubi.editor.GuiTextureSelector.*;
+import frutty.gui.*;
+import frutty.tools.*;
+import frutty.world.base.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
+import java.util.*;
 import java.util.List;
-
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.KeyStroke;
-import javax.swing.WindowConstants;
-
-import degubi.editor.GuiEditorProperties.GuiEditorInfo;
-import degubi.editor.GuiTextureSelector.TextureSelectorButton;
-import frutty.gui.GuiMenu;
-import frutty.tools.GuiHelper;
-import frutty.tools.IOHelper;
-import frutty.tools.Material;
-import frutty.world.base.MapZoneBase;
-import frutty.world.base.MapZoneTexturable;
+import javax.swing.*;
 
 public final class GuiEditor extends JPanel{
 	public final List<EditorZoneButton> zoneButtons = new ArrayList<>();

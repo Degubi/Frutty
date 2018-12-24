@@ -1,9 +1,8 @@
 package frutty.entity.effects;
 
-import java.awt.Graphics;
-import java.util.Iterator;
-
-import frutty.entity.EntityPlayer;
+import frutty.entity.*;
+import java.awt.*;
+import java.util.*;
 
 public abstract class EntityEffect{	
 	public int ticks;

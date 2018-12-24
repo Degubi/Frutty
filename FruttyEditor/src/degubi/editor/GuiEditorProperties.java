@@ -1,21 +1,13 @@
 package degubi.editor;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Graphics;
-import java.util.Arrays;
+import degubi.editor.GuiEditor.*;
+import frutty.tools.*;
+import java.awt.*;
+import java.util.*;
 import java.util.List;
-
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JTable;
-import javax.swing.border.LineBorder;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
-
-import degubi.editor.GuiEditor.EditorZoneButton;
-import frutty.tools.GuiHelper;
-import frutty.tools.IOHelper;
+import javax.swing.*;
+import javax.swing.border.*;
+import javax.swing.table.*;
 
 @SuppressWarnings("boxing")
 public final class GuiEditorProperties extends JPanel{

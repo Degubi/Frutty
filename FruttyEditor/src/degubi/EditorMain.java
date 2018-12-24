@@ -1,12 +1,10 @@
 package degubi;
 
-import degubi.editor.GuiEditor;
-import frutty.gui.GuiMenu;
-import frutty.plugin.FruttyEvent;
-import frutty.plugin.FruttyPlugin;
-import frutty.plugin.FruttyPluginMain;
-import frutty.plugin.event.gui.GuiMenuEvent;
-import frutty.tools.GuiHelper;
+import degubi.editor.*;
+import frutty.gui.*;
+import frutty.plugin.*;
+import frutty.plugin.event.gui.*;
+import frutty.tools.*;
 
 @FruttyPlugin(name = "Frutty Editor", version = "1.0.0", description = "Editor Plugin")
 public final class EditorMain{

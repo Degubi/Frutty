@@ -1,18 +1,14 @@
 package frutty.entity;
 
-import java.awt.Graphics;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.Iterator;
-
-import frutty.entity.effects.EntityEffect;
-import frutty.entity.effects.EntityEffectInvisible;
-import frutty.gui.GuiIngame;
-import frutty.gui.GuiSettings.Settings;
-import frutty.tools.IOHelper;
-import frutty.world.World;
+import frutty.entity.effects.*;
+import frutty.gui.*;
+import frutty.gui.GuiSettings.*;
+import frutty.tools.*;
+import frutty.world.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.image.*;
+import java.util.*;
 
 public final class EntityPlayer extends Entity implements KeyListener{
 	private static final BufferedImage[] textures = {IOHelper.loadTexture("player", "side.png"), IOHelper.loadTexture("player", "front.png"), IOHelper.loadTexture("player", "back.png")};

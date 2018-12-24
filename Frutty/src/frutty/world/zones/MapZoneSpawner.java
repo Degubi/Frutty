@@ -1,15 +1,12 @@
 package frutty.world.zones;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-
-import javax.swing.ImageIcon;
-
-import frutty.entity.EntityEnemy;
-import frutty.gui.GuiSettings.Settings;
-import frutty.tools.Material;
-import frutty.world.World;
-import frutty.world.base.MapZoneBase;
+import frutty.entity.*;
+import frutty.gui.GuiSettings.*;
+import frutty.tools.*;
+import frutty.world.*;
+import frutty.world.base.*;
+import java.awt.*;
+import javax.swing.*;
 
 public final class MapZoneSpawner extends MapZoneBase{
 	private static final Color[] colorCache = new Color[32];

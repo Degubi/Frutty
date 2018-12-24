@@ -1,17 +1,12 @@
 package frutty.tools;
 
-import java.awt.Color;
-import java.awt.Image;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.Serializable;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.LinkedHashMap;
-import java.util.Objects;
-
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
+import java.awt.*;
+import java.awt.image.*;
+import java.io.*;
+import java.nio.file.*;
+import java.util.*;
+import javax.imageio.*;
+import javax.swing.*;
 
 public final class Material implements Serializable{
 	public static final LinkedHashMap<String, Material> materialRegistry = new LinkedHashMap<>(4);

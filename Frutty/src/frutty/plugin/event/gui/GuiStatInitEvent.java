@@ -1,9 +1,8 @@
 package frutty.plugin.event.gui;
 
-import javax.swing.tree.DefaultMutableTreeNode;
-
-import frutty.plugin.internal.EventBase;
-import frutty.tools.PropertyFile;
+import frutty.plugin.internal.*;
+import frutty.tools.*;
+import javax.swing.tree.*;
 
 /**Event is fired when stats menu is initialized. can new stats to existing categories or add new categories. Can access the main stats file too.
  * UI: Need to use GuiStatSavedEvent too to make sure stats are getting saved.

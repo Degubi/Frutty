@@ -1,12 +1,10 @@
 package frutty.world.zones;
 
-import java.awt.Graphics2D;
-
-import javax.swing.ImageIcon;
-
-import frutty.tools.Material;
-import frutty.world.World;
-import frutty.world.base.MapZoneBase;
+import frutty.tools.*;
+import frutty.world.*;
+import frutty.world.base.*;
+import java.awt.*;
+import javax.swing.*;
 
 public final class MapZoneSky extends MapZoneBase{
 	public MapZoneSky() {
