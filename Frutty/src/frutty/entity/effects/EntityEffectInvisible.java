@@ -1,9 +1,7 @@
 package frutty.entity.effects;
 
-import java.awt.Color;
-import java.awt.Graphics;
-
-import frutty.entity.EntityPlayer;
+import frutty.entity.*;
+import java.awt.*;
 
 public final class EntityEffectInvisible extends EntityEffect {
 	private boolean animSwitch = false;

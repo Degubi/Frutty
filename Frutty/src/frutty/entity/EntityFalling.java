@@ -1,6 +1,6 @@
 package frutty.entity;
 
-import frutty.world.base.MapZoneBase;
+import frutty.world.base.*;
 
 public abstract class EntityFalling extends Entity{
 	private int sleepCounter = 0;

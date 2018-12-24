@@ -2,20 +2,13 @@ package frutty.gui;
 
 import static frutty.tools.GuiHelper.newButton;
 
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.JPanel;
-import javax.swing.JTree;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeCellRenderer;
-
-import frutty.plugin.event.gui.GuiStatInitEvent;
-import frutty.plugin.event.gui.GuiStatSavedEvent;
-import frutty.plugin.internal.EventHandle;
-import frutty.tools.GuiHelper;
-import frutty.tools.PropertyFile;
+import frutty.plugin.event.gui.*;
+import frutty.plugin.internal.*;
+import frutty.tools.*;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import javax.swing.tree.*;
 
 public final class GuiStats extends JPanel implements ActionListener{
 	private static final PropertyFile stats = new PropertyFile("stats.prop", 4);

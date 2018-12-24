@@ -1,15 +1,12 @@
 package frutty.world.zones;
 
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-
-import javax.swing.ImageIcon;
-
-import frutty.entity.EntityPlayer;
-import frutty.tools.IOHelper;
-import frutty.tools.Material;
-import frutty.world.World;
-import frutty.world.base.MapZoneBase;
+import frutty.entity.*;
+import frutty.tools.*;
+import frutty.world.*;
+import frutty.world.base.*;
+import java.awt.*;
+import java.awt.image.*;
+import javax.swing.*;
 
 public final class MapZonePortal extends MapZoneBase{
 	public static final BufferedImage portalTexture = IOHelper.loadTexture("map/special", "portal.png");

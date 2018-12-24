@@ -1,11 +1,10 @@
 package frutty.entity;
 
-import java.awt.Graphics;
-import java.awt.image.BufferedImage;
-
-import frutty.FruttyMain;
-import frutty.tools.IOHelper;
-import frutty.world.World;
+import frutty.*;
+import frutty.tools.*;
+import frutty.world.*;
+import java.awt.*;
+import java.awt.image.*;
 
 public final class EntityEnemy extends Entity {
 	private static final BufferedImage[] fastTextures = {IOHelper.loadTexture("enemy", "fast_side.png"), IOHelper.loadTexture("enemy", "fast_front.png"), IOHelper.loadTexture("enemy", "fast_back.png")};

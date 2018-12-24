@@ -1,17 +1,10 @@
 package frutty.gui.components;
 
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.io.IOException;
-
-import javax.swing.JPanel;
-
-import frutty.tools.IOHelper;
-import frutty.tools.Material;
-import frutty.world.base.IInternalZone;
-import frutty.world.base.ITransparentZone;
-import frutty.world.base.MapZoneBase;
-import frutty.world.base.MapZoneTexturable;
+import frutty.tools.*;
+import frutty.world.base.*;
+import java.awt.*;
+import java.io.*;
+import javax.swing.*;
 
 public abstract class GuiMapBackground extends JPanel {
 	private final MapZoneBase[] zones = new MapZoneBase[140];

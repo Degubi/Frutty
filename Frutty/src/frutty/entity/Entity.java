@@ -1,21 +1,22 @@
 package frutty.entity;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.io.Serializable;
-
-import frutty.FruttyMain;
-import frutty.gui.GuiSettings.Settings;
-import frutty.world.World;
-import frutty.world.base.MapZoneBase;
+import frutty.*;
+import frutty.gui.GuiSettings.*;
+import frutty.world.*;
+import frutty.world.base.*;
+import java.awt.*;
+import java.io.*;
 
 public abstract class Entity implements Serializable{
 	private static final long serialVersionUID = 2876462867774051456L;
 	
 	public boolean active = true;
-	public int renderPosX, renderPosY, serverPosX, serverPosY, motionX, motionY, moveRate;
+	public int renderPosX, renderPosY, serverPosX, serverPosY, motionX, motionY;
+	public final int moveRate;
 	
-	public Entity() {}
+	public Entity() {
+		moveRate = 0;
+	}
 	public Entity(int x, int y) {
 		renderPosX = x;
 		renderPosY = y;

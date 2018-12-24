@@ -1,25 +1,15 @@
 package frutty.world;
 
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Random;
-
-import frutty.FruttyMain;
-import frutty.entity.Entity;
-import frutty.entity.EntityEnemy;
-import frutty.entity.EntityPlayer;
-import frutty.entity.zone.EntityAppleZone;
-import frutty.entity.zone.EntityZone;
-import frutty.plugin.event.world.WorldInitEvent;
-import frutty.plugin.internal.EventHandle;
-import frutty.tools.GuiHelper;
-import frutty.tools.IOHelper;
-import frutty.tools.Material;
-import frutty.world.base.IInternalZone;
-import frutty.world.base.IZoneEntityProvider;
-import frutty.world.base.MapZoneBase;
-import frutty.world.base.MapZoneTexturable;
+import frutty.*;
+import frutty.entity.*;
+import frutty.entity.zone.*;
+import frutty.plugin.event.world.*;
+import frutty.plugin.internal.*;
+import frutty.tools.*;
+import frutty.world.base.*;
+import java.awt.image.*;
+import java.io.*;
+import java.util.*;
 
 public final class World{
 	public static EntityPlayer[] players;

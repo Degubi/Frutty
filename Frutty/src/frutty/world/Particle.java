@@ -1,14 +1,11 @@
 package frutty.world;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.io.Serializable;
-import java.util.Iterator;
-
-import frutty.FruttyMain;
-import frutty.gui.GuiSettings.Settings;
-import frutty.tools.GuiHelper;
-import frutty.tools.Material;
+import frutty.*;
+import frutty.gui.GuiSettings.*;
+import frutty.tools.*;
+import java.awt.*;
+import java.io.*;
+import java.util.*;
 
 public final class Particle implements Serializable{
 	private static final long serialVersionUID = -9182849456014867036L;

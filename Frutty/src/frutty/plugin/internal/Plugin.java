@@ -1,26 +1,18 @@
 package frutty.plugin.internal;
 
-import java.io.File;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodHandles.Lookup;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.List;
-import java.util.jar.Manifest;
-
-import frutty.FruttyMain;
-import frutty.plugin.FruttyEvent;
-import frutty.plugin.FruttyPlugin;
-import frutty.plugin.FruttyPluginMain;
-import frutty.tools.IOHelper;
-import frutty.tools.Version;
+import frutty.*;
+import frutty.plugin.*;
+import frutty.tools.*;
+import java.io.*;
+import java.lang.invoke.*;
+import java.lang.invoke.MethodHandles.*;
+import java.lang.reflect.*;
+import java.net.*;
+import java.util.*;
+import java.util.jar.*;
 
 public final class Plugin{
-	public static List<Plugin> plugins = FruttyMain.toList(new Plugin("Frutty", "Base module for the game.", "", Version.from(1, 4, 1), "https://pastebin.com/raw/m5qJbnks"), new Plugin("Frutty Plugin Loader", "Base module for the plugin loader", "", Version.from(1, 0, 0), ""));
+	public static final List<Plugin> plugins = FruttyMain.toList(new Plugin("Frutty", "Base module for the game.", "", Version.from(1, 4, 1), "https://pastebin.com/raw/m5qJbnks"), new Plugin("Frutty Plugin Loader", "Base module for the plugin loader", "", Version.from(1, 0, 0), ""));
 	
 	public final String description, ID, updateURL, versionURL;
 	public final Version version;
@@ -96,9 +88,8 @@ public final class Plugin{
 					FruttyPlugin pluginAnnotation = loaded.getDeclaredAnnotation(FruttyPlugin.class);
 					plugins.add(new Plugin(pluginAnnotation.name(), pluginAnnotation.description(), pluginAnnotation.updateURL(), Version.fromString(pluginAnnotation.version()), pluginAnnotation.versionURL()));
 					
-					Method[] methods = loaded.getDeclaredMethods();
 					boolean ranMain = false;
-					for(Method method : methods) {
+					for(Method method : loaded.getDeclaredMethods()) {
 						if(ranMain) {
 							throw new IllegalStateException("Found more than one main methods from plugin: " + pluginNames[k]);
 						}

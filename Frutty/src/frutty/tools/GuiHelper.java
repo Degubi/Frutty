@@ -1,20 +1,10 @@
 package frutty.tools;
 
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.EventQueue;
-import java.awt.Font;
-import java.awt.Toolkit;
-import java.awt.event.ActionListener;
-
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.WindowConstants;
-import javax.swing.border.LineBorder;
-
-import frutty.gui.GuiMenu;
+import frutty.gui.*;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
+import javax.swing.border.*;
 
 public final class GuiHelper {
 	public static final Font ingameFont = new Font("TimesRoman", Font.PLAIN, 22);

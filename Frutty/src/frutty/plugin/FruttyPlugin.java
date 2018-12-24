@@ -1,9 +1,6 @@
 package frutty.plugin;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**Mark the class of the plugin with this annotation. Also need to set the "Plugin-Class" attribute in the Manifest file. See an example down below. <pre><code>
 	//Loads of optional parameters for the FruttyPlugin annotation

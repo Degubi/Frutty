@@ -1,12 +1,9 @@
 package frutty.entity;
 
-import java.awt.Color;
-import java.awt.Graphics;
-
-import frutty.sound.StreamedSoundClip;
-import frutty.world.Particle;
-import frutty.world.World;
-import frutty.world.zones.MapZoneApple;
+import frutty.sound.*;
+import frutty.world.*;
+import frutty.world.zones.*;
+import java.awt.*;
 
 public final class EntityApple extends EntityFalling{
 	private final StreamedSoundClip fallSound = new StreamedSoundClip("fall.wav");

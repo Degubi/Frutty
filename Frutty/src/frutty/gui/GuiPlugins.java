@@ -1,24 +1,13 @@
 package frutty.gui;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Desktop;
-import java.io.IOException;
-import java.net.URISyntaxException;
-
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.JList;
-import javax.swing.JSplitPane;
-import javax.swing.JTextPane;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkEvent.EventType;
-import javax.swing.event.HyperlinkListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
-import frutty.plugin.internal.Plugin;
-import frutty.tools.GuiHelper;
-import frutty.tools.Version;
+import frutty.plugin.internal.*;
+import frutty.tools.*;
+import java.awt.*;
+import java.io.*;
+import java.net.*;
+import javax.swing.*;
+import javax.swing.event.*;
+import javax.swing.event.HyperlinkEvent.*;
 
 public final class GuiPlugins implements ListSelectionListener, HyperlinkListener{
 	protected final JList<Plugin> pluginList = new JList<>(Plugin.plugins.toArray(new Plugin[Plugin.plugins.size()]));

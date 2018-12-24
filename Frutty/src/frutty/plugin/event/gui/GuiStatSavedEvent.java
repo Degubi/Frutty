@@ -1,7 +1,7 @@
 package frutty.plugin.event.gui;
 
-import frutty.plugin.internal.EventBase;
-import frutty.tools.PropertyFile;
+import frutty.plugin.internal.*;
+import frutty.tools.*;
 
 public final class GuiStatSavedEvent extends EventBase{
 	public final PropertyFile statsFile;

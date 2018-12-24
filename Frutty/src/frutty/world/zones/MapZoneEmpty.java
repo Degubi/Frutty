@@ -1,13 +1,10 @@
 package frutty.world.zones;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-
-import javax.swing.ImageIcon;
-
-import frutty.tools.Material;
-import frutty.world.base.MapZoneBase;
+import frutty.tools.*;
+import frutty.world.base.*;
+import java.awt.*;
+import java.awt.image.*;
+import javax.swing.*;
 
 public final class MapZoneEmpty extends MapZoneBase{
 	public MapZoneEmpty() {

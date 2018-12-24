@@ -1,18 +1,11 @@
 package frutty.world.zones;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-
-import javax.swing.ImageIcon;
-
-import frutty.gui.GuiSettings.Settings;
-import frutty.tools.GuiHelper;
-import frutty.tools.IOHelper;
-import frutty.tools.Material;
-import frutty.world.base.ITransparentZone;
-import frutty.world.base.MapZoneBase;
+import frutty.gui.GuiSettings.*;
+import frutty.tools.*;
+import frutty.world.base.*;
+import java.awt.*;
+import java.awt.image.*;
+import javax.swing.*;
 
 public final class MapZoneWater extends MapZoneBase implements ITransparentZone{
 	public static final BufferedImage waterTexture = IOHelper.loadTexture("map/special", "water.png");

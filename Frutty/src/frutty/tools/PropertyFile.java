@@ -1,10 +1,8 @@
 package frutty.tools;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.io.*;
+import java.nio.file.*;
+import java.util.*;
 
 public final class PropertyFile {
 	private final ArrayList<Prop> storage;

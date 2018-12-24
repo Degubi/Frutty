@@ -4,30 +4,16 @@ import static frutty.tools.GuiHelper.newButton;
 import static frutty.tools.GuiHelper.newCheckBox;
 import static frutty.tools.GuiHelper.switchMenuPanel;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-
-import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JSplitPane;
-import javax.swing.JTextField;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-
-import frutty.gui.components.SettingButton;
-import frutty.tools.GuiHelper;
-import frutty.tools.IOHelper;
-import frutty.world.World;
+import frutty.gui.components.*;
+import frutty.tools.*;
+import frutty.world.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.image.*;
+import java.io.*;
+import java.util.*;
+import javax.swing.*;
+import javax.swing.event.*;
 
 public final class GuiMapSelection extends JPanel implements ListSelectionListener, ActionListener{
 	private final JCheckBox devMode = newCheckBox("Enable Dev Maps", 180, 510, Color.BLACK, false);
@@ -72,7 +58,7 @@ public final class GuiMapSelection extends JPanel implements ListSelectionListen
 				graph.setColor(Color.WHITE);
 				graph.setFont(GuiHelper.bigFont);
 				graph.drawString(loadMapSize(mapList.getSelectedValue()), 390, 460);
-				
+				graph.dispose();
 				mapImage.setIcon(new ImageIcon(image));
 			}else{
 				mapImage.setIcon(new ImageIcon("./textures/gui/dev.jpg"));

@@ -1,6 +1,6 @@
 package frutty.world.base;
 
-import frutty.entity.zone.EntityZone;
+import frutty.entity.zone.*;
 
 /**Interface used for adding unique data per zone. Sometimes we need this because the zones in the game are implemented via FlyWeight pattern.*/
 public interface IZoneEntityProvider {

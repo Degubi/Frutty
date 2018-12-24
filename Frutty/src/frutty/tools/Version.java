@@ -1,11 +1,9 @@
 package frutty.tools;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
+import java.io.*;
+import java.net.*;
+import java.time.*;
+import java.time.format.*;
 
 public final class Version{
 	public final int majorVersion, minorVersion, patchVersion;

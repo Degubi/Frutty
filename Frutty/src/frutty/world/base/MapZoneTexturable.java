@@ -1,11 +1,9 @@
 package frutty.world.base;
 
-import java.awt.Graphics;
-import java.awt.image.BufferedImage;
-
-import javax.swing.ImageIcon;
-
-import frutty.tools.Lazy;
+import frutty.tools.*;
+import java.awt.*;
+import java.awt.image.*;
+import javax.swing.*;
 
 public abstract class MapZoneTexturable extends MapZoneBase{
 	public transient final Lazy<ImageIcon[]> textureVariants = new Lazy<>(this::getEditorTextures);

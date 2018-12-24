@@ -1,6 +1,6 @@
 package frutty.entity.zone;
 
-import java.io.Serializable;
+import java.io.*;
 
 public abstract class EntityZone implements Serializable{
 	private static final long serialVersionUID = -136000208701141435L;

@@ -1,18 +1,12 @@
 package frutty.plugin.internal;
 
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles.Lookup;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Comparator;
-
-import frutty.plugin.EnumPriority;
-import frutty.plugin.FruttyEvent;
-import frutty.plugin.event.gui.GuiMenuEvent;
-import frutty.plugin.event.gui.GuiStatInitEvent;
-import frutty.plugin.event.gui.GuiStatSavedEvent;
-import frutty.plugin.event.world.WorldInitEvent;
-import frutty.plugin.event.world.ZoneAddedEvent;
+import frutty.plugin.*;
+import frutty.plugin.event.gui.*;
+import frutty.plugin.event.world.*;
+import java.lang.invoke.*;
+import java.lang.invoke.MethodHandles.*;
+import java.lang.reflect.*;
+import java.util.*;
 
 public final class EventHandle {
 	public static final Comparator<EventHandle> byPriority = Comparator.comparingInt(event -> event.priority);

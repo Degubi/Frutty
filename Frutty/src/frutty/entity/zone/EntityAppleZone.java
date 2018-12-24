@@ -1,7 +1,7 @@
 package frutty.entity.zone;
 
-import frutty.entity.EntityApple;
-import frutty.world.World;
+import frutty.entity.*;
+import frutty.world.*;
 
 public final class EntityAppleZone extends EntityZone{
 	private int counter;

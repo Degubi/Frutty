@@ -1,18 +1,10 @@
 package degubi.editor;
 
-import java.awt.EventQueue;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusEvent.Cause;
-import java.awt.event.FocusListener;
-
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.WindowConstants;
-
-import frutty.tools.Material;
+import frutty.tools.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.event.FocusEvent.*;
+import javax.swing.*;
 
 public final class GuiTextureSelector extends JPanel implements ActionListener, FocusListener{
 	private final GuiEditor editor;

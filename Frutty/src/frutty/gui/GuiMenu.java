@@ -2,32 +2,19 @@ package frutty.gui;
 
 import static frutty.tools.GuiHelper.newButton;
 
-import java.awt.Color;
-import java.awt.EventQueue;
-import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JTextArea;
-import javax.swing.WindowConstants;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.MatteBorder;
-
-import frutty.FruttyMain;
-import frutty.gui.components.GuiMapBackground;
-import frutty.plugin.event.gui.GuiMenuEvent;
-import frutty.plugin.internal.EventHandle;
-import frutty.plugin.internal.Plugin;
-import frutty.tools.GuiHelper;
-import frutty.tools.IOHelper;
-import frutty.tools.Version;
-import frutty.world.World;
+import frutty.*;
+import frutty.gui.components.*;
+import frutty.plugin.event.gui.*;
+import frutty.plugin.internal.*;
+import frutty.tools.*;
+import frutty.world.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
+import java.net.*;
+import java.util.*;
+import javax.swing.*;
+import javax.swing.border.*;
 
 public final class GuiMenu extends GuiMapBackground implements ActionListener{
 	private static final JTextArea devMessage = new JTextArea();

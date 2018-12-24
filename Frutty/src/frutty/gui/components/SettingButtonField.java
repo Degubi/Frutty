@@ -1,17 +1,9 @@
 package frutty.gui.components;
 
-import java.awt.Color;
-import java.awt.Graphics;
-
-import javax.swing.JComponent;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-import javax.swing.text.AbstractDocument;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DocumentFilter;
-
-import frutty.tools.GuiHelper;
+import frutty.tools.*;
+import java.awt.*;
+import javax.swing.*;
+import javax.swing.text.*;
 
 public final class SettingButtonField extends JComponent{
 	public final JTextField dataField;

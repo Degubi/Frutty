@@ -1,50 +1,23 @@
 package frutty.gui;
 
-import java.awt.AWTException;
-import java.awt.Color;
-import java.awt.EventQueue;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.HeadlessException;
-import java.awt.Rectangle;
-import java.awt.Robot;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.io.File;
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
-import java.util.Iterator;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
-import javax.imageio.ImageIO;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.WindowConstants;
-
-import frutty.FruttyMain;
-import frutty.entity.Entity;
-import frutty.entity.EntityEnemy;
-import frutty.entity.EntityPlayer;
-import frutty.entity.zone.EntityZone;
-import frutty.gui.GuiSettings.Settings;
-import frutty.tools.GuiHelper;
-import frutty.tools.IOHelper;
-import frutty.world.Particle;
-import frutty.world.World;
-import frutty.world.base.ITransparentZone;
-import frutty.world.base.IZoneEntityProvider;
-import frutty.world.base.MapZoneBase;
-import frutty.world.zones.MapZoneWater;
+import frutty.*;
+import frutty.entity.*;
+import frutty.entity.zone.*;
+import frutty.gui.GuiSettings.*;
+import frutty.tools.*;
+import frutty.world.*;
+import frutty.world.base.*;
+import frutty.world.zones.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
+import java.time.*;
+import java.time.format.*;
+import java.time.temporal.*;
+import java.util.*;
+import java.util.concurrent.*;
+import javax.imageio.*;
+import javax.swing.*;
 
 public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 	public static GuiIngame ingameGui;
