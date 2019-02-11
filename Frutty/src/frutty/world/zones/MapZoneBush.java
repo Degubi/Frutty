@@ -27,10 +27,11 @@ public final class MapZoneBush extends MapZoneBase implements ITransparentZone{
 	@Override
 	protected ImageIcon getEditorIcon() {
 		var toReturn = new BufferedImage(64, 64, BufferedImage.TYPE_INT_RGB);
-		var drawer = toReturn.createGraphics();
-		drawer.setColor(Color.BLACK);
-		drawer.fillRect(0, 0, 64, 64);
-		drawer.drawImage(texture, 0, 0, 64, 64, null);
+		var graphics = toReturn.createGraphics();
+		graphics.setColor(Color.BLACK);
+		graphics.fillRect(0, 0, 64, 64);
+		graphics.drawImage(texture, 0, 0, 64, 64, null);
+		graphics.dispose();
 		return new ImageIcon(toReturn);
 	}
 	

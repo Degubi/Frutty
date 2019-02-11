@@ -3,7 +3,6 @@ package frutty.entity;
 import frutty.*;
 import frutty.gui.GuiSettings.*;
 import frutty.world.*;
-import frutty.world.base.*;
 import java.awt.*;
 import java.io.*;
 
@@ -48,7 +47,8 @@ public abstract class Entity implements Serializable{
 		if(x < 0 || x > World.width || y < 0 || y > World.height) {
 			return false;
 		}
-		MapZoneBase zone = World.getZoneAtIndex(coordsToIndex(x, y));
+		
+		var zone = World.getZoneAtIndex(coordsToIndex(x, y));
 		return zone != null && zone.canNPCPass(x, y);
 	}
 	

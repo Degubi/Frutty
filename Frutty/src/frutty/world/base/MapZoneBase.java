@@ -97,17 +97,17 @@ public abstract class MapZoneBase implements Serializable{
 	}
 	
 	private final ImageIcon getEditorIconInternal() {
-		ImageIcon icon = getEditorIcon();
+		var icon = getEditorIcon();
 		return (icon.getIconWidth() == 64 && icon.getIconHeight() == 64) ? icon : new ImageIcon(icon.getImage().getScaledInstance(64, 64, Image.SCALE_DEFAULT));
 	}
 	
 	public static boolean isEmpty(int x, int y) {
-		MapZoneBase zone = World.getZoneAtPos(x, y);
+		var zone = World.getZoneAtPos(x, y);
 		return zone != null && zone == emptyZone;
 	}
 	
 	public static boolean isEmptyAt(int index) {
-		MapZoneBase zone = World.getZoneAtIndex(index);
+		var zone = World.getZoneAtIndex(index);
 		return zone != null && zone == emptyZone;
 	}
 	
@@ -144,7 +144,7 @@ public abstract class MapZoneBase implements Serializable{
 	}
 	
 	public static MapZoneBase getZoneFromName(String name) {
-		for(MapZoneBase zone : zoneRegistry) {
+		for(var zone : zoneRegistry) {
 			if(zone.zoneName.equals(name)) {
 				return zone;
 			}
@@ -157,7 +157,7 @@ public abstract class MapZoneBase implements Serializable{
 	}
 	
 	private static boolean isZoneAlreadyRegistered(String name) {
-		for(MapZoneBase zones : zoneRegistry) {
+		for(var zones : zoneRegistry) {
 			if(zones.zoneName.equals(name)) {
 				return true;
 			}

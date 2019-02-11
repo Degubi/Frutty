@@ -33,7 +33,7 @@ public final class SettingButtonSlider extends JComponent implements ActionListe
 	}
 	
 	private static ImageIcon getColoredImage(Color color) {
-		BufferedImage img = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+		var img = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
 		
 		int rgb = color.getRGB();
 		for(int x = 0; x < 16; ++x) {
@@ -59,7 +59,7 @@ public final class SettingButtonSlider extends JComponent implements ActionListe
 
 	@Override
 	public void actionPerformed(ActionEvent event) {
-		String command = event.getActionCommand();
+		var command = event.getActionCommand();
 		
 		if(command.equals("leftButton")) {
 			if(counter > 1) {

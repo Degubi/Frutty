@@ -38,7 +38,8 @@ public final class Version{
 	
 	public static Version fromURL(String url) {
 		if(!url.isEmpty()) {
-			try(InputStream stream = new URL(url).openConnection().getInputStream()){
+			try(var stream = new URL(url).openConnection().getInputStream()){
+				
 				int first = stream.read() - 48;
 				stream.read();
 				int second = stream.read() - 48;

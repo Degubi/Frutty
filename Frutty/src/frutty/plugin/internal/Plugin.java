@@ -5,7 +5,6 @@ import frutty.plugin.*;
 import frutty.tools.*;
 import java.io.*;
 import java.lang.invoke.*;
-import java.lang.invoke.MethodHandles.*;
 import java.lang.reflect.*;
 import java.net.*;
 import java.util.*;
@@ -39,27 +38,31 @@ public final class Plugin{
 				description != null ? ("<br>Description: " + description) : "");
 	}
 	
-	public static void handlePluginInit() {
-		IOHelper.createDirectory("plugins");
-		loadPlugins();
-		EventHandle.sortEvents();
+	private static Manifest getManifestFromJar(File jarPath) {
+		try(var jar = new JarFile(jarPath)){
+			return jar.getManifest();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	public static void loadPlugins() {
 		File[] pluginNames = new File("plugins").listFiles((dir, name) -> name.endsWith(".jar"));
+		int pluginCount = pluginNames.length;
 		
-		if(pluginNames.length > 0) {
-			String[] mainClassNames = new String[pluginNames.length];
-			URL[] classLoaderNames = new URL[pluginNames.length];
+		if(pluginCount > 0) {
+			String[] mainClassNames = new String[pluginCount];
+			URL[] classLoaderNames = new URL[pluginCount];
 			
-			for(int k = 0; k < pluginNames.length; ++k) {
+			for(int k = 0; k < pluginCount; ++k) {
 				try {
 					classLoaderNames[k] = pluginNames[k].toURI().toURL();
 				} catch (MalformedURLException e1) {
 					e1.printStackTrace();
 				}
 				
-				Manifest mani = IOHelper.getManifestFromJar(pluginNames[k]);
+				var mani = getManifestFromJar(pluginNames[k]);
 				
 				if(mani == null) {
 					throw new IllegalStateException("Can't find manifest file from plugin: " + pluginNames[k]);
@@ -74,13 +77,14 @@ public final class Plugin{
 			
 			try{
 				@SuppressWarnings("resource")
-				URLClassLoader urlClass = new URLClassLoader(classLoaderNames, FruttyMain.class.getClassLoader());
+				var urlClass = new URLClassLoader(classLoaderNames, FruttyMain.class.getClassLoader()); //Dont close this or shit breaks
 				
 				for(int k = 0; k < mainClassNames.length; ++k) {
 					if(mainClassNames[k] == null) {
 						throw new IllegalStateException("Can't load main class from plugin: " + pluginNames[k]);
 					}
-					Class<?> loaded = urlClass.loadClass(mainClassNames[k]);
+					
+					var loaded = urlClass.loadClass(mainClassNames[k]);
 					if(!loaded.isAnnotationPresent(FruttyPlugin.class)) {
 						throw new IllegalStateException("Main class from plugin: " + pluginNames[k] + " is not annotated with @FruttyPlugin");
 					}
@@ -89,10 +93,11 @@ public final class Plugin{
 					plugins.add(new Plugin(pluginAnnotation.name(), pluginAnnotation.description(), pluginAnnotation.updateURL(), Version.fromString(pluginAnnotation.version()), pluginAnnotation.versionURL()));
 					
 					boolean ranMain = false;
-					for(Method method : loaded.getDeclaredMethods()) {
+					for(var method : loaded.getDeclaredMethods()) {
 						if(ranMain) {
 							throw new IllegalStateException("Found more than one main methods from plugin: " + pluginNames[k]);
 						}
+						
 						if(method.isAnnotationPresent(FruttyPluginMain.class)) {
 							if((method.getModifiers() & Modifier.STATIC) != 0 || method.getParameterCount() > 0) {
 								Class<?> eventClass = method.getAnnotation(FruttyPluginMain.class).eventClass();
@@ -100,14 +105,14 @@ public final class Plugin{
 								if(eventClass != void.class) {
 									Method[] eventMethods = eventClass.getDeclaredMethods();
 									
-									Lookup lookup = MethodHandles.publicLookup();
+									var lookup = MethodHandles.publicLookup();
 									
-									for(Method eventMts : eventMethods) {
+									for(var eventMts : eventMethods) {
 										if(eventMts.isAnnotationPresent(FruttyEvent.class)) {
 											if((eventMts.getModifiers() & Modifier.STATIC) != 0 && eventMts.getParameterCount() == 1) {
 												Class<?> eventTypeClass = eventMts.getParameterTypes()[0];
 												
-												if(eventTypeClass.getSuperclass() != EventBase.class) {
+												if(eventTypeClass.getInterfaces()[0] != EventBase.class) {
 													throw new IllegalArgumentException("Illegal type of argument for method: " + eventMts.getName());
 												}
 												

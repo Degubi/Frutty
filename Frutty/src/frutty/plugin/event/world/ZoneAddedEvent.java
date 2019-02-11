@@ -3,7 +3,7 @@ package frutty.plugin.event.world;
 import frutty.plugin.internal.*;
 import frutty.world.base.*;
 
-public final class ZoneAddedEvent extends EventBase{
+public final class ZoneAddedEvent implements EventBase{
 	public final MapZoneBase zone;
 	public final int x, y;
 	public boolean canceled = false;

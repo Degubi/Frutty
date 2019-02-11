@@ -13,10 +13,11 @@ public final class GuiTextureSelector extends JPanel implements ActionListener, 
 		editor = ed;
 		setLayout(null);
 			
-		String[] materialNames = Material.getMaterialNames();
+		var materialNames = Material.getMaterialNames();
 		
 		for(int index = 0, xPosition = 10, yPosition = 20; index < materialNames.length; ++index) {
-			JButton button = new JButton(Material.materialRegistry.get(materialNames[index]).editorUpscaledTexture.get());
+			var button = new JButton(Material.materialRegistry.get(materialNames[index]).editorUpscaledTexture.get());
+			
 			button.setActionCommand(materialNames[index]);
 			button.setBounds(xPosition, yPosition, 128, 128);
 			button.addActionListener(this);
@@ -32,7 +33,7 @@ public final class GuiTextureSelector extends JPanel implements ActionListener, 
 	
 	@Override
 	public void actionPerformed(ActionEvent event) {
-		Material mat = Material.materialRegistry.get(event.getActionCommand());
+		var mat = Material.materialRegistry.get(event.getActionCommand());
 		editor.textureSelectorButton.activeMaterial = mat;
 		editor.textureSelectorButton.setIcon(mat.editorUpscaledTexture.get());
 		editor.repaint();
@@ -64,8 +65,9 @@ public final class GuiTextureSelector extends JPanel implements ActionListener, 
 		@Override
 		public void actionPerformed(ActionEvent event) {
 			EventQueue.invokeLater(() -> {
-				JFrame frame = new JFrame("Texture Selector");
-				GuiTextureSelector gui = new GuiTextureSelector(editorInstance);
+				var frame = new JFrame("Texture Selector");
+				var gui = new GuiTextureSelector(editorInstance);
+				
 				frame.setContentPane(gui);
 				frame.addFocusListener(gui);
 				frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);

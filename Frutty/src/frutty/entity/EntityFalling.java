@@ -21,6 +21,7 @@ public abstract class EntityFalling extends Entity{
 	public void updateServer() {
 		if(MapZoneBase.isEmptyAt(coordsToIndex(renderPosX, serverPosY + 64))) {
 			fireStopFall = false;
+			
 			if(sleepCounter == 0) {
 				motionY = 64;
 			}else{

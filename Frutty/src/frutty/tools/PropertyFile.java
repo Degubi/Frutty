@@ -9,7 +9,7 @@ public final class PropertyFile {
 	private final Path path;
 	
 	public PropertyFile(String filePath, int estimatePropCount) {
-		path = Paths.get(filePath);
+		path = Path.of(filePath);
 		storage = new ArrayList<>(estimatePropCount);
 		
 		try(var reader = Files.newBufferedReader(path)){
@@ -36,7 +36,13 @@ public final class PropertyFile {
 				}
 			}
 		} catch (IOException e) {
-			IOHelper.createFile(filePath);
+			var file = Path.of(filePath);
+			
+			if(!Files.exists(file)) {
+				try {
+					Files.createFile(file);
+				} catch (IOException ex) {}
+			}
 		}
 	}
 	

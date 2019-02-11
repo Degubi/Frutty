@@ -3,6 +3,8 @@ package degubi.editor;
 import degubi.editor.GuiEditor.*;
 import frutty.tools.*;
 import java.awt.*;
+import java.io.*;
+import java.nio.file.*;
 import java.util.*;
 import java.util.List;
 import javax.swing.*;
@@ -82,14 +84,22 @@ public final class GuiEditorProperties extends JPanel{
 					  			  .distinct()
 					  			  .toArray(String[]::new);
 
-			textureSize = "Texture size: " + Arrays.stream(textures).mapToInt(IOHelper::fileSize).sum() + " bytes";
+			textureSize = "Texture size: " + Arrays.stream(textures).mapToInt(GuiEditorInfo::getFileSize).sum() + " bytes";
 	 		textureCount = "Texture Count: " + textures.length;
 	 		
-	 		JList<String> textureList = new JList<>(textures);
+	 		var textureList = new JList<>(textures);
 			textureList.setBounds(60, 150, 200, 120);
 			textureList.setBorder(GuiHelper.menuBorder);
 	 		
 	 		add(textureList);
+		}
+		
+		private static int getFileSize(String filePath) {
+			try {
+				return (int) Files.size(Path.of(filePath));
+			} catch (IOException e) {
+				return -1;
+			}
 		}
 		
 		@Override

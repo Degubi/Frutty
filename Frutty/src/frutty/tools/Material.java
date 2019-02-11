@@ -3,14 +3,12 @@ package frutty.tools;
 import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
-import java.nio.file.*;
 import java.util.*;
-import javax.imageio.*;
 import javax.swing.*;
 
 public final class Material implements Serializable{
 	public static final LinkedHashMap<String, Material> materialRegistry = new LinkedHashMap<>(4);
-	private static final BufferedImage missingTexture = loadTexture("./textures/missing.png");
+	public static final BufferedImage missingTexture = IOHelper.loadTexture("./textures/missing.png");
 
 	private static int indexer = 0;
 	
@@ -27,7 +25,7 @@ public final class Material implements Serializable{
 	
 	Material(String texturePath) {
 		name = texturePath;
-		texture = loadTexture("./textures/map/" + texturePath + ".png");
+		texture = IOHelper.loadTexture("./textures/map/" + texturePath + ".png");
 		particleColor = new Color(texture.getRGB(2, 2));
 		
 		editorTexture = new Lazy<>(() -> new ImageIcon(texture.getScaledInstance(64, 64, Image.SCALE_DEFAULT)));
@@ -35,18 +33,8 @@ public final class Material implements Serializable{
 		materialRegistry.put(texturePath, this);
 	}
 	
-	private static BufferedImage loadTexture(String path) {
-		try(var inputStream = Files.newInputStream(Paths.get(path))){
-			return ImageIO.read(inputStream);
-		}catch(IOException e){
-			e.printStackTrace();
-			return missingTexture;
-		}
-	}
-	
 	public static String[] getMaterialNames() {
-		//TODO Supplier verzióra 11-ben
-		return materialRegistry.keySet().toArray(new String[0]);
+		return materialRegistry.keySet().toArray(String[]::new);
 	}
 	
 	@SuppressWarnings("boxing")

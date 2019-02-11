@@ -44,7 +44,7 @@ public final class GuiHelper {
 	}
 	
 	public static JCheckBox newCheckBox(String text, int x, int y, Color foreground, boolean setSelected) {
-		JCheckBox box = new JCheckBox(text, setSelected);
+		var box = new JCheckBox(text, setSelected);
 		box.setBounds(x, y, 150, 30);
 		box.setForeground(foreground);
 		box.setOpaque(false);
@@ -52,7 +52,7 @@ public final class GuiHelper {
 	}
 	
 	public static JButton newButton(String text, int x, int y, ActionListener listener) {
-		JButton butt = new JButton(text);
+		var butt = new JButton(text);
 		butt.setBounds(x, y, 160, 60);
 		butt.setBorder(menuBorder);
 		butt.setBackground(Color.LIGHT_GRAY);

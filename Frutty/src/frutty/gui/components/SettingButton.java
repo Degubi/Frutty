@@ -107,6 +107,7 @@ public final class SettingButton extends JComponent implements ActionListener{
 			}
 		}
 		
+		paint.dispose();
 		return new ImageIcon(img);
 	}
 }

@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.function.*;
 
 public final class Lazy<T>{
-	private final Supplier<T> mkFunction;
+	private Supplier<T> mkFunction;
 	private T value;
 	
 	public Lazy(Supplier<T> fun) {
@@ -12,7 +12,11 @@ public final class Lazy<T>{
 	}
 	
 	public T get() {
-		return value == null ? value = mkFunction.get() : value;
+		if(value == null) {
+			value = mkFunction.get();
+			mkFunction = null;
+		}
+		return value;
 	}
 	
 	@Override

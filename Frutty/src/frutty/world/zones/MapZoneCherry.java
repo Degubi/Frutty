@@ -43,6 +43,7 @@ public final class MapZoneCherry extends MapZoneTexturable{
 		var graphics = returnTexture.createGraphics();
 		graphics.drawImage(MapZoneBase.normalZone.editorTexture.get().getImage(), 0, 0, null);
 		graphics.drawImage(cherryTexture, 0, 0, null);
+		graphics.dispose();
 		return new ImageIcon(returnTexture);
 	}
 

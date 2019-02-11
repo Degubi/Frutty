@@ -54,6 +54,7 @@ public final class MapZoneApple extends MapZoneTexturable implements IZoneEntity
 		var graphics = returnTexture.createGraphics();
 		graphics.drawImage(MapZoneBase.normalZone.editorTexture.get().getImage(), 0, 0, null);
 		graphics.drawImage(appleTexture, 0, 0, null);
+		graphics.dispose();
 		return new ImageIcon(returnTexture);
 	}
 

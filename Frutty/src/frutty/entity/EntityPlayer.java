@@ -89,7 +89,7 @@ public final class EntityPlayer extends Entity implements KeyListener{
 			graphics.drawImage(textures[textureIndex], renderPosX, renderPosY, null);
 		}
 		
-		for(EntityEffect effects : entityEffects) {
+		for(var effects : entityEffects) {
 			effects.handleEffect(this, graphics);
 		}
 	}
@@ -110,7 +110,7 @@ public final class EntityPlayer extends Entity implements KeyListener{
 
 	@Override
 	public void updateServer() {
-		for(Iterator<EntityEffect> iterator = entityEffects.iterator(); iterator.hasNext();) {
+		for(var iterator = entityEffects.iterator(); iterator.hasNext();) {
 			iterator.next().update(iterator);
 		}		
 	}

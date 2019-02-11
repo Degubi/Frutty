@@ -10,6 +10,11 @@ import java.util.*;
 
 public final class EventHandle {
 	public static final Comparator<EventHandle> byPriority = Comparator.comparingInt(event -> event.priority);
+	public static final ArrayList<EventHandle> mapLoadEvents = new ArrayList<>(0);
+	public static final ArrayList<EventHandle> menuInitEvents = new ArrayList<>(0);
+	public static final ArrayList<EventHandle> statInitEvents = new ArrayList<>(0);
+	public static final ArrayList<EventHandle> statSaveEvents = new ArrayList<>(0);
+	public static final ArrayList<EventHandle> zoneAddedEvents = new ArrayList<>(0);
 	
 	public final MethodHandle handle;
 	public final int priority;
@@ -20,14 +25,8 @@ public final class EventHandle {
 	}
 	
 	public static void handleEvent(EventBase event, ArrayList<EventHandle> methods) {
-		for(EventHandle handles : methods) event.invoke(handles.handle);
+		for(var handles : methods) event.invoke(handles.handle);
 	}
-	
-	public static final ArrayList<EventHandle> mapLoadEvents = new ArrayList<>(0);
-	public static final ArrayList<EventHandle> menuInitEvents = new ArrayList<>(0);
-	public static final ArrayList<EventHandle> statInitEvents = new ArrayList<>(0);
-	public static final ArrayList<EventHandle> statSaveEvents = new ArrayList<>(0);
-	public static final ArrayList<EventHandle> zoneAddedEvents = new ArrayList<>(0);
 	
 	public static void handleEventTypes(Lookup lookup, Method eventMts, Class<?> eventTypeClass) throws IllegalAccessException {
 		var handle = new EventHandle(lookup.unreflect(eventMts), eventMts.getAnnotation(FruttyEvent.class).priority());
@@ -45,7 +44,7 @@ public final class EventHandle {
 		}
 	}
 	
-	static void sortEvents() {
+	public static void sortEvents() {
 		if(!mapLoadEvents.isEmpty()) {
 			mapLoadEvents.trimToSize();
 			mapLoadEvents.sort(byPriority);

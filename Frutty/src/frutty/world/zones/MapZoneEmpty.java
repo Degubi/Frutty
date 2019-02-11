@@ -33,6 +33,7 @@ public final class MapZoneEmpty extends MapZoneBase{
 		var graphics = emptyZoneTexture.createGraphics();
 		graphics.setColor(Color.BLACK);
 		graphics.fillRect(0, 0, 64, 64);
+		graphics.dispose();
 		return new ImageIcon(emptyZoneTexture);
 	}
 }

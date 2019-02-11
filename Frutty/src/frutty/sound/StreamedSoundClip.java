@@ -16,10 +16,10 @@ public final class StreamedSoundClip{
 	public void start() {
 		if(Settings.enableSound) {
 			new Thread(() -> {
-				try(AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(soundFile)){
-					AudioFormat audioFormat = audioInputStream.getFormat();
+				try(var audioInputStream = AudioSystem.getAudioInputStream(soundFile)){
+					var audioFormat = audioInputStream.getFormat();
 					@SuppressWarnings("resource")
-					SourceDataLine soundLine = (SourceDataLine) AudioSystem.getLine(new Info(SourceDataLine.class, audioFormat));
+					var soundLine = (SourceDataLine) AudioSystem.getLine(new Info(SourceDataLine.class, audioFormat));
 					
 					soundLine.open(audioFormat);
 					((FloatControl) soundLine.getControl(FloatControl.Type.MASTER_GAIN)).setValue(-20);
@@ -36,11 +36,7 @@ public final class StreamedSoundClip{
 			         }
 					
 					soundLine.close();
-				} catch (UnsupportedAudioFileException ex) {
-					ex.printStackTrace();
-				} catch (IOException ex) {
-					ex.printStackTrace();
-				} catch (LineUnavailableException ex) {
+				} catch (IOException | LineUnavailableException | UnsupportedAudioFileException ex) {
 					ex.printStackTrace();
 				}
 			}).start();

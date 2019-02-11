@@ -73,6 +73,7 @@ public final class MapZoneWater extends MapZoneBase implements ITransparentZone{
 		graphics.setColor(Color.BLACK);
 		graphics.fillRect(0, 0, 64, 64);
 		graphics.drawImage(MapZoneWater.waterTexture, 0, 0, 64, 64, 0, 0, 16, 16, null);
+		graphics.dispose();
 		return new ImageIcon(returnTexture);
 	}
 }

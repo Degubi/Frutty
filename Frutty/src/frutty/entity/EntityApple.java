@@ -35,7 +35,7 @@ public final class EntityApple extends EntityFalling{
 		if(motionY != 0) {
 			checkPlayers();
 			
-			for(EntityEnemy enemy : World.enemies) {
+			for(var enemy : World.enemies) {
 				if(doesCollide(enemy.serverPosX, enemy.serverPosY)) {
 					enemy.onKilled(this);
 				}

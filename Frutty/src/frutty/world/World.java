@@ -68,7 +68,7 @@ public final class World{
 	}
 	
 	public static void generateMap(int genWidth, int genHeight, boolean isMultiplayer) {
-		Random rand = FruttyMain.rand;
+		var rand = FruttyMain.rand;
 		int bigWidth = genWidth * 64, bigHeight = genHeight * 64, zoneIndex = 0;
 		
 		init(new String[] {"normal"}, isMultiplayer, null, "generated: " + genWidth + "x" + genHeight, bigWidth, bigHeight, null);
@@ -155,9 +155,9 @@ public final class World{
 			
 			init(textureCache, isMultiplayer, input.readUTF(), name, loadedWidth = input.readShort() * 64, loadedHeight = input.readShort() * 64, input.readUTF());
 			
-			for(int y = 0; y < loadedHeight; y += 64) {
-				for(int x = 0; x < loadedWidth; x += 64) {
-					MapZoneBase zone = MapZoneBase.getZoneFromName(zoneIDCache[input.readByte()]);
+			for(var y = 0; y < loadedHeight; y += 64) {
+				for(var x = 0; x < loadedWidth; x += 64) {
+					var zone = MapZoneBase.getZoneFromName(zoneIDCache[input.readByte()]);
 					
 					zone.onZoneAddedInternal(isMultiplayer, x, y);  //Fentre így a player zónák jól müködnek majd elméletileg
 					if(zone instanceof IInternalZone) {
@@ -205,7 +205,15 @@ public final class World{
 				output.writeInt(ticks);
 				output.writeObject(xCoords);
 				output.writeObject(yCoords);
-				output.writeObject(materials);
+				
+				int materialCount = materials.length;
+				output.writeInt(materials.length);
+				
+				for(int x = 0; x < materialCount; ++x) {
+					var currentMat = materials[x];
+					output.writeUTF(currentMat == null ? "null" : currentMat.name);
+				}
+				
 				output.writeObject(zoneEntities);
 				output.writeUTF(skyTextureName);
 				output.writeUTF(mapName);
@@ -238,7 +246,15 @@ public final class World{
 				ticks = input.readInt();
 				xCoords = (int[]) input.readObject();
 				yCoords = (int[]) input.readObject();
-				materials = (Material[]) input.readObject();
+				
+				int materialCount = input.readInt();
+				materials = new Material[materialCount];
+				
+				for(int x = 0; x < materialCount; ++x) {
+					var currentReadName = input.readUTF();
+					materials[x] = currentReadName.equals("null") ? null : Material.materialRegistry.get(currentReadName);
+				}
+				
 				zoneEntities = (EntityZone[]) input.readObject();
 				loadSkyTexture(skyTextureName = input.readUTF());
 				mapName = input.readUTF();

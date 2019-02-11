@@ -1,8 +1,6 @@
 package frutty.gui;
 
-import static frutty.tools.GuiHelper.newButton;
-import static frutty.tools.GuiHelper.newCheckBox;
-import static frutty.tools.GuiHelper.switchMenuPanel;
+import static frutty.tools.GuiHelper.*;
 
 import frutty.gui.components.*;
 import frutty.tools.*;
@@ -11,6 +9,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
 import java.io.*;
+import java.nio.file.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
@@ -50,7 +49,7 @@ public final class GuiMapSelection extends JPanel implements ListSelectionListen
 		if(!event.getValueIsAdjusting()){
 			String path = "./textures/gui/" + mapList.getSelectedValue() + ".jpg";
 
-			if(IOHelper.fileExists(path)) {
+			if(Files.exists(Path.of(path))) {
 				BufferedImage image = IOHelper.loadTexture("gui", mapList.getSelectedValue() + ".jpg");
 				var graph = image.createGraphics();
 				graph.setColor(Color.BLACK);

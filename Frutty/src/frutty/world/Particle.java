@@ -49,10 +49,9 @@ public final class Particle implements Serializable{
 	public void render(Graphics graphics) {
 		graphics.setColor(color);
 		graphics.fillRect(posX, posY, 4, 4);
-		
 		graphics.setColor(GuiHelper.color_84Black);
-		int till = posY / 240;
-		for(int k = 0; k < till && k < 4; ++k) {
+		
+		for(int till = posY / 240, k = 0; k < till && k < 4; ++k) {
 			graphics.fillRect(posX, posY, 4, 4);
 		}
 	}
@@ -60,6 +59,7 @@ public final class Particle implements Serializable{
 	public void update(Iterator<Particle> iterator) {
 		posY += motionY;
 		posX += motionX;
+		
 		if(--lifeTime == 0) {
 			iterator.remove();
 		}

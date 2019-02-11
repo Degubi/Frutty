@@ -1,7 +1,8 @@
 package frutty.gui;
 
-import static frutty.tools.GuiHelper.newButton;
+import static frutty.tools.GuiHelper.*;
 
+import frutty.gui.components.*;
 import frutty.plugin.event.gui.*;
 import frutty.plugin.internal.*;
 import frutty.tools.*;
@@ -10,7 +11,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.tree.*;
 
-public final class GuiStats extends JPanel implements ActionListener{
+public final class GuiStats extends GuiMapBackground implements ActionListener{
 	private static final PropertyFile stats = new PropertyFile("stats.prop", 4);
 	public static int topScore = stats.getInt("topScore", 0);
 	public static int enemyCount = stats.getInt("enemyCount", 0);
@@ -18,13 +19,13 @@ public final class GuiStats extends JPanel implements ActionListener{
 	public static int playTime = stats.getInt("minutesPlayed", 0);
 	
 	public GuiStats() {
+		super("./maps/dev_settings.fmap");
 		setLayout(null);
 		
-		DefaultMutableTreeNode top = new DefaultMutableTreeNode("Frutty Stats");
-		
-		DefaultMutableTreeNode basic = new DefaultMutableTreeNode("Basics");
-		DefaultMutableTreeNode zones = new DefaultMutableTreeNode("Zones");
-		DefaultMutableTreeNode enemies = new DefaultMutableTreeNode("Enemies");
+		var top = new DefaultMutableTreeNode("Frutty Stats");
+		var basic = new DefaultMutableTreeNode("Basics");
+		var zones = new DefaultMutableTreeNode("Zones");
+		var enemies = new DefaultMutableTreeNode("Enemies");
 		
 		basic.add(new DefaultMutableTreeNode("Minutes Played: " + playTime));
 		basic.add(new DefaultMutableTreeNode("Max Score: " + topScore));
@@ -35,7 +36,8 @@ public final class GuiStats extends JPanel implements ActionListener{
 		top.add(zones);
 		top.add(enemies);
 		
-		JTree statTree = new JTree(top);
+		var statTree = new JTree(top);
+		statTree.setBackground(Color.RED);
 		statTree.setCellRenderer(new TreeRender());
 		statTree.setFont(GuiHelper.thiccFont);
 		statTree.setOpaque(false);
@@ -88,6 +90,11 @@ public final class GuiStats extends JPanel implements ActionListener{
 		@Override
 		public Color getBackground() {
 			return null;
+		}
+		
+		@Override
+		public Color getTextNonSelectionColor() {
+			return Color.BLACK;
 		}
 	}
 }

@@ -47,6 +47,7 @@ public final class EntityEnemy extends Entity {
 	@Override
 	public void updateServer() {
 		animSwitch = !animSwitch;
+		
 		if(!isFree(serverPosX + motionX, serverPosY + motionY)) {
 			EnumFacing facing = findFreeFacing();
 			motionX = facing.xOffset;

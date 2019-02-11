@@ -39,6 +39,7 @@ public final class MapZoneSpawner extends MapZoneBase{
 	@Override
 	public void onZoneAdded(boolean isCoop, int x, int y) {
 		int enemyCount = 0, zoneCount = World.zones.length;
+		
 		if(!Settings.disableEnemies) {
 			if(Settings.difficulty == 0) {
 				enemyCount += zoneCount < 70 ? 1 : zoneCount / 70;

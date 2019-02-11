@@ -1,5 +1,7 @@
 package degubi.editor;
 
+import static java.nio.file.StandardOpenOption.*;
+
 import degubi.editor.GuiEditorProperties.*;
 import degubi.editor.GuiTextureSelector.*;
 import frutty.gui.*;
@@ -8,6 +10,7 @@ import frutty.world.base.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.nio.file.*;
 import java.util.*;
 import java.util.List;
 import javax.swing.*;
@@ -60,7 +63,7 @@ public final class GuiEditor extends JPanel{
 	 		output.writeShort(mapProperties.height);
 	 		output.writeUTF(mapProperties.nextMap);
 	 		
-	 		for(EditorZoneButton writeButton : zoneButtons) {
+	 		for(var writeButton : zoneButtons) {
 	 			output.writeByte(indexOf(zoneIDCache, writeButton.zoneID));
 	 			
 	 			if(MapZoneBase.getZoneFromName(writeButton.zoneID) instanceof MapZoneTexturable) {
@@ -75,7 +78,7 @@ public final class GuiEditor extends JPanel{
 	}
 	
 	private void saveMap() {
-		try(var output = IOHelper.newBufferedWriter("./mapsrc/" + mapProperties.mapName + ".fmf")){
+		try(var output = Files.newBufferedWriter(Path.of("./mapsrc/" + mapProperties.mapName + ".fmf"), WRITE, CREATE, TRUNCATE_EXISTING)){
 			output.write(Integer.toString(mapProperties.width) + '\n');
 			output.write(Integer.toString(mapProperties.height) + '\n');
 			output.write(mapProperties.skyName + '\n');
@@ -100,17 +103,17 @@ public final class GuiEditor extends JPanel{
 	
 	private static void loadMap(String fileName) {
 		if(fileName != null && !fileName.isEmpty()) {
-			try(var input = IOHelper.newBufferedReader("./mapsrc/" + fileName)){
+			try(var input = Files.newBufferedReader(Path.of("./mapsrc/" + fileName))){
 				int mapWidth = Integer.parseInt(input.readLine());
 				int mapHeight = Integer.parseInt(input.readLine());
-				GuiEditor editor = new GuiEditor(fileName.substring(0, fileName.indexOf('.')), mapWidth, mapHeight, input.readLine(), input.readLine());
+				var editor = new GuiEditor(fileName.substring(0, fileName.indexOf('.')), mapWidth, mapHeight, input.readLine(), input.readLine());
 				String[] textureCache = input.readLine().split(" ");
 				
 				for(int y = 0; y < mapHeight; ++y) {
 					for(int x = 0; x < mapWidth; ++x) {
-						String[] zoneData = input.readLine().split(" ");
-						MapZoneBase zoneFromName = MapZoneBase.getZoneFromName(zoneData[0]);
-						EditorZoneButton button = new EditorZoneButton(zoneFromName.editorTexture.get(), zoneData[0], x * 64, y * 64, editor);
+						var zoneData = input.readLine().split(" ");
+						var zoneFromName = MapZoneBase.getZoneFromName(zoneData[0]);
+						var button = new EditorZoneButton(zoneFromName.editorTexture.get(), zoneData[0], x * 64, y * 64, editor);
 						
 						if(zoneData.length == 2) {
 							int textureIndexFromCache = Integer.parseInt(zoneData[1]);
@@ -132,12 +135,12 @@ public final class GuiEditor extends JPanel{
 	
 	private static void newMap(GuiEditor editor) {
 		String[] types = {"Normal", "Background"};
-		int input = JOptionPane.showOptionDialog(null, "Make Normal or Background map?", "Map Type Chooser", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, types, types[0]);
+		var input = JOptionPane.showOptionDialog(null, "Make Normal or Background map?", "Map Type Chooser", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, types, types[0]);
 		var mapSizeString = (input == 0 ? JOptionPane.showInputDialog("Enter map size!", "10x10") : "14x10").split("x");
 		int mapWidth = Integer.parseInt(mapSizeString[0]), bigWidth = mapWidth * 64;
 		int mapHeight = Integer.parseInt(mapSizeString[1]), bigHeight = mapHeight * 64;
-		String mapName = JOptionPane.showInputDialog("Enter map name!", "mapname");
-		GuiEditor newEditor = new GuiEditor(mapName, mapWidth, mapHeight, "null", "null");
+		var mapName = JOptionPane.showInputDialog("Enter map name!", "mapname");
+		var newEditor = new GuiEditor(mapName, mapWidth, mapHeight, "null", "null");
 		
 		if(mapName != null) {
 			for(int yPos = 0; yPos < bigHeight; yPos += 64) {
@@ -155,16 +158,16 @@ public final class GuiEditor extends JPanel{
 	
 	private static void showEditorFrame(GuiEditor editor, String titleMapName, int width, int height) {
 		EventQueue.invokeLater(() -> {
-			JFrame frame = new JFrame("Frutty Map Editor -- " + titleMapName);
+			var frame = new JFrame("Frutty Map Editor -- " + titleMapName);
 			frame.setContentPane(editor);
 			frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 			frame.setResizable(false);
 			frame.setBounds(0, 0, width + 200, height + 63);
 			frame.setLocationRelativeTo(null);
 			
-			JMenuBar menuBar = new JMenuBar();
-	    	JMenu fileMenu = new JMenu("File");
-	    	JMenu mapMenu = new JMenu("Map");
+			var menuBar = new JMenuBar();
+	    	var fileMenu = new JMenu("File");
+	    	var mapMenu = new JMenu("Map");
 	    	
 	    	mapMenu.setEnabled(!editor.zoneButtons.isEmpty());
 	    	
@@ -199,7 +202,7 @@ public final class GuiEditor extends JPanel{
 	}
 	
 	private static JMenuItem newMenuItem(String text, char shortcut, boolean setEnabled, ActionListener listener) {
-		JMenuItem item = new JMenuItem(text);
+		var item = new JMenuItem(text);
 		if(shortcut != '0') {
 			item.setAccelerator(KeyStroke.getKeyStroke(shortcut, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
 		}
@@ -209,7 +212,7 @@ public final class GuiEditor extends JPanel{
 	}
 	
 	private static<T> int indexOf(T[] array, T element) {
-		for(int k = 0; k < array.length; ++k) {
+		for(var k = 0; k < array.length; ++k) {
 			if(array[k].equals(element)) {
 				return k;
 			}
@@ -231,11 +234,11 @@ public final class GuiEditor extends JPanel{
 		
 		@Override
 		public void mousePressed(MouseEvent event) {
-			EditorZoneButton button = (EditorZoneButton)event.getComponent();
+			var button = (EditorZoneButton)event.getComponent();
 			int pressedButton = event.getButton();
 			
 			if(pressedButton == MouseEvent.BUTTON1) {
-				String activeZoneName = (String) editorInstance.zoneList.getSelectedItem();
+				var activeZoneName = (String) editorInstance.zoneList.getSelectedItem();
 				button.zoneID = activeZoneName; button.setIcon(MapZoneBase.getZoneFromName(activeZoneName).editorTexture.get());
 				
 				if(MapZoneBase.getZoneFromName(activeZoneName) instanceof MapZoneTexturable) {

@@ -34,6 +34,7 @@ public final class MapZoneChest extends MapZoneTexturable{
 		var graphics = toReturn.createGraphics();
 		graphics.drawImage(MapZoneBase.normalZone.editorTexture.get().getImage(), 0, 0, null);
 		graphics.drawImage(chestTexture, 0, 0, null);
+		graphics.dispose();
 		return new ImageIcon(toReturn);
 	}
 

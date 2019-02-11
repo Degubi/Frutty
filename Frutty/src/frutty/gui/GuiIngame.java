@@ -1,8 +1,6 @@
 package frutty.gui;
 
 import frutty.*;
-import frutty.entity.*;
-import frutty.entity.zone.*;
 import frutty.gui.GuiSettings.*;
 import frutty.tools.*;
 import frutty.world.*;
@@ -14,7 +12,6 @@ import java.io.*;
 import java.time.*;
 import java.time.format.*;
 import java.time.temporal.*;
-import java.util.*;
 import java.util.concurrent.*;
 import javax.imageio.*;
 import javax.swing.*;
@@ -39,36 +36,42 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 	protected void paintComponent(Graphics graphics) {
 		super.paintComponent(graphics);
 		
-		MapZoneBase[] zones = World.zones;
+		var zones = World.zones;         //Hoist globals that are read multiple times
+		var xCoords = World.xCoords;
+		var yCoords = World.yCoords;
+		var materials = World.materials;
+		var worldWidth = World.width;
+		var worldHeight = World.height;
+
+		for(var k = 0; k < zones.length; ++k) zones[k].render(xCoords[k], yCoords[k], materials[k], (Graphics2D) graphics);
+		for(var players : World.players) players.handleRender(graphics);
 		
-		for(int k = 0; k < zones.length; ++k) zones[k].render(World.xCoords[k], World.yCoords[k], World.materials[k], (Graphics2D) graphics);
-		for(EntityPlayer players : World.players) players.handleRender(graphics);
-		
-		for(Entity entity : World.entities) {
+		for(var entity : World.entities) {
 			if(entity.active) {
 				entity.handleRender(graphics);
 			}
 		}
 		
-		for(EntityEnemy enemies : World.enemies) {
+		for(var enemies : World.enemies) {
 			if(enemies.active) {
 				enemies.handleRender(graphics);
 			}
 		}
 		
-		for(Particle particles : World.particles) particles.render(graphics);
+		for(var particles : World.particles) particles.render(graphics);
 		
-		for(int k = 0; k < zones.length; ++k) {
-			MapZoneBase zone = zones[k];
+		for(var k = 0; k < zones.length; ++k) {
+			var zone = zones[k];
+			
 			if(zone instanceof ITransparentZone) {
-				((ITransparentZone)zone).drawAfter(World.xCoords[k], World.yCoords[k], World.materials[k], graphics);
+				((ITransparentZone)zone).drawAfter(xCoords[k], yCoords[k], materials[k], graphics);
 			}
 		}
 		
 		graphics.setColor(Color.BLACK);
 		graphics.setFont(GuiHelper.ingameFont);
-		graphics.drawString("Score: " + World.score, World.width + 90, 20);
-		graphics.drawString("Top score: " + GuiStats.topScore, World.width + 90, 80);
+		graphics.drawString("Score: " + World.score, worldWidth + 90, 20);
+		graphics.drawString("Top score: " + GuiStats.topScore, worldWidth + 90, 80);
 		
 		if(Settings.enableMapDebug) {
 			graphics.setColor(GuiHelper.color_128Black);
@@ -80,68 +83,75 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 			//Left
 			graphics.drawString("zonecount: " + zones.length, 2, 20);
 			graphics.drawString("entities: " + (World.enemies.length + World.players.length + World.entities.size() + World.particles.size()), 2, 40);
-			graphics.drawString("map_width: " + (World.width + 64), 2, 60);
-			graphics.drawString("map_height: " + (World.height + 64), 2, 80);
+			graphics.drawString("map_width: " + (worldWidth + 64), 2, 60);
+			graphics.drawString("map_height: " + (worldHeight + 64), 2, 80);
 			graphics.drawString("playerpos_x: " + World.players[0].serverPosX, 2, 100);
 			graphics.drawString("playerpos_y: " + World.players[0].serverPosY, 2, 120);
 		}
 		
 		if(Settings.renderDebugLevel == 1 || Settings.renderDebugLevel == 3) {
 			graphics.setColor(GuiHelper.color_128Black);
-			graphics.fillRect(World.width - 85, 0, 160, 130);
+			graphics.fillRect(worldWidth - 85, 0, 160, 130);
 			
 			graphics.setFont(GuiHelper.thiccFont);
 			graphics.setColor(Color.WHITE);
 			
 			//Right
-			graphics.drawString("current map: " + World.mapName, World.width - 100, 20);
-			graphics.drawString("render delay: " + renderDelay + " ms", World.width - 100, 40);
-			graphics.drawString("fps: " + 1000 / (System.currentTimeMillis() - renderLastUpdate), World.width - 100, 60);
+			graphics.drawString("current map: " + World.mapName, worldWidth - 100, 20);
+			graphics.drawString("render delay: " + renderDelay + " ms", worldWidth - 100, 40);
+			graphics.drawString("fps: " + 1000 / (System.currentTimeMillis() - renderLastUpdate), worldWidth - 100, 60);
 			
 			renderDelay = (int) (System.currentTimeMillis() - renderLastUpdate);
 			renderLastUpdate = System.currentTimeMillis();
 		}
 		
 		graphics.setColor(Color.DARK_GRAY);
-		for(int k = 0; k < 20; ++k) graphics.drawLine(World.width + 64 + k, 0, World.width + 64 + k, World.height + 83);
+		for(var k = 0; k < 20; ++k) graphics.drawLine(worldWidth + 64 + k, 0, worldWidth + 64 + k, worldHeight + 83);
 	}
 	
 	@Override
 	public void run() {
 		if(!paused) {
 			++World.ticks;
+			var ticks = World.ticks;
 			
-			for(Entity entity : World.players) entity.update(World.ticks);
+			for(var entity : World.players) entity.update(ticks);
 			
-			for(EntityEnemy monsters : World.enemies) {
+			for(var monsters : World.enemies) {
 				if(monsters.active) {
-					monsters.update(World.ticks);
+					monsters.update(ticks);
 				}
 			}
 			
-			for(Entity entities : World.entities) {
+			for(var entities : World.entities) {
 				if(entities.active) {
-					entities.update(World.ticks);
+					entities.update(ticks);
 				}
 			}
 			
-			if(World.ticks % 4 == 0) MapZoneWater.updateWaterUV();
+			if(ticks % 4 == 0) MapZoneWater.updateWaterUV();
 			
-			if(World.ticks % 2 == 0) {
-				for(Iterator<Particle> iterator = World.particles.iterator(); iterator.hasNext();) {
+			if(ticks % 2 == 0) {
+				for(var iterator = World.particles.iterator(); iterator.hasNext();) {
 					iterator.next().update(iterator);
 				}
 			}
 			
-			if(World.ticks % 20 == 0) {
+			if(ticks % 20 == 0) {
+				var xCoords = World.xCoords;
+				var yCoords = World.yCoords;
+				var materials = World.materials;
+				
 				for(int k = 0; k < World.zones.length; ++k) {
-					MapZoneBase zone = World.zones[k];
-					if(zone.hasParticleSpawns && MapZoneBase.isEmpty(World.xCoords[k], World.yCoords[k] + 64) && FruttyMain.rand.nextInt(100) == 3) {
-						Particle.spawnFallingParticles(2 + FruttyMain.rand.nextInt(5), World.xCoords[k], World.yCoords[k], World.materials[k]);
+					var zone = World.zones[k];
+					
+					if(zone.hasParticleSpawns && MapZoneBase.isEmpty(xCoords[k], yCoords[k] + 64) && FruttyMain.rand.nextInt(100) == 3) {
+						Particle.spawnFallingParticles(2 + FruttyMain.rand.nextInt(5), xCoords[k], yCoords[k], materials[k]);
 					}
 					
 					if(zone instanceof IZoneEntityProvider) {
-						EntityZone entity = World.zoneEntities[k];
+						var entity = World.zoneEntities[k];
+						
 						if(entity.shouldUpdate) {
 							entity.update();
 						}
@@ -175,7 +185,7 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 			ingameFrame.setContentPane(ingameGui = new GuiIngame());
 			ingameFrame.addKeyListener(ingameGui);
 			ingameFrame.setFocusable(true);
-			for(EntityPlayer players : World.players) {
+			for(var players : World.players) {
 				ingameFrame.addKeyListener(players);
 			}
 			ingameFrame.setVisible(true);
@@ -190,8 +200,8 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 			paused = true;
 			
 			EventQueue.invokeLater(() -> {
-				JFrame returnFrame = new JFrame("Frutty");
-				PauseMenu menu = new PauseMenu();
+				var returnFrame = new JFrame("Frutty");
+				var menu = new PauseMenu();
 				returnFrame.setContentPane(menu);
 				returnFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 				returnFrame.setResizable(false);
@@ -204,7 +214,7 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 			});
 		}else if(keyCode == KeyEvent.VK_F12) {
 			try {
-				IOHelper.createDirectory("screenshots");
+				FruttyMain.createDirectory("screenshots");
 				var window = ((JFrame)getTopLevelAncestor()).getLocationOnScreen();
 				ImageIO.write(new Robot().createScreenCapture(new Rectangle(window.x + 7, window.y + 30, World.width + 64, World.height + 64)), Settings.screenshotFormat, 
 																			new File("./screenshots/" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd_kk_HH_ss")) +"." + Settings.screenshotFormat.toLowerCase()));
@@ -226,7 +236,8 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 
 		@Override
 		public void actionPerformed(ActionEvent event) {
-			String cmd = event.getActionCommand();
+			var cmd = event.getActionCommand();
+			
 			if(cmd.equals("Resume")) {
 				ingameGui.paused = false;
 			}else if(cmd.equals("Exit")) {

@@ -44,7 +44,8 @@ public abstract class GuiMapBackground extends JPanel {
 		super.paintComponent(graphics);
 		
 		for(int k = 0; k < zones.length; ++k) {
-			MapZoneBase zone = zones[k];
+			var zone = zones[k];
+			
 			zone.render(xCoords[k], yCoords[k], materials[k], (Graphics2D) graphics);
 			if(zone instanceof ITransparentZone) {
 				((ITransparentZone) zone).drawAfter(xCoords[k], yCoords[k], materials[k], graphics);

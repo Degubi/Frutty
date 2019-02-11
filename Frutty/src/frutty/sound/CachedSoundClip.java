@@ -9,7 +9,7 @@ public final class CachedSoundClip {
 	
 	public CachedSoundClip(String filePath) {
 		if(Settings.enableSound) {
-			try(AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("./sounds/" + filePath))){
+			try(var audioInputStream = AudioSystem.getAudioInputStream(new File("./sounds/" + filePath))){
 				soundClip.open(audioInputStream);
 				((FloatControl) soundClip.getControl(FloatControl.Type.MASTER_GAIN)).setValue(-20);
 				

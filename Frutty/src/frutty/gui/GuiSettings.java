@@ -11,7 +11,7 @@ public final class GuiSettings extends GuiMapBackground implements ActionListene
 		super("./maps/dev_settings.fmap");
 		setLayout(null);
 		
-		for(JComponent comp : components) add(comp);
+		for(var comp : components) add(comp);
 		add(GuiHelper.newButton("Save", 370, 525, this));
 	}
 	
@@ -47,13 +47,13 @@ public final class GuiSettings extends GuiMapBackground implements ActionListene
 	}
 	
 	public static void showGuiSettings() {
-		JTabbedPane tabbed = new JTabbedPane();
+		var tabbed = new JTabbedPane();
 		tabbed.addTab("Gameplay", new GuiSettings(difficultyButton, upKeyButtonField, downKeyButtonField, leftKeyButtonField, rightKeyButtonField));
 		tabbed.addTab("Graphics", new GuiSettings(graphicsLevelButton, fpsSlider, screenshotFormatButton));
 		tabbed.addTab("Sound", new GuiSettings(enableSoundButton, volumeSlider));
 		tabbed.addTab("Debug", new GuiSettings(renderDebugLevelButton, godModeButton, disableEnemiesButton, collisionBoxButton, showMapDebugInfo));
 		
-		Insets insets = UIManager.getInsets("TabbedPane.contentBorderInsets");
+		var insets = UIManager.getInsets("TabbedPane.contentBorderInsets");
 		insets.left = -1;
 		insets.right = -1;
 		insets.bottom = -1;

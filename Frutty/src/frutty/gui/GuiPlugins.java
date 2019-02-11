@@ -14,7 +14,7 @@ public final class GuiPlugins implements ListSelectionListener, HyperlinkListene
 	protected final JTextPane description = new JTextPane();
 
 	public static void showPlugins() {
-		GuiPlugins plugs = new GuiPlugins();
+		var plugs = new GuiPlugins();
 		
 		plugs.pluginList.addListSelectionListener(plugs);
 		plugs.pluginList.setCellRenderer(new PluginListRenderer());
@@ -23,14 +23,14 @@ public final class GuiPlugins implements ListSelectionListener, HyperlinkListene
 		plugs.description.setContentType("text/html");
 		plugs.pluginList.setSelectedIndex(0);
 		
-		JSplitPane pane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, plugs.pluginList, plugs.description);
+		var pane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, plugs.pluginList, plugs.description);
 		pane.setResizeWeight(0.5D);
 		pane.setEnabled(false);
 		
 		GuiHelper.showNewGui(pane, "Frutty Plugins", 576, 480);
 		
 		new Thread(() -> {
-			for(Plugin plugin : Plugin.plugins) {
+			for(var plugin : Plugin.plugins) {
 				if(plugin.version.isOlderThan(Version.fromURL(plugin.versionURL))) {
 					plugin.needsUpdate = true;
 				}
@@ -60,7 +60,7 @@ public final class GuiPlugins implements ListSelectionListener, HyperlinkListene
 		
 		@Override
 		public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-			Component comp = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+			var comp = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 			if(((Plugin) value).needsUpdate) {
 				comp.setForeground(Color.RED);
 			}
