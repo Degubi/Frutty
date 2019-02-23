@@ -7,7 +7,7 @@ import java.awt.image.*;
 import javax.swing.*;
 
 public final class MapZoneBush extends MapZoneBase implements ITransparentZone{
-	public static final BufferedImage texture = IOHelper.loadTexture("map/special", "bush.png");
+	public static final BufferedImage texture = Material.loadTexture("map/special", "bush.png");
 	
 	public MapZoneBush() {
 		super("bushZone", true, false);

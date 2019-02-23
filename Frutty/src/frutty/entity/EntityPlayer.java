@@ -11,7 +11,7 @@ import java.awt.image.*;
 import java.util.*;
 
 public final class EntityPlayer extends Entity implements KeyListener{
-	private static final BufferedImage[] textures = {IOHelper.loadTexture("player", "side.png"), IOHelper.loadTexture("player", "front.png"), IOHelper.loadTexture("player", "back.png")};
+	private static final BufferedImage[] textures = Material.loadTextures("player", "side.png", "front.png", "back.png");
 	public final ArrayList<EntityEffect> entityEffects = new ArrayList<>();
 	
 	private int textureIndex;

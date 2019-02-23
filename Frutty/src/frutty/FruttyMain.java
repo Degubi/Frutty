@@ -13,8 +13,11 @@ public final class FruttyMain {
 	
 	public static void main(String[] args){
 		FruttyMain.createDirectory("plugins");
-		Plugin.loadPlugins();
-		EventHandle.sortEvents();
+		boolean loadedAny = Plugin.loadPlugins();
+		
+		if(loadedAny) {
+			EventHandle.sortEvents();
+		}
 		GuiMenu.createMainFrame(true);
 		createDirectory("saves");
 	}
@@ -30,7 +33,7 @@ public final class FruttyMain {
 	}
 	
 	@SafeVarargs
-	public static <T> List<T> toList(T... objs){
+	public static<T> List<T> toList(T... objs){
 		var list = new ArrayList<T>(objs.length);
 		
 		for(T el : objs) {

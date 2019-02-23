@@ -47,7 +47,7 @@ public final class Plugin{
 		return null;
 	}
 	
-	public static void loadPlugins() {
+	public static boolean loadPlugins() {
 		File[] pluginNames = new File("plugins").listFiles((dir, name) -> name.endsWith(".jar"));
 		int pluginCount = pluginNames.length;
 		
@@ -89,10 +89,10 @@ public final class Plugin{
 						throw new IllegalStateException("Main class from plugin: " + pluginNames[k] + " is not annotated with @FruttyPlugin");
 					}
 					
-					FruttyPlugin pluginAnnotation = loaded.getDeclaredAnnotation(FruttyPlugin.class);
+					var pluginAnnotation = loaded.getDeclaredAnnotation(FruttyPlugin.class);
 					plugins.add(new Plugin(pluginAnnotation.name(), pluginAnnotation.description(), pluginAnnotation.updateURL(), Version.fromString(pluginAnnotation.version()), pluginAnnotation.versionURL()));
 					
-					boolean ranMain = false;
+					var ranMain = false;
 					for(var method : loaded.getDeclaredMethods()) {
 						if(ranMain) {
 							throw new IllegalStateException("Found more than one main methods from plugin: " + pluginNames[k]);
@@ -100,23 +100,22 @@ public final class Plugin{
 						
 						if(method.isAnnotationPresent(FruttyPluginMain.class)) {
 							if((method.getModifiers() & Modifier.STATIC) != 0 || method.getParameterCount() > 0) {
-								Class<?> eventClass = method.getAnnotation(FruttyPluginMain.class).eventClass();
+								var eventClass = method.getAnnotation(FruttyPluginMain.class).eventClass();
 										
 								if(eventClass != void.class) {
-									Method[] eventMethods = eventClass.getDeclaredMethods();
-									
+									var eventMethods = eventClass.getDeclaredMethods();
 									var lookup = MethodHandles.publicLookup();
 									
 									for(var eventMts : eventMethods) {
-										if(eventMts.isAnnotationPresent(FruttyEvent.class)) {
+										if(eventMts.isAnnotationPresent(FruttyEventHandler.class)) {
 											if((eventMts.getModifiers() & Modifier.STATIC) != 0 && eventMts.getParameterCount() == 1) {
-												Class<?> eventTypeClass = eventMts.getParameterTypes()[0];
+												var eventTypeClass = eventMts.getParameterTypes()[0];
 												
-												if(eventTypeClass.getInterfaces()[0] != EventBase.class) {
+												if(!eventTypeClass.isAnnotationPresent(FruttyEvent.class)) {
 													throw new IllegalArgumentException("Illegal type of argument for method: " + eventMts.getName());
 												}
 												
-												EventHandle.handleEventTypes(lookup, eventMts, eventTypeClass);
+												EventHandle.addEvent(lookup, eventMts, eventTypeClass);
 											}else {
 												throw new IllegalStateException("Method from class: " + eventClass + ", methodName: " + eventMts.getName() + " is not static or has more than 1 parameters");
 											}
@@ -139,6 +138,8 @@ public final class Plugin{
 			} catch (SecurityException | IllegalArgumentException | ClassNotFoundException | IllegalAccessException | InvocationTargetException e) {
 				e.printStackTrace();
 			}
+			return true;
 		}
+		return false;
 	}
 }

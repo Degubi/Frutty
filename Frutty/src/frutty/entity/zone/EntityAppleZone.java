@@ -6,19 +6,19 @@ import frutty.world.*;
 public final class EntityAppleZone extends EntityZone{
 	private int counter;
 	
-	public EntityAppleZone(int xCoord, int yCoord, int zoneIndex) {
-		super(false, xCoord, yCoord, zoneIndex);
+	public EntityAppleZone(int xCoord, int yCoord) {
+		super(false, xCoord, yCoord);
 	}
 	
 	@Override
 	public void onNotified() {
-		shouldUpdate = true;
+		needsUpdates = true;
 	}
 	
 	@Override
 	public void update() {
 		if(++counter == 2) {
-			World.setZoneEmptyAt(zoneIndex);
+			World.setZoneEmptyAt(Entity.coordsToIndex(x, y));
 			World.entities.add(new EntityApple(x, y));
 		}
 	}

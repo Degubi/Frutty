@@ -52,7 +52,7 @@ public final class GuiEditor extends JPanel{
 	}
 	
 	private void renderMap() {
-		try(var output = IOHelper.newObjectOS("./maps/" + mapProperties.mapName + ".fmap")){
+		try(var output = new ObjectOutputStream(Files.newOutputStream(Path.of("./maps/" + mapProperties.mapName + ".fmap"), WRITE, CREATE, TRUNCATE_EXISTING))){
 	 		var zoneIDCache = zoneButtons.stream().map(button -> button.zoneID).distinct().toArray(String[]::new);
 	 		var textureCache = zoneButtons.stream().map(button -> button.zoneTexture).filter(texture -> texture != null).distinct().toArray(String[]::new);
 	 		

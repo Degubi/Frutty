@@ -5,7 +5,8 @@ import frutty.plugin.internal.*;
 import java.util.*;
 
 /**Event is fired when a map is initialized, can add entities, or change textures*/
-public final class WorldInitEvent implements EventBase{
+@FruttyEvent
+public final class WorldInitEvent{
 	public final int mapWidth, mapHeight;
 	public final String[] mapTextureCache;
 	public final List<Entity> mapEntities;

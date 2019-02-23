@@ -3,7 +3,8 @@ package frutty.plugin.event.gui;
 import frutty.plugin.internal.*;
 import frutty.tools.*;
 
-public final class GuiStatSavedEvent implements EventBase{
+@FruttyEvent
+public final class GuiStatSavedEvent{
 	public final PropertyFile statsFile;
 	
 	public GuiStatSavedEvent(PropertyFile stats) {

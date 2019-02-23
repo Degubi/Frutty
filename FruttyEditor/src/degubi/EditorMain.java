@@ -12,7 +12,7 @@ public final class EditorMain{
 	@FruttyPluginMain(eventClass = EditorMain.class)
 	public static void pluginMain() {}
 
-	@FruttyEvent
+	@FruttyEventHandler
 	public static void menuInitEvent(GuiMenuEvent event) {
 		event.addButton(GuiHelper.newButton("Editor", 20, 475, e -> {GuiEditor.openEmptyEditor(); GuiMenu.mainFrame.dispose();}));
 	}

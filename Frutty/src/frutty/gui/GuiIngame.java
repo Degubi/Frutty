@@ -47,9 +47,7 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 		for(var players : World.players) players.handleRender(graphics);
 		
 		for(var entity : World.entities) {
-			if(entity.active) {
-				entity.handleRender(graphics);
-			}
+			entity.handleRender(graphics);
 		}
 		
 		for(var enemies : World.enemies) {
@@ -124,9 +122,7 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 			}
 			
 			for(var entities : World.entities) {
-				if(entities.active) {
-					entities.update(ticks);
-				}
+				entities.update(ticks);
 			}
 			
 			if(ticks % 4 == 0) MapZoneWater.updateWaterUV();
@@ -152,7 +148,7 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 					if(zone instanceof IZoneEntityProvider) {
 						var entity = World.zoneEntities[k];
 						
-						if(entity.shouldUpdate) {
+						if(entity.needsUpdates) {
 							entity.update();
 						}
 					}
@@ -243,17 +239,21 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 			}else if(cmd.equals("Exit")) {
 				ingameGui.renderThread.shutdown();
 				ingameGui.updateThread.shutdown();
+				
 				if(JOptionPane.showConfirmDialog(null, "Save current status?", "Save?", JOptionPane.YES_NO_OPTION, 1) == 0) {
 					World.createSave(JOptionPane.showInputDialog("Enter save name!"));
 				}
+				
 				GuiStats.saveStats();
 				System.exit(0);
 			}else if(cmd.equals("Menu")) {
 				ingameGui.renderThread.shutdown();
 				ingameGui.updateThread.shutdown();
+				
 				if(JOptionPane.showConfirmDialog(null, "Save current status?", "Save?", JOptionPane.YES_NO_OPTION, 1) == 0) {
 					World.createSave(JOptionPane.showInputDialog("Enter save name!"));
 				}
+				
 				((JFrame)ingameGui.getTopLevelAncestor()).dispose();
 				GuiMenu.createMainFrame(false);
 				GuiStats.saveStats();

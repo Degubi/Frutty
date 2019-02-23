@@ -32,27 +32,36 @@ public final class Particle implements Serializable{
 	
 	public static void spawnFallingParticles(int count, int x, int y, Material material) {
 		if(Settings.graphicsLevel == 2) {
+			var rand = FruttyMain.rand;
+			var color = material.particleColor;
+			var particles = World.particles;
+			
 			for(int k = 0; k < count; ++k) {
-				World.particles.add(new Particle(x + FruttyMain.rand.nextInt(64), y + 64 + FruttyMain.rand.nextInt(32), true, material.particleColor));
+				particles.add(new Particle(x + rand.nextInt(64), y + 64 + rand.nextInt(32), true, color));
 			}
 		}
 	}
 	
 	public static void spawnRandomParticles(int count, int x, int y, Color color) {
 		if(Settings.graphicsLevel == 2) {
+			var particles = World.particles;
+			
 			for(int k = 0; k < count; ++k) {
-				World.particles.add(new Particle(x + 32, y + 60, false, color));
+				particles.add(new Particle(x + 32, y + 60, false, color));
 			}
 		}
 	}
 	
 	public void render(Graphics graphics) {
+		var posXLocal = posX;
+		var posYLocal = posY;
+
 		graphics.setColor(color);
-		graphics.fillRect(posX, posY, 4, 4);
+		graphics.fillRect(posXLocal, posYLocal, 4, 4);
 		graphics.setColor(GuiHelper.color_84Black);
 		
-		for(int till = posY / 240, k = 0; k < till && k < 4; ++k) {
-			graphics.fillRect(posX, posY, 4, 4);
+		for(int till = posYLocal / 240, k = 0; k < till && k < 4; ++k) {
+			graphics.fillRect(posXLocal, posYLocal, 4, 4);
 		}
 	}
 	

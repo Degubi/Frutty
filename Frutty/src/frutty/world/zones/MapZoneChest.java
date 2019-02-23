@@ -9,7 +9,7 @@ import java.awt.image.*;
 import javax.swing.*;
 
 public final class MapZoneChest extends MapZoneTexturable{
-	public static final BufferedImage chestTexture = IOHelper.loadTexture("map/special", "chest.png");
+	public static final BufferedImage chestTexture = Material.loadTexture("map/special", "chest.png");
 	
 	public MapZoneChest() {
 		super("chestZone");

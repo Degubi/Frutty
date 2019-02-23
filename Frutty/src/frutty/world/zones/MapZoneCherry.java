@@ -10,7 +10,7 @@ import java.awt.image.*;
 import javax.swing.*;
 
 public final class MapZoneCherry extends MapZoneTexturable{
-	public static final BufferedImage cherryTexture = IOHelper.loadTexture("fruit", "cherry.png");
+	public static final BufferedImage cherryTexture = Material.loadTexture("fruit", "cherry.png");
 	
 	public MapZoneCherry() {
 		super("cherryZone");

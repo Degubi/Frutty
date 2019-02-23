@@ -8,7 +8,7 @@ import java.awt.image.*;
 import javax.swing.*;
 
 public final class MapZoneWater extends MapZoneBase implements ITransparentZone{
-	public static final BufferedImage waterTexture = IOHelper.loadTexture("map/special", "water.png");
+	public static final BufferedImage waterTexture = Material.loadTexture("map/special", "water.png");
 	private static boolean decrease = false;
 	private static int textureY = 0;
 	

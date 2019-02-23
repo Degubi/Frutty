@@ -5,7 +5,8 @@ import java.util.*;
 import javax.swing.*;
 
 /**Event is fired when the main menu is initialized, can add buttons to menu*/
-public final class GuiMenuEvent implements EventBase{
+@FruttyEvent
+public final class GuiMenuEvent{
 	private final List<JButton> buttons;
 	
 	public GuiMenuEvent(List<JButton> pass) {

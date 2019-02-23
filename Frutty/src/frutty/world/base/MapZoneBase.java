@@ -52,7 +52,7 @@ public abstract class MapZoneBase implements Serializable{
 			GuiStats.zoneCount++;
 			
 			int checkIndex = zoneIndex - (World.width / 64) - 1;
-			MapZoneBase up = World.getZoneAtIndex(checkIndex);
+			var up = World.getZoneAtIndex(checkIndex);
 			if(up != null && up instanceof IZoneEntityProvider) {
 				World.zoneEntities[checkIndex].onNotified();
 			}
@@ -136,7 +136,7 @@ public abstract class MapZoneBase implements Serializable{
 			throw new IllegalArgumentException("Tried to register zone without plugin ID: " + zone.zoneName);
 		}
 		
-		if(isZoneAlreadyRegistered(zone.zoneName)) {
+		if(zoneRegistry.stream().anyMatch(zones -> zones.zoneName.equals(zone.zoneName))) {
 			throw new IllegalArgumentException("Zone already registered with ID: " + zone.zoneName);
 		}
 		
@@ -154,14 +154,5 @@ public abstract class MapZoneBase implements Serializable{
 	
 	public static String[] zoneNames() {
 		return zoneRegistry.stream().map(zone -> zone.zoneName).toArray(String[]::new);
-	}
-	
-	private static boolean isZoneAlreadyRegistered(String name) {
-		for(var zones : zoneRegistry) {
-			if(zones.zoneName.equals(name)) {
-				return true;
-			}
-		}
-		return false;
 	}
 }

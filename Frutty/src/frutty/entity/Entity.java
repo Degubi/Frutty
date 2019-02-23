@@ -9,7 +9,6 @@ import java.io.*;
 public abstract class Entity implements Serializable{
 	private static final long serialVersionUID = 2876462867774051456L;
 	
-	public boolean active = true;
 	public int renderPosX, renderPosY, serverPosX, serverPosY, motionX, motionY;
 	public final int moveRate;
 	
@@ -35,8 +34,11 @@ public abstract class Entity implements Serializable{
 	
 	
 	protected final EnumFacing findFreeFacing() {
+		var serverPosXLocal = serverPosX;
+		var serverPosYLocal = serverPosY;
+		
 		for(var randomFacing = EnumFacing.randomFacing(); ; randomFacing = EnumFacing.randomFacing()) {
-			if(isFree(serverPosX + randomFacing.xOffset, serverPosY + randomFacing.yOffset)) {
+			if(isFree(serverPosXLocal + randomFacing.xOffset, serverPosYLocal + randomFacing.yOffset)) {
 				return randomFacing;
 			}
 			continue;
@@ -52,15 +54,24 @@ public abstract class Entity implements Serializable{
 		return zone != null && zone.canNPCPass(x, y);
 	}
 	
-	protected final boolean doesCollide(int x, int y) {
-		return (serverPosX >= x && serverPosX + 64 <= x + 64) &&
-			   (serverPosY >= y && serverPosY + 64 <= y + 64);
+	protected final boolean doesCollide(Entity other) {
+		var posX = renderPosX;
+		var posY = renderPosY;
+		var otherPosX = other.renderPosX;
+		var otherPosY = other.renderPosY;
+		
+		return posX < otherPosX + 64 && 
+			   posX + 64 > otherPosX &&
+			   posY < otherPosY + 64 && 
+			   posY + 64 > otherPosY;
 	}
 	
 	protected final void checkPlayers() {
+		var godEnabled = Settings.enableGod;
+		
 		for(var player : World.players) {
-			if(!player.hidden && doesCollide(player.serverPosX, player.serverPosY)) {
-				if(Settings.enableGod || player.isInvicible()) {
+			if(!player.hidden && doesCollide(player)) {
+				if(godEnabled || player.isInvicible()) {
 					onKilled(player);
 				}else{
 					if(this instanceof EntityFalling) {

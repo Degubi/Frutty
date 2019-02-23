@@ -58,7 +58,7 @@ public final class GuiMenu extends GuiMapBackground implements ActionListener{
 	}
 	
 	public static void createMainFrame(boolean checkUpdate) {
-		GuiMenu menu = new GuiMenu();
+		var menu = new GuiMenu();
 		
 		if(checkUpdate) {
 			new Thread(() -> {

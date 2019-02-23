@@ -48,7 +48,7 @@ public final class SettingButton extends JComponent implements ActionListener{
 
 	@Override
 	public void actionPerformed(ActionEvent event) {
-		String command = event.getActionCommand();
+		var command = event.getActionCommand();
 		
 		if(command.equals("leftButton")) {
 			if(optionIndex > 0) {
@@ -67,7 +67,7 @@ public final class SettingButton extends JComponent implements ActionListener{
 	}
 	
 	static JButton newArrowButton(boolean isRight, int x, int y, ActionListener listener) {
-		JButton toReturn = new JButton(isRight ? rightIcon : leftIcon);
+		var toReturn = new JButton(isRight ? rightIcon : leftIcon);
 		toReturn.addActionListener(listener);
 		toReturn.setActionCommand(isRight ? "rightButton" : "leftButton");
 		toReturn.setContentAreaFilled(false);

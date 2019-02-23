@@ -7,13 +7,14 @@ import java.awt.*;
 import java.awt.image.*;
 
 public final class EntityEnemy extends Entity {
-	private static final BufferedImage[] fastTextures = {IOHelper.loadTexture("enemy", "fast_side.png"), IOHelper.loadTexture("enemy", "fast_front.png"), IOHelper.loadTexture("enemy", "fast_back.png")};
-	private static final BufferedImage[] normalTextures = {IOHelper.loadTexture("enemy", "side.png"), IOHelper.loadTexture("enemy", "front.png"), IOHelper.loadTexture("enemy", "back.png")};
+	private static final BufferedImage[] fastTextures = Material.loadTextures("enemy", "fast_side.png", "fast_front.png", "fast_back.png");
+	private static final BufferedImage[] normalTextures = Material.loadTextures("enemy", "side.png", "front.png", "back.png");
 	
 	private int textureIndex;
 	private boolean animSwitch;
 	private final boolean isFast = FruttyMain.rand.nextBoolean();
-	
+	public boolean active = true;
+
 	public EntityEnemy(int x, int y) {
 		super(x, y);
 	}

@@ -4,6 +4,7 @@ import frutty.tools.*;
 import frutty.world.base.*;
 import java.awt.*;
 import java.io.*;
+import java.nio.file.*;
 import javax.swing.*;
 
 public abstract class GuiMapBackground extends JPanel {
@@ -12,7 +13,7 @@ public abstract class GuiMapBackground extends JPanel {
 	private final Material[] materials = new Material[140];
 	
 	public GuiMapBackground(String mapName) {
-		try(var input = IOHelper.newObjectIS(mapName)){
+		try(var input = new ObjectInputStream(Files.newInputStream(Path.of(mapName)))){
 			String[] zoneIDCache = (String[]) input.readObject();
 			String[] textureCache = (String[]) input.readObject();
 			
@@ -22,7 +23,7 @@ public abstract class GuiMapBackground extends JPanel {
 			
 			for(int y = 0, zoneIndex = 0; y < 640; y += 64) {
 				for(int x = 0; x < 896; x += 64) {
-					MapZoneBase zone = MapZoneBase.getZoneFromName(zoneIDCache[input.readByte()]);
+					var zone = MapZoneBase.getZoneFromName(zoneIDCache[input.readByte()]);
 					
 					if(zone instanceof IInternalZone) {
 						zone = ((IInternalZone) zone).getReplacementZone();
@@ -43,12 +44,17 @@ public abstract class GuiMapBackground extends JPanel {
 	protected void paintComponent(Graphics graphics) {
 		super.paintComponent(graphics);
 		
-		for(int k = 0; k < zones.length; ++k) {
-			var zone = zones[k];
+		var zonesLocal = zones;
+		var xCoordsLocal = xCoords;
+		var yCoordsLocal = yCoords;
+		var materialsLocal = materials;
+
+		for(int k = 0; k < zonesLocal.length; ++k) {
+			var zone = zonesLocal[k];
 			
-			zone.render(xCoords[k], yCoords[k], materials[k], (Graphics2D) graphics);
+			zone.render(xCoordsLocal[k], yCoordsLocal[k], materialsLocal[k], (Graphics2D) graphics);
 			if(zone instanceof ITransparentZone) {
-				((ITransparentZone) zone).drawAfter(xCoords[k], yCoords[k], materials[k], graphics);
+				((ITransparentZone) zone).drawAfter(xCoordsLocal[k], yCoordsLocal[k], materialsLocal[k], graphics);
 			}
 		}
 	}

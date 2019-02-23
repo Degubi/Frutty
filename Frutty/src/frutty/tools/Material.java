@@ -3,12 +3,14 @@ package frutty.tools;
 import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
+import java.nio.file.*;
 import java.util.*;
+import javax.imageio.*;
 import javax.swing.*;
 
 public final class Material implements Serializable{
 	public static final LinkedHashMap<String, Material> materialRegistry = new LinkedHashMap<>(4);
-	public static final BufferedImage missingTexture = IOHelper.loadTexture("./textures/missing.png");
+	public static final BufferedImage missingTexture = loadTexture("./textures/missing.png");
 
 	private static int indexer = 0;
 	
@@ -25,7 +27,7 @@ public final class Material implements Serializable{
 	
 	Material(String texturePath) {
 		name = texturePath;
-		texture = IOHelper.loadTexture("./textures/map/" + texturePath + ".png");
+		texture = loadTexture("./textures/map/" + texturePath + ".png");
 		particleColor = new Color(texture.getRGB(2, 2));
 		
 		editorTexture = new Lazy<>(() -> new ImageIcon(texture.getScaledInstance(64, 64, Image.SCALE_DEFAULT)));
@@ -37,6 +39,15 @@ public final class Material implements Serializable{
 		return materialRegistry.keySet().toArray(String[]::new);
 	}
 	
+	private static BufferedImage loadTexture(String path) {
+		try(var inputStream = Files.newInputStream(Path.of(path))){
+			return ImageIO.read(inputStream);
+		}catch(IOException e){
+			e.printStackTrace();
+			return Material.missingTexture;
+		}
+	}
+	
 	@SuppressWarnings("boxing")
 	@Override
 	public int hashCode() {
@@ -46,7 +57,7 @@ public final class Material implements Serializable{
 	@Override
 	public boolean equals(Object obj) {
 		if(obj instanceof Material) {
-			Material mat = (Material) obj;
+			var mat = (Material) obj;
 			return mat.index == index && mat.name.equals(name);
 		}
 		return false;
@@ -55,5 +66,24 @@ public final class Material implements Serializable{
 	@Override
 	public String toString() {
 		return name;
+	}
+	
+	public static BufferedImage loadTexture(String prefix, String name) {
+		try(var inputStream = Files.newInputStream(Path.of("./textures/" + prefix + '/' + name))){
+			return ImageIO.read(inputStream);
+		}catch(IOException e){
+			System.err.println("Can't find texture: " + prefix + '/' + name + " from class: " + Thread.currentThread().getStackTrace()[2].getClassName());
+			return null;
+		}
+	}
+	
+	public static BufferedImage[] loadTextures(String prefix, String... names) {
+		var textures = new BufferedImage[names.length];
+		
+		for(var x = 0; x < names.length; ++x) {
+			textures[x] = loadTexture(prefix, names[x]);
+		}
+		
+		return textures;
 	}
 }

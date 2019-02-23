@@ -9,7 +9,7 @@ import java.awt.image.*;
 import javax.swing.*;
 
 public final class MapZonePortal extends MapZoneBase{
-	public static final BufferedImage portalTexture = IOHelper.loadTexture("map/special", "portal.png");
+	public static final BufferedImage portalTexture = Material.loadTexture("map/special", "portal.png");
 	
 	public MapZonePortal() {
 		super("portalZone", true, false);

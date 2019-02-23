@@ -8,8 +8,7 @@ public interface IZoneEntityProvider {
 	 * This method needs to return a new instance of a EntityZone. E.g: For the apple zone, we need to store some counters per zone for delaying apple dropping.
 	 * @param x X coordinate of the zone
 	 * @param y Y coordinate of the zone
-	 * @param zoneIndex The index of the zone
 	 * @return The new EntityZone instance
 	 */
-	EntityZone getZoneEntity(int x, int y, int zoneIndex);
+	EntityZone getZoneEntity(int x, int y);
 }

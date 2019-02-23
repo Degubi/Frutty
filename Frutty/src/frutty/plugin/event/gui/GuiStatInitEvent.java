@@ -7,7 +7,8 @@ import javax.swing.tree.*;
 /**Event is fired when stats menu is initialized. can new stats to existing categories or add new categories. Can access the main stats file too.
  * UI: Need to use GuiStatSavedEvent too to make sure stats are getting saved.
  */
-public final class GuiStatInitEvent implements EventBase{
+@FruttyEvent
+public final class GuiStatInitEvent{
 	public final PropertyFile statsFile;
 	private final DefaultMutableTreeNode basicNodes, zoneNodes, enemyNodes, topNode;
 	

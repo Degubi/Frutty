@@ -1,5 +1,7 @@
 package frutty.world;
 
+import static java.nio.file.StandardOpenOption.*;
+
 import frutty.*;
 import frutty.entity.*;
 import frutty.entity.zone.*;
@@ -9,6 +11,7 @@ import frutty.tools.*;
 import frutty.world.base.*;
 import java.awt.image.*;
 import java.io.*;
+import java.nio.file.*;
 import java.util.*;
 
 public final class World{
@@ -84,7 +87,7 @@ public final class World{
 					zones[zoneIndex++] = MapZoneBase.emptyZone;
 				}else if(rng == 9) {
 					if(rand.nextBoolean()) {   //isApple
-						zoneEntities[zoneIndex] = new EntityAppleZone(x, y, zoneIndex);
+						zoneEntities[zoneIndex] = new EntityAppleZone(x, y);
 						zones[zoneIndex++] = MapZoneBase.appleZone;
 					}else {
 						zones[zoneIndex++] = MapZoneBase.cherryZone;
@@ -147,7 +150,7 @@ public final class World{
 	}
 	
 	public static void loadMap(String name, boolean isMultiplayer) {
-		try(var input = IOHelper.newObjectIS("./maps/" + name + ".fmap")){
+		try(var input = new ObjectInputStream(Files.newInputStream(Path.of("./maps/" + name + ".fmap")))){
 			int loadedWidth, loadedHeight, zoneIndex = 0;
 			
 			String[] zoneIDCache = (String[]) input.readObject();
@@ -172,7 +175,7 @@ public final class World{
 					yCoords[zoneIndex] = y;
 					
 					if(zone instanceof IZoneEntityProvider) {
-						zoneEntities[zoneIndex] = ((IZoneEntityProvider) zone).getZoneEntity(x, y, zoneIndex);
+						zoneEntities[zoneIndex] = ((IZoneEntityProvider) zone).getZoneEntity(x, y);
 					}
 					zones[zoneIndex++] = zone;
 				}
@@ -187,7 +190,7 @@ public final class World{
 	
 	public static void createSave(String fileName) {
 		if(fileName != null) {
-			try(var output = IOHelper.newObjectOS("./saves/" + fileName + ".sav")){
+			try(var output = new ObjectOutputStream(Files.newOutputStream(Path.of("./saves/" + fileName + ".sav"), CREATE, WRITE, TRUNCATE_EXISTING))){
 				output.writeObject(players);
 				
 				output.writeShort(zones.length);
@@ -228,7 +231,7 @@ public final class World{
 	@SuppressWarnings("unchecked")
 	public static boolean loadSave(String fileName) {
 		if(fileName != null) {
-			try(var input = IOHelper.newObjectIS("./saves/" + fileName)){
+			try(var input = new ObjectInputStream(Files.newInputStream(Path.of("./saves/" + fileName)))){
 				players = (EntityPlayer[]) input.readObject();
 				
 				zones = new MapZoneBase[input.readShort()];
@@ -268,9 +271,13 @@ public final class World{
 	}
 	
 	public static MapZoneBase getZoneAtPos(int x, int y) {
-		for(int k = 0; k < zones.length; ++k) {
-			if(xCoords[k] == x && yCoords[k] == y) {
-				return zones[k];
+		var zoneLocal = zones;
+		var xCoordsLocal = xCoords;
+		var yCoordsLocal = yCoords;
+		
+		for(int k = 0; k < zoneLocal.length; ++k) {
+			if(xCoordsLocal[k] == x && yCoordsLocal[k] == y) {
+				return zoneLocal[k];
 			}
 		}
 		return null;
@@ -289,6 +296,6 @@ public final class World{
 	}
 	
 	public static void loadSkyTexture(String textureName) {
-		skyTexture = !textureName.equals("null") ? IOHelper.loadTexture("map/skybox", textureName + ".png") : null;
+		skyTexture = !textureName.equals("null") ? Material.loadTexture("map/skybox", textureName + ".png") : null;
 	}
 }

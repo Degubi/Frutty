@@ -7,7 +7,6 @@ import frutty.tools.*;
 import frutty.world.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.*;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
@@ -47,10 +46,10 @@ public final class GuiMapSelection extends JPanel implements ListSelectionListen
 	@Override
 	public void valueChanged(ListSelectionEvent event) {
 		if(!event.getValueIsAdjusting()){
-			String path = "./textures/gui/" + mapList.getSelectedValue() + ".jpg";
+			var path = "./textures/gui/" + mapList.getSelectedValue() + ".jpg";
 
 			if(Files.exists(Path.of(path))) {
-				BufferedImage image = IOHelper.loadTexture("gui", mapList.getSelectedValue() + ".jpg");
+				var image = Material.loadTexture("gui", mapList.getSelectedValue() + ".jpg");
 				var graph = image.createGraphics();
 				graph.setColor(Color.BLACK);
 				graph.fillRect(380, 420, 100, 60);
@@ -74,7 +73,7 @@ public final class GuiMapSelection extends JPanel implements ListSelectionListen
 	}
 	
 	private void setModel() {
-		DefaultListModel<String> model = new DefaultListModel<>();
+		var model = new DefaultListModel<String>();
 		var files = Arrays.stream(new File("./maps").list()).filter(name -> name.endsWith(".fmap")).map(name -> name.substring(0, name.indexOf('.')));
 		
 		if(devMode.isSelected()) {
@@ -91,7 +90,7 @@ public final class GuiMapSelection extends JPanel implements ListSelectionListen
 	
 	@Override
 	public void actionPerformed(ActionEvent event) {
-		String actionCommand = event.getActionCommand();
+		var actionCommand = event.getActionCommand();
 		
 		if(actionCommand.equals("Play")) {
 			if(mapList.getSelectedValue().equals("Generate Map")) {
@@ -110,7 +109,7 @@ public final class GuiMapSelection extends JPanel implements ListSelectionListen
 	
 	
 	public static String loadMapSize(String fileName) {
-		try(var input = IOHelper.newObjectIS("./maps/" + fileName + ".fmap")){
+		try(var input = new ObjectInputStream(Files.newInputStream(Path.of("./maps/" + fileName + ".fmap")))){
 			input.readObject(); input.readObject();
 			input.readUTF();
 			return input.readShort() + "x" + input.readShort();
@@ -136,7 +135,7 @@ public final class GuiMapSelection extends JPanel implements ListSelectionListen
 
 		@Override
 		public void actionPerformed(ActionEvent event) {
-			String actionCommand = event.getActionCommand();
+			var actionCommand = event.getActionCommand();
 			
 			if(actionCommand.equals("Play")) {
 				var mapSize = sizeField.getText().split("x");

@@ -11,7 +11,7 @@ import java.awt.image.*;
 import javax.swing.*;
 
 public final class MapZoneApple extends MapZoneTexturable implements IZoneEntityProvider{
-	public static final BufferedImage appleTexture = IOHelper.loadTexture("fruit", "apple.png");
+	public static final BufferedImage appleTexture = Material.loadTexture("fruit", "apple.png");
 
 	public MapZoneApple() {
 		super("appleZone");
@@ -34,8 +34,8 @@ public final class MapZoneApple extends MapZoneTexturable implements IZoneEntity
 	}
 
 	@Override
-	public EntityZone getZoneEntity(int x, int y, int zoneIndex) {
-		return new EntityAppleZone(x, y, zoneIndex);
+	public EntityZone getZoneEntity(int x, int y) {
+		return new EntityAppleZone(x, y);
 	}
 	
 	@Override

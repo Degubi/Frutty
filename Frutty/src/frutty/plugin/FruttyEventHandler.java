@@ -2,7 +2,7 @@ package frutty.plugin;
 
 import java.lang.annotation.*;
 
-/**Mark any methods with this annotation to register it as an event method. (Method must be static and must contain a subclass of EventBase class. See them in the plugin.event package). See an example down below. <pre><code>
+/**Mark any methods with this annotation to register it as an event method. (Method must be static and must contain a class from the frutty.plugin.event* package. See them in the plugin.event package). See an example down below. <pre><code>
 	{@literal @}FruttyEvent
 	public static void mapLoadEvent(MapInitEvent event) {
 		//Access parameters through the event argument
@@ -10,7 +10,7 @@ import java.lang.annotation.*;
 </code> </pre>*/
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface FruttyEvent {
+public @interface FruttyEventHandler {
 	
 	/**Optional priority for the method, affects event execution ordering, defaults to EnumPriority.NORMAL*/
 	EnumPriority priority() default EnumPriority.NORMAL;

@@ -18,11 +18,11 @@ public final class GuiEditorProperties extends JPanel{
 	
 	public GuiEditorProperties(String mapName, String skyName, int width, int height, String nextMap) {
 		setLayout(null);
-		JTable table = new JTable(new PropertyTableModel());
+		var table = new JTable(new PropertyTableModel());
 		table.setBorder(new LineBorder(Color.GRAY, 1, true));
 		table.setBounds(20, 20, 300, 165);
 		
-		CustomCellRenderer renderer = new CustomCellRenderer();
+		var renderer = new CustomCellRenderer();
 		table.getColumnModel().getColumn(1).setCellRenderer(renderer);
 		table.getColumnModel().getColumn(0).setCellRenderer(renderer);
 		

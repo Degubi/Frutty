@@ -25,8 +25,8 @@ public final class StreamedSoundClip{
 					((FloatControl) soundLine.getControl(FloatControl.Type.MASTER_GAIN)).setValue(-20);
 					soundLine.start();
 					
-					int readBytes = 0;
-					byte[] soundData = new byte[16 * 1024];
+					var readBytes = 0;
+					var soundData = new byte[16 * 1024];
 					
 					while(shouldPlay && readBytes > -1) {
 						readBytes = audioInputStream.read(soundData, 0, soundData.length);
