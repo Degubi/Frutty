@@ -1,6 +1,7 @@
 /**Module used for plugin development*/
 module frutty.api{
 	requires transitive java.desktop;
+	requires java.compiler;
 	
 	exports frutty.gui;
 	exports frutty.gui.components;
