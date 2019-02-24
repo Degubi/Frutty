@@ -7,6 +7,7 @@ import java.io.*;
 import java.lang.invoke.*;
 import java.lang.reflect.*;
 import java.net.*;
+import java.nio.file.*;
 import java.util.*;
 import java.util.jar.*;
 
@@ -38,108 +39,84 @@ public final class Plugin{
 				description != null ? ("<br>Description: " + description) : "");
 	}
 	
-	private static Manifest getManifestFromJar(File jarPath) {
-		try(var jar = new JarFile(jarPath)){
-			return jar.getManifest();
+	private static String getMainClassNameFromJar(Path jarPath) {
+		try(var jar = new JarFile(jarPath.toFile())){
+			var mani = jar.getManifest();
+			
+			if(mani == null) {
+				throw new IllegalStateException("Can't find manifest file from plugin: " + jarPath);
+			}
+				
+			var pluginClass = mani.getMainAttributes().getValue("Plugin-Class");
+			if(pluginClass == null) {
+				throw new IllegalStateException("Can't find \"Plugin-Class\" attribute from plugin: " + jarPath);
+			}
+			return pluginClass;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
 	
+	private static URL convertToURL(Path file) {
+		try {
+			return file.toUri().toURL();
+		} catch (MalformedURLException e) {
+			throw new IllegalStateException();
+		}
+	}
+	
+	@SuppressWarnings("resource")
 	public static boolean loadPlugins() {
-		File[] pluginNames = new File("plugins").listFiles((dir, name) -> name.endsWith(".jar"));
-		int pluginCount = pluginNames.length;
-		
-		if(pluginCount > 0) {
-			String[] mainClassNames = new String[pluginCount];
-			URL[] classLoaderNames = new URL[pluginCount];
-			
-			for(int k = 0; k < pluginCount; ++k) {
-				try {
-					classLoaderNames[k] = pluginNames[k].toURI().toURL();
-				} catch (MalformedURLException e1) {
-					e1.printStackTrace();
-				}
-				
-				var mani = getManifestFromJar(pluginNames[k]);
-				
-				if(mani == null) {
-					throw new IllegalStateException("Can't find manifest file from plugin: " + pluginNames[k]);
-				}
-					
-				String pluginClass = mani.getMainAttributes().getValue("Plugin-Class");
-				if(pluginClass == null) {
-					throw new IllegalStateException("Can't find \"Plugin-Class\" attribute from plugin: " + pluginNames[k]);
-				}
-				mainClassNames[k] = pluginClass;
-			}
-			
-			try{
-				@SuppressWarnings("resource")
-				var urlClass = new URLClassLoader(classLoaderNames, FruttyMain.class.getClassLoader()); //Dont close this or shit breaks
-				
-				for(int k = 0; k < mainClassNames.length; ++k) {
-					if(mainClassNames[k] == null) {
-						throw new IllegalStateException("Can't load main class from plugin: " + pluginNames[k]);
+		try(var pluginFolder = Files.list(Path.of("plugins"))){
+			var pluginJars = pluginFolder.filter(Files::isRegularFile)
+										 .filter(file -> file.toString().endsWith(".jar"))
+										 .toArray(Path[]::new);
+
+			if(pluginJars.length > 0) {
+				var mainClasses = Arrays.stream(pluginJars).map(Plugin::getMainClassNameFromJar).toArray(String[]::new);
+				var classLoader = new URLClassLoader(Arrays.stream(pluginJars).map(Plugin::convertToURL).toArray(URL[]::new), FruttyMain.class.getClassLoader()); //Dont close this or shit breaks
+				var lookup = MethodHandles.publicLookup();
+
+				for(int k = 0; k < mainClasses.length; ++k) {
+					if(mainClasses[k] == null) {
+						throw new IllegalStateException("Can't load main class from plugin: " + pluginJars[k]);
 					}
-					
-					var loaded = urlClass.loadClass(mainClassNames[k]);
+
+					var loaded = classLoader.loadClass(mainClasses[k]);
 					if(!loaded.isAnnotationPresent(FruttyPlugin.class)) {
-						throw new IllegalStateException("Main class from plugin: " + pluginNames[k] + " is not annotated with @FruttyPlugin");
+						throw new IllegalStateException("Main class from plugin: " + pluginJars[k] + " is not annotated with @FruttyPlugin");
 					}
-					
+
 					var pluginAnnotation = loaded.getDeclaredAnnotation(FruttyPlugin.class);
 					plugins.add(new Plugin(pluginAnnotation.name(), pluginAnnotation.description(), pluginAnnotation.updateURL(), Version.fromString(pluginAnnotation.version()), pluginAnnotation.versionURL()));
-					
-					var ranMain = false;
-					for(var method : loaded.getDeclaredMethods()) {
-						if(ranMain) {
-							throw new IllegalStateException("Found more than one main methods from plugin: " + pluginNames[k]);
+
+					var pluginMains = Arrays.stream(loaded.getDeclaredMethods())
+											.filter(method -> method.isAnnotationPresent(FruttyPluginMain.class))
+											.toArray(Method[]::new);
+
+					if(pluginMains.length == 0) {
+						System.err.println("Can't find main method annotated with @FruttyPluginMain from plugin: " + pluginJars[k] + ", ignoring");
+					}else if(pluginMains.length > 1) {
+						throw new IllegalStateException("Found more than one main methods from plugin: " + pluginJars[k]);
+					}else{
+						lookup.unreflect(pluginMains[0]).invokeExact();
+
+						var eventClass = pluginMains[0].getAnnotation(FruttyPluginMain.class).eventClass();
+						if(eventClass != void.class) {
+							Arrays.stream(eventClass.getDeclaredMethods())
+								  .filter(eventMethod -> eventMethod.isAnnotationPresent(FruttyEventHandler.class))
+								  .filter(eventMethod -> eventMethod.getParameterTypes()[0].isAnnotationPresent(FruttyEvent.class))
+								  .forEach(eventMethod -> EventHandle.addEvent(lookup, eventMethod, eventMethod.getParameterTypes()[0]));
 						}
-						
-						if(method.isAnnotationPresent(FruttyPluginMain.class)) {
-							if((method.getModifiers() & Modifier.STATIC) != 0 || method.getParameterCount() > 0) {
-								var eventClass = method.getAnnotation(FruttyPluginMain.class).eventClass();
-										
-								if(eventClass != void.class) {
-									var eventMethods = eventClass.getDeclaredMethods();
-									var lookup = MethodHandles.publicLookup();
-									
-									for(var eventMts : eventMethods) {
-										if(eventMts.isAnnotationPresent(FruttyEventHandler.class)) {
-											if((eventMts.getModifiers() & Modifier.STATIC) != 0 && eventMts.getParameterCount() == 1) {
-												var eventTypeClass = eventMts.getParameterTypes()[0];
-												
-												if(!eventTypeClass.isAnnotationPresent(FruttyEvent.class)) {
-													throw new IllegalArgumentException("Illegal type of argument for method: " + eventMts.getName());
-												}
-												
-												EventHandle.addEvent(lookup, eventMts, eventTypeClass);
-											}else {
-												throw new IllegalStateException("Method from class: " + eventClass + ", methodName: " + eventMts.getName() + " is not static or has more than 1 parameters");
-											}
-										}
-									}
-								}
-								
-								method.invoke(null);
-								ranMain = true;
-								break;
-							}
-							throw new IllegalStateException("Main method from plugin: " + pluginNames[k] + " is not static or has method arguments");
-						}
-					}
-					
-					if(!ranMain) {
-						System.err.println("Can't find main method annotated with @FruttyPluginMain from plugin: " + pluginNames[k] + ", ignoring");
 					}
 				}
-			} catch (SecurityException | IllegalArgumentException | ClassNotFoundException | IllegalAccessException | InvocationTargetException e) {
-				e.printStackTrace();
+				return true;
 			}
-			return true;
+			return false;
+			
+		} catch (Throwable e1) {
+			throw new IllegalStateException("Something is fucked in plugin loading again...");
 		}
-		return false;
 	}
 }

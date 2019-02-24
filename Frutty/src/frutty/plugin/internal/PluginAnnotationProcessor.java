@@ -35,6 +35,10 @@ public class PluginAnnotationProcessor extends AbstractProcessor {
 				if(!modifiers.contains(PUBLIC) || !modifiers.contains(STATIC)) {
 					messager.printMessage(ERROR, "Annotated @FruttyPluginMain method must be public and static", pluginMainMethods[0]);
 				}
+				
+				if(!((ExecutableElement)element).getParameters().isEmpty()) {
+					messager.printMessage(ERROR, "Annotated @FruttyPluginMain method must not have any parameters", pluginMainMethods[0]);
+				}
 			}
 		}
 		

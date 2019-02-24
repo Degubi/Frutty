@@ -33,19 +33,23 @@ public final class EventHandle {
 		}
 	}
 	
-	public static void addEvent(Lookup lookup, Method eventMts, Class<?> eventTypeClass) throws IllegalAccessException {
-		var handle = new EventHandle(lookup.unreflect(eventMts), eventMts.getAnnotation(FruttyEventHandler.class).priority());
-		
-		if(eventTypeClass == WorldInitEvent.class) {
-			mapLoadEvents.add(handle);
-		}else if(eventTypeClass == GuiMenuEvent.class) {
-			menuInitEvents.add(handle);
-		}else if(eventTypeClass == GuiStatInitEvent.class) {
-			statInitEvents.add(handle);
-		}else if(eventTypeClass == GuiStatSavedEvent.class) {
-			statSaveEvents.add(handle);
-		}else if(eventTypeClass == ZoneAddedEvent.class) {
-			zoneAddedEvents.add(handle);
+	public static void addEvent(Lookup lookup, Method eventMts, Class<?> eventTypeClass) {
+		try {
+			var handle = new EventHandle(lookup.unreflect(eventMts), eventMts.getAnnotation(FruttyEventHandler.class).priority());
+			
+			if(eventTypeClass == WorldInitEvent.class) {
+				mapLoadEvents.add(handle);
+			}else if(eventTypeClass == GuiMenuEvent.class) {
+				menuInitEvents.add(handle);
+			}else if(eventTypeClass == GuiStatInitEvent.class) {
+				statInitEvents.add(handle);
+			}else if(eventTypeClass == GuiStatSavedEvent.class) {
+				statSaveEvents.add(handle);
+			}else if(eventTypeClass == ZoneAddedEvent.class) {
+				zoneAddedEvents.add(handle);
+			}
+		}catch (IllegalAccessException e) {
+			throw new RuntimeException(e);
 		}
 	}
 	
