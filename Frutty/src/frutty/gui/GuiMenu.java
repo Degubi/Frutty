@@ -5,7 +5,6 @@ import static frutty.tools.GuiHelper.*;
 import frutty.*;
 import frutty.gui.components.*;
 import frutty.plugin.event.gui.*;
-import frutty.plugin.internal.*;
 import frutty.tools.*;
 import frutty.world.*;
 import java.awt.*;
@@ -22,7 +21,7 @@ public final class GuiMenu extends GuiMapBackground implements ActionListener{
 	public static JFrame mainFrame;
 	
 	public GuiMenu() {
-		super("./maps/background" + FruttyMain.rand.nextInt(4) + ".fmap");
+		super("./maps/background" + Main.rand.nextInt(4) + ".fmap");
 		setLayout(null);
 		
 		if(devMessage.getText().isEmpty()) {

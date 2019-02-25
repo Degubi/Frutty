@@ -10,7 +10,7 @@ import java.lang.annotation.*;
 	}</code> </pre>*/
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface FruttyPluginMain {
+public @interface FruttyMain {
 	
 	/**The class object to read events from*/
 	Class<?> eventClass() default void.class;

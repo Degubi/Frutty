@@ -20,19 +20,19 @@ public final class Particle implements Serializable{
 		
 		if(fall) {
 			motionX = 0;
-			motionY = 2 + FruttyMain.rand.nextInt(3);
+			motionY = 2 + Main.rand.nextInt(3);
 		}else{
-			motionX = -2 + FruttyMain.rand.nextInt(5);
-			motionY = -2 + FruttyMain.rand.nextInt(2);
+			motionX = -2 + Main.rand.nextInt(5);
+			motionY = -2 + Main.rand.nextInt(2);
 		}
 		
-		lifeTime = 25 + FruttyMain.rand.nextInt(20);
+		lifeTime = 25 + Main.rand.nextInt(20);
 		this.color = color;
 	}
 	
 	public static void spawnFallingParticles(int count, int x, int y, Material material) {
 		if(Settings.graphicsLevel == 2) {
-			var rand = FruttyMain.rand;
+			var rand = Main.rand;
 			var color = material.particleColor;
 			var particles = World.particles;
 			

@@ -6,7 +6,6 @@ import frutty.*;
 import frutty.entity.*;
 import frutty.entity.zone.*;
 import frutty.plugin.event.world.*;
-import frutty.plugin.internal.*;
 import frutty.tools.*;
 import frutty.world.base.*;
 import java.awt.image.*;
@@ -71,7 +70,7 @@ public final class World{
 	}
 	
 	public static void generateMap(int genWidth, int genHeight, boolean isMultiplayer) {
-		var rand = FruttyMain.rand;
+		var rand = Main.rand;
 		int bigWidth = genWidth * 64, bigHeight = genHeight * 64, zoneIndex = 0;
 		
 		init(new String[] {"normal"}, isMultiplayer, null, "generated: " + genWidth + "x" + genHeight, bigWidth, bigHeight, null);

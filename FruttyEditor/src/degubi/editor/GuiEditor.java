@@ -49,6 +49,7 @@ public final class GuiEditor extends JPanel{
 
 	public static void openEmptyEditor() {
 		showEditorFrame(new GuiEditor(null, 0, 0, null, null), "", 800, 600);
+		GuiMenu.mainFrame.dispose();
 	}
 	
 	private void renderMap() {

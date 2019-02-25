@@ -1,11 +1,11 @@
 package frutty.plugin.event.gui;
 
-import frutty.plugin.internal.*;
+import frutty.*;
 import java.util.*;
 import javax.swing.*;
 
 /**Event is fired when the main menu is initialized, can add buttons to menu*/
-@FruttyEvent
+@FruttyEventMarker
 public final class GuiMenuEvent{
 	private final List<JButton> buttons;
 	

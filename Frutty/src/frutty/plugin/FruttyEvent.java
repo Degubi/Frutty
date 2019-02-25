@@ -10,7 +10,7 @@ import java.lang.annotation.*;
 </code> </pre>*/
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface FruttyEventHandler {
+public @interface FruttyEvent {
 	
 	/**Optional priority for the method, affects event execution ordering, defaults to EnumPriority.NORMAL*/
 	EnumPriority priority() default EnumPriority.NORMAL;

@@ -1,9 +1,9 @@
 package frutty.plugin.event.gui;
 
-import frutty.plugin.internal.*;
+import frutty.*;
 import frutty.tools.*;
 
-@FruttyEvent
+@FruttyEventMarker
 public final class GuiStatSavedEvent{
 	public final PropertyFile statsFile;
 	

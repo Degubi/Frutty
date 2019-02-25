@@ -12,7 +12,7 @@ public final class EntityEnemy extends Entity {
 	
 	private int textureIndex;
 	private boolean animSwitch;
-	private final boolean isFast = FruttyMain.rand.nextBoolean();
+	private final boolean isFast = Main.rand.nextBoolean();
 	public boolean active = true;
 
 	public EntityEnemy(int x, int y) {

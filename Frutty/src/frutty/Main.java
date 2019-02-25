@@ -1,18 +1,17 @@
 package frutty;
 
 import frutty.gui.*;
-import frutty.plugin.internal.*;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 
-public final class FruttyMain {
+public final class Main {
 	public static final Random rand = new Random();
 	
-	private FruttyMain() {}
+	private Main() {}
 	
 	public static void main(String[] args){
-		FruttyMain.createDirectory("plugins");
+		Main.createDirectory("plugins");
 		boolean loadedAny = Plugin.loadPlugins();
 		
 		if(loadedAny) {

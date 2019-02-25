@@ -1,6 +1,5 @@
-package frutty.plugin.internal;
+package frutty;
 
-import frutty.*;
 import frutty.plugin.*;
 import frutty.tools.*;
 import java.io.*;
@@ -12,7 +11,7 @@ import java.util.*;
 import java.util.jar.*;
 
 public final class Plugin{
-	public static final List<Plugin> plugins = FruttyMain.toList(new Plugin("Frutty", "Base module for the game.", "", Version.from(1, 4, 1), "https://pastebin.com/raw/m5qJbnks"), new Plugin("Frutty Plugin Loader", "Base module for the plugin loader", "", Version.from(1, 0, 0), ""));
+	public static final List<Plugin> plugins = Main.toList(new Plugin("Frutty", "Base module for the game.", "", Version.from(1, 4, 1), "https://pastebin.com/raw/m5qJbnks"), new Plugin("Frutty Plugin Loader", "Base module for the plugin loader", "", Version.from(1, 0, 0), ""));
 	
 	public final String description, ID, updateURL, versionURL;
 	public final Version version;
@@ -75,7 +74,7 @@ public final class Plugin{
 
 			if(pluginJars.length > 0) {
 				var mainClasses = Arrays.stream(pluginJars).map(Plugin::getMainClassNameFromJar).toArray(String[]::new);
-				var classLoader = new URLClassLoader(Arrays.stream(pluginJars).map(Plugin::convertToURL).toArray(URL[]::new), FruttyMain.class.getClassLoader()); //Dont close this or shit breaks
+				var classLoader = new URLClassLoader(Arrays.stream(pluginJars).map(Plugin::convertToURL).toArray(URL[]::new), Main.class.getClassLoader()); //Dont close this or shit breaks
 				var lookup = MethodHandles.publicLookup();
 
 				for(int k = 0; k < mainClasses.length; ++k) {
@@ -92,7 +91,7 @@ public final class Plugin{
 					plugins.add(new Plugin(pluginAnnotation.name(), pluginAnnotation.description(), pluginAnnotation.updateURL(), Version.fromString(pluginAnnotation.version()), pluginAnnotation.versionURL()));
 
 					var pluginMains = Arrays.stream(loaded.getDeclaredMethods())
-											.filter(method -> method.isAnnotationPresent(FruttyPluginMain.class))
+											.filter(method -> method.isAnnotationPresent(FruttyMain.class))
 											.toArray(Method[]::new);
 
 					if(pluginMains.length == 0) {
@@ -102,11 +101,11 @@ public final class Plugin{
 					}else{
 						lookup.unreflect(pluginMains[0]).invokeExact();
 
-						var eventClass = pluginMains[0].getAnnotation(FruttyPluginMain.class).eventClass();
+						var eventClass = pluginMains[0].getAnnotation(FruttyMain.class).eventClass();
 						if(eventClass != void.class) {
 							Arrays.stream(eventClass.getDeclaredMethods())
-								  .filter(eventMethod -> eventMethod.isAnnotationPresent(FruttyEventHandler.class))
-								  .filter(eventMethod -> eventMethod.getParameterTypes()[0].isAnnotationPresent(FruttyEvent.class))
+								  .filter(eventMethod -> eventMethod.isAnnotationPresent(FruttyEvent.class))
+								  .filter(eventMethod -> eventMethod.getParameterTypes()[0].isAnnotationPresent(FruttyEventMarker.class))
 								  .forEach(eventMethod -> EventHandle.addEvent(lookup, eventMethod, eventMethod.getParameterTypes()[0]));
 						}
 					}

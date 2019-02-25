@@ -1,9 +1,9 @@
 package frutty.plugin.event.world;
 
-import frutty.plugin.internal.*;
+import frutty.*;
 import frutty.world.base.*;
 
-@FruttyEvent
+@FruttyEventMarker
 public final class ZoneAddedEvent{
 	public final MapZoneBase zone;
 	public final int x, y;

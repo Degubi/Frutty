@@ -1,11 +1,11 @@
 package frutty.plugin.event.world;
 
+import frutty.*;
 import frutty.entity.*;
-import frutty.plugin.internal.*;
 import java.util.*;
 
 /**Event is fired when a map is initialized, can add entities, or change textures*/
-@FruttyEvent
+@FruttyEventMarker
 public final class WorldInitEvent{
 	public final int mapWidth, mapHeight;
 	public final String[] mapTextureCache;

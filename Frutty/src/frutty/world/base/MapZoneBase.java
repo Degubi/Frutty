@@ -5,7 +5,6 @@ import frutty.entity.*;
 import frutty.gui.*;
 import frutty.gui.GuiSettings.*;
 import frutty.plugin.event.world.*;
-import frutty.plugin.internal.*;
 import frutty.sound.*;
 import frutty.tools.*;
 import frutty.world.*;
@@ -57,7 +56,7 @@ public abstract class MapZoneBase implements Serializable{
 				World.zoneEntities[checkIndex].onNotified();
 			}
 			
-			Particle.spawnFallingParticles(2 + FruttyMain.rand.nextInt(10), x, y, material);
+			Particle.spawnFallingParticles(2 + Main.rand.nextInt(10), x, y, material);
 		}
 	}
 	
@@ -124,7 +123,7 @@ public abstract class MapZoneBase implements Serializable{
 	public static final MapZoneBush bushZone = new MapZoneBush();
 	public static final MapZonePortal portalZone = new MapZonePortal();
 	
-	private static final List<MapZoneBase> zoneRegistry = FruttyMain.toList(normalZone, emptyZone, appleZone, player1Zone, player2Zone, cherryZone, spawnerZone, chestZone, waterZone, skyZone, bushZone, portalZone);
+	private static final List<MapZoneBase> zoneRegistry = Main.toList(normalZone, emptyZone, appleZone, player1Zone, player2Zone, cherryZone, spawnerZone, chestZone, waterZone, skyZone, bushZone, portalZone);
 	
 	/**
 	 * Register zone

@@ -125,7 +125,7 @@ public abstract class Entity implements Serializable{
 		}
 
 		public static EnumFacing randomFacing() {
-			switch(FruttyMain.rand.nextInt(4)) {
+			switch(Main.rand.nextInt(4)) {
 				case 0: return UP;
 				case 1: return DOWN;
 				case 2: return LEFT;

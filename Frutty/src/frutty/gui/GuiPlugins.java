@@ -1,6 +1,6 @@
 package frutty.gui;
 
-import frutty.plugin.internal.*;
+import frutty.*;
 import frutty.tools.*;
 import java.awt.*;
 import java.io.*;

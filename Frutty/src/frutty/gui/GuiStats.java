@@ -2,9 +2,9 @@ package frutty.gui;
 
 import static frutty.tools.GuiHelper.*;
 
+import frutty.*;
 import frutty.gui.components.*;
 import frutty.plugin.event.gui.*;
-import frutty.plugin.internal.*;
 import frutty.tools.*;
 import java.awt.*;
 import java.awt.event.*;

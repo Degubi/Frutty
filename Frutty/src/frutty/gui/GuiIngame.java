@@ -141,8 +141,8 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 				for(int k = 0; k < World.zones.length; ++k) {
 					var zone = World.zones[k];
 					
-					if(zone.hasParticleSpawns && MapZoneBase.isEmpty(xCoords[k], yCoords[k] + 64) && FruttyMain.rand.nextInt(100) == 3) {
-						Particle.spawnFallingParticles(2 + FruttyMain.rand.nextInt(5), xCoords[k], yCoords[k], materials[k]);
+					if(zone.hasParticleSpawns && MapZoneBase.isEmpty(xCoords[k], yCoords[k] + 64) && Main.rand.nextInt(100) == 3) {
+						Particle.spawnFallingParticles(2 + Main.rand.nextInt(5), xCoords[k], yCoords[k], materials[k]);
 					}
 					
 					if(zone instanceof IZoneEntityProvider) {
@@ -210,7 +210,7 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 			});
 		}else if(keyCode == KeyEvent.VK_F12) {
 			try {
-				FruttyMain.createDirectory("screenshots");
+				Main.createDirectory("screenshots");
 				var window = ((JFrame)getTopLevelAncestor()).getLocationOnScreen();
 				ImageIO.write(new Robot().createScreenCapture(new Rectangle(window.x + 7, window.y + 30, World.width + 64, World.height + 64)), Settings.screenshotFormat, 
 																			new File("./screenshots/" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd_kk_HH_ss")) +"." + Settings.screenshotFormat.toLowerCase()));

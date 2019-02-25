@@ -1,4 +1,4 @@
-package frutty.plugin.internal;
+package frutty;
 
 import static javax.lang.model.element.Modifier.*;
 import static javax.tools.Diagnostic.Kind.*;
@@ -12,7 +12,7 @@ public class PluginAnnotationProcessor extends AbstractProcessor {
 
 	@Override
 	public Set<String> getSupportedAnnotationTypes() {
-		return Set.of("frutty.plugin.FruttyPlugin", "frutty.plugin.FruttyPluginMain", "frutty.plugin.FruttyEventHandler", "frutty.plugin.internal.FruttyEvent");
+		return Set.of("frutty.plugin.FruttyPlugin", "frutty.plugin.FruttyMain", "frutty.plugin.FruttyEvent", "frutty.plugin.internal.FruttyEventMarker");
 	}
 	
 	@Override
@@ -22,7 +22,7 @@ public class PluginAnnotationProcessor extends AbstractProcessor {
 
 		for(var element : env.getElementsAnnotatedWith(FruttyPlugin.class)) {
 			var pluginMainMethods = element.getEnclosedElements().stream()
-					   					   .filter(parent -> parent.getAnnotation(FruttyPluginMain.class) != null)
+					   					   .filter(parent -> parent.getAnnotation(FruttyMain.class) != null)
 					   					   .toArray(Element[]::new);
 			
 			if(pluginMainMethods.length == 0) {
@@ -30,19 +30,20 @@ public class PluginAnnotationProcessor extends AbstractProcessor {
 			}else if(pluginMainMethods.length > 1) {
 				messager.printMessage(ERROR, "Class has multiple methods annotated with @FruttyPluginMain", element);
 			}else{
-				var modifiers = pluginMainMethods[0].getModifiers();
+				var mainMethod = pluginMainMethods[0];
+				var modifiers = mainMethod.getModifiers();
 				
 				if(!modifiers.contains(PUBLIC) || !modifiers.contains(STATIC)) {
-					messager.printMessage(ERROR, "Annotated @FruttyPluginMain method must be public and static", pluginMainMethods[0]);
+					messager.printMessage(ERROR, "Annotated @FruttyPluginMain method must be public and static", mainMethod);
 				}
 				
-				if(!((ExecutableElement)element).getParameters().isEmpty()) {
-					messager.printMessage(ERROR, "Annotated @FruttyPluginMain method must not have any parameters", pluginMainMethods[0]);
+				if(!((ExecutableElement)mainMethod).getParameters().isEmpty()) {
+					messager.printMessage(ERROR, "Annotated @FruttyPluginMain method must not have any parameters", mainMethod);
 				}
 			}
 		}
 		
-		for(var element : env.getElementsAnnotatedWith(FruttyEventHandler.class)) {
+		for(var element : env.getElementsAnnotatedWith(FruttyEvent.class)) {
 			var modifiers = element.getModifiers();
 			
 			if(!modifiers.contains(PUBLIC) || !modifiers.contains(STATIC)) {
@@ -58,7 +59,7 @@ public class PluginAnnotationProcessor extends AbstractProcessor {
 				}else {
 					var firstParam = parameters.get(0);
 					
-					if(elementUtils.getTypeElement(firstParam.asType().toString()).getAnnotation(FruttyEvent.class) == null) {
+					if(elementUtils.getTypeElement(firstParam.asType().toString()).getAnnotation(FruttyEventMarker.class) == null) {
 						messager.printMessage(ERROR, "Parameter is not an event type", firstParam);
 					}
 				}

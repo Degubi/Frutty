@@ -1,4 +1,4 @@
-package frutty.plugin.internal;
+package frutty;
 
 import frutty.plugin.*;
 import frutty.plugin.event.gui.*;
@@ -35,7 +35,7 @@ public final class EventHandle {
 	
 	public static void addEvent(Lookup lookup, Method eventMts, Class<?> eventTypeClass) {
 		try {
-			var handle = new EventHandle(lookup.unreflect(eventMts), eventMts.getAnnotation(FruttyEventHandler.class).priority());
+			var handle = new EventHandle(lookup.unreflect(eventMts), eventMts.getAnnotation(FruttyEvent.class).priority());
 			
 			if(eventTypeClass == WorldInitEvent.class) {
 				mapLoadEvents.add(handle);
