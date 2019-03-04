@@ -3,6 +3,7 @@ package frutty.tools;
 import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
+import java.lang.StackWalker.*;
 import java.nio.file.*;
 import java.util.*;
 import javax.imageio.*;
@@ -72,7 +73,7 @@ public final class Material implements Serializable{
 		try(var inputStream = Files.newInputStream(Path.of("./textures/" + prefix + '/' + name))){
 			return ImageIO.read(inputStream);
 		}catch(IOException e){
-			System.err.println("Can't find texture: " + prefix + '/' + name + " from class: " + Thread.currentThread().getStackTrace()[2].getClassName());
+			System.err.println("Can't find texture: " + prefix + '/' + name + " from class: " + StackWalker.getInstance(Option.RETAIN_CLASS_REFERENCE).getCallerClass().getName());
 			return null;
 		}
 	}

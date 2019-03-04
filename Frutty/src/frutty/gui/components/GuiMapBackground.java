@@ -14,13 +14,14 @@ public abstract class GuiMapBackground extends JPanel {
 	
 	public GuiMapBackground(String mapName) {
 		try(var input = new ObjectInputStream(Files.newInputStream(Path.of(mapName)))){
-			String[] zoneIDCache = (String[]) input.readObject();
-			String[] textureCache = (String[]) input.readObject();
+			var zoneIDCache = (String[]) input.readObject();
+			var textureCache = (String[]) input.readObject();
 			
 			input.readUTF(); //Sky texture
 			input.readShort(); input.readShort();  //Width height felesleges, 14x10 az összes
 			input.readUTF(); //Next map
 			
+			var materialRegistry = Material.materialRegistry;
 			for(int y = 0, zoneIndex = 0; y < 640; y += 64) {
 				for(int x = 0; x < 896; x += 64) {
 					var zone = MapZoneBase.getZoneFromName(zoneIDCache[input.readByte()]);
@@ -30,7 +31,7 @@ public abstract class GuiMapBackground extends JPanel {
 					}
 					
 					if(zone instanceof MapZoneTexturable) {
-						materials[zoneIndex] = Material.materialRegistry.get(textureCache[input.readByte()]);
+						materials[zoneIndex] = materialRegistry.get(textureCache[input.readByte()]);
 					}
 					xCoords[zoneIndex] = x;
 					yCoords[zoneIndex] = y;
@@ -52,7 +53,7 @@ public abstract class GuiMapBackground extends JPanel {
 		for(int k = 0; k < zonesLocal.length; ++k) {
 			var zone = zonesLocal[k];
 			
-			zone.render(xCoordsLocal[k], yCoordsLocal[k], materialsLocal[k], (Graphics2D) graphics);
+			zone.render(xCoordsLocal[k], yCoordsLocal[k], materialsLocal[k], graphics);
 			if(zone instanceof ITransparentZone) {
 				((ITransparentZone) zone).drawAfter(xCoordsLocal[k], yCoordsLocal[k], materialsLocal[k], graphics);
 			}

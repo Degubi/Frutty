@@ -1,6 +1,7 @@
 package frutty.gui;
 
 import frutty.*;
+import frutty.gui.components.*;
 import frutty.tools.*;
 import java.awt.*;
 import java.io.*;
@@ -9,25 +10,41 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.event.HyperlinkEvent.*;
 
-public final class GuiPlugins implements ListSelectionListener, HyperlinkListener{
-	protected final JList<Plugin> pluginList = new JList<>(Plugin.plugins.toArray(new Plugin[Plugin.plugins.size()]));
-	protected final JTextPane description = new JTextPane();
-
+public final class GuiPlugins extends GuiMapBackground implements HyperlinkListener{
+	private GuiPlugins() {
+		super("./maps/dev_settings.fmap");
+		setLayout(new BorderLayout());
+	}
+	
 	public static void showPlugins() {
 		var plugs = new GuiPlugins();
+		var description = new JTextPane();
+		var pluginList = new JList<>(Plugin.plugins.toArray(Plugin[]::new));
+
+		pluginList.addListSelectionListener(e -> description.setText(Plugin.plugins.get(pluginList.getSelectedIndex()).getInfo()));
+		pluginList.setCellRenderer(new PluginListRenderer());
+		description.addHyperlinkListener(plugs);
+		description.setEditable(false);
+		description.setContentType("text/html");
+		pluginList.setSelectedIndex(0);
 		
-		plugs.pluginList.addListSelectionListener(plugs);
-		plugs.pluginList.setCellRenderer(new PluginListRenderer());
-		plugs.description.addHyperlinkListener(plugs);
-		plugs.description.setEditable(false);
-		plugs.description.setContentType("text/html");
-		plugs.pluginList.setSelectedIndex(0);
+		var pluginPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, pluginList, description);
+		pluginPanel.setResizeWeight(0.5D);
+		pluginPanel.setEnabled(false);
+		pluginPanel.setBackground(Color.GRAY);
 		
-		var pane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, plugs.pluginList, plugs.description);
-		pane.setResizeWeight(0.5D);
-		pane.setEnabled(false);
+		var bottomPanel = new JPanel(null);
+		bottomPanel.add(GuiHelper.newButton("Menu", 360, 15, e -> GuiHelper.switchMenuPanel(new GuiMenu())));
+		pluginPanel.setPreferredSize(new Dimension(Integer.MAX_VALUE, 530));
+		bottomPanel.setPreferredSize(new Dimension(Integer.MAX_VALUE, 100));
 		
-		GuiHelper.showNewGui(pane, "Frutty Plugins", 576, 480);
+		plugs.add(pluginPanel, BorderLayout.NORTH);
+		plugs.add(bottomPanel, BorderLayout.SOUTH);
+
+		pluginPanel.setOpaque(false);
+		bottomPanel.setOpaque(false);
+		
+		GuiHelper.switchMenuPanel(plugs);
 		
 		new Thread(() -> {
 			for(var plugin : Plugin.plugins) {
@@ -35,14 +52,8 @@ public final class GuiPlugins implements ListSelectionListener, HyperlinkListene
 					plugin.needsUpdate = true;
 				}
 			}
-			pane.repaint();
+			plugs.repaint();
 		}).start();
-	}
-
-	@Override
-	public void valueChanged(ListSelectionEvent event) {
-		description.setText(null);
-		description.setText(Plugin.plugins.get(pluginList.getSelectedIndex()).getInfo());
 	}
 
 	@Override

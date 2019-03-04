@@ -29,7 +29,7 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 	public GuiIngame() {
 		setLayout(null);
 		updateThread.scheduleAtFixedRate(this, 0, 20, TimeUnit.MILLISECONDS);
-		renderThread.scheduleAtFixedRate(() -> ingameGui.repaint(), 0, 1000 / Settings.fps, TimeUnit.MILLISECONDS);
+		renderThread.scheduleAtFixedRate(ingameGui::repaint, 0, 1000 / Settings.fps, TimeUnit.MILLISECONDS);
 	}
 	
 	@Override
@@ -40,10 +40,8 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 		var xCoords = World.xCoords;
 		var yCoords = World.yCoords;
 		var materials = World.materials;
-		var worldWidth = World.width;
-		var worldHeight = World.height;
 
-		for(var k = 0; k < zones.length; ++k) zones[k].render(xCoords[k], yCoords[k], materials[k], (Graphics2D) graphics);
+		for(var k = 0; k < zones.length; ++k) zones[k].render(xCoords[k], yCoords[k], materials[k], graphics);
 		for(var players : World.players) players.handleRender(graphics);
 		
 		for(var entity : World.entities) {
@@ -65,6 +63,9 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 				((ITransparentZone)zone).drawAfter(xCoords[k], yCoords[k], materials[k], graphics);
 			}
 		}
+		
+		var worldWidth = World.width;
+		var worldHeight = World.height;
 		
 		graphics.setColor(Color.BLACK);
 		graphics.setFont(GuiHelper.ingameFont);

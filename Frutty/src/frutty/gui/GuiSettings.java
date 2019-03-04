@@ -12,7 +12,7 @@ public final class GuiSettings extends GuiMapBackground implements ActionListene
 		setLayout(null);
 		
 		for(var comp : components) add(comp);
-		add(GuiHelper.newButton("Save", 370, 525, this));
+		add(GuiHelper.newButton("Save", 371, 525, this));
 	}
 	
 	@Override

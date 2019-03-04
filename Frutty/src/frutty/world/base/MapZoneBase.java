@@ -33,7 +33,7 @@ public abstract class MapZoneBase implements Serializable{
 		this(name, true, true);
 	}
 	
-	public abstract void draw(int x, int y, Material material, Graphics2D graphics);
+	public abstract void draw(int x, int y, Material material, Graphics graphics);
 	protected abstract ImageIcon getEditorIcon();
 	
 	public boolean doesHidePlayer(int x, int y) {return false;}
@@ -64,7 +64,7 @@ public abstract class MapZoneBase implements Serializable{
 	/********************************************************INTERNALS***********************************************************/
 	
 	
-	public final void render(int x, int y, Material material, Graphics2D graphics) {
+	public final void render(int x, int y, Material material, Graphics graphics) {
 		draw(x, y, material, graphics);
 		
 		if(hasShadowRender && Settings.graphicsLevel > 0) {

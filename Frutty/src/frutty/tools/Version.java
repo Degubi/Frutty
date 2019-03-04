@@ -57,7 +57,7 @@ public final class Version{
 			return false;
 		}
 		return (majorVersion > otherVersion.majorVersion || (majorVersion == otherVersion.majorVersion && minorVersion > otherVersion.minorVersion) || 
-				(majorVersion == otherVersion.majorVersion && minorVersion == otherVersion.minorVersion && patchVersion > otherVersion.patchVersion));
+			   (majorVersion == otherVersion.majorVersion && minorVersion == otherVersion.minorVersion && patchVersion > otherVersion.patchVersion));
 	}
 	
 	public boolean isOlderThan(Version otherVersion) {
@@ -65,7 +65,7 @@ public final class Version{
 			return false;
 		}
 		return (majorVersion < otherVersion.majorVersion || (majorVersion == otherVersion.majorVersion && minorVersion < otherVersion.minorVersion) || 
-				(majorVersion == otherVersion.majorVersion && minorVersion == otherVersion.minorVersion && patchVersion < otherVersion.patchVersion));
+			   (majorVersion == otherVersion.majorVersion && minorVersion == otherVersion.minorVersion && patchVersion < otherVersion.patchVersion));
 	}
 	
 	public boolean isSameVersion(Version otherVersion) {

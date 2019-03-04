@@ -12,7 +12,7 @@ public final class MapZoneSky extends MapZoneBase{
 	}
 
 	@Override
-	public void draw(int x, int y, Material material, Graphics2D graphics) {
+	public void draw(int x, int y, Material material, Graphics graphics) {
 		graphics.drawImage(World.skyTexture, x, y, x + 64, y + 64, x, y, x + 64, y + 64, null);
 	}
 	

@@ -9,15 +9,18 @@ import frutty.tools.*;
 import frutty.world.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.*;
 import java.io.*;
 import java.net.*;
 import java.nio.file.*;
 import java.util.*;
+import javax.imageio.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
 public final class GuiMenu extends GuiMapBackground implements ActionListener{
 	private static final JTextArea devMessage = new JTextArea();
+	public static final BufferedImage frameIcon = getFrameIcon(); 
 	public static JFrame mainFrame;
 	
 	public GuiMenu() {
@@ -27,7 +30,7 @@ public final class GuiMenu extends GuiMapBackground implements ActionListener{
 		if(devMessage.getText().isEmpty()) {
 			new Thread(() -> {
 				try(var input = new URL("https://pastebin.com/raw/tffU5Vu6").openStream()){
-					byte[] kek = new byte[255];
+					var kek = new byte[255];
 					
 					devMessage.setText(new String(kek, 0, input.readNBytes(kek, 0, 255)));
 					devMessage.setEditable(false);
@@ -56,6 +59,14 @@ public final class GuiMenu extends GuiMapBackground implements ActionListener{
 		}
 	}
 	
+	private static BufferedImage getFrameIcon() {
+		try {
+			return ImageIO.read(new File("./textures/player/side.png"));
+		} catch (IOException e) {
+			return null;
+		}
+	}
+	
 	public static void createMainFrame(boolean checkUpdate) {
 		var menu = new GuiMenu();
 		
@@ -79,6 +90,7 @@ public final class GuiMenu extends GuiMapBackground implements ActionListener{
 			mainFrame = new JFrame("Frutty");
 			mainFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 			mainFrame.setResizable(false);
+			mainFrame.setIconImage(frameIcon);
 			mainFrame.setBounds(0, 0, 910, 675);
 			mainFrame.setLocationRelativeTo(null);
 			mainFrame.setContentPane(menu);

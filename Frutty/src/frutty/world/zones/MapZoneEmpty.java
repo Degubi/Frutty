@@ -12,7 +12,7 @@ public final class MapZoneEmpty extends MapZoneBase{
 	}
 
 	@Override
-	public void draw(int x, int y, Material material, Graphics2D graphics) {
+	public void draw(int x, int y, Material material, Graphics graphics) {
 		graphics.setColor(Color.BLACK);
 		graphics.fillRect(x, y, 64, 64);
 	}

@@ -25,7 +25,7 @@ public final class MapZoneSpawner extends MapZoneBase{
 	}
 	
 	@Override
-	public void draw(int x, int y, Material material, Graphics2D graphics) {
+	public void draw(int x, int y, Material material, Graphics graphics) {
 		if(colorIndexer == 31) {
 			decrease = true;
 		}
