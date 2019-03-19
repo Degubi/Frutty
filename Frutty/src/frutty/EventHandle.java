@@ -9,11 +9,11 @@ import java.lang.reflect.*;
 import java.util.*;
 
 public final class EventHandle {
-	public static final ArrayList<EventHandle> mapLoadEvents = new ArrayList<>(0);
-	public static final ArrayList<EventHandle> menuInitEvents = new ArrayList<>(0);
-	public static final ArrayList<EventHandle> statInitEvents = new ArrayList<>(0);
-	public static final ArrayList<EventHandle> statSaveEvents = new ArrayList<>(0);
-	public static final ArrayList<EventHandle> zoneAddedEvents = new ArrayList<>(0);
+	public static final ArrayList<EventHandle> mapLoadEvents = new ArrayList<>();
+	public static final ArrayList<EventHandle> menuInitEvents = new ArrayList<>();
+	public static final ArrayList<EventHandle> statInitEvents = new ArrayList<>();
+	public static final ArrayList<EventHandle> statSaveEvents = new ArrayList<>();
+	public static final ArrayList<EventHandle> zoneAddedEvents = new ArrayList<>();
 	
 	public final MethodHandle handle;
 	public final int priority;

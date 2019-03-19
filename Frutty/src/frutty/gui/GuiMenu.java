@@ -9,40 +9,18 @@ import frutty.tools.*;
 import frutty.world.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.*;
 import java.io.*;
-import java.net.*;
 import java.nio.file.*;
 import java.util.*;
-import javax.imageio.*;
 import javax.swing.*;
-import javax.swing.border.*;
 
 public final class GuiMenu extends GuiMapBackground implements ActionListener{
-	private static final JTextArea devMessage = new JTextArea();
-	public static final BufferedImage frameIcon = getFrameIcon(); 
+	public static final Image frameIcon = Toolkit.getDefaultToolkit().createImage("./textures/player/side.png");
 	public static JFrame mainFrame;
 	
 	public GuiMenu() {
 		super("./maps/background" + Main.rand.nextInt(4) + ".fmap");
 		setLayout(null);
-		
-		if(devMessage.getText().isEmpty()) {
-			new Thread(() -> {
-				try(var input = new URL("https://pastebin.com/raw/tffU5Vu6").openStream()){
-					var kek = new byte[255];
-					
-					devMessage.setText(new String(kek, 0, input.readNBytes(kek, 0, 255)));
-					devMessage.setEditable(false);
-					devMessage.setForeground(Color.WHITE);
-					devMessage.setBackground(new Color(0, 0, 0, 192));
-					devMessage.setBorder(new CompoundBorder(new MatteBorder(0, 12, 0, 0, Color.YELLOW), new MatteBorder(4, 4, 4, 4, Color.LIGHT_GRAY)));
-					devMessage.setBounds(20, 40, devMessage.getText().indexOf('\n') * 7, 80);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}, "Menu Dev Message Thread").start();
-		}
 		
 		add(newButton("New Game", 700, 20, this));
 		add(newButton("Exit", 370, 550, this));
@@ -50,20 +28,11 @@ public final class GuiMenu extends GuiMapBackground implements ActionListener{
 		add(newButton("Load Save", 700, 100, this));
 		add(newButton("Plugins", 20, 400, this));
 		add(newButton("Stats", 700, 330, this));
-		add(devMessage);
 		
 		if(!EventHandle.menuInitEvents.isEmpty()) {
 			var eventButtons = new ArrayList<JButton>(0);
 			EventHandle.handleEvent(new GuiMenuEvent(eventButtons), EventHandle.menuInitEvents);
 			for(var butt : eventButtons) add(butt);
-		}
-	}
-	
-	private static BufferedImage getFrameIcon() {
-		try {
-			return ImageIO.read(new File("./textures/player/side.png"));
-		} catch (IOException e) {
-			return null;
 		}
 	}
 	
@@ -108,6 +77,7 @@ public final class GuiMenu extends GuiMapBackground implements ActionListener{
 		graphics.setColor(Color.WHITE);
 		graphics.setFont(GuiHelper.thiccFont);
 		graphics.drawString("Version: " + Plugin.plugins.get(0).version, 10, 625);
+		graphics.setColor(Color.YELLOW);
 	}
 	
 	@Override
@@ -115,7 +85,7 @@ public final class GuiMenu extends GuiMapBackground implements ActionListener{
 		var command = event.getActionCommand();
 		
 		if(command.equals("New Game")){
-			GuiHelper.switchMenuPanel(new GuiMapSelection());
+			GuiHelper.switchGui(new GuiMapSelection());
 		}else if(command.equals("Exit")){
 			System.exit(0);
 		}else if(command.equals("Settings")){
@@ -123,7 +93,7 @@ public final class GuiMenu extends GuiMapBackground implements ActionListener{
 		}else if(command.equals("Plugins")) {
 			GuiPlugins.showPlugins();
 		}else if(command.equals("Stats")){
-			GuiHelper.switchMenuPanel(new GuiStats());
+			GuiHelper.switchGui(new GuiStats());
 		}else{ //Load
 			try(var files = Files.list(Path.of("./saves"))){
 				var saveFolderList = files.map(Path::getFileName).map(Path::toString).toArray(String[]::new);

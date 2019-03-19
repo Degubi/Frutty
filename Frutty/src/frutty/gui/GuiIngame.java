@@ -26,12 +26,6 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 	private int renderDelay;
 	private long renderLastUpdate = System.currentTimeMillis();
 	
-	public GuiIngame() {
-		setLayout(null);
-		updateThread.scheduleAtFixedRate(this, 0, 20, TimeUnit.MILLISECONDS);
-		renderThread.scheduleAtFixedRate(ingameGui::repaint, 0, 1000 / Settings.fps, TimeUnit.MILLISECONDS);
-	}
-	
 	@Override
 	protected void paintComponent(Graphics graphics) {
 		super.paintComponent(graphics);
@@ -181,6 +175,8 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 			ingameFrame.setLocationRelativeTo(null);
 			ingameFrame.setContentPane(ingameGui = new GuiIngame());
 			ingameFrame.addKeyListener(ingameGui);
+			ingameGui.updateThread.scheduleAtFixedRate(ingameGui, 0, 20, TimeUnit.MILLISECONDS);
+			ingameGui.renderThread.scheduleAtFixedRate(ingameGui::repaint, 0, 1000 / Settings.fps, TimeUnit.MILLISECONDS);
 			ingameFrame.setFocusable(true);
 			for(var players : World.players) {
 				ingameFrame.addKeyListener(players);

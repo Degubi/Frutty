@@ -34,7 +34,7 @@ public final class GuiPlugins extends GuiMapBackground implements HyperlinkListe
 		pluginPanel.setBackground(Color.GRAY);
 		
 		var bottomPanel = new JPanel(null);
-		bottomPanel.add(GuiHelper.newButton("Menu", 360, 15, e -> GuiHelper.switchMenuPanel(new GuiMenu())));
+		bottomPanel.add(GuiHelper.newButton("Menu", 360, 15, e -> GuiHelper.switchGui(new GuiMenu())));
 		pluginPanel.setPreferredSize(new Dimension(Integer.MAX_VALUE, 530));
 		bottomPanel.setPreferredSize(new Dimension(Integer.MAX_VALUE, 100));
 		
@@ -44,7 +44,7 @@ public final class GuiPlugins extends GuiMapBackground implements HyperlinkListe
 		pluginPanel.setOpaque(false);
 		bottomPanel.setOpaque(false);
 		
-		GuiHelper.switchMenuPanel(plugs);
+		GuiHelper.switchGui(plugs);
 		
 		new Thread(() -> {
 			for(var plugin : Plugin.plugins) {

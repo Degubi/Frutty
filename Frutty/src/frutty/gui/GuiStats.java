@@ -62,7 +62,7 @@ public final class GuiStats extends GuiMapBackground implements ActionListener{
 			repaint();
 			saveStats();
 		}else{
-			GuiHelper.switchMenuPanel(new GuiMenu());
+			GuiHelper.switchGui(new GuiMenu());
 		}
 	}
 	

@@ -94,14 +94,14 @@ public final class GuiMapSelection extends JPanel implements ListSelectionListen
 		
 		if(actionCommand.equals("Play")) {
 			if(mapList.getSelectedValue().equals("Generate Map")) {
-				GuiHelper.switchMenuPanel(new GuiGenerateMap());
+				GuiHelper.switchGui(new GuiGenerateMap());
 			}else{
 				World.loadMap(mapList.getSelectedValue(), coopBox.isSelected());
 				GuiIngame.showIngame();
 				GuiMenu.mainFrame.dispose();
 			}
 		}else if(actionCommand.equals("Menu")) {
-			switchMenuPanel(new GuiMenu());
+			switchGui(new GuiMenu());
 		}else if(actionCommand.equals("Enable Dev Maps")) {
 			setModel();
 		}
@@ -143,7 +143,7 @@ public final class GuiMapSelection extends JPanel implements ListSelectionListen
 				GuiIngame.showIngame();
 				GuiMenu.mainFrame.dispose();
 			}else if(actionCommand.equals("Menu")) {
-				switchMenuPanel(new GuiMenu());
+				switchGui(new GuiMenu());
 			}
 		}
 	}

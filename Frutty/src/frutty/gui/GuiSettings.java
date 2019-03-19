@@ -42,7 +42,7 @@ public final class GuiSettings extends GuiMapBackground implements ActionListene
 			Settings.settingProperties.setInt("volume", Settings.volume = volumeSlider.counter);
 			Settings.settingProperties.setString("screenshotFormat", Settings.screenshotFormat = screenshotFormats[screenshotFormatButton.optionIndex]);
 			Settings.settingProperties.save();
-			GuiHelper.switchMenuPanel(new GuiMenu());
+			GuiHelper.switchGui(new GuiMenu());
 		}
 	}
 	
@@ -59,7 +59,7 @@ public final class GuiSettings extends GuiMapBackground implements ActionListene
 		insets.bottom = -1;
 		UIManager.put("TabbedPane.contentBorderInsets", insets);
 		
-		GuiHelper.switchMenuPanel(tabbed);
+		GuiHelper.switchGui(tabbed);
 	}
 	
 	private static final SettingButton difficultyButton = new SettingButton(Settings.difficulty, "Difficulty", 100, 20, "Easy", "Normal", "Hard");

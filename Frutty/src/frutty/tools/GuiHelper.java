@@ -23,23 +23,10 @@ public final class GuiHelper {
 		}
 	}
 	
-	public static void switchMenuPanel(Container panel) {
+	public static void switchGui(Container panel) {
 		EventQueue.invokeLater(() -> {
 			GuiMenu.mainFrame.setContentPane(panel);
 			GuiMenu.mainFrame.revalidate();
-		});
-	}
-	
-	public static void showNewGui(Container panel, String name, int width, int height) {
-		EventQueue.invokeLater(() -> {
-			JFrame frame = new JFrame(name);
-			frame.setContentPane(panel);
-			frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-			frame.setResizable(false);
-			frame.setBounds(0, 0, width, height);
-			frame.setLocationRelativeTo(null);
-			frame.setFocusable(true);
-			frame.setVisible(true);
 		});
 	}
 	

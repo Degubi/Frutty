@@ -7,7 +7,7 @@ import javax.sound.sampled.DataLine.*;
 
 public final class StreamedSoundClip{
 	private final File soundFile;
-	private boolean shouldPlay = true;
+	private volatile boolean shouldPlay = true;
 	
 	public StreamedSoundClip(String fileName) {
 		soundFile = new File("./sounds/" + fileName);

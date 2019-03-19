@@ -12,7 +12,6 @@ public final class CachedSoundClip {
 			try(var audioInputStream = AudioSystem.getAudioInputStream(new File("./sounds/" + filePath))){
 				soundClip.open(audioInputStream);
 				((FloatControl) soundClip.getControl(FloatControl.Type.MASTER_GAIN)).setValue(-20);
-				
 			} catch (IOException | UnsupportedAudioFileException | LineUnavailableException e) {
 				e.printStackTrace();
 			}
