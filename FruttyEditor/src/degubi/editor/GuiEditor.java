@@ -191,8 +191,8 @@ public final class GuiEditor extends JPanel{
 	    	fileMenu.add(newMenuItem("Exit to menu", '0', true, event -> {frame.dispose(); GuiMenu.createMainFrame(false);}));
 	    	fileMenu.add(newMenuItem("Exit app", '0', true, event -> System.exit(0)));
 	    	
-	    	mapMenu.add(newMenuItem("Map Properties", 'P', true, event -> GuiHelper.showNewGui(editor.mapProperties, "Map Properties", 350, 350)));
-	    	mapMenu.add(newMenuItem("Map Information", 'I', true, event -> GuiHelper.showNewGui(new GuiEditorInfo(editor.zoneButtons), "Map Info", 350, 350)));
+	    	mapMenu.add(newMenuItem("Map Properties", 'P', true, event -> showNewGui(editor.mapProperties, "Map Properties", 350, 350)));
+	    	mapMenu.add(newMenuItem("Map Information", 'I', true, event -> showNewGui(new GuiEditorInfo(editor.zoneButtons), "Map Info", 350, 350)));
 	    	
 	    	menuBar.add(fileMenu);
 	    	menuBar.add(mapMenu);
@@ -201,6 +201,19 @@ public final class GuiEditor extends JPanel{
 			frame.setVisible(true);
 		});
 	}
+	
+	private static void showNewGui(Container panel, String name, int width, int height) {
+        EventQueue.invokeLater(() -> {
+            JFrame frame = new JFrame(name);
+            frame.setContentPane(panel);
+            frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+            frame.setResizable(false);
+            frame.setBounds(0, 0, width, height);
+            frame.setLocationRelativeTo(null);
+            frame.setFocusable(true);
+            frame.setVisible(true);
+        });
+    }
 	
 	private static JMenuItem newMenuItem(String text, char shortcut, boolean setEnabled, ActionListener listener) {
 		var item = new JMenuItem(text);

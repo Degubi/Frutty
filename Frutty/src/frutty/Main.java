@@ -11,7 +11,7 @@ public final class Main {
 	private Main() {}
 	
 	public static void main(String[] args){
-		Main.createDirectory("plugins");
+		createDirectory("plugins");
 		boolean loadedAny = Plugin.loadPlugins();
 		
 		if(loadedAny) {

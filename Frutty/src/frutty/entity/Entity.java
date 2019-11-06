@@ -28,7 +28,7 @@ public abstract class Entity implements Serializable{
 	public abstract void updateServer();
 	public abstract int getClientUpdateRate();
 	public abstract int getServerUpdateRate();
-	public void onKilled(@SuppressWarnings("unused") Entity killer) {};
+	public void onKilled(@SuppressWarnings("unused") Entity killer) {}
 	
 	/**************************************************INTERNALS**************************************************/
 	

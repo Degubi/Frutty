@@ -30,7 +30,7 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 	protected void paintComponent(Graphics graphics) {
 		super.paintComponent(graphics);
 		
-		var zones = World.zones;         //Hoist globals that are read multiple times
+		var zones = World.zones;
 		var xCoords = World.xCoords;
 		var yCoords = World.yCoords;
 		var materials = World.materials;
