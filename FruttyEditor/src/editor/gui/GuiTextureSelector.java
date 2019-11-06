@@ -1,4 +1,4 @@
-package degubi.editor;
+package editor.gui;
 
 import frutty.tools.*;
 import java.awt.*;

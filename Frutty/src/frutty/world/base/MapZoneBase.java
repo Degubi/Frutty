@@ -14,7 +14,7 @@ import java.io.*;
 import java.util.List;
 import javax.swing.*;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "static-method"})
 public abstract class MapZoneBase implements Serializable{
 	private static final long serialVersionUID = 392316063689927131L;
 	public transient final Lazy<ImageIcon> editorTexture = new Lazy<>(this::getEditorIconInternal);
@@ -36,7 +36,7 @@ public abstract class MapZoneBase implements Serializable{
 	public abstract void draw(int x, int y, Material material, Graphics graphics);
 	protected abstract ImageIcon getEditorIcon();
 	
-	public boolean doesHidePlayer(int x, int y) {return false;}
+    public boolean doesHidePlayer(int x, int y) {return false;}
 	public boolean isBreakable(int x, int y) {return canPlayerPass(x, y);}
 	public boolean canPlayerPass(int x, int y) {return true;}
 	public boolean canNPCPass(int x, int y) {return false;}

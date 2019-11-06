@@ -1,6 +1,6 @@
-package degubi;
+package editor;
 
-import degubi.editor.*;
+import editor.gui.*;
 import frutty.plugin.*;
 import frutty.plugin.event.gui.*;
 import frutty.tools.*;

@@ -1,6 +1,6 @@
-package degubi.editor;
+package editor.gui;
 
-import degubi.editor.GuiEditor.*;
+import editor.gui.GuiEditor.*;
 import frutty.tools.*;
 import java.awt.*;
 import java.io.*;

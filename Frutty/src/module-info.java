@@ -1,7 +1,7 @@
 /**Module used for plugin development*/
 module frutty.api{
 	requires transitive java.desktop;
-	requires java.compiler;
+	requires static java.compiler;
 	
 	exports frutty.gui;
 	exports frutty.gui.components;
@@ -19,4 +19,6 @@ module frutty.api{
 	
 	exports frutty.world.zones;
 	exports frutty.world.base;
+	
+	provides javax.annotation.processing.Processor with frutty.PluginAnnotationProcessor;
 }

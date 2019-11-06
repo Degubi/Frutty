@@ -1,9 +1,9 @@
-package degubi.editor;
+package editor.gui;
 
 import static java.nio.file.StandardOpenOption.*;
 
-import degubi.editor.GuiEditorProperties.*;
-import degubi.editor.GuiTextureSelector.*;
+import editor.gui.GuiEditorProperties.*;
+import editor.gui.GuiTextureSelector.*;
 import frutty.gui.*;
 import frutty.tools.*;
 import frutty.world.base.*;
