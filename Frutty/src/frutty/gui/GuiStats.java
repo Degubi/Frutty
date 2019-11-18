@@ -37,18 +37,17 @@ public final class GuiStats extends GuiMapBackground implements ActionListener{
 		top.add(enemies);
 		
 		var statTree = new JTree(top);
-		statTree.setBackground(Color.RED);
+		statTree.setBackground(Color.BLACK);
 		statTree.setCellRenderer(new TreeRender());
 		statTree.setFont(GuiHelper.thiccFont);
-		statTree.setOpaque(false);
-		statTree.setBounds(50, 50, 800, 400);
+		statTree.setOpaque(true);
+		statTree.setBounds(50, 50, 200, 400);
 		
 		if(!EventHandle.statInitEvents.isEmpty()) {
 			EventHandle.handleEvent(new GuiStatInitEvent(stats, basic, zones, enemies, top), EventHandle.statInitEvents);
 		}
 		
 		add(statTree);
-		
 		add(newButton("Reset", 100, 550, this));
 		add(newButton("Menu", 370, 550, this));
 	}
@@ -94,7 +93,7 @@ public final class GuiStats extends GuiMapBackground implements ActionListener{
 		
 		@Override
 		public Color getTextNonSelectionColor() {
-			return Color.BLACK;
+			return Color.WHITE;
 		}
 	}
 }

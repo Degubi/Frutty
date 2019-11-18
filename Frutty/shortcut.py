@@ -1,20 +1,12 @@
-from subprocess import call
-from inspect import cleandoc as format
-from os import getcwd, environ, remove as removefile
+from os import environ, getcwd as getworkdir
+from win32com.client import Dispatch
 
-workdir = getcwd()
-linkPath = environ["HOMEPATH"] + r"\Desktop\Frutty.lnk"
+workdir = getworkdir()
+shell = Dispatch("WScript.Shell")
 
-command = fr'''Set oWS = WScript.CreateObject("WScript.Shell")
-               Set oLink = oWS.CreateShortcut("{linkPath}")
-                   oLink.TargetPath = "{workdir}\bin\javaw.exe"
-                   oLink.Arguments = "-jar ""{workdir}\Frutty.jar"""
-                   oLink.WorkingDirectory = "{workdir}"
-                   oLink.IconLocation = "{workdir}\icon.ico"
-                   oLink.Save'''
-
-with open("iconScript.vbs", "w") as vbsScript:
-    vbsScript.write(format(command))
-
-call("wscript.exe iconScript.vbs");
-removefile("iconScript.vbs")
+shortcut = shell.CreateShortCut(environ["HOMEPATH"] + r"\Desktop\Frutty.lnk")
+shortcut.Targetpath = workdir + r"\bin\javaw.exe"
+shortcut.IconLocation = workdir + r"\icon.ico"
+shortcut.Arguments = fr'-jar "{workdir}\Frutty.jar"'
+shortcut.WorkingDirectory = workdir
+shortcut.save()

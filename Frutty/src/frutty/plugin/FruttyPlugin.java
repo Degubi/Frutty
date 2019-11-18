@@ -10,7 +10,7 @@ import java.lang.annotation.*;
 	
 		{@literal @}FruttyPluginMain(eventClass = TestMain.class)
 		public static void pluginMain() {
-			PluginRegistry.registerZone("test:bedrock", bedrockZone);
+			MapZoneBase.registerZone("test:bedrock", bedrockZone);
 		}
 	
 		{@literal @}FruttyEvent

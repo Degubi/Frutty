@@ -1,4 +1,4 @@
-from subprocess import call
+from subprocess import call, DEVNULL
 from distutils.dir_util import copy_tree as copydir
 from urllib.request import urlretrieve as download
 from inspect import cleandoc as format
@@ -46,7 +46,13 @@ rename("Frutty.jar", "./Frutty/Frutty.jar")
 removefile("Manifest.txt")
 removedir("compile")
 
-copyfile("shortcut.py", "./Frutty/shortcut.py")
 copyfile("icon.ico", "./Frutty/icon.ico")
+
+print("Creating Shortcut Creator")
+call("pyinstaller shortcut.py --onefile", stderr = DEVNULL, stdin = DEVNULL)
+rename("./dist/shortcut.exe", "./Frutty/CreateShortcut.exe")
+removefile("shortcut.spec")
+removedir("build")
+removedir("dist")
 
 print("Done")
