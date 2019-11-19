@@ -168,16 +168,20 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 	
 	public static void showIngame() {
 		EventQueue.invokeLater(() -> {
-			JFrame ingameFrame = new JFrame("Frutty");
+			var ingameFrame = new JFrame("Frutty");
+			
 			ingameFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 			ingameFrame.setResizable(false);
 			ingameFrame.setBounds(0, 0, World.width + 288, World.height + 100);
 			ingameFrame.setLocationRelativeTo(null);
 			ingameFrame.setContentPane(ingameGui = new GuiIngame());
 			ingameFrame.addKeyListener(ingameGui);
+			ingameFrame.setIconImage(GuiMenu.frameIcon);
+			
 			ingameGui.updateThread.scheduleAtFixedRate(ingameGui, 0, 20, TimeUnit.MILLISECONDS);
 			ingameGui.renderThread.scheduleAtFixedRate(ingameGui::repaint, 0, 1000 / Settings.fps, TimeUnit.MILLISECONDS);
 			ingameFrame.setFocusable(true);
+			
 			for(var players : World.players) {
 				ingameFrame.addKeyListener(players);
 			}

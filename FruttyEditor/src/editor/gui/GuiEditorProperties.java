@@ -1,6 +1,5 @@
 package editor.gui;
 
-import editor.gui.GuiEditor.*;
 import frutty.tools.*;
 import java.awt.*;
 import java.io.*;

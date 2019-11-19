@@ -4,19 +4,22 @@ import frutty.gui.*;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
+import javax.swing.*;
 
 public final class Main {
 	public static final Random rand = new Random();
 	
 	private Main() {}
 	
-	public static void main(String[] args){
+	public static void main(String[] args) throws Exception {
 		createDirectory("plugins");
 		boolean loadedAny = Plugin.loadPlugins();
 		
 		if(loadedAny) {
 			EventHandle.sortEvents();
 		}
+		
+		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		GuiMenu.createMainFrame(true);
 		createDirectory("saves");
 	}

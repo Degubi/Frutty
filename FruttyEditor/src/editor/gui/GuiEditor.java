@@ -85,9 +85,13 @@ public final class GuiEditor extends JPanel{
 			output.write(mapProperties.skyName + '\n');
 			output.write(mapProperties.nextMap + '\n');
 			
-			String[] textures = zoneButtons.stream().map(button -> button.zoneTexture).filter(texture -> texture != null).distinct().toArray(String[]::new);
+			var textures = zoneButtons.stream()
+			                          .map(button -> button.zoneTexture)
+			                          .filter(texture -> texture != null)
+			                          .distinct()
+			                          .toArray(String[]::new);
 			
-			for(String texture : textures) {
+			for(var texture : textures) {
 				output.write(texture + ' ');
 			}
 			output.write("\n");
@@ -108,7 +112,7 @@ public final class GuiEditor extends JPanel{
 				int mapWidth = Integer.parseInt(input.readLine());
 				int mapHeight = Integer.parseInt(input.readLine());
 				var editor = new GuiEditor(fileName.substring(0, fileName.indexOf('.')), mapWidth, mapHeight, input.readLine(), input.readLine());
-				String[] textureCache = input.readLine().split(" ");
+				var textureCache = input.readLine().split(" ");
 				
 				for(int y = 0; y < mapHeight; ++y) {
 					for(int x = 0; x < mapWidth; ++x) {
@@ -119,11 +123,11 @@ public final class GuiEditor extends JPanel{
 						if(zoneData.length == 2) {
 							int textureIndexFromCache = Integer.parseInt(zoneData[1]);
 							button.zoneTexture = textureCache[textureIndexFromCache];
-							button.setIcon(((MapZoneTexturable)zoneFromName).textureVariants.get()[Material.materialRegistry.get(textureCache[textureIndexFromCache]).index]);
+							button.guiButton.setIcon(((MapZoneTexturable)zoneFromName).textureVariants.get()[Material.materialRegistry.get(textureCache[textureIndexFromCache]).index]);
 						}
 						
 						editor.zoneButtons.add(button);
-						editor.add(button);
+						editor.add(button.guiButton);
 					}
 				}
 				
@@ -149,7 +153,7 @@ public final class GuiEditor extends JPanel{
 					EditorZoneButton button = new EditorZoneButton(MapZoneBase.normalZone.editorTexture.get(), "normalZone", xPos, yPos, newEditor);
 					button.zoneTexture = "normal";
 					newEditor.zoneButtons.add(button);
-					newEditor.add(button);
+					newEditor.add(button.guiButton);
 				}
 			}
 		}
@@ -165,6 +169,7 @@ public final class GuiEditor extends JPanel{
 			frame.setResizable(false);
 			frame.setBounds(0, 0, width + 200, height + 63);
 			frame.setLocationRelativeTo(null);
+			frame.setIconImage(GuiMenu.frameIcon);
 			
 			var menuBar = new JMenuBar();
 	    	var fileMenu = new JMenu("File");
@@ -232,51 +237,5 @@ public final class GuiEditor extends JPanel{
 			}
 		}
 		return -1;
-	}
-	
-	static final class EditorZoneButton extends JButton implements MouseListener{
-		public String zoneTexture, zoneID;
-		private final GuiEditor editorInstance;
-		
-		public EditorZoneButton(ImageIcon texture, String zoneID, int x, int y, GuiEditor editor) {
-			super(texture);
-			editorInstance = editor;
-			this.zoneID = zoneID;
-			setBounds(x, y, 64, 64);
-			addMouseListener(this);
-		}
-		
-		@Override
-		public void mousePressed(MouseEvent event) {
-			var button = (EditorZoneButton)event.getComponent();
-			int pressedButton = event.getButton();
-			
-			if(pressedButton == MouseEvent.BUTTON1) {
-				var activeZoneName = (String) editorInstance.zoneList.getSelectedItem();
-				button.zoneID = activeZoneName; button.setIcon(MapZoneBase.getZoneFromName(activeZoneName).editorTexture.get());
-				
-				if(MapZoneBase.getZoneFromName(activeZoneName) instanceof MapZoneTexturable) {
-					button.setIcon(((MapZoneTexturable)MapZoneBase.getZoneFromName(button.zoneID)).textureVariants.get()[editorInstance.textureSelectorButton.activeMaterial.index]);
-					button.zoneTexture = editorInstance.textureSelectorButton.activeMaterial.name;
-				}else{
-					button.zoneTexture = null;
-				}
-				
-			}else if(pressedButton == MouseEvent.BUTTON3) {
-				if(MapZoneBase.getZoneFromName(button.zoneID) instanceof MapZoneTexturable) {
-					button.setIcon(((MapZoneTexturable)MapZoneBase.getZoneFromName(button.zoneID)).textureVariants.get()[editorInstance.textureSelectorButton.activeMaterial.index]);
-					button.zoneTexture = editorInstance.textureSelectorButton.activeMaterial.name;
-				}
-			}
-		}
-		
-		@Override
-		public void mouseClicked(MouseEvent e) {}
-		@Override
-		public void mouseReleased(MouseEvent e) {}
-		@Override
-		public void mouseEntered(MouseEvent e) {}
-		@Override
-		public void mouseExited(MouseEvent e) {}
 	}
 }

@@ -31,7 +31,7 @@ public final class Plugin{
 	}
 		
 	public String getInfo() {
-		return "Name: " + ID + 
+		return "<b><font color=white>Name: " + ID +
 				"<br>Version: " + version + 
 				"<br>URL: " + (updateURL == null ? "" : ("<a href=" + updateURL + ">" + updateURL + "</a>")) + 
 				"<br>Needs update: <b><font color=" + (needsUpdate ? "red>" : "green>") + (needsUpdate ? "Yes" : "No") + "</font></b>" + (

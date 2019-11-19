@@ -11,6 +11,8 @@ import javax.swing.event.*;
 import javax.swing.event.HyperlinkEvent.*;
 
 public final class GuiPlugins extends GuiMapBackground implements HyperlinkListener{
+    private static final Color backgroundColor = new Color(0, 0, 0, 192);
+    
 	private GuiPlugins() {
 		super("./maps/dev_settings.fmap");
 		setLayout(new BorderLayout());
@@ -23,27 +25,31 @@ public final class GuiPlugins extends GuiMapBackground implements HyperlinkListe
 
 		pluginList.addListSelectionListener(e -> description.setText(Plugin.plugins.get(pluginList.getSelectedIndex()).getInfo()));
 		pluginList.setCellRenderer(new PluginListRenderer());
+		pluginList.setForeground(Color.WHITE);
+		pluginList.setOpaque(false);
+		pluginList.setBackground(new Color(0, 0, 0, 128));
 		description.addHyperlinkListener(plugs);
 		description.setEditable(false);
 		description.setContentType("text/html");
+		description.setOpaque(false);
 		pluginList.setSelectedIndex(0);
 		
 		var pluginPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, pluginList, description);
 		pluginPanel.setResizeWeight(0.5D);
+		pluginPanel.setOpaque(false);
 		pluginPanel.setEnabled(false);
-		pluginPanel.setBackground(Color.GRAY);
+		pluginPanel.setBorder(null);
+		pluginPanel.setDividerSize(0);
 		
 		var bottomPanel = new JPanel(null);
-		bottomPanel.add(GuiHelper.newButton("Menu", 360, 15, e -> GuiHelper.switchGui(new GuiMenu())));
+		bottomPanel.add(GuiHelper.newButton("Menu", 370, 14, e -> GuiHelper.switchGui(new GuiMenu())));
 		pluginPanel.setPreferredSize(new Dimension(Integer.MAX_VALUE, 530));
 		bottomPanel.setPreferredSize(new Dimension(Integer.MAX_VALUE, 100));
+		bottomPanel.setOpaque(false);
 		
 		plugs.add(pluginPanel, BorderLayout.NORTH);
 		plugs.add(bottomPanel, BorderLayout.SOUTH);
 
-		pluginPanel.setOpaque(false);
-		bottomPanel.setOpaque(false);
-		
 		GuiHelper.switchGui(plugs);
 		
 		new Thread(() -> {
@@ -65,6 +71,14 @@ public final class GuiPlugins extends GuiMapBackground implements HyperlinkListe
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	@Override
+	protected void paintComponent(Graphics graphics) {
+	    super.paintComponent(graphics);
+	    
+	    graphics.setColor(backgroundColor);
+	    graphics.fillRect(0, 0, 910, 675);
 	}
 	
 	protected static final class PluginListRenderer extends DefaultListCellRenderer{
