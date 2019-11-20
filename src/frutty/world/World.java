@@ -86,7 +86,7 @@ public final class World{
 					zones[zoneIndex++] = MapZoneBase.emptyZone;
 				}else if(rng == 9) {
 					if(rand.nextBoolean()) {   //isApple
-						zoneEntities[zoneIndex] = new EntityAppleZone(x, y);
+						zoneEntities[zoneIndex] = new EntityAppleZone();
 						zones[zoneIndex++] = MapZoneBase.appleZone;
 					}else {
 						zones[zoneIndex++] = MapZoneBase.cherryZone;
@@ -152,10 +152,17 @@ public final class World{
 		try(var input = new ObjectInputStream(Files.newInputStream(Path.of("./maps/" + name + ".fmap")))){
 			int loadedWidth, loadedHeight, zoneIndex = 0;
 			
-			String[] zoneIDCache = (String[]) input.readObject();
-			String[] textureCache = (String[]) input.readObject();
+			var zoneIDCache = (String[]) input.readObject();
+			var textureCache = (String[]) input.readObject();
 			
 			init(textureCache, isMultiplayer, input.readUTF(), name, loadedWidth = input.readShort() * 64, loadedHeight = input.readShort() * 64, input.readUTF());
+			
+			var materials = World.materials;
+			var xCoords = World.xCoords;
+			var yCoords = World.yCoords;
+			var zoneEntities = World.zoneEntities;
+			var zones = World.zones;
+			var materialRegistry = Material.materialRegistry;
 			
 			for(var y = 0; y < loadedHeight; y += 64) {
 				for(var x = 0; x < loadedWidth; x += 64) {
@@ -167,14 +174,14 @@ public final class World{
 					}
 					
 					if(zone instanceof MapZoneTexturable) {
-						materials[zoneIndex] = Material.materialRegistry.get(textureCache[input.readByte()]);
+						materials[zoneIndex] = materialRegistry.get(textureCache[input.readByte()]);
 					}
 					
 					xCoords[zoneIndex] = x;
 					yCoords[zoneIndex] = y;
 					
 					if(zone instanceof IZoneEntityProvider) {
-						zoneEntities[zoneIndex] = ((IZoneEntityProvider) zone).getZoneEntity(x, y);
+						zoneEntities[zoneIndex] = ((IZoneEntityProvider) zone).getZoneEntity();
 					}
 					zones[zoneIndex++] = zone;
 				}
@@ -293,6 +300,10 @@ public final class World{
 		zones[index] = MapZoneBase.emptyZone;
 		zoneEntities[index] = null;
 	}
+	
+	public static int coordsToIndex(int x, int y) {
+        return x / 64 + (y / 64 * ((World.width + 64) / 64));
+    }
 	
 	public static void loadSkyTexture(String textureName) {
 		skyTexture = !textureName.equals("null") ? Material.loadTexture("map/skybox", textureName + ".png") : null;

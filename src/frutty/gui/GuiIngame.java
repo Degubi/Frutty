@@ -19,11 +19,10 @@ import javax.swing.*;
 public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 	public static GuiIngame ingameGui;
 	
-	protected final ScheduledExecutorService updateThread = Executors.newSingleThreadScheduledExecutor();
-	protected final ScheduledExecutorService renderThread = Executors.newSingleThreadScheduledExecutor();
+	protected final ScheduledExecutorService updateThread = Executors.newSingleThreadScheduledExecutor(task -> new Thread(task, "Server Thread"));
+	protected final ScheduledExecutorService renderThread = Executors.newSingleThreadScheduledExecutor(task -> new Thread(task, "Render Thread"));
 	protected boolean paused = false;
 	private final LocalTime startTime = LocalTime.now();
-	private int renderDelay;
 	private long renderLastUpdate = System.currentTimeMillis();
 	
 	@Override
@@ -90,11 +89,13 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 			graphics.setColor(Color.WHITE);
 			
 			//Right
+			var currentMilis = System.currentTimeMillis();
+			var renderDelay = currentMilis - renderLastUpdate;
+			
 			graphics.drawString("current map: " + World.mapName, worldWidth - 100, 20);
 			graphics.drawString("render delay: " + renderDelay + " ms", worldWidth - 100, 40);
-			graphics.drawString("fps: " + 1000 / (System.currentTimeMillis() - renderLastUpdate), worldWidth - 100, 60);
+			graphics.drawString("fps: " + (1000 / renderDelay), worldWidth - 100, 60);
 			
-			renderDelay = (int) (System.currentTimeMillis() - renderLastUpdate);
 			renderLastUpdate = System.currentTimeMillis();
 		}
 		
@@ -132,19 +133,22 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 				var xCoords = World.xCoords;
 				var yCoords = World.yCoords;
 				var materials = World.materials;
+				var zones = World.zones;
 				
-				for(int k = 0; k < World.zones.length; ++k) {
-					var zone = World.zones[k];
+				for(int k = 0; k < zones.length; ++k) {
+					var zone = zones[k];
+					var xCoord = xCoords[k];
+					var yCoord = yCoords[k];
 					
-					if(zone.hasParticleSpawns && MapZoneBase.isEmpty(xCoords[k], yCoords[k] + 64) && Main.rand.nextInt(100) == 3) {
-						Particle.spawnFallingParticles(2 + Main.rand.nextInt(5), xCoords[k], yCoords[k], materials[k]);
+					if(zone.hasParticleSpawns && MapZoneBase.isEmpty(xCoord, yCoord + 64) && Main.rand.nextInt(100) == 3) {
+						Particle.spawnFallingParticles(2 + Main.rand.nextInt(5), xCoord, yCoord, materials[k]);
 					}
 					
 					if(zone instanceof IZoneEntityProvider) {
 						var entity = World.zoneEntities[k];
 						
 						if(entity.needsUpdates) {
-							entity.update();
+							entity.update(k, xCoord, yCoord);
 						}
 					}
 				}

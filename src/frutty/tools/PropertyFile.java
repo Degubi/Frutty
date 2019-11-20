@@ -14,8 +14,8 @@ public final class PropertyFile {
 		storage = new ArrayList<>(estimatePropCount);
 		
 		try(var reader = Files.newBufferedReader(path)){
-			for(String line = reader.readLine(); line != null; line = reader.readLine()) {
-				byte[] strBytes = line.getBytes();
+			for(var line = reader.readLine(); line != null; line = reader.readLine()) {
+				var strBytes = line.getBytes();
 				
 				int typeIndex = 0, equalsIndex = 0;
 				for(int index = 0; index < strBytes.length; ++index) {
@@ -28,8 +28,8 @@ public final class PropertyFile {
 					}
 				}
 				
-				String first = new String(strBytes, typeIndex + 1, equalsIndex - typeIndex - 1);
-				String second = new String(strBytes, equalsIndex + 1, strBytes.length - 1 - equalsIndex);
+				var first = new String(strBytes, typeIndex + 1, equalsIndex - typeIndex - 1);
+				var second = new String(strBytes, equalsIndex + 1, strBytes.length - 1 - equalsIndex);
 				
 				switch(new String(strBytes, 0, typeIndex)) {
 					case "int": storage.add(new PrimitiveProperty(first, Integer.parseInt(second))); break;

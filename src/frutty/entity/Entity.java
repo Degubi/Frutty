@@ -50,7 +50,7 @@ public abstract class Entity implements Serializable{
 			return false;
 		}
 		
-		var zone = World.getZoneAtIndex(coordsToIndex(x, y));
+		var zone = World.getZoneAtIndex(World.coordsToIndex(x, y));
 		return zone != null && zone.canNPCPass(x, y);
 	}
 	
@@ -81,10 +81,6 @@ public abstract class Entity implements Serializable{
 				}
 			}
 		}
-	}
-	
-	public static int coordsToIndex(int x, int y) {
-		return x / 64 + (y / 64 * ((World.width + 64) / 64));
 	}
 	
 	public final void handleRender(Graphics graphics) {

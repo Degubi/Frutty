@@ -11,7 +11,7 @@ public final class EntityEffectInvisible extends EntityEffect {
 	}
 	
 	@Override
-	public void handleEffect(EntityPlayer player, Graphics graphics) {
+	public void renderEffect(EntityPlayer player, Graphics graphics) {
 		if(animSwitch) {
 			graphics.setColor(Color.BLACK);
 			graphics.fillRect(player.renderPosX, player.renderPosY, 64, 64);

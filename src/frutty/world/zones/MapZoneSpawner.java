@@ -32,29 +32,33 @@ public final class MapZoneSpawner extends MapZoneBase{
 		if(colorIndexer == 0) {
 			decrease = false;
 		}
+		
 		graphics.setColor(colorCache[decrease ? --colorIndexer : ++colorIndexer]);
 		graphics.fillRect(x, y, 64, 64);
 	}
 
 	@Override
 	public void onZoneAdded(boolean isCoop, int x, int y) {
-		int enemyCount = 0, zoneCount = World.zones.length;
-		
-		if(!Settings.disableEnemies) {
-			if(Settings.difficulty == 0) {
-				enemyCount += zoneCount < 70 ? 1 : zoneCount / 70;
-			}else if(Settings.difficulty == 1) {
-				enemyCount += zoneCount / 50;
-			}else{
-				enemyCount += zoneCount / 30;
-			}
-		}
-		
+	    var enemyCount = getEnemyCountBasedOnDifficulty(World.zones.length);
 		World.enemies = new EntityEnemy[enemyCount];
 		
-		for(int k = 0; k < +World.enemies.length; ++k) {
+		for(int k = 0; k < enemyCount; ++k) {
 			World.enemies[k] = new EntityEnemy(x, y);
 		}
+	}
+	
+	private static int getEnemyCountBasedOnDifficulty(int zoneCount) {
+	    if(!Settings.disableEnemies) {
+            if(Settings.difficulty == 0) {
+                return zoneCount < 70 ? 1 : zoneCount / 70;
+            }else if(Settings.difficulty == 1) {
+                return zoneCount / 50;
+            }else{
+                return zoneCount / 30;
+            }
+        }
+	    
+	    return 0;
 	}
 	
 	@Override

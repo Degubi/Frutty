@@ -17,5 +17,5 @@ public abstract class EntityEffect{
 		}
 	}
 	
-	public abstract void handleEffect(EntityPlayer player, Graphics graphics);
+	public abstract void renderEffect(EntityPlayer player, Graphics graphics);
 }

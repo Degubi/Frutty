@@ -1,5 +1,6 @@
 package frutty.entity;
 
+import frutty.world.*;
 import frutty.world.base.*;
 
 public abstract class EntityFalling extends Entity{
@@ -19,7 +20,7 @@ public abstract class EntityFalling extends Entity{
 	
 	@Override
 	public void updateServer() {
-		if(MapZoneBase.isEmptyAt(coordsToIndex(renderPosX, serverPosY + 64))) {
+		if(MapZoneBase.isEmptyAt(World.coordsToIndex(renderPosX, serverPosY + 64))) {
 			fireStopFall = false;
 			
 			if(sleepCounter == 0) {

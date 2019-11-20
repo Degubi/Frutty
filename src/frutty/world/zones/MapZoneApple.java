@@ -34,8 +34,8 @@ public final class MapZoneApple extends MapZoneTexturable implements IZoneEntity
 	}
 
 	@Override
-	public EntityZone getZoneEntity(int x, int y) {
-		return new EntityAppleZone(x, y);
+	public EntityZone getZoneEntity() {
+		return new EntityAppleZone();
 	}
 	
 	@Override

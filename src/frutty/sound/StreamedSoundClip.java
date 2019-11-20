@@ -5,6 +5,7 @@ import java.io.*;
 import javax.sound.sampled.*;
 import javax.sound.sampled.DataLine.*;
 
+@SuppressWarnings("resource")
 public final class StreamedSoundClip{
 	private final File soundFile;
 	private volatile boolean shouldPlay = true;
@@ -18,7 +19,7 @@ public final class StreamedSoundClip{
 			new Thread(() -> {
 				try(var audioInputStream = AudioSystem.getAudioInputStream(soundFile)){
 					var audioFormat = audioInputStream.getFormat();
-					@SuppressWarnings("resource")
+					
 					var soundLine = (SourceDataLine) AudioSystem.getLine(new Info(SourceDataLine.class, audioFormat));
 					
 					soundLine.open(audioFormat);

@@ -5,15 +5,14 @@ import java.io.*;
 public abstract class EntityZone implements Serializable{
 	private static final long serialVersionUID = -136000208701141435L;
 	
-	public final int x, y;
 	public boolean needsUpdates;
 	
-	public EntityZone(boolean startWithUpdates, int xCoord, int yCoord) {
-		x = xCoord;
-		y = yCoord;
+	public EntityZone(boolean startWithUpdates) {
 		needsUpdates = startWithUpdates;
 	}
 	
 	public void onNotified() {}
-	public void update() {}
+	
+	@SuppressWarnings("unused")
+	public void update(int zoneIndex, int x, int y) {}
 }

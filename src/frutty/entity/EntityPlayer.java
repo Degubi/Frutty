@@ -37,7 +37,7 @@ public final class EntityPlayer extends Entity implements KeyListener{
 	}
 
 	private static boolean isPlayerFree(int x, int y) {
-		if(!World.getZoneAtIndex(coordsToIndex(x, y)).canPlayerPass(x, y)) {
+		if(!World.getZoneAtIndex(World.coordsToIndex(x, y)).canPlayerPass(x, y)) {
 			return false;
 		}
 		
@@ -61,7 +61,7 @@ public final class EntityPlayer extends Entity implements KeyListener{
 		serverPosY += facing.yOffset;
 		textureIndex = facing.textureIndex;
 		
-		int zoneIndex = coordsToIndex(renderPosX, renderPosY);
+		var zoneIndex = World.coordsToIndex(renderPosX, renderPosY);
 		World.zones[zoneIndex].onZoneEntered(renderPosX, renderPosY, zoneIndex, World.materials[zoneIndex], this);
 		lastPressTime = System.currentTimeMillis();
 	}
@@ -90,7 +90,7 @@ public final class EntityPlayer extends Entity implements KeyListener{
 		}
 		
 		for(var effects : entityEffects) {
-			effects.handleEffect(this, graphics);
+			effects.renderEffect(this, graphics);
 		}
 	}
 	

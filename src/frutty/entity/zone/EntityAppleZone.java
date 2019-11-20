@@ -6,8 +6,8 @@ import frutty.world.*;
 public final class EntityAppleZone extends EntityZone{
 	private int delayCounter;
 	
-	public EntityAppleZone(int xCoord, int yCoord) {
-		super(false, xCoord, yCoord);
+	public EntityAppleZone() {
+		super(false);
 	}
 	
 	@Override
@@ -16,9 +16,9 @@ public final class EntityAppleZone extends EntityZone{
 	}
 	
 	@Override
-	public void update() {
+	public void update(int zoneIndex, int x, int y) {
 		if(++delayCounter == 2) {
-			World.setZoneEmptyAt(Entity.coordsToIndex(x, y));
+			World.setZoneEmptyAt(zoneIndex);
 			World.entities.add(new EntityApple(x, y));
 		}
 	}

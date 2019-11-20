@@ -8,11 +8,16 @@ import java.nio.file.*;
 import javax.swing.*;
 
 public abstract class GuiMapBackground extends JPanel {
-	private final MapZoneBase[] zones = new MapZoneBase[140];
-	private final int[] xCoords = new int[140], yCoords = new int[140];
-	private final Material[] materials = new Material[140];
+	private final MapZoneBase[] zones;
+	private final int[] xCoords, yCoords;
+	private final Material[] materials;
 	
 	public GuiMapBackground(String mapName) {
+	    var zones = new MapZoneBase[140];
+	    var xCoords = new int[140];
+	    var yCoords = new int[140];
+	    var materials = new Material[140];
+	    
 		try(var input = new ObjectInputStream(Files.newInputStream(Path.of(mapName)))){
 			var zoneIDCache = (String[]) input.readObject();
 			var textureCache = (String[]) input.readObject();
@@ -39,6 +44,11 @@ public abstract class GuiMapBackground extends JPanel {
 				}
 			}
 		}catch(IOException | ClassNotFoundException e){}
+		
+		this.materials = materials;
+		this.zones = zones;
+		this.xCoords = xCoords;
+		this.yCoords = yCoords;
 	}
 	
 	@Override

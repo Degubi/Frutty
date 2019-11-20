@@ -10,5 +10,5 @@ public interface IZoneEntityProvider {
 	 * @param y Y coordinate of the zone
 	 * @return The new EntityZone instance
 	 */
-	EntityZone getZoneEntity(int x, int y);
+	EntityZone getZoneEntity();
 }
