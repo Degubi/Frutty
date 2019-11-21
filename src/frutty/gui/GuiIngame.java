@@ -27,8 +27,6 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 	
 	@Override
 	protected void paintComponent(Graphics graphics) {
-		super.paintComponent(graphics);
-		
 		var zones = World.zones;
 		var xCoords = World.xCoords;
 		var yCoords = World.yCoords;
@@ -160,7 +158,7 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 		ingameGui.updateThread.shutdown();
 		ingameGui.renderThread.shutdown();
 		JOptionPane.showMessageDialog(null, message, "Frutty", JOptionPane.PLAIN_MESSAGE);
-		GuiMenu.createMainFrame(false);
+		GuiMenu.createMainFrame();
 		((JFrame)ingameGui.getTopLevelAncestor()).dispose();
 		if(GuiStats.topScore < World.score) {
 			GuiStats.topScore = World.score;
@@ -203,7 +201,7 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 			EventQueue.invokeLater(() -> {
 				var returnFrame = new JFrame("Frutty");
 				var menu = new PauseMenu();
-				returnFrame.setContentPane(menu);
+				returnFrame.setContentPane(menu.panel);
 				returnFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 				returnFrame.setResizable(false);
 				returnFrame.setBounds(0, 0, 600, 540);
@@ -225,14 +223,17 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 		}
 	}
 	
-	private static final class PauseMenu extends JPanel implements ActionListener, WindowListener, KeyListener{
-		public PauseMenu() {
-			setLayout(null);
+	private static final class PauseMenu extends WindowAdapter implements ActionListener, KeyListener{
+		public final JPanel panel;
+	    
+	    public PauseMenu() {
+			panel = new JPanel(null);
+			panel.setBackground(GuiHelper.color_84Black);
 			
-			add(GuiHelper.newButton("Resume", 220, 180, this));
-			add(GuiHelper.newButton("Save", 220, 260, this));
-			add(GuiHelper.newButton("Menu", 220, 340, this));
-			add(GuiHelper.newButton("Exit", 220, 420, this));
+	        panel.add(GuiHelper.newButton("Resume", 220, 180, this));
+	        panel.add(GuiHelper.newButton("Save", 220, 260, this));
+	        panel.add(GuiHelper.newButton("Menu", 220, 340, this));
+	        panel.add(GuiHelper.newButton("Exit", 220, 420, this));
 		}
 
 		@Override
@@ -260,7 +261,7 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 				}
 				
 				((JFrame)ingameGui.getTopLevelAncestor()).dispose();
-				GuiMenu.createMainFrame(false);
+				GuiMenu.createMainFrame();
 				GuiStats.saveStats();
 				World.cleanUp();
 			}else{  //Save
@@ -269,21 +270,13 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 				ingameGui.paused = false;
 				GuiStats.saveStats();
 			}
-			((JFrame)getTopLevelAncestor()).dispose();
-		}
-		
-		@Override
-		protected void paintComponent(Graphics graphics) {
-			super.paintComponent(graphics);
-			
-			graphics.setColor(GuiHelper.color_84Black);
-			graphics.fillRect(0, 0, 600, 540);
+			((JFrame)panel.getTopLevelAncestor()).dispose();
 		}
 		
 		@Override
 		public void keyPressed(KeyEvent event) {
 			if(event.getKeyCode() == KeyEvent.VK_ESCAPE) {
-				((JFrame)getTopLevelAncestor()).dispose();
+				((JFrame)panel.getTopLevelAncestor()).dispose();
 				ingameGui.paused = false;
 			}
 		}
@@ -293,7 +286,6 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 			ingameGui.paused = false;
 		}
 
-		@Override public void windowOpened(WindowEvent e) {} @Override public void windowClosed(WindowEvent e) {} @Override public void windowIconified(WindowEvent e) {} @Override public void windowDeiconified(WindowEvent e) {} @Override public void windowActivated(WindowEvent e) {} @Override public void windowDeactivated(WindowEvent e) {}
 		@Override public void keyTyped(KeyEvent e) {} @Override public void keyReleased(KeyEvent e) {}
 	}
 

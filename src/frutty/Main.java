@@ -20,7 +20,7 @@ public final class Main {
 		}
 		
 		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		GuiMenu.createMainFrame(true);
+		GuiMenu.createMainFrame();
 		createDirectory("saves");
 	}
 	

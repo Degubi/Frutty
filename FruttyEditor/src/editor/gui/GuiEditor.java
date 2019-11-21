@@ -193,7 +193,7 @@ public final class GuiEditor extends JPanel{
 	    	
 	    	fileMenu.addSeparator();
 	    	fileMenu.add(newMenuItem("Close map", '0', !editor.zoneButtons.isEmpty(), event -> {openEmptyEditor(); ((JFrame)editor.getTopLevelAncestor()).dispose();}));
-	    	fileMenu.add(newMenuItem("Exit to menu", '0', true, event -> {frame.dispose(); GuiMenu.createMainFrame(false);}));
+	    	fileMenu.add(newMenuItem("Exit to menu", '0', true, event -> {frame.dispose(); GuiMenu.createMainFrame();}));
 	    	fileMenu.add(newMenuItem("Exit app", '0', true, event -> System.exit(0)));
 	    	
 	    	mapMenu.add(newMenuItem("Map Properties", 'P', true, event -> showNewGui(editor.mapProperties, "Map Properties", 350, 350)));

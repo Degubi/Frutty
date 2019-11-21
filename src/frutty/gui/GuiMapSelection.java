@@ -6,45 +6,47 @@ import frutty.gui.components.*;
 import frutty.tools.*;
 import frutty.world.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
-public final class GuiMapSelection extends JPanel implements ListSelectionListener, ActionListener{
-	private final JCheckBox devMode = newCheckBox("Enable Dev Maps", 180, 510, Color.BLACK, false);
-	private final JList<String> mapList = new JList<>();
-	private final JLabel mapImage = new JLabel();
-	private final JCheckBox coopBox = newCheckBox("Coop mode", 40, 510, Color.BLACK, false);
-	
-	public GuiMapSelection() {
-		setLayout(null);
+public final class GuiMapSelection{
+    private GuiMapSelection() {}
+    
+	public static void showMapSelection() {
+		var panel = new JPanel(null);
+		panel.setBackground(Color.GRAY);
+		
+		var mapList = new JList<String>();
+		var mapImage = new JLabel();
+		var devMode = newCheckBox("Enable Dev Maps", 180, 510, Color.BLACK, false);
+		var coopBox = newCheckBox("Coop mode", 40, 510, Color.BLACK, false);
 		
 		mapList.setForeground(Color.BLACK);
 		mapList.setBackground(Color.GRAY);
-		mapList.addListSelectionListener(this);
-		devMode.addActionListener(this);
+		mapList.addListSelectionListener(e -> handleMapListChange(e, mapList, mapImage));
+		devMode.addActionListener(e -> updateModel(mapList, devMode));
 		
-		setModel();
+		updateModel(mapList, devMode);
 		
-		add(devMode);
-		add(coopBox);
-		
-		JSplitPane pane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, mapList, mapImage);
+		var pane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, mapList, mapImage);
 		pane.setEnabled(false);
 		pane.setBounds(20, 20, 690, 480);
 		pane.setBorder(GuiHelper.menuBorder);
 		pane.setDividerLocation(200);
 		
-		add(pane);
-		add(newButton("Menu", 725, 475, this));
-		add(newButton("Play", 725, 550, this));
+		panel.add(devMode);
+        panel.add(coopBox);
+		panel.add(pane);
+		panel.add(newButton("Menu", 725, 475, e -> switchGui(GuiMenu.createMenuPanel())));
+		panel.add(newButton("Play", 725, 550, e -> handlePlayButtonPress(mapList, coopBox)));
+		
+		GuiHelper.switchGui(panel);
 	}
 	
-	@Override
-	public void valueChanged(ListSelectionEvent event) {
+	private static void handleMapListChange(ListSelectionEvent event, JList<String> mapList, JLabel mapImage) {
 		if(!event.getValueIsAdjusting()){
 			var path = "./textures/gui/" + mapList.getSelectedValue() + ".jpg";
 
@@ -64,15 +66,7 @@ public final class GuiMapSelection extends JPanel implements ListSelectionListen
 		}
 	}
 	
-	@Override
-	protected void paintComponent(Graphics graphics) {
-		super.paintComponent(graphics);
-		
-		graphics.setColor(Color.GRAY);
-		graphics.fillRect(0, 0, 910, 675);
-	}
-	
-	private void setModel() {
+	private static void updateModel(JList<String> mapList, JCheckBox devMode) {
 		var model = new DefaultListModel<String>();
 		var files = Arrays.stream(new File("./maps").list()).filter(name -> name.endsWith(".fmap")).map(name -> name.substring(0, name.indexOf('.')));
 		
@@ -88,25 +82,15 @@ public final class GuiMapSelection extends JPanel implements ListSelectionListen
 		mapList.setSelectedValue("Creepy", false);
 	}
 	
-	@Override
-	public void actionPerformed(ActionEvent event) {
-		var actionCommand = event.getActionCommand();
-		
-		if(actionCommand.equals("Play")) {
-			if(mapList.getSelectedValue().equals("Generate Map")) {
-				GuiHelper.switchGui(new GuiGenerateMap());
-			}else{
-				World.loadMap(mapList.getSelectedValue(), coopBox.isSelected());
-				GuiIngame.showIngame();
-				GuiMenu.mainFrame.dispose();
-			}
-		}else if(actionCommand.equals("Menu")) {
-			switchGui(new GuiMenu());
-		}else if(actionCommand.equals("Enable Dev Maps")) {
-			setModel();
-		}
+	private static void handlePlayButtonPress(JList<String> mapList, JCheckBox coopBox) {
+	    if(mapList.getSelectedValue().equals("Generate Map")) {
+            GuiHelper.switchGui(createGenerateMapPanel());
+        }else{
+            World.loadMap(mapList.getSelectedValue(), coopBox.isSelected());
+            GuiIngame.showIngame();
+            GuiMenu.mainFrame.dispose();
+        }
 	}
-	
 	
 	public static String loadMapSize(String fileName) {
 		try(var input = new ObjectInputStream(Files.newInputStream(Path.of("./maps/" + fileName + ".fmap")))){
@@ -119,32 +103,25 @@ public final class GuiMapSelection extends JPanel implements ListSelectionListen
 		}
 	}
 	
-	static class GuiGenerateMap extends JPanel implements ActionListener{
-		private final JTextField sizeField = new JTextField("10x10");
-		
-		public GuiGenerateMap() {
-			setLayout(null);
-			
-			sizeField.setBounds(50, 50, 120, 40);
-			add(sizeField);
-			
-			add(new SettingButton(false, "Enable Water", 50, 80));
-			add(newButton("Menu", 725, 475, this));
-			add(newButton("Play", 725, 550, this));
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent event) {
-			var actionCommand = event.getActionCommand();
-			
-			if(actionCommand.equals("Play")) {
-				var mapSize = sizeField.getText().split("x");
-				World.generateMap(Integer.parseInt(mapSize[0]), Integer.parseInt(mapSize[1]), false);
-				GuiIngame.showIngame();
-				GuiMenu.mainFrame.dispose();
-			}else if(actionCommand.equals("Menu")) {
-				switchGui(new GuiMenu());
-			}
-		}
+	private static JPanel createGenerateMapPanel() {
+	    var sizeField = new JTextField("10x10");
+	    var panel = new JPanel(null);
+        
+        sizeField.setBounds(50, 50, 120, 40);
+        panel.add(sizeField);
+        
+        panel.add(new SettingButton(false, "Enable Water", 50, 80));
+        panel.add(newButton("Menu", 725, 475, e -> switchGui(GuiMenu.createMenuPanel())));
+        panel.add(newButton("Play", 725, 550, e -> handleGeneratePlayButtonPress(sizeField)));
+        
+        return panel;
+	}
+	
+	private static void handleGeneratePlayButtonPress(JTextField sizeField) {
+	    var mapSize = sizeField.getText().split("x");
+	    
+        World.generateMap(Integer.parseInt(mapSize[0]), Integer.parseInt(mapSize[1]), false);
+        GuiIngame.showIngame();
+        GuiMenu.mainFrame.dispose();
 	}
 }

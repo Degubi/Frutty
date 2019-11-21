@@ -2,25 +2,21 @@ package frutty.gui;
 
 import frutty.gui.components.*;
 import frutty.tools.*;
-import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-public final class GuiSettings extends GuiMapBackground implements ActionListener{
-	private GuiSettings(JComponent... components) {
-		super("./maps/dev_settings.fmap");
-		setLayout(null);
-		
-		for(var comp : components) add(comp);
-		add(GuiHelper.newButton("Save", 371, 525, this));
-	}
+public final class GuiSettings implements ActionListener{
+	private GuiSettings() {}
 	
-	@Override
-	protected void paintComponent(Graphics graphics) {
-		super.paintComponent(graphics);
-		
-		graphics.setColor(GuiHelper.color_84Black);
-		graphics.fillRect(0, 0, 910, 675);
+	private static GuiMapBackground createPanel(JComponent...components) {
+	    var panel = new GuiMapBackground("./maps/dev_settings.fmap");
+	    panel.setLayout(null);
+	    
+	    for(var comp : components) panel.add(comp);
+	    
+	    panel.add(GuiHelper.newButton("Save", 371, 525, new GuiSettings()));
+        
+        return panel;
 	}
 	
 	@Override
@@ -42,16 +38,16 @@ public final class GuiSettings extends GuiMapBackground implements ActionListene
 			Settings.settingProperties.setInt("volume", Settings.volume = volumeSlider.counter);
 			Settings.settingProperties.setString("screenshotFormat", Settings.screenshotFormat = screenshotFormats[screenshotFormatButton.optionIndex]);
 			Settings.settingProperties.save();
-			GuiHelper.switchGui(new GuiMenu());
+			GuiHelper.switchGui(GuiMenu.createMenuPanel());
 		}
 	}
 	
 	public static void showGuiSettings() {
 		var tabbed = new JTabbedPane();
-		tabbed.addTab("Gameplay", new GuiSettings(difficultyButton, upKeyButtonField, downKeyButtonField, leftKeyButtonField, rightKeyButtonField));
-		tabbed.addTab("Graphics", new GuiSettings(graphicsLevelButton, fpsSlider, screenshotFormatButton));
-		tabbed.addTab("Sound", new GuiSettings(enableSoundButton, volumeSlider));
-		tabbed.addTab("Debug", new GuiSettings(renderDebugLevelButton, godModeButton, disableEnemiesButton, collisionBoxButton, showMapDebugInfo));
+		tabbed.addTab("Gameplay", createPanel(difficultyButton, upKeyButtonField, downKeyButtonField, leftKeyButtonField, rightKeyButtonField));
+		tabbed.addTab("Graphics", createPanel(graphicsLevelButton, fpsSlider, screenshotFormatButton));
+		tabbed.addTab("Sound", createPanel(enableSoundButton, volumeSlider));
+		tabbed.addTab("Debug", createPanel(renderDebugLevelButton, godModeButton, disableEnemiesButton, collisionBoxButton, showMapDebugInfo));
 		
 		var insets = UIManager.getInsets("TabbedPane.contentBorderInsets");
 		insets.left = -1;

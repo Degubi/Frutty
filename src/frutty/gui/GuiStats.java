@@ -7,20 +7,21 @@ import frutty.gui.components.*;
 import frutty.plugin.event.gui.*;
 import frutty.tools.*;
 import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.tree.*;
 
-public final class GuiStats extends GuiMapBackground implements ActionListener{
+public final class GuiStats extends DefaultTreeCellRenderer{
 	private static final PropertyFile stats = new PropertyFile("stats.prop", 4);
 	public static int topScore = stats.getInt("topScore", 0);
 	public static int enemyCount = stats.getInt("enemyCount", 0);
 	public static int zoneCount = stats.getInt("zoneCount", 0);
 	public static int playTime = stats.getInt("minutesPlayed", 0);
 	
-	public GuiStats() {
-		super("./maps/dev_settings.fmap");
-		setLayout(null);
+	private GuiStats() {}
+	
+	public static void showStatsGui() {
+		var panel = new GuiMapBackground("./maps/dev_settings.fmap");
+		panel.setLayout(null);
 		
 		var top = new DefaultMutableTreeNode("Frutty Stats");
 		var basic = new DefaultMutableTreeNode("Basics");
@@ -38,7 +39,7 @@ public final class GuiStats extends GuiMapBackground implements ActionListener{
 		
 		var statTree = new JTree(top);
 		statTree.setBackground(Color.BLACK);
-		statTree.setCellRenderer(new TreeRender());
+		statTree.setCellRenderer(new GuiStats());
 		statTree.setFont(GuiHelper.thiccFont);
 		statTree.setOpaque(true);
 		statTree.setBounds(50, 50, 200, 400);
@@ -47,22 +48,19 @@ public final class GuiStats extends GuiMapBackground implements ActionListener{
 			EventHandle.handleEvent(new GuiStatInitEvent(stats, basic, zones, enemies, top), EventHandle.statInitEvents);
 		}
 		
-		add(statTree);
-		add(newButton("Reset", 100, 550, this));
-		add(newButton("Menu", 370, 550, this));
+		panel.add(statTree);
+		panel.add(newButton("Reset", 100, 550, e -> handleResetButtonPress(panel)));
+		panel.add(newButton("Menu", 370, 550, e -> GuiHelper.switchGui(GuiMenu.createMenuPanel())));
+		
+		GuiHelper.switchGui(panel);
 	}
-
-	@Override
-	public void actionPerformed(ActionEvent event) {
-		if(event.getActionCommand().equals("Reset")) {
-			topScore = 0;
-			enemyCount = 0;
-			zoneCount = 0;
-			repaint();
-			saveStats();
-		}else{
-			GuiHelper.switchGui(new GuiMenu());
-		}
+	
+	private static void handleResetButtonPress(GuiMapBackground panel) {
+	    topScore = 0;
+        enemyCount = 0;
+        zoneCount = 0;
+        panel.repaint();
+        saveStats();
 	}
 	
 	public static void saveStats() {
@@ -74,26 +72,24 @@ public final class GuiStats extends GuiMapBackground implements ActionListener{
 		stats.save();
 	}
 	
-	protected static final class TreeRender extends DefaultTreeCellRenderer{
-		
-		@Override
-		public Color getBackgroundSelectionColor() {
-			return null;
-		}
-		
-		@Override
-		public Color getBackgroundNonSelectionColor() {
-			return null;
-		}
-		
-		@Override
-		public Color getBackground() {
-			return null;
-		}
-		
-		@Override
-		public Color getTextNonSelectionColor() {
-			return Color.WHITE;
-		}
-	}
+	
+	@Override
+    public Color getBackgroundSelectionColor() {
+        return null;
+    }
+    
+    @Override
+    public Color getBackgroundNonSelectionColor() {
+        return null;
+    }
+    
+    @Override
+    public Color getBackground() {
+        return null;
+    }
+    
+    @Override
+    public Color getTextNonSelectionColor() {
+        return Color.WHITE;
+    }
 }

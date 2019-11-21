@@ -7,7 +7,7 @@ import java.io.*;
 import java.nio.file.*;
 import javax.swing.*;
 
-public abstract class GuiMapBackground extends JPanel {
+public final class GuiMapBackground extends JPanel {
 	private final MapZoneBase[] zones;
 	private final int[] xCoords, yCoords;
 	private final Material[] materials;
