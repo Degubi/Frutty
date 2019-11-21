@@ -33,14 +33,4 @@ public final class Main {
 			} catch (IOException e) {}
 		}
 	}
-	
-	@SafeVarargs
-	public static<T> List<T> toList(T... objs){
-		var list = new ArrayList<T>(objs.length);
-		
-		for(T el : objs) {
-			list.add(el);
-		}
-		return list;
-	}
 }

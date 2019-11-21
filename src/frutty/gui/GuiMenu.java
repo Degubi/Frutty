@@ -14,7 +14,6 @@ import java.util.*;
 import javax.swing.*;
 
 public final class GuiMenu{
-	public static final Image frameIcon = Toolkit.getDefaultToolkit().createImage("./textures/player/side.png");
 	public static JFrame mainFrame;
 	
 	public static JPanel createMenuPanel() {

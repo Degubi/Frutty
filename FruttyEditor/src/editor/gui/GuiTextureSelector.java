@@ -6,13 +6,10 @@ import java.awt.event.*;
 import java.awt.event.FocusEvent.*;
 import javax.swing.*;
 
-public final class GuiTextureSelector extends JPanel implements ActionListener, FocusListener{
-	private final GuiEditor editor;
-		
-	public GuiTextureSelector(GuiEditor ed) {
-		editor = ed;
-		setLayout(null);
-			
+public final class GuiTextureSelector extends FocusAdapter {
+    public final JPanel panel = new JPanel(null);
+    
+	public GuiTextureSelector(GuiEditor editor) {
 		var materialNames = Material.getMaterialNames();
 		
 		for(int index = 0, xPosition = 10, yPosition = 20; index < materialNames.length; ++index) {
@@ -20,46 +17,44 @@ public final class GuiTextureSelector extends JPanel implements ActionListener, 
 			
 			button.setActionCommand(materialNames[index]);
 			button.setBounds(xPosition, yPosition, 128, 128);
-			button.addActionListener(this);
+			button.addActionListener(e -> handleTextureButtonPress(e, panel, editor));
 			xPosition += 138;
 			
 			if(xPosition > 600) {
 				xPosition = 10;
 				yPosition += 138;
 			}
-			add(button);
+			panel.add(button);
 		}
 	}
 	
-	@Override
-	public void actionPerformed(ActionEvent event) {
+	private static void handleTextureButtonPress(ActionEvent event, JPanel panel, GuiEditor editor) {
 		var mat = Material.materialRegistry.get(event.getActionCommand());
-		editor.textureSelectorButton.activeMaterial = mat;
-		editor.textureSelectorButton.setIcon(mat.editorUpscaledTexture.get());
+		editor.textureSelector.activeMaterial = mat;
+		editor.textureSelector.button.setIcon(mat.editorUpscaledTexture.get());
 		editor.repaint();
-		((JFrame)getTopLevelAncestor()).dispose();
+		((JFrame)panel.getTopLevelAncestor()).dispose();
 	}
-		
-	@Override
-	public void focusGained(FocusEvent event) {}
+	
 	@Override
 	public void focusLost(FocusEvent event) {
 		if(event.getCause() == Cause.ACTIVATION) {
-			((JFrame)getTopLevelAncestor()).dispose();
+			((JFrame)panel.getTopLevelAncestor()).dispose();
 		}
 	}
 	
-	static final class TextureSelectorButton extends JButton implements ActionListener{
+	public static final class TextureSelector implements ActionListener{
 		public Material activeMaterial = Material.NORMAL;
+		public final JButton button;
 		private final GuiEditor editorInstance;
 			
-		public TextureSelectorButton(int width, GuiEditor editor) {
-			super(Material.NORMAL.editorUpscaledTexture.get());
+		public TextureSelector(int width, GuiEditor editor) {
+			this.button = new JButton(Material.NORMAL.editorUpscaledTexture.get());
 				
-			editorInstance = editor;
-			setToolTipText("Texture Selector Tool");
-			addActionListener(this);
-			setBounds(width * 64 + 20, 200, 128, 128);
+			this.editorInstance = editor;
+			this.button.setToolTipText("Texture Selector Tool");
+			this.button.addActionListener(this);
+			this.button.setBounds(width * 64 + 20, 200, 128, 128);
 		}
 			
 		@Override
@@ -68,7 +63,7 @@ public final class GuiTextureSelector extends JPanel implements ActionListener, 
 				var frame = new JFrame("Texture Selector");
 				var gui = new GuiTextureSelector(editorInstance);
 				
-				frame.setContentPane(gui);
+				frame.setContentPane(gui.panel);
 				frame.addFocusListener(gui);
 				frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 				frame.setResizable(false);

@@ -19,9 +19,9 @@ import javax.swing.*;
 public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 	public static GuiIngame ingameGui;
 	
-	protected final ScheduledExecutorService updateThread = Executors.newSingleThreadScheduledExecutor(task -> new Thread(task, "Server Thread"));
-	protected final ScheduledExecutorService renderThread = Executors.newSingleThreadScheduledExecutor(task -> new Thread(task, "Render Thread"));
-	protected boolean paused = false;
+	private final ScheduledExecutorService updateThread = Executors.newSingleThreadScheduledExecutor(task -> new Thread(task, "Server Thread"));
+	private final ScheduledExecutorService renderThread = Executors.newSingleThreadScheduledExecutor(task -> new Thread(task, "Render Thread"));
+	private boolean paused = false;
 	private final LocalTime startTime = LocalTime.now();
 	private long renderLastUpdate = System.currentTimeMillis();
 	
@@ -138,7 +138,7 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 					var xCoord = xCoords[k];
 					var yCoord = yCoords[k];
 					
-					if(zone.hasParticleSpawns && MapZoneBase.isEmpty(xCoord, yCoord + 64) && Main.rand.nextInt(100) == 3) {
+					if(zone.hasParticleSpawns && World.isEmptyAt(xCoord, yCoord + 64) && Main.rand.nextInt(100) == 3) {
 						Particle.spawnFallingParticles(2 + Main.rand.nextInt(5), xCoord, yCoord, materials[k]);
 					}
 					
@@ -168,6 +168,13 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 		World.cleanUp();
 	}
 	
+	public static void switchGui(Container panel) {
+        EventQueue.invokeLater(() -> {
+            GuiMenu.mainFrame.setContentPane(panel);
+            GuiMenu.mainFrame.revalidate();
+        });
+    }
+	
 	public static void showIngame() {
 		EventQueue.invokeLater(() -> {
 			var ingameFrame = new JFrame("Frutty");
@@ -178,7 +185,7 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 			ingameFrame.setLocationRelativeTo(null);
 			ingameFrame.setContentPane(ingameGui = new GuiIngame());
 			ingameFrame.addKeyListener(ingameGui);
-			ingameFrame.setIconImage(GuiMenu.frameIcon);
+			ingameFrame.setIconImage(GuiHelper.frameIcon);
 			
 			ingameGui.updateThread.scheduleAtFixedRate(ingameGui, 0, 20, TimeUnit.MILLISECONDS);
 			ingameGui.renderThread.scheduleAtFixedRate(ingameGui::repaint, 0, 1000 / Settings.fps, TimeUnit.MILLISECONDS);

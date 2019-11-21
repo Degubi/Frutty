@@ -18,7 +18,7 @@ public final class EntityAppleZone extends EntityZone{
 	@Override
 	public void update(int zoneIndex, int x, int y) {
 		if(++delayCounter == 2) {
-			World.setZoneEmptyAt(zoneIndex);
+			World.setZoneEmptyAt(x, y);
 			World.entities.add(new EntityApple(x, y));
 		}
 	}

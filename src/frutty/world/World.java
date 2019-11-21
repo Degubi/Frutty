@@ -5,6 +5,7 @@ import static java.nio.file.StandardOpenOption.*;
 import frutty.*;
 import frutty.entity.*;
 import frutty.entity.zone.*;
+import frutty.gui.GuiSettings.*;
 import frutty.plugin.event.world.*;
 import frutty.tools.*;
 import frutty.world.base.*;
@@ -276,36 +277,56 @@ public final class World{
 		return false;
 	}
 	
-	public static MapZoneBase getZoneAtPos(int x, int y) {
-		var zoneLocal = zones;
-		var xCoordsLocal = xCoords;
-		var yCoordsLocal = yCoords;
-		
-		for(int k = 0; k < zoneLocal.length; ++k) {
-			if(xCoordsLocal[k] == x && yCoordsLocal[k] == y) {
-				return zoneLocal[k];
-			}
-		}
-		return null;
+	public static MapZoneBase getZoneAt(int x, int y) {
+	    var index = coordsToIndex(x, y);
+	    
+	    if(index < 0 || index > World.zones.length - 1) {
+            return null;
+        }
+        return World.zones[index];
 	}
 	
-	public static MapZoneBase getZoneAtIndex(int index) {
-		if(index < 0 || index > zones.length - 1) {
-			return null;
-		}
-		return zones[index];
-	}
+	public static boolean isEmptyAt(int x, int y) {
+        var zone = World.getZoneAt(x, y);
+        
+        return zone != null && zone == MapZoneBase.emptyZone;
+    }
 	
-	public static void setZoneEmptyAt(int index) {
+	public static boolean isPositionFree(int x, int y) {
+        if(x < 0 || x > World.width || y < 0 || y > World.height) {
+            return false;
+        }
+        
+        var zone = World.getZoneAt(x, y);
+        return zone != null && zone.canNPCPass(x, y);
+    }
+	
+	public static void setZoneEmptyAt(int x, int y) {
+	    var index = coordsToIndex(x, y);
+	    
 		zones[index] = MapZoneBase.emptyZone;
 		zoneEntities[index] = null;
 	}
 	
-	public static int coordsToIndex(int x, int y) {
+	private static int coordsToIndex(int x, int y) {
         return x / 64 + (y / 64 * ((World.width + 64) / 64));
     }
 	
-	public static void loadSkyTexture(String textureName) {
+	public static int getEnemyCountBasedOnDifficulty(int zoneCount) {
+        if(!Settings.disableEnemies) {
+            if(Settings.difficulty == 0) {
+                return zoneCount < 70 ? 1 : zoneCount / 70;
+            }else if(Settings.difficulty == 1) {
+                return zoneCount / 50;
+            }else{
+                return zoneCount / 30;
+            }
+        }
+        
+        return 0;
+    }
+	
+	private static void loadSkyTexture(String textureName) {
 		skyTexture = !textureName.equals("null") ? Material.loadTexture("map/skybox", textureName + ".png") : null;
 	}
 }

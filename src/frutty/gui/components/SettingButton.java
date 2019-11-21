@@ -29,7 +29,7 @@ public final class SettingButton extends JComponent implements ActionListener{
 	}
 	
 	public SettingButton(String data, String displayText, int x, int y, String... options) {
-		this(indexOf(data, options), displayText, x, y, options);
+		this(GeneralFunctions.indexOf(data, options), displayText, x, y, options);
 	}
 	
 	@Override
@@ -78,15 +78,6 @@ public final class SettingButton extends JComponent implements ActionListener{
 	public static int indexOf(int value, int[] values) {
 		for(int k = 0; k < values.length; ++k) {
 			if(values[k] == value) {
-				return k;
-			}
-		}
-		throw new IllegalArgumentException("Should not get there...");
-	}
-	
-	private static int indexOf(String value, String[] values) {
-		for(int k = 0; k < values.length; ++k) {
-			if(values[k].equals(value)) {
 				return k;
 			}
 		}

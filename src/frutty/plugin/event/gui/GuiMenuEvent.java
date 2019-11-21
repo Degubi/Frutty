@@ -1,6 +1,7 @@
 package frutty.plugin.event.gui;
 
 import frutty.*;
+import frutty.gui.*;
 import java.util.*;
 import javax.swing.*;
 
@@ -15,5 +16,13 @@ public final class GuiMenuEvent{
 	
 	public void addButton(JButton button) {
 		buttons.add(button);
+	}
+	
+	public static void closeMainMenu() {
+	    GuiMenu.mainFrame.dispose();
+	}
+	
+	public static void openMainMenu() {
+	    GuiMenu.createMainFrame();
 	}
 }

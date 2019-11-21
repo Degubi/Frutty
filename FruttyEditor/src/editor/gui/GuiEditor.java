@@ -4,7 +4,7 @@ import static java.nio.file.StandardOpenOption.*;
 
 import editor.gui.GuiEditorProperties.*;
 import editor.gui.GuiTextureSelector.*;
-import frutty.gui.*;
+import frutty.plugin.event.gui.*;
 import frutty.tools.*;
 import frutty.world.base.*;
 import java.awt.*;
@@ -18,7 +18,7 @@ import javax.swing.*;
 public final class GuiEditor extends JPanel{
 	public final List<EditorZoneButton> zoneButtons = new ArrayList<>();
 	public final GuiEditorProperties mapProperties;
-	public final TextureSelectorButton textureSelectorButton;
+	public final TextureSelector textureSelector;
 	public final JComboBox<String> zoneList = new JComboBox<>(MapZoneBase.zoneNames());
 	
 	private GuiEditor(String fileName, int width, int height, String skyName, String nextMap) {
@@ -29,11 +29,12 @@ public final class GuiEditor extends JPanel{
 			zoneList.setSelectedItem("normalZone");
 			zoneList.setBounds(width * 64 + 20, 80, 120, 30);
 			
+			this.textureSelector = new TextureSelector(width, this);
 			add(zoneList);
-			add(textureSelectorButton = new TextureSelectorButton(width, this));
+			add(textureSelector.button);
 		}else{
 			mapProperties = null;
-			textureSelectorButton = null;
+			textureSelector = null;
 		}
 	}
 	
@@ -43,13 +44,13 @@ public final class GuiEditor extends JPanel{
 		
 		if(!zoneButtons.isEmpty()) {
 			graphics.setFont(GuiHelper.thiccFont);
-			graphics.drawString("Current texture: " + textureSelectorButton.activeMaterial.name, getWidth() - 175, 190);
+			graphics.drawString("Current texture: " + textureSelector.activeMaterial.name, getWidth() - 175, 190);
 		}
 	}
 
 	public static void openEmptyEditor() {
 		showEditorFrame(new GuiEditor(null, 0, 0, null, null), "", 800, 600);
-		GuiMenu.mainFrame.dispose();
+		GuiMenuEvent.closeMainMenu();
 	}
 	
 	private void renderMap() {
@@ -65,10 +66,10 @@ public final class GuiEditor extends JPanel{
 	 		output.writeUTF(mapProperties.nextMap);
 	 		
 	 		for(var writeButton : zoneButtons) {
-	 			output.writeByte(indexOf(zoneIDCache, writeButton.zoneID));
+	 			output.writeByte(GeneralFunctions.indexOf(writeButton.zoneID, zoneIDCache));
 	 			
 	 			if(MapZoneBase.getZoneFromName(writeButton.zoneID) instanceof MapZoneTexturable) {
-	 				output.writeByte(indexOf(textureCache, writeButton.zoneTexture));
+	 				output.writeByte(GeneralFunctions.indexOf(writeButton.zoneTexture, textureCache));
 	 			}
 	 		}
 		} catch (IOException e) {
@@ -97,7 +98,7 @@ public final class GuiEditor extends JPanel{
 			output.write("\n");
 			
 			for(var button : zoneButtons) {
-				output.write(button.zoneID + (button.zoneTexture != null ? (" " + indexOf(textures, button.zoneTexture)) : "") + '\n');
+				output.write(button.zoneID + (button.zoneTexture != null ? (" " + GeneralFunctions.indexOf(button.zoneTexture, textures)) : "") + '\n');
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -169,7 +170,7 @@ public final class GuiEditor extends JPanel{
 			frame.setResizable(false);
 			frame.setBounds(0, 0, width + 200, height + 63);
 			frame.setLocationRelativeTo(null);
-			frame.setIconImage(GuiMenu.frameIcon);
+			frame.setIconImage(GuiHelper.frameIcon);
 			
 			var menuBar = new JMenuBar();
 	    	var fileMenu = new JMenu("File");
@@ -193,10 +194,10 @@ public final class GuiEditor extends JPanel{
 	    	
 	    	fileMenu.addSeparator();
 	    	fileMenu.add(newMenuItem("Close map", '0', !editor.zoneButtons.isEmpty(), event -> {openEmptyEditor(); ((JFrame)editor.getTopLevelAncestor()).dispose();}));
-	    	fileMenu.add(newMenuItem("Exit to menu", '0', true, event -> {frame.dispose(); GuiMenu.createMainFrame();}));
+	    	fileMenu.add(newMenuItem("Exit to menu", '0', true, event -> {frame.dispose(); GuiMenuEvent.openMainMenu();}));
 	    	fileMenu.add(newMenuItem("Exit app", '0', true, event -> System.exit(0)));
 	    	
-	    	mapMenu.add(newMenuItem("Map Properties", 'P', true, event -> showNewGui(editor.mapProperties, "Map Properties", 350, 350)));
+	    	mapMenu.add(newMenuItem("Map Properties", 'P', true, event -> showNewGui(editor.mapProperties.panel, "Map Properties", 350, 350)));
 	    	mapMenu.add(newMenuItem("Map Information", 'I', true, event -> showNewGui(new GuiEditorInfo(editor.zoneButtons), "Map Info", 350, 350)));
 	    	
 	    	menuBar.add(fileMenu);
@@ -214,6 +215,7 @@ public final class GuiEditor extends JPanel{
             frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
             frame.setResizable(false);
             frame.setBounds(0, 0, width, height);
+            frame.setIconImage(GuiHelper.frameIcon);
             frame.setLocationRelativeTo(null);
             frame.setFocusable(true);
             frame.setVisible(true);
@@ -228,14 +230,5 @@ public final class GuiEditor extends JPanel{
 		item.setEnabled(setEnabled);
 		item.addActionListener(listener);
 		return item;
-	}
-	
-	private static<T> int indexOf(T[] array, T element) {
-		for(var k = 0; k < array.length; ++k) {
-			if(array[k].equals(element)) {
-				return k;
-			}
-		}
-		return -1;
 	}
 }

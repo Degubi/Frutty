@@ -32,16 +32,16 @@ public final class EditorZoneButton extends MouseAdapter{
             guiButton.setIcon(MapZoneBase.getZoneFromName(activeZoneName).editorTexture.get());
             
             if(MapZoneBase.getZoneFromName(activeZoneName) instanceof MapZoneTexturable) {
-                guiButton.setIcon(((MapZoneTexturable)MapZoneBase.getZoneFromName(zoneID)).textureVariants.get()[editorInstance.textureSelectorButton.activeMaterial.index]);
-                zoneTexture = editorInstance.textureSelectorButton.activeMaterial.name;
+                guiButton.setIcon(((MapZoneTexturable)MapZoneBase.getZoneFromName(zoneID)).textureVariants.get()[editorInstance.textureSelector.activeMaterial.index]);
+                zoneTexture = editorInstance.textureSelector.activeMaterial.name;
             }else{
                 zoneTexture = null;
             }
             
         }else if(pressedButton == MouseEvent.BUTTON3) {
             if(MapZoneBase.getZoneFromName(zoneID) instanceof MapZoneTexturable) {
-                guiButton.setIcon(((MapZoneTexturable)MapZoneBase.getZoneFromName(zoneID)).textureVariants.get()[editorInstance.textureSelectorButton.activeMaterial.index]);
-                zoneTexture = editorInstance.textureSelectorButton.activeMaterial.name;
+                guiButton.setIcon(((MapZoneTexturable)MapZoneBase.getZoneFromName(zoneID)).textureVariants.get()[editorInstance.textureSelector.activeMaterial.index]);
+                zoneTexture = editorInstance.textureSelector.activeMaterial.name;
             }
         }
     }

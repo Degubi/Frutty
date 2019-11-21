@@ -37,7 +37,7 @@ public final class EntityPlayer extends Entity implements KeyListener{
 	}
 
 	private static boolean isPlayerFree(int x, int y) {
-		if(!World.getZoneAtIndex(World.coordsToIndex(x, y)).canPlayerPass(x, y)) {
+		if(!World.getZoneAt(x, y).canPlayerPass(x, y)) {
 			return false;
 		}
 		
@@ -61,10 +61,15 @@ public final class EntityPlayer extends Entity implements KeyListener{
 		serverPosY += facing.yOffset;
 		textureIndex = facing.textureIndex;
 		
-		var zoneIndex = World.coordsToIndex(renderPosX, renderPosY);
-		World.zones[zoneIndex].onZoneEntered(renderPosX, renderPosY, zoneIndex, World.materials[zoneIndex], this);
+		var zoneIndex = coordsToIndex(renderPosX, renderPosY);
+		World.getZoneAt(renderPosX, renderPosY).onZoneEntered(renderPosX, renderPosY, zoneIndex, World.materials[zoneIndex], this);
 		lastPressTime = System.currentTimeMillis();
 	}
+	
+	//TODO: Ettõl valahogy megszabadulni
+	private static int coordsToIndex(int x, int y) {
+        return x / 64 + (y / 64 * ((World.width + 64) / 64));
+    }
 	
 	@Override
 	public void keyPressed(KeyEvent event) {

@@ -1,7 +1,6 @@
 package frutty.world.zones;
 
 import frutty.entity.*;
-import frutty.gui.GuiSettings.*;
 import frutty.tools.*;
 import frutty.world.*;
 import frutty.world.base.*;
@@ -39,26 +38,12 @@ public final class MapZoneSpawner extends MapZoneBase{
 
 	@Override
 	public void onZoneAdded(boolean isCoop, int x, int y) {
-	    var enemyCount = getEnemyCountBasedOnDifficulty(World.zones.length);
+	    var enemyCount = World.getEnemyCountBasedOnDifficulty(World.zones.length);
 		World.enemies = new EntityEnemy[enemyCount];
 		
 		for(int k = 0; k < enemyCount; ++k) {
 			World.enemies[k] = new EntityEnemy(x, y);
 		}
-	}
-	
-	private static int getEnemyCountBasedOnDifficulty(int zoneCount) {
-	    if(!Settings.disableEnemies) {
-            if(Settings.difficulty == 0) {
-                return zoneCount < 70 ? 1 : zoneCount / 70;
-            }else if(Settings.difficulty == 1) {
-                return zoneCount / 50;
-            }else{
-                return zoneCount / 30;
-            }
-        }
-	    
-	    return 0;
 	}
 	
 	@Override

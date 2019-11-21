@@ -38,20 +38,11 @@ public abstract class Entity implements Serializable{
 		var serverPosYLocal = serverPosY;
 		
 		for(var randomFacing = EnumFacing.randomFacing(); ; randomFacing = EnumFacing.randomFacing()) {
-			if(isFree(serverPosXLocal + randomFacing.xOffset, serverPosYLocal + randomFacing.yOffset)) {
+			if(World.isPositionFree(serverPosXLocal + randomFacing.xOffset, serverPosYLocal + randomFacing.yOffset)) {
 				return randomFacing;
 			}
 			continue;
 		}
-	}
-	
-	protected final static boolean isFree(int x, int y) {
-		if(x < 0 || x > World.width || y < 0 || y > World.height) {
-			return false;
-		}
-		
-		var zone = World.getZoneAtIndex(World.coordsToIndex(x, y));
-		return zone != null && zone.canNPCPass(x, y);
 	}
 	
 	protected final boolean doesCollide(Entity other) {

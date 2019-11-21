@@ -1,6 +1,5 @@
 package frutty.tools;
 
-import frutty.gui.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -14,20 +13,14 @@ public final class GuiHelper {
 	private static final int recommendedMaxMapHeight = Toolkit.getDefaultToolkit().getScreenSize().height / 64 - 1;
 	private static final int recommendedMaxMapWidth = Toolkit.getDefaultToolkit().getScreenSize().width / 64 - 1;
 	public static final LineBorder menuBorder = new LineBorder(Color.DARK_GRAY, 2);
-	
+	public static final Image frameIcon = Toolkit.getDefaultToolkit().createImage("./textures/player/side.png");
+
 	private GuiHelper() {}
 	
 	public static void mapSizeCheck(int width, int height) {
 		if(width > GuiHelper.recommendedMaxMapWidth || height > GuiHelper.recommendedMaxMapHeight) {
 			JOptionPane.showMessageDialog(null, "Warning: map size is bigger than the recommended max map size!");
 		}
-	}
-	
-	public static void switchGui(Container panel) {
-		EventQueue.invokeLater(() -> {
-			GuiMenu.mainFrame.setContentPane(panel);
-			GuiMenu.mainFrame.revalidate();
-		});
 	}
 	
 	public static JCheckBox newCheckBox(String text, int x, int y, Color foreground, boolean setSelected) {

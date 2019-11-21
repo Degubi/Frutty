@@ -11,7 +11,7 @@ import java.util.*;
 import java.util.jar.*;
 
 public final class Plugin{
-	public static final List<Plugin> plugins = Main.toList(new Plugin("Frutty", "Base module for the game.", "", Version.from(1, 5, 0), "https://pastebin.com/raw/m5qJbnks"), new Plugin("Frutty Plugin Loader", "Base module for the plugin loader", "", Version.from(1, 0, 0), ""));
+	public static final List<Plugin> plugins = GeneralFunctions.toMutableList(new Plugin("Frutty", "Base module for the game.", "", Version.from(1, 5, 0), "https://pastebin.com/raw/m5qJbnks"), new Plugin("Frutty Plugin Loader", "Base module for the plugin loader", "", Version.from(1, 0, 0), ""));
 	
 	public final String description, ID, updateURL, versionURL;
 	public final Version version;

@@ -46,12 +46,12 @@ public abstract class MapZoneBase implements Serializable{
 		player.hidden = doesHidePlayer(x, y);
 
 		if(isBreakable(x, y)) {
-			World.setZoneEmptyAt(zoneIndex);
+			World.setZoneEmptyAt(x, y);
 			breakSound.start();
 			GuiStats.zoneCount++;
 			
 			int checkIndex = zoneIndex - (World.width / 64) - 1;
-			var up = World.getZoneAtIndex(checkIndex);
+			var up = getZoneAtIndex(checkIndex);
 			if(up != null && up instanceof IZoneEntityProvider) {
 				World.zoneEntities[checkIndex].onNotified();
 			}
@@ -60,6 +60,13 @@ public abstract class MapZoneBase implements Serializable{
 		}
 	}
 	
+	//TODO: Ettõl valahogy megszabadulni
+	private static MapZoneBase getZoneAtIndex(int index) {
+        if(index < 0 || index > World.zones.length - 1) {
+            return null;
+        }
+        return World.zones[index];
+    }
 	
 	/********************************************************INTERNALS***********************************************************/
 	
@@ -100,16 +107,6 @@ public abstract class MapZoneBase implements Serializable{
 		return (icon.getIconWidth() == 64 && icon.getIconHeight() == 64) ? icon : new ImageIcon(icon.getImage().getScaledInstance(64, 64, Image.SCALE_DEFAULT));
 	}
 	
-	public static boolean isEmpty(int x, int y) {
-		var zone = World.getZoneAtPos(x, y);
-		return zone != null && zone == emptyZone;
-	}
-	
-	public static boolean isEmptyAt(int index) {
-		var zone = World.getZoneAtIndex(index);
-		return zone != null && zone == emptyZone;
-	}
-	
 	public static final MapZoneNormal normalZone = new MapZoneNormal();
 	public static final MapZoneEmpty emptyZone = new MapZoneEmpty();
 	public static final MapZonePlayer player1Zone = new MapZonePlayer(1);
@@ -123,7 +120,7 @@ public abstract class MapZoneBase implements Serializable{
 	public static final MapZoneBush bushZone = new MapZoneBush();
 	public static final MapZonePortal portalZone = new MapZonePortal();
 	
-	private static final List<MapZoneBase> zoneRegistry = Main.toList(normalZone, emptyZone, appleZone, player1Zone, player2Zone, cherryZone, spawnerZone, chestZone, waterZone, skyZone, bushZone, portalZone);
+	private static final List<MapZoneBase> zoneRegistry = GeneralFunctions.toMutableList(normalZone, emptyZone, appleZone, player1Zone, player2Zone, cherryZone, spawnerZone, chestZone, waterZone, skyZone, bushZone, portalZone);
 	
 	/**
 	 * Register zone
