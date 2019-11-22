@@ -19,7 +19,7 @@ public final class GuiMenuEvent{
 	}
 	
 	public static void closeMainMenu() {
-	    GuiMenu.mainFrame.dispose();
+	    GuiMenu.closeMainFrame();
 	}
 	
 	public static void openMainMenu() {

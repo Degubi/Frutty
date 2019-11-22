@@ -11,10 +11,10 @@ public final class WorldInitEvent{
 	public final String[] mapTextureCache;
 	public final List<Entity> mapEntities;
 	
-	public WorldInitEvent(int w, int h, String[] text, List<Entity> ents) {
+	public WorldInitEvent(int w, int h, String[] textures, List<Entity> ents) {
 		mapWidth = w;
 		mapHeight = h;
-		mapTextureCache = text;
+		mapTextureCache = textures;
 		mapEntities = ents;
 	}
 }

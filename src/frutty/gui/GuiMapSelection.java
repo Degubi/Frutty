@@ -40,10 +40,10 @@ public final class GuiMapSelection{
 		panel.add(devMode);
         panel.add(coopBox);
 		panel.add(pane);
-		panel.add(newButton("Menu", 725, 475, e -> GuiIngame.switchGui(GuiMenu.createMenuPanel())));
+		panel.add(newButton("Menu", 725, 475, e -> GuiMenu.switchMenuGui(GuiMenu.createMenuPanel())));
 		panel.add(newButton("Play", 725, 550, e -> handlePlayButtonPress(mapList, coopBox)));
 		
-		GuiIngame.switchGui(panel);
+		GuiMenu.switchMenuGui(panel);
 	}
 	
 	private static void handleMapListChange(ListSelectionEvent event, JList<String> mapList, JLabel mapImage) {
@@ -84,11 +84,11 @@ public final class GuiMapSelection{
 	
 	private static void handlePlayButtonPress(JList<String> mapList, JCheckBox coopBox) {
 	    if(mapList.getSelectedValue().equals("Generate Map")) {
-	        GuiIngame.switchGui(createGenerateMapPanel());
+	        GuiMenu.switchMenuGui(createGenerateMapPanel());
         }else{
             World.loadMap(mapList.getSelectedValue(), coopBox.isSelected());
             GuiIngame.showIngame();
-            GuiMenu.mainFrame.dispose();
+            GuiMenu.closeMainFrame();
         }
 	}
 	
@@ -111,7 +111,7 @@ public final class GuiMapSelection{
         panel.add(sizeField);
         
         panel.add(new SettingButton(false, "Enable Water", 50, 80));
-        panel.add(newButton("Menu", 725, 475, e -> GuiIngame.switchGui(GuiMenu.createMenuPanel())));
+        panel.add(newButton("Menu", 725, 475, e -> GuiMenu.switchMenuGui(GuiMenu.createMenuPanel())));
         panel.add(newButton("Play", 725, 550, e -> handleGeneratePlayButtonPress(sizeField)));
         
         return panel;
@@ -122,6 +122,6 @@ public final class GuiMapSelection{
 	    
         World.generateMap(Integer.parseInt(mapSize[0]), Integer.parseInt(mapSize[1]), false);
         GuiIngame.showIngame();
-        GuiMenu.mainFrame.dispose();
+        GuiMenu.closeMainFrame();
 	}
 }

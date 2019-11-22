@@ -45,11 +45,11 @@ public final class World{
 		textures = null;
 	}
 	
-	private static void init(String[] txts, boolean isMultiplayer, String skyName, String levelName, int w, int h, String next) {
+	private static void init(String[] textures, boolean isMultiplayer, String skyName, String levelName, int w, int h, String next) {
 		mapName = levelName;
 		nextMap = next;
 		
-		if(!EventHandle.mapLoadEvents.isEmpty()) EventHandle.handleEvent(new WorldInitEvent(w, h, txts, entities), EventHandle.mapLoadEvents);
+		if(!EventHandle.mapLoadEvents.isEmpty()) EventHandle.handleEvent(new WorldInitEvent(w, h, textures, entities), EventHandle.mapLoadEvents);
 		
 		int zoneCount = (w / 64) * (h / 64);
 		zones = new MapZoneBase[zoneCount];

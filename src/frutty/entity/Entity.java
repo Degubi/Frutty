@@ -74,7 +74,7 @@ public abstract class Entity implements Serializable{
 		}
 	}
 	
-	public final void handleRender(Graphics graphics) {
+	public final void renderInternal(Graphics graphics) {
 		render(graphics);
 		
 		if(Settings.enableCollisionDebug) {
@@ -85,7 +85,7 @@ public abstract class Entity implements Serializable{
 		}
 	}
 	
-	public final void update(int ticks) {
+	public final void updateInternal(int ticks) {
 		if(ticks % getClientUpdateRate() == 0) {
 			updateClient();
 			renderPosX += motionX / moveRate;

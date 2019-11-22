@@ -63,7 +63,7 @@ public final class GuiMapBackground extends JPanel {
 		for(int k = 0; k < zonesLocal.length; ++k) {
 			var zone = zonesLocal[k];
 			
-			zone.render(xCoordsLocal[k], yCoordsLocal[k], materialsLocal[k], graphics);
+			zone.drawInternal(xCoordsLocal[k], yCoordsLocal[k], materialsLocal[k], graphics);
 			if(zone instanceof ITransparentZone) {
 				((ITransparentZone) zone).drawAfter(xCoordsLocal[k], yCoordsLocal[k], materialsLocal[k], graphics);
 			}

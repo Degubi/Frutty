@@ -50,9 +50,9 @@ public final class GuiStats extends DefaultTreeCellRenderer{
 		
 		panel.add(statTree);
 		panel.add(newButton("Reset", 100, 550, e -> handleResetButtonPress(panel)));
-		panel.add(newButton("Menu", 370, 550, e -> GuiIngame.switchGui(GuiMenu.createMenuPanel())));
+		panel.add(newButton("Menu", 370, 550, e -> GuiMenu.switchMenuGui(GuiMenu.createMenuPanel())));
 		
-		GuiIngame.switchGui(panel);
+		GuiMenu.switchMenuGui(panel);
 	}
 	
 	private static void handleResetButtonPress(GuiMapBackground panel) {

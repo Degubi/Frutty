@@ -13,12 +13,7 @@ public final class Main {
 	
 	public static void main(String[] args) throws Exception {
 		createDirectory("plugins");
-		boolean loadedAny = Plugin.loadPlugins();
-		
-		if(loadedAny) {
-			EventHandle.sortEvents();
-		}
-		
+		Plugin.loadPlugins();
 		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		GuiMenu.createMainFrame();
 		createDirectory("saves");

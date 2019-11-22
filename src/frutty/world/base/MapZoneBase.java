@@ -71,7 +71,7 @@ public abstract class MapZoneBase implements Serializable{
 	/********************************************************INTERNALS***********************************************************/
 	
 	
-	public final void render(int x, int y, Material material, Graphics graphics) {
+	public final void drawInternal(int x, int y, Material material, Graphics graphics) {
 		draw(x, y, material, graphics);
 		
 		if(hasShadowRender && Settings.graphicsLevel > 0) {

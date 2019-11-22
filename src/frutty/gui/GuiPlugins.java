@@ -37,7 +37,7 @@ public final class GuiPlugins extends DefaultListCellRenderer implements Hyperli
 		pluginPanel.setDividerSize(0);
 		
 		var bottomPanel = new JPanel(null);
-		bottomPanel.add(GuiHelper.newButton("Menu", 370, 14, e -> GuiIngame.switchGui(GuiMenu.createMenuPanel())));
+		bottomPanel.add(GuiHelper.newButton("Menu", 370, 14, e -> GuiMenu.switchMenuGui(GuiMenu.createMenuPanel())));
 		pluginPanel.setPreferredSize(new Dimension(Integer.MAX_VALUE, 530));
 		bottomPanel.setPreferredSize(new Dimension(Integer.MAX_VALUE, 100));
 		bottomPanel.setOpaque(false);
@@ -47,7 +47,7 @@ public final class GuiPlugins extends DefaultListCellRenderer implements Hyperli
 		backgroundPanel.add(pluginPanel, BorderLayout.NORTH);
 		backgroundPanel.add(bottomPanel, BorderLayout.SOUTH);
 
-		GuiIngame.switchGui(backgroundPanel);
+		GuiMenu.switchMenuGui(backgroundPanel);
 		
 		new Thread(() -> {
 			for(var plugin : Plugin.plugins) {

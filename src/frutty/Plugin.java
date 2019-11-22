@@ -66,12 +66,11 @@ public final class Plugin{
 	}
 	
 	@SuppressWarnings("resource")
-	public static boolean loadPlugins() {
+	public static void loadPlugins() {
 		try(var pluginFolder = Files.list(Path.of("plugins"))){
 			var pluginJars = pluginFolder.filter(Files::isRegularFile)
 										 .filter(file -> file.toString().endsWith(".jar"))
 										 .toArray(Path[]::new);
-
 			if(pluginJars.length > 0) {
 				var mainClasses = Arrays.stream(pluginJars).map(Plugin::getMainClassNameFromJar).toArray(String[]::new);
 				var classLoader = new URLClassLoader(Arrays.stream(pluginJars).map(Plugin::convertToURL).toArray(URL[]::new), Main.class.getClassLoader()); //Dont close this or shit breaks
@@ -110,10 +109,9 @@ public final class Plugin{
 						}
 					}
 				}
-				return true;
+				
+				EventHandle.sortEvents();
 			}
-			return false;
-			
 		} catch (Throwable e1) {
 			throw new IllegalStateException("Something is fucked in plugin loading again...");
 		}

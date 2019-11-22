@@ -38,7 +38,7 @@ public final class GuiSettings implements ActionListener{
 			Settings.settingProperties.setInt("volume", Settings.volume = volumeSlider.counter);
 			Settings.settingProperties.setString("screenshotFormat", Settings.screenshotFormat = screenshotFormats[screenshotFormatButton.optionIndex]);
 			Settings.settingProperties.save();
-			GuiIngame.switchGui(GuiMenu.createMenuPanel());
+			GuiMenu.switchMenuGui(GuiMenu.createMenuPanel());
 		}
 	}
 	
@@ -55,7 +55,7 @@ public final class GuiSettings implements ActionListener{
 		insets.bottom = -1;
 		UIManager.put("TabbedPane.contentBorderInsets", insets);
 		
-		GuiIngame.switchGui(tabbed);
+		GuiMenu.switchMenuGui(tabbed);
 	}
 	
 	private static final SettingButton difficultyButton = new SettingButton(Settings.difficulty, "Difficulty", 100, 20, "Easy", "Normal", "Hard");

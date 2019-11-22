@@ -16,14 +16,15 @@ import java.util.concurrent.*;
 import javax.imageio.*;
 import javax.swing.*;
 
-public final class GuiIngame extends JPanel implements Runnable, KeyListener{
-	public static GuiIngame ingameGui;
+public final class GuiIngame extends JPanel implements KeyListener{
+	private static ScheduledExecutorService serverThread;
+	private static ScheduledExecutorService renderThread;
+	private static ScheduledFuture<?> serverTask;
 	
-	private final ScheduledExecutorService updateThread = Executors.newSingleThreadScheduledExecutor(task -> new Thread(task, "Server Thread"));
-	private final ScheduledExecutorService renderThread = Executors.newSingleThreadScheduledExecutor(task -> new Thread(task, "Render Thread"));
-	private boolean paused = false;
-	private final LocalTime startTime = LocalTime.now();
-	private long renderLastUpdate = System.currentTimeMillis();
+	static JFrame ingameFrame;
+	private static GuiIngame ingamePanel;
+	private static LocalTime startTime;
+	private static long renderLastUpdate;
 	
 	@Override
 	protected void paintComponent(Graphics graphics) {
@@ -32,16 +33,16 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 		var yCoords = World.yCoords;
 		var materials = World.materials;
 
-		for(var k = 0; k < zones.length; ++k) zones[k].render(xCoords[k], yCoords[k], materials[k], graphics);
-		for(var players : World.players) players.handleRender(graphics);
+		for(var k = 0; k < zones.length; ++k) zones[k].drawInternal(xCoords[k], yCoords[k], materials[k], graphics);
+		for(var players : World.players) players.renderInternal(graphics);
 		
 		for(var entity : World.entities) {
-			entity.handleRender(graphics);
+			entity.renderInternal(graphics);
 		}
 		
 		for(var enemies : World.enemies) {
 			if(enemies.active) {
-				enemies.handleRender(graphics);
+				enemies.renderInternal(graphics);
 			}
 		}
 		
@@ -101,53 +102,48 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 		for(var k = 0; k < 20; ++k) graphics.drawLine(worldWidth + 64 + k, 0, worldWidth + 64 + k, worldHeight + 83);
 	}
 	
-	@Override
-	public void run() {
-		if(!paused) {
-			++World.ticks;
-			var ticks = World.ticks;
+	private static void updateServer() {
+	    ++World.ticks;
+	    var ticks = World.ticks;
 			
-			for(var entity : World.players) entity.update(ticks);
+	    for(var entity : World.players) entity.updateInternal(ticks);
 			
-			for(var monsters : World.enemies) {
-				if(monsters.active) {
-					monsters.update(ticks);
-				}
+	    for(var monsters : World.enemies) {
+	        if(monsters.active) {
+	            monsters.updateInternal(ticks);
 			}
+		}
 			
-			for(var entities : World.entities) {
-				entities.update(ticks);
+	    for(var entities : World.entities) entities.updateInternal(ticks);
+			
+	    if(ticks % 4 == 0) MapZoneWater.updateWaterUV();
+			
+	    if(ticks % 2 == 0) {
+	        for(var iterator = World.particles.iterator(); iterator.hasNext();) {
+	            iterator.next().update(iterator);
 			}
+		}
 			
-			if(ticks % 4 == 0) MapZoneWater.updateWaterUV();
-			
-			if(ticks % 2 == 0) {
-				for(var iterator = World.particles.iterator(); iterator.hasNext();) {
-					iterator.next().update(iterator);
-				}
-			}
-			
-			if(ticks % 20 == 0) {
-				var xCoords = World.xCoords;
-				var yCoords = World.yCoords;
-				var materials = World.materials;
-				var zones = World.zones;
+	    if(ticks % 20 == 0) {
+	        var xCoords = World.xCoords;
+	        var yCoords = World.yCoords;
+	        var materials = World.materials;
+	        var zones = World.zones;
 				
-				for(int k = 0; k < zones.length; ++k) {
-					var zone = zones[k];
-					var xCoord = xCoords[k];
-					var yCoord = yCoords[k];
+	        for(var k = 0; k < zones.length; ++k) {
+	            var zone = zones[k];
+	            var xCoord = xCoords[k];
+	            var yCoord = yCoords[k];
 					
-					if(zone.hasParticleSpawns && World.isEmptyAt(xCoord, yCoord + 64) && Main.rand.nextInt(100) == 3) {
-						Particle.spawnFallingParticles(2 + Main.rand.nextInt(5), xCoord, yCoord, materials[k]);
-					}
-					
-					if(zone instanceof IZoneEntityProvider) {
-						var entity = World.zoneEntities[k];
+	            if(zone.hasParticleSpawns && World.isEmptyAt(xCoord, yCoord + 64) && Main.rand.nextInt(100) == 3) {
+	                Particle.spawnFallingParticles(2 + Main.rand.nextInt(5), xCoord, yCoord, materials[k]);
+				}
+	            
+	            if(zone instanceof IZoneEntityProvider) {
+	                var entity = World.zoneEntities[k];
 						
-						if(entity.needsUpdates) {
-							entity.update(k, xCoord, yCoord);
-						}
+	                if(entity.needsUpdates) {
+	                    entity.update(k, xCoord, yCoord);
 					}
 				}
 			}
@@ -155,41 +151,73 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 	}
 	
 	public static void showMessageAndClose(String message) {
-		ingameGui.updateThread.shutdown();
-		ingameGui.renderThread.shutdown();
+	    serverThread.shutdown();
+	    renderThread.shutdown();
+	    serverThread = null;
+	    renderThread = null;
+	    
 		JOptionPane.showMessageDialog(null, message, "Frutty", JOptionPane.PLAIN_MESSAGE);
 		GuiMenu.createMainFrame();
-		((JFrame)ingameGui.getTopLevelAncestor()).dispose();
+		ingameFrame.dispose();
 		if(GuiStats.topScore < World.score) {
 			GuiStats.topScore = World.score;
 		}
-		GuiStats.playTime += ingameGui.startTime.until(LocalTime.now(), ChronoUnit.MINUTES);
+		
+		GuiStats.playTime += startTime.until(LocalTime.now(), ChronoUnit.MINUTES);
 		GuiStats.saveStats();
 		World.cleanUp();
 	}
 	
-	public static void switchGui(Container panel) {
-        EventQueue.invokeLater(() -> {
-            GuiMenu.mainFrame.setContentPane(panel);
-            GuiMenu.mainFrame.revalidate();
-        });
-    }
+	public static void showSaveQuestion() {
+	    serverThread.shutdown();
+        renderThread.shutdown();
+        serverThread = null;
+        renderThread = null;
+        serverTask = null;
+        
+        if(JOptionPane.showConfirmDialog(null, "Save current status?", "Save?", JOptionPane.YES_NO_OPTION, 1) == 0) {
+            World.createSave(JOptionPane.showInputDialog("Enter save name!"));
+        }
+	}
+	
+	public static void pause() {
+	    serverTask.cancel(true);
+	}
+	
+	public static void unpause() {
+	    serverTask = serverThread.scheduleAtFixedRate(GuiIngame::updateServer, 0, 20, TimeUnit.MILLISECONDS);
+	}
+	
+	public static void shutdown() {
+        serverThread.shutdown();
+        renderThread.shutdown();
+        
+        serverTask = null;
+        serverThread = null;
+        renderThread = null;
+	}
 	
 	public static void showIngame() {
 		EventQueue.invokeLater(() -> {
-			var ingameFrame = new JFrame("Frutty");
+			ingameFrame = new JFrame("Frutty");
+			ingamePanel = new GuiIngame();
 			
 			ingameFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 			ingameFrame.setResizable(false);
 			ingameFrame.setBounds(0, 0, World.width + 288, World.height + 100);
 			ingameFrame.setLocationRelativeTo(null);
-			ingameFrame.setContentPane(ingameGui = new GuiIngame());
-			ingameFrame.addKeyListener(ingameGui);
+			ingameFrame.setContentPane(ingamePanel);
+			ingameFrame.addKeyListener(ingamePanel);
 			ingameFrame.setIconImage(GuiHelper.frameIcon);
-			
-			ingameGui.updateThread.scheduleAtFixedRate(ingameGui, 0, 20, TimeUnit.MILLISECONDS);
-			ingameGui.renderThread.scheduleAtFixedRate(ingameGui::repaint, 0, 1000 / Settings.fps, TimeUnit.MILLISECONDS);
 			ingameFrame.setFocusable(true);
+			
+			startTime = LocalTime.now();
+			renderLastUpdate = System.currentTimeMillis();
+			serverThread = Executors.newSingleThreadScheduledExecutor(task -> new Thread(task, "Server Thread"));
+			renderThread = Executors.newSingleThreadScheduledExecutor(task -> new Thread(task, "Render Thread"));
+	        renderThread.scheduleAtFixedRate(ingamePanel::repaint, 0, 1000 / Settings.fps, TimeUnit.MILLISECONDS);
+
+	        unpause();
 			
 			for(var players : World.players) {
 				ingameFrame.addKeyListener(players);
@@ -200,20 +228,21 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 	
 	@Override
 	public void keyPressed(KeyEvent event) {
-		int keyCode = event.getKeyCode();
+		var keyCode = event.getKeyCode();
 		
 		if(keyCode == KeyEvent.VK_ESCAPE) {
-			paused = true;
+			pause();
 			
 			EventQueue.invokeLater(() -> {
 				var returnFrame = new JFrame("Frutty");
-				var menu = new PauseMenu();
+				var menu = new GuiPauseMenu();
 				returnFrame.setContentPane(menu.panel);
 				returnFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 				returnFrame.setResizable(false);
 				returnFrame.setBounds(0, 0, 600, 540);
 				returnFrame.setLocationRelativeTo(null);
 				returnFrame.setFocusable(true);
+				returnFrame.setIconImage(GuiHelper.frameIcon);
 				returnFrame.addKeyListener(menu);
 				returnFrame.addWindowListener(menu);
 				returnFrame.setVisible(true);
@@ -224,77 +253,11 @@ public final class GuiIngame extends JPanel implements Runnable, KeyListener{
 				var window = ((JFrame)getTopLevelAncestor()).getLocationOnScreen();
 				ImageIO.write(new Robot().createScreenCapture(new Rectangle(window.x + 7, window.y + 30, World.width + 64, World.height + 64)), Settings.screenshotFormat, 
 																			new File("./screenshots/" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd_kk_HH_ss")) +"." + Settings.screenshotFormat.toLowerCase()));
-			} catch (HeadlessException | AWTException | IOException e1) {
+			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
 		}
 	}
 	
-	private static final class PauseMenu extends WindowAdapter implements ActionListener, KeyListener{
-		public final JPanel panel;
-	    
-	    public PauseMenu() {
-			panel = new JPanel(null);
-			panel.setBackground(GuiHelper.color_84Black);
-			
-	        panel.add(GuiHelper.newButton("Resume", 220, 180, this));
-	        panel.add(GuiHelper.newButton("Save", 220, 260, this));
-	        panel.add(GuiHelper.newButton("Menu", 220, 340, this));
-	        panel.add(GuiHelper.newButton("Exit", 220, 420, this));
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent event) {
-			var cmd = event.getActionCommand();
-			
-			if(cmd.equals("Resume")) {
-				ingameGui.paused = false;
-			}else if(cmd.equals("Exit")) {
-				ingameGui.renderThread.shutdown();
-				ingameGui.updateThread.shutdown();
-				
-				if(JOptionPane.showConfirmDialog(null, "Save current status?", "Save?", JOptionPane.YES_NO_OPTION, 1) == 0) {
-					World.createSave(JOptionPane.showInputDialog("Enter save name!"));
-				}
-				
-				GuiStats.saveStats();
-				System.exit(0);
-			}else if(cmd.equals("Menu")) {
-				ingameGui.renderThread.shutdown();
-				ingameGui.updateThread.shutdown();
-				
-				if(JOptionPane.showConfirmDialog(null, "Save current status?", "Save?", JOptionPane.YES_NO_OPTION, 1) == 0) {
-					World.createSave(JOptionPane.showInputDialog("Enter save name!"));
-				}
-				
-				((JFrame)ingameGui.getTopLevelAncestor()).dispose();
-				GuiMenu.createMainFrame();
-				GuiStats.saveStats();
-				World.cleanUp();
-			}else{  //Save
-				ingameGui.paused = true;
-				World.createSave(JOptionPane.showInputDialog("Enter save name!"));
-				ingameGui.paused = false;
-				GuiStats.saveStats();
-			}
-			((JFrame)panel.getTopLevelAncestor()).dispose();
-		}
-		
-		@Override
-		public void keyPressed(KeyEvent event) {
-			if(event.getKeyCode() == KeyEvent.VK_ESCAPE) {
-				((JFrame)panel.getTopLevelAncestor()).dispose();
-				ingameGui.paused = false;
-			}
-		}
-		
-		@Override
-		public void windowClosing(WindowEvent event) {
-			ingameGui.paused = false;
-		}
-
-		@Override public void keyTyped(KeyEvent e) {} @Override public void keyReleased(KeyEvent e) {}
-	}
-
 	@Override public void keyTyped(KeyEvent e) {} @Override public void keyReleased(KeyEvent e) {}
 }

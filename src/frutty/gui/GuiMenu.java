@@ -14,7 +14,7 @@ import java.util.*;
 import javax.swing.*;
 
 public final class GuiMenu{
-	public static JFrame mainFrame;
+	private static JFrame mainFrame;
 	
 	public static JPanel createMenuPanel() {
 		var panel = new GuiMapBackground("./maps/background" + Main.rand.nextInt(4) + ".fmap");
@@ -42,6 +42,10 @@ public final class GuiMenu{
 		return panel;
 	}
 	
+	public static void closeMainFrame() {
+	    mainFrame.dispose();
+	}
+	
 	public static void createMainFrame() {
 		EventQueue.invokeLater(() -> {
 			mainFrame = new JFrame("Frutty");
@@ -55,6 +59,13 @@ public final class GuiMenu{
 			mainFrame.setVisible(true);
 		});
 	}
+	
+	public static void switchMenuGui(Container panel) {
+        EventQueue.invokeLater(() -> {
+            GuiMenu.mainFrame.setContentPane(panel);
+            GuiMenu.mainFrame.revalidate();
+        });
+    }
 	
 	private static void handleSaveLoading(GuiMapBackground panel) {
 	    try(var files = Files.list(Path.of("./saves"))){
