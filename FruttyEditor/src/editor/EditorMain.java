@@ -5,7 +5,7 @@ import frutty.plugin.*;
 import frutty.plugin.event.gui.*;
 import frutty.tools.*;
 
-@FruttyPlugin(name = "Frutty Editor", version = "1.0.0", description = "Editor Plugin")
+@FruttyPlugin(name = "Frutty Editor", version = "1.0.0", description = "Editor Plugin", pluginSiteURL = "https://github.com/Degubi/Frutty/tree/master/FruttyEditor")
 public final class EditorMain{
 	
 	@FruttyMain(eventClass = EditorMain.class)

@@ -42,7 +42,7 @@ public abstract class MapZoneBase implements Serializable{
 	public boolean canNPCPass(int x, int y) {return false;}
 	protected void onZoneAdded(boolean isCoop, int x, int y) {}
 	
-	public void onZoneEntered(int x, int y, int zoneIndex, Material material, EntityPlayer player) {
+	public void onZoneEntered(int x, int y, Material material, EntityPlayer player) {
 		player.hidden = doesHidePlayer(x, y);
 
 		if(isBreakable(x, y)) {
@@ -50,23 +50,16 @@ public abstract class MapZoneBase implements Serializable{
 			breakSound.start();
 			GuiStats.zoneCount++;
 			
-			int checkIndex = zoneIndex - (World.width / 64) - 1;
-			var up = getZoneAtIndex(checkIndex);
-			if(up != null && up instanceof IZoneEntityProvider) {
-				World.zoneEntities[checkIndex].onNotified();
+			var aboveZoneIndex = World.coordsToIndex(x, y - 64);
+			var zoneAbove = World.getZoneAtIndex(aboveZoneIndex);
+			
+			if(zoneAbove != null && zoneAbove instanceof IZoneEntityProvider) {
+				World.zoneEntities[aboveZoneIndex].onNotified();
 			}
 			
 			Particle.spawnFallingParticles(2 + Main.rand.nextInt(10), x, y, material);
 		}
 	}
-	
-	//TODO: Ettõl valahogy megszabadulni
-	private static MapZoneBase getZoneAtIndex(int index) {
-        if(index < 0 || index > World.zones.length - 1) {
-            return null;
-        }
-        return World.zones[index];
-    }
 	
 	/********************************************************INTERNALS***********************************************************/
 	

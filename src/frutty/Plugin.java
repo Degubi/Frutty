@@ -11,31 +11,29 @@ import java.util.*;
 import java.util.jar.*;
 
 public final class Plugin{
-	public static final List<Plugin> plugins = GeneralFunctions.toMutableList(new Plugin("Frutty", "Base module for the game.", "", Version.from(1, 5, 0), "https://pastebin.com/raw/m5qJbnks"), new Plugin("Frutty Plugin Loader", "Base module for the plugin loader", "", Version.from(1, 0, 0), ""));
+	public static final List<Plugin> plugins = GeneralFunctions.toMutableList(new Plugin("Frutty", "Base module for the game.", "https://github.com/Degubi/Frutty", "1.5.0"), new Plugin("Frutty Plugin Loader", "Base module for the plugin loader", "", "1.0.0"));
 	
-	public final String description, ID, updateURL, versionURL;
-	public final Version version;
+	public final String description, name, pluginURL;
+	public final String version;
 	public boolean needsUpdate = false;
 	
-	public Plugin(String name, String desc, String url, Version ver, String verURL) {
-		description = desc;
-		ID = name;
-		updateURL = url;
-		version = ver;
-		versionURL = verURL;
+	public Plugin(String name, String description, String pluginURL, String version) {
+	    this.name = name;
+		this.description = description;
+		this.pluginURL = pluginURL;
+		this.version = version;
 	}
 		
 	@Override
 	public String toString() {
-		return ID;
+		return name;
 	}
 		
 	public String getInfo() {
-		return "<b><font color=white>Name: " + ID +
-				"<br>Version: " + version + 
-				"<br>URL: " + (updateURL == null ? "" : ("<a href=" + updateURL + ">" + updateURL + "</a>")) + 
-				"<br>Needs update: <b><font color=" + (needsUpdate ? "red>" : "green>") + (needsUpdate ? "Yes" : "No") + "</font></b>" + (
-				description != null ? ("<br>Description: " + description) : "");
+		return "<b><font color=white>Name: " + name +
+		       "<br>Version: " + version +
+		       "<br>URL: <a href=" + pluginURL + ">" + pluginURL + "</a>" +
+		       "<br>Description: " + description;
 	}
 	
 	private static String getMainClassNameFromJar(Path jarPath) {
@@ -76,7 +74,7 @@ public final class Plugin{
 				var classLoader = new URLClassLoader(Arrays.stream(pluginJars).map(Plugin::convertToURL).toArray(URL[]::new), Main.class.getClassLoader()); //Dont close this or shit breaks
 				var lookup = MethodHandles.publicLookup();
 
-				for(int k = 0; k < mainClasses.length; ++k) {
+				for(var k = 0; k < mainClasses.length; ++k) {
 					if(mainClasses[k] == null) {
 						throw new IllegalStateException("Can't load main class from plugin: " + pluginJars[k]);
 					}
@@ -87,7 +85,7 @@ public final class Plugin{
 					}
 
 					var pluginAnnotation = loaded.getDeclaredAnnotation(FruttyPlugin.class);
-					plugins.add(new Plugin(pluginAnnotation.name(), pluginAnnotation.description(), pluginAnnotation.updateURL(), Version.fromString(pluginAnnotation.version()), pluginAnnotation.versionURL()));
+					plugins.add(new Plugin(pluginAnnotation.name(), pluginAnnotation.description(), pluginAnnotation.pluginSiteURL(), pluginAnnotation.version()));
 
 					var pluginMains = Arrays.stream(loaded.getDeclaredMethods())
 											.filter(method -> method.isAnnotationPresent(FruttyMain.class))

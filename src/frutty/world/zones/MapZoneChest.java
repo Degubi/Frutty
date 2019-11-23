@@ -22,10 +22,10 @@ public final class MapZoneChest extends MapZoneTexturable{
 	}
 	
 	@Override
-	public void onZoneEntered(int x, int y, int zoneIndex, Material material, EntityPlayer player) {
+	public void onZoneEntered(int x, int y, Material material, EntityPlayer player) {
 		player.entityEffects.add(new EntityEffectInvisible());
 		
-		super.onZoneEntered(x, y, zoneIndex, material, player);
+		super.onZoneEntered(x, y, material, player);
 	}
 	
 	@Override

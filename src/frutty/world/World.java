@@ -9,7 +9,7 @@ import frutty.gui.GuiSettings.*;
 import frutty.plugin.event.world.*;
 import frutty.tools.*;
 import frutty.world.base.*;
-import java.awt.image.*;
+import frutty.world.zones.*;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
@@ -26,7 +26,6 @@ public final class World{
 	public static String skyTextureName, mapName, nextMap;
 	public static String[] textures;
 	public static Material[] materials;
-	public static BufferedImage skyTexture;
 	
 	public static void cleanUp() {
 		entities.clear();
@@ -67,7 +66,7 @@ public final class World{
 			players = new EntityPlayer[1];
 		}
 		
-		loadSkyTexture(skyTextureName = skyName);
+		MapZoneSky.loadSkyTexture(skyTextureName = skyName);
 	}
 	
 	public static void generateMap(int genWidth, int genHeight, boolean isMultiplayer) {
@@ -266,7 +265,7 @@ public final class World{
 				}
 				
 				zoneEntities = (EntityZone[]) input.readObject();
-				loadSkyTexture(skyTextureName = input.readUTF());
+				MapZoneSky.loadSkyTexture(skyTextureName = input.readUTF());
 				mapName = input.readUTF();
 				nextMap = input.readUTF();
 				return true;
@@ -308,7 +307,14 @@ public final class World{
 		zoneEntities[index] = null;
 	}
 	
-	private static int coordsToIndex(int x, int y) {
+	public static MapZoneBase getZoneAtIndex(int index) {
+        if(index < 0 || index > World.zones.length - 1) {
+            return null;
+        }
+        return World.zones[index];
+    }
+	
+	public static int coordsToIndex(int x, int y) {
         return x / 64 + (y / 64 * ((World.width + 64) / 64));
     }
 	
@@ -325,8 +331,4 @@ public final class World{
         
         return 0;
     }
-	
-	private static void loadSkyTexture(String textureName) {
-		skyTexture = !textureName.equals("null") ? Material.loadTexture("map/skybox", textureName + ".png") : null;
-	}
 }

@@ -21,7 +21,7 @@ public final class MapZonePortal extends MapZoneBase{
 	}
 
 	@Override
-	public void onZoneEntered(int x, int y, int zoneIndex, Material material, EntityPlayer player) {
+	public void onZoneEntered(int x, int y, Material material, EntityPlayer player) {
 		World.loadMap(World.nextMap, World.players.length == 2);
 	}
 	

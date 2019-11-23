@@ -48,15 +48,6 @@ public final class GuiPlugins extends DefaultListCellRenderer implements Hyperli
 		backgroundPanel.add(bottomPanel, BorderLayout.SOUTH);
 
 		GuiMenu.switchMenuGui(backgroundPanel);
-		
-		new Thread(() -> {
-			for(var plugin : Plugin.plugins) {
-				if(plugin.version.isOlderThan(Version.fromURL(plugin.versionURL))) {
-					plugin.needsUpdate = true;
-				}
-			}
-			backgroundPanel.repaint();
-		}).start();
 	}
 
 	@Override

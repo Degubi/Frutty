@@ -30,10 +30,8 @@ public @interface FruttyPlugin {
 	String name();
 	/**Current version of the plugin*/
 	String version();
-	/**Optional URL for the version checker*/
-	String versionURL() default "";
 	/**Optional description for the plugin*/
 	String description() default "";
 	/**Optional URL only for display in the plugins menu*/
-	String updateURL() default "";
+	String pluginSiteURL() default "";
 }
