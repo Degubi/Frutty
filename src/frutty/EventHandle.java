@@ -1,6 +1,7 @@
 package frutty;
 
 import frutty.plugin.*;
+import frutty.plugin.event.*;
 import frutty.plugin.event.gui.*;
 import frutty.plugin.event.world.*;
 import java.lang.invoke.*;
@@ -18,7 +19,7 @@ public final class EventHandle {
 	public final MethodHandle handle;
 	public final int priority;
 	
-	public EventHandle(MethodHandle hand, EnumPriority pri) {
+	public EventHandle(MethodHandle hand, EventPriority pri) {
 		handle = hand;
 		priority = pri.ordinal();
 	}

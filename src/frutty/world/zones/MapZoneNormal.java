@@ -12,7 +12,7 @@ public final class MapZoneNormal extends MapZoneTexturable{
 	}
 	
 	@Override
-	public void draw(int x, int y, Material material, Graphics graphics) {
+	public void render(int x, int y, Material material, Graphics graphics) {
 		graphics.drawImage(material.texture, x, y, 64, 64, null);
 	}
 

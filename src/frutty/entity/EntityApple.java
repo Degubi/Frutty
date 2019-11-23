@@ -17,7 +17,7 @@ public final class EntityApple extends EntityFalling{
 	@Override
 	public void onFallStopped() {
 		fallSound.stop();
-		Particle.spawnRandomParticles(10, serverPosX, serverPosY, BROWN);
+		World.spawnRandomParticles(10, serverPosX, serverPosY, BROWN);
 	}
 
 	@Override

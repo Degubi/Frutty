@@ -27,7 +27,7 @@ public final class MapZoneCherry extends MapZoneTexturable{
 	}
 	
 	@Override
-	public void draw(int x, int y, Material material, Graphics graphics) {
+	public void render(int x, int y, Material material, Graphics graphics) {
 		graphics.drawImage(material.texture, x, y, 64, 64, null);
 		graphics.drawImage(cherryTexture, x, y, null);
 	}

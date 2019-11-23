@@ -1,6 +1,6 @@
-package frutty.plugin;
+package frutty.plugin.event;
 
 /**Enum values for changing the ordering of the event execution*/
-public enum EnumPriority{
+public enum EventPriority{
 	LOW, NORMAL, HIGH;
 }

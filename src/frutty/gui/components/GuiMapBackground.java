@@ -1,5 +1,6 @@
 package frutty.gui.components;
 
+import frutty.gui.GuiSettings.*;
 import frutty.tools.*;
 import frutty.world.base.*;
 import java.awt.*;
@@ -63,7 +64,12 @@ public final class GuiMapBackground extends JPanel {
 		for(int k = 0; k < zonesLocal.length; ++k) {
 			var zone = zonesLocal[k];
 			
-			zone.drawInternal(xCoordsLocal[k], yCoordsLocal[k], materialsLocal[k], graphics);
+			if(Settings.renderDebugLevel < 2) {
+			    zone.renderInternal(xCoordsLocal[k], yCoordsLocal[k], materialsLocal[k], graphics);
+	        }else{
+	            zone.renderDebug(xCoordsLocal[k], yCoordsLocal[k], materialsLocal[k], graphics);
+	        }
+			
 			if(zone instanceof ITransparentZone) {
 				((ITransparentZone) zone).drawAfter(xCoordsLocal[k], yCoordsLocal[k], materialsLocal[k], graphics);
 			}

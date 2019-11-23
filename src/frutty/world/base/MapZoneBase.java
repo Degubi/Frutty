@@ -33,7 +33,7 @@ public abstract class MapZoneBase implements Serializable{
 		this(name, true, true);
 	}
 	
-	public abstract void draw(int x, int y, Material material, Graphics graphics);
+	public abstract void render(int x, int y, Material material, Graphics graphics);
 	protected abstract ImageIcon getEditorIcon();
 	
     public boolean doesHidePlayer(int x, int y) {return false;}
@@ -57,29 +57,30 @@ public abstract class MapZoneBase implements Serializable{
 				World.zoneEntities[aboveZoneIndex].onNotified();
 			}
 			
-			Particle.spawnFallingParticles(2 + Main.rand.nextInt(10), x, y, material);
+			World.spawnFallingParticles(4 + Main.rand.nextInt(10), x, y, material);
 		}
 	}
 	
 	/********************************************************INTERNALS***********************************************************/
 	
 	
-	public final void drawInternal(int x, int y, Material material, Graphics graphics) {
-		draw(x, y, material, graphics);
+	public final void renderInternal(int x, int y, Material material, Graphics graphics) {
+		render(x, y, material, graphics);
 		
 		if(hasShadowRender && Settings.graphicsLevel > 0) {
 			graphics.setColor(GuiHelper.color_84Black);
 			
-			int till = y / 120;
-			for(int k = 0; k < till && k < 4; ++k) {
+			for(int till = y / 120, k = 0; k < till && k < 4; ++k) {
 				graphics.fillRect(x, y, 64, 64);
 			}
 		}
-		
-		if(Settings.renderDebugLevel > 1) {
-			graphics.setColor(Color.WHITE);
-			graphics.drawRect(x, y, 64, 64);
-		}
+	}
+	
+	public final void renderDebug(int x, int y, Material material, Graphics graphics) {
+	    renderInternal(x, y, material, graphics);
+	    
+	    graphics.setColor(Color.WHITE);
+        graphics.drawRect(x, y, 64, 64);
 	}
 	
 	public final void onZoneAddedInternal(boolean isCoop, int x, int y) {

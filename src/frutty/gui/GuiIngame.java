@@ -33,20 +33,35 @@ public final class GuiIngame extends JPanel implements KeyListener{
 		var yCoords = World.yCoords;
 		var materials = World.materials;
 
-		for(var k = 0; k < zones.length; ++k) zones[k].drawInternal(xCoords[k], yCoords[k], materials[k], graphics);
-		for(var players : World.players) players.renderInternal(graphics);
-		
-		for(var entity : World.entities) {
-			entity.renderInternal(graphics);
+		if(Settings.renderDebugLevel < 2) {
+		    for(var k = 0; k < zones.length; ++k) zones[k].renderInternal(xCoords[k], yCoords[k], materials[k], graphics);
+		}else{
+		    for(var k = 0; k < zones.length; ++k) zones[k].renderDebug(xCoords[k], yCoords[k], materials[k], graphics);
 		}
 		
-		for(var enemies : World.enemies) {
-			if(enemies.active) {
-				enemies.renderInternal(graphics);
-			}
+		if(Settings.enableCollisionDebug) {
+		    for(var players : World.players) players.renderDebug(graphics);
+		    for(var entity : World.entities) entity.renderDebug(graphics);
+		    
+		    for(var enemies : World.enemies) {
+	            if(enemies.active) {
+	                enemies.renderDebug(graphics);
+	            }
+	        }
+		    
+		    for(var particles : World.particles) particles.renderDebug(graphics);
+		}else{
+		    for(var players : World.players) players.render(graphics);
+            for(var entity : World.entities) entity.render(graphics);
+            
+            for(var enemies : World.enemies) {
+                if(enemies.active) {
+                    enemies.render(graphics);
+                }
+            }
+		    
+		    for(var particles : World.particles) particles.render(graphics);
 		}
-		
-		for(var particles : World.particles) particles.render(graphics);
 		
 		for(var k = 0; k < zones.length; ++k) {
 			var zone = zones[k];
@@ -65,9 +80,6 @@ public final class GuiIngame extends JPanel implements KeyListener{
 		graphics.drawString("Top score: " + GuiStats.topScore, worldWidth + 90, 80);
 		
 		if(Settings.enableMapDebug) {
-			graphics.setColor(GuiHelper.color_128Black);
-			graphics.fillRect(0, 0, 130, 130);
-			
 			graphics.setFont(GuiHelper.thiccFont);
 			graphics.setColor(Color.WHITE);
 			
@@ -81,9 +93,6 @@ public final class GuiIngame extends JPanel implements KeyListener{
 		}
 		
 		if(Settings.renderDebugLevel == 1 || Settings.renderDebugLevel == 3) {
-			graphics.setColor(GuiHelper.color_128Black);
-			graphics.fillRect(worldWidth - 85, 0, 160, 130);
-			
 			graphics.setFont(GuiHelper.thiccFont);
 			graphics.setColor(Color.WHITE);
 			
@@ -97,9 +106,6 @@ public final class GuiIngame extends JPanel implements KeyListener{
 			
 			renderLastUpdate = System.currentTimeMillis();
 		}
-		
-		graphics.setColor(Color.DARK_GRAY);
-		for(var k = 0; k < 20; ++k) graphics.drawLine(worldWidth + 64 + k, 0, worldWidth + 64 + k, worldHeight + 83);
 	}
 	
 	private static void updateServer() {
@@ -136,7 +142,7 @@ public final class GuiIngame extends JPanel implements KeyListener{
 	            var yCoord = yCoords[k];
 					
 	            if(zone.hasParticleSpawns && World.isEmptyAt(xCoord, yCoord + 64) && Main.rand.nextInt(100) == 3) {
-	                Particle.spawnFallingParticles(2 + Main.rand.nextInt(5), xCoord, yCoord, materials[k]);
+	                World.spawnFallingParticles(3 + Main.rand.nextInt(6), xCoord, yCoord, materials[k]);
 				}
 	            
 	            if(zone instanceof IZoneEntityProvider) {

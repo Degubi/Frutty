@@ -16,7 +16,7 @@ public final class MapZonePortal extends MapZoneBase{
 	}
 
 	@Override
-	public void draw(int x, int y, Material material, Graphics graphics) {
+	public void render(int x, int y, Material material, Graphics graphics) {
 		graphics.drawImage(portalTexture, x, y, 64, 64, null);
 	}
 

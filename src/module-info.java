@@ -10,6 +10,7 @@ module frutty.api{
 	exports frutty.entity.zone;
 	
 	exports frutty.plugin;
+	exports frutty.plugin.event;
 	exports frutty.plugin.event.world;
 	exports frutty.plugin.event.gui;
 	

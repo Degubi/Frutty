@@ -16,9 +16,9 @@ public final class GuiPlugins extends DefaultListCellRenderer implements Hyperli
 	public static void showPlugins() {
 		var plugs = new GuiPlugins();
 		var description = new JTextPane();
-		var pluginList = new JList<>(Plugin.plugins.toArray(Plugin[]::new));
+		var pluginList = new JList<>(Main.plugins.toArray(Plugin[]::new));
 
-		pluginList.addListSelectionListener(e -> description.setText(Plugin.plugins.get(pluginList.getSelectedIndex()).getInfo()));
+		pluginList.addListSelectionListener(e -> description.setText(Main.plugins.get(pluginList.getSelectedIndex()).getInfo()));
 		pluginList.setCellRenderer(plugs);
 		pluginList.setForeground(Color.WHITE);
 		pluginList.setOpaque(false);

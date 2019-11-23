@@ -10,6 +10,7 @@ import frutty.plugin.event.world.*;
 import frutty.tools.*;
 import frutty.world.base.*;
 import frutty.world.zones.*;
+import java.awt.*;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
@@ -331,4 +332,28 @@ public final class World{
         
         return 0;
     }
+	
+	
+	public static void spawnFallingParticles(int count, int x, int y, Material material) {
+	    if(Settings.graphicsLevel == 2) {
+	        var rand = Main.rand;
+	        var color = material.particleColor;
+	        var particles = World.particles;
+	        
+	        for(var k = 0; k < count; ++k) {
+	            particles.add(new Particle(x + rand.nextInt(64), y + 64 + rand.nextInt(32), 0, 2 + rand.nextInt(3), color));
+	        }
+	    }
+	}
+	    
+	public static void spawnRandomParticles(int count, int x, int y, Color color) {
+	    if(Settings.graphicsLevel == 2) {
+	        var particles = World.particles;
+	        var rand = Main.rand;
+	        
+	        for(var k = 0; k < count; ++k) {
+	            particles.add(new Particle(x + 32, y + 60, -2 + rand.nextInt(5), -2 + rand.nextInt(2), color));
+	        }
+	    }
+	}
 }

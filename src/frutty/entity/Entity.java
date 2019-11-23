@@ -74,15 +74,13 @@ public abstract class Entity implements Serializable{
 		}
 	}
 	
-	public final void renderInternal(Graphics graphics) {
+	public final void renderDebug(Graphics graphics) {
 		render(graphics);
 		
-		if(Settings.enableCollisionDebug) {
-			graphics.setColor(Color.BLUE);
-			graphics.drawRect(serverPosX, serverPosY, 64, 64);
-			graphics.setColor(Color.RED);
-			graphics.drawRect(renderPosX, renderPosY, 64, 64);
-		}
+		graphics.setColor(Color.BLUE);
+		graphics.drawRect(serverPosX, serverPosY, 64, 64);
+		graphics.setColor(Color.RED);
+		graphics.drawRect(renderPosX, renderPosY, 64, 64);
 	}
 	
 	public final void updateInternal(int ticks) {

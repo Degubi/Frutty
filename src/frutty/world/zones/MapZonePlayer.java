@@ -21,7 +21,7 @@ public final class MapZonePlayer extends MapZoneBase implements IInternalZone{
 	}
 
 	@Override
-	public void draw(int x, int y, Material material, Graphics graphics) {}
+	public void render(int x, int y, Material material, Graphics graphics) {}
 
 	@Override
 	public void onZoneAdded(boolean isCoop, int x, int y) {

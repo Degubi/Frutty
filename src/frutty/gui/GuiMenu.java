@@ -27,7 +27,7 @@ public final class GuiMenu{
 		panel.add(newButton("Plugins", 20, 400, e -> GuiPlugins.showPlugins()));
 		panel.add(newButton("Stats", 700, 330, e -> GuiStats.showStatsGui()));
 		
-		var versionLabel = new JLabel("Version: " + Plugin.plugins.get(0).version);
+		var versionLabel = new JLabel("Version: " + Main.plugins.get(0).version);
 		versionLabel.setBounds(20, 600, 100, 30);
 		versionLabel.setForeground(Color.WHITE);
 		versionLabel.setFont(GuiHelper.thiccFont);
