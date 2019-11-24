@@ -24,15 +24,14 @@ public final class Main {
 		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		GuiMenu.createMainFrame();
 		createDirectory("saves");
+		createDirectory("screenshots");
 	}
 	
-	public static void createDirectory(String path) {
+	private static void createDirectory(String path) throws IOException {
 		var filePath = Path.of(path);
 		
 		if(!Files.exists(filePath)) {
-			try {
-				Files.createDirectory(filePath);
-			} catch (IOException e) {}
+		    Files.createDirectory(filePath);
 		}
 	}
 	
@@ -64,7 +63,7 @@ public final class Main {
     }
     
     @SuppressWarnings("resource")
-    public static void loadPlugins() {
+    private static void loadPlugins() {
         try(var pluginFolder = Files.list(Path.of("plugins"))){
             var pluginJars = pluginFolder.filter(Files::isRegularFile)
                                          .filter(file -> file.toString().endsWith(".jar"))

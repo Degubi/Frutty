@@ -66,7 +66,7 @@ public final class GuiSettings implements ActionListener{
 	
 	private static final SettingButton graphicsLevelButton = new SettingButton(Settings.graphicsLevel, "Graphics Level", 100, 20, "Low", "Medium", "High");
 	private static final int[] tenToHundred = {10, 20, 30, 40, 50, 60, 70, 80, 90, 100};
-	private static final SettingButtonSlider fpsSlider = new SettingButtonSlider(SettingButton.indexOf(Settings.fps, tenToHundred) + 1, "FPS", 100, 100);
+	private static final SettingButtonSlider fpsSlider = new SettingButtonSlider(GeneralFunctions.indexOfInt(Settings.fps, tenToHundred) + 1, "FPS", 100, 100);
 	private static final String[] screenshotFormats = {"JPG", "PNG"};
 	private static final SettingButton screenshotFormatButton = new SettingButton(Settings.screenshotFormat, "Screenshot Format", 100, 180, screenshotFormats);
 	

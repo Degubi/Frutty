@@ -74,7 +74,7 @@ public final class World{
 		var rand = Main.rand;
 		int bigWidth = genWidth * 64, bigHeight = genHeight * 64, zoneIndex = 0;
 		
-		init(new String[] {"normal"}, isMultiplayer, null, "generated: " + genWidth + "x" + genHeight, bigWidth, bigHeight, null);
+		init(new String[] {"normal"}, isMultiplayer, "null", "generated: " + genWidth + "x" + genHeight, bigWidth, bigHeight, null);
 		
 		for(int y = 0; y < bigHeight; y += 64) {
 			for(int x = 0, rng = rand.nextInt(10); x < bigWidth; x += 64, rng = rand.nextInt(10)) {
@@ -82,66 +82,48 @@ public final class World{
 				yCoords[zoneIndex] = y;
 				
 				if(rng < 6) {
-					zones[zoneIndex++] = MapZoneBase.normalZone;
+					zones[zoneIndex] = MapZoneBase.normalZone;
+					materials[zoneIndex++] = Material.NORMAL;
 				}else if(rng >= 6 && rng < 9) {
 					zones[zoneIndex++] = MapZoneBase.emptyZone;
 				}else if(rng == 9) {
 					if(rand.nextBoolean()) {   //isApple
 						zoneEntities[zoneIndex] = new EntityAppleZone();
-						zones[zoneIndex++] = MapZoneBase.appleZone;
+						zones[zoneIndex] = MapZoneBase.appleZone;
 					}else {
-						zones[zoneIndex++] = MapZoneBase.cherryZone;
+						zones[zoneIndex] = MapZoneBase.cherryZone;
 						++pickCount;
 					}
+					
+					materials[zoneIndex++] = Material.NORMAL;
 				}
 			}
 		}
 		
-		outerLoop:
+		enemies = new EntityEnemy[0];
+		
 		for(int randIndex = rand.nextInt(zoneIndex), loopState = 0; ; randIndex = rand.nextInt(zoneIndex)) {
 			if(zones[randIndex] == MapZoneBase.emptyZone) {
 				if(loopState == 0) {
 					zones[randIndex] = MapZoneBase.spawnerZone;
 					loopState = 1;
 					
-					//TODO tisztítást itt megcsinálni újra
-					
-					/*for(int yClear = 0; yClear < bigHeight; yClear += 64) {
-						zones[Entity.coordsToIndex(xCoords[randIndex], yClear)] = Main.emptyZone;
-						/*MapZone toSet = Map.getZoneAtPos(zone.posX, yClear);
-							if(toSet != null && yClear != zone.posY) {
-								Map.setZoneEmptyAt(toSet.zoneIndex);
-						}*/
-					//}
-					
-					/*for(int xClear = 0; xClear < bigWidth; xClear += 64) {
-						zones[Entity.coordsToIndex(xClear, yCoords[randIndex])] = Main.emptyZone;
-						/*MapZone toSet = Map.getZoneAtPos(xClear, zone.posY);
-							if(toSet != null && xClear != zone.posX) {
-								Map.setZoneEmptyAt(toSet.zoneIndex);
-						}*/
-					//}
 					for(int l = 0; l < enemies.length; ++l) {
 						enemies[l] = new EntityEnemy(xCoords[randIndex], yCoords[randIndex]);
 					}
 					
-					continue outerLoop;
+					continue;
 				}else if(loopState == 1) {
-					players[0].renderPosX = xCoords[randIndex];
-					players[0].renderPosY = yCoords[randIndex];
-					players[0].serverPosX = xCoords[randIndex];
-					players[0].serverPosY = yCoords[randIndex];
+				    players[0] = new EntityPlayer(xCoords[randIndex], yCoords[randIndex], true);
 					
 					loopState = 2;
 					
-					if(isMultiplayer) continue outerLoop;
-					break outerLoop;
+					if(isMultiplayer) continue;
+					break;
 				}else{
-					players[1].renderPosX = xCoords[randIndex];
-					players[1].renderPosY = yCoords[randIndex];
-					players[1].serverPosX = xCoords[randIndex];
-					players[1].serverPosY = yCoords[randIndex];
-					break outerLoop;
+                    players[1] = new EntityPlayer(xCoords[randIndex], yCoords[randIndex], false);
+					
+                    break;
 				}
 			}
 		}

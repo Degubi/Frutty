@@ -255,7 +255,6 @@ public final class GuiIngame extends JPanel implements KeyListener{
 			});
 		}else if(keyCode == KeyEvent.VK_F12) {
 			try {
-				Main.createDirectory("screenshots");
 				var window = ((JFrame)getTopLevelAncestor()).getLocationOnScreen();
 				ImageIO.write(new Robot().createScreenCapture(new Rectangle(window.x + 7, window.y + 30, World.width + 64, World.height + 64)), Settings.screenshotFormat, 
 																			new File("./screenshots/" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd_kk_HH_ss")) +"." + Settings.screenshotFormat.toLowerCase()));

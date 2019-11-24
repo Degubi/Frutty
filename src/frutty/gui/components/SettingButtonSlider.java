@@ -73,8 +73,8 @@ public final class SettingButtonSlider extends JComponent implements ActionListe
 			counter = ((JButton)event.getSource()).getMnemonic();
 		}
 		
-		for(int k = 1; k < 11; ++k) {
-			butts[k - 1].setIcon(k - 1 < counter ? RED_ICON : TRANSPARENT_ICON);
+		for(int k = 0; k < 10; ++k) {
+			butts[k].setIcon(k < counter ? RED_ICON : TRANSPARENT_ICON);
 		}
 	}
 }

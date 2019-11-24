@@ -75,15 +75,6 @@ public final class SettingButton extends JComponent implements ActionListener{
 		return toReturn;
 	}
 	
-	public static int indexOf(int value, int[] values) {
-		for(int k = 0; k < values.length; ++k) {
-			if(values[k] == value) {
-				return k;
-			}
-		}
-		throw new IllegalArgumentException("Should not get there...");
-	}
-	
 	private static ImageIcon getIcon(boolean isRight) {
 		var img = new BufferedImage(48, 48, BufferedImage.TYPE_INT_ARGB);
 		var paint = img.createGraphics();

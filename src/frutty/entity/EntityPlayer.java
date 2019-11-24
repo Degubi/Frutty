@@ -111,7 +111,9 @@ public final class EntityPlayer extends Entity implements KeyListener{
 	@Override
 	public void updateServer() {
 		for(var iterator = entityEffects.iterator(); iterator.hasNext();) {
-			iterator.next().update(iterator);
+		    if(--iterator.next().ticks == 0) {
+	            iterator.remove();
+	        }
 		}		
 	}
 
