@@ -8,7 +8,6 @@ public final class PropertyFile {
 	private final ArrayList<Prop> storage;
 	private final Path path;
 	
-	@SuppressWarnings("incomplete-switch")
     public PropertyFile(String filePath, int estimatePropCount) {
 		path = Path.of(filePath);
 		storage = new ArrayList<>(estimatePropCount);

@@ -14,7 +14,7 @@ import java.io.*;
 import java.util.List;
 import javax.swing.*;
 
-@SuppressWarnings({"unused", "static-method"})
+@SuppressWarnings("unused")
 public abstract class MapZoneBase implements Serializable{
 	private static final long serialVersionUID = 392316063689927131L;
 	public transient final Lazy<ImageIcon> editorTexture = new Lazy<>(this::getEditorIconInternal);

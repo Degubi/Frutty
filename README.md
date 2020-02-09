@@ -6,7 +6,7 @@
 ### Letöltés, futtatás:
   - https://drive.google.com/uc?id=1n1y3h5OOTMKLNeTxZhhCq3PLYtu423t6&export=download
   - Unzipelni (érdemes pl. Program Files-ba)
-  - Lekell futtatni a CreateShortcut.exe-t
+  - Lekell futtatni a CreateShortcut.vbs-t
   - Az Asztalon levő parancsikonnal kell futtatni a programot
 
 ### Pályaszerkesztő plugin:
