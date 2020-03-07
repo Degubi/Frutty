@@ -1,4 +1,4 @@
-package frutty.plugin.event.gui;
+package frutty.plugin.event.stats;
 
 import frutty.*;
 import frutty.tools.*;
@@ -8,11 +8,11 @@ import javax.swing.tree.*;
  * UI: Need to use GuiStatSavedEvent too to make sure stats are getting saved.
  */
 @FruttyEventMarker
-public final class GuiStatInitEvent{
+public final class StatsInitEvent{
 	public final PropertyFile statsFile;
 	private final DefaultMutableTreeNode basicNodes, zoneNodes, enemyNodes, topNode;
 	
-	public GuiStatInitEvent(PropertyFile stats, DefaultMutableTreeNode basic, DefaultMutableTreeNode zones, DefaultMutableTreeNode enemies, DefaultMutableTreeNode top) {
+	public StatsInitEvent(PropertyFile stats, DefaultMutableTreeNode basic, DefaultMutableTreeNode zones, DefaultMutableTreeNode enemies, DefaultMutableTreeNode top) {
 		statsFile = stats;
 		basicNodes = basic;
 		zoneNodes = zones;

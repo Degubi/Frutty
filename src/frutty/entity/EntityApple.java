@@ -28,6 +28,8 @@ public final class EntityApple extends EntityFalling{
 	@Override
 	public void onKilled(Entity killer) {
 		fallSound.stop();
+		
+		super.onKilled(killer);
 	}
 	
 	@Override

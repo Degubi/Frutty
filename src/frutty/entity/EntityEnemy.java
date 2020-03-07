@@ -38,6 +38,7 @@ public final class EntityEnemy extends Entity {
 			World.score += 100;
 		}
 		active = false;
+		super.onKilled(killer);
 	}
 	
 	@Override
@@ -50,7 +51,7 @@ public final class EntityEnemy extends Entity {
 		animSwitch = !animSwitch;
 		
 		if(!World.isPositionFree(serverPosX + motionX, serverPosY + motionY)) {
-			EnumFacing facing = findFreeFacing();
+			var facing = findFreeFacing();
 			motionX = facing.xOffset;
 			motionY = facing.yOffset;
 			textureIndex = facing.textureIndex;

@@ -6,12 +6,10 @@ import java.awt.event.*;
 import javax.swing.*;
 
 public final class GuiPauseMenu extends WindowAdapter implements ActionListener, KeyListener{
-    public final JPanel panel;
+    public final JPanel panel = new JPanel(null);
     
     public GuiPauseMenu() {
-        panel = new JPanel(null);
         panel.setBackground(GuiHelper.color_84Black);
-        
         panel.add(GuiHelper.newButton("Resume", 220, 180, this));
         panel.add(GuiHelper.newButton("Save", 220, 260, this));
         panel.add(GuiHelper.newButton("Menu", 220, 340, this));
@@ -34,7 +32,7 @@ public final class GuiPauseMenu extends WindowAdapter implements ActionListener,
             GuiMenu.createMainFrame();
             GuiStats.saveStats();
             World.cleanUp();
-        }else{  //Save
+        }else if(cmd.equals("Save")){
             GuiIngame.pause();
             World.createSave(JOptionPane.showInputDialog("Enter save name!"));
             GuiIngame.unpause();

@@ -52,6 +52,7 @@ public final class EntityPlayer extends Entity implements KeyListener{
 	@Override
 	public void onKilled(Entity killer) {
 		GuiIngame.showMessageAndClose("Game over!");
+		super.onKilled(killer);
 	}
 	
 	private void setFacing(EnumFacing facing) {

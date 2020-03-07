@@ -16,9 +16,9 @@ public final class GuiPlugins extends DefaultListCellRenderer implements Hyperli
 	public static void showPlugins() {
 		var plugs = new GuiPlugins();
 		var description = new JTextPane();
-		var pluginList = new JList<>(Main.plugins.toArray(Plugin[]::new));
+		var pluginList = new JList<>(Main.loadedPlugins);
 
-		pluginList.addListSelectionListener(e -> description.setText(Main.plugins.get(pluginList.getSelectedIndex()).getInfo()));
+		pluginList.addListSelectionListener(e -> description.setText(Main.loadedPlugins[pluginList.getSelectedIndex()].getInfo()));
 		pluginList.setCellRenderer(plugs);
 		pluginList.setForeground(Color.WHITE);
 		pluginList.setOpaque(false);
@@ -50,15 +50,6 @@ public final class GuiPlugins extends DefaultListCellRenderer implements Hyperli
 		GuiMenu.switchMenuGui(backgroundPanel);
 	}
 
-	@Override
-    public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-        var comp = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-        if(((Plugin) value).needsUpdate) {
-            comp.setForeground(Color.RED);
-        }
-        return comp;
-    }
-	
 	@Override
 	public void hyperlinkUpdate(HyperlinkEvent event) {
 		if(event.getEventType() == EventType.ACTIVATED) {

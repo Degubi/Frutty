@@ -16,7 +16,7 @@ public final class GeneralFunctions {
     }
     
     public static<T> int indexOf(T value, T[] values) {
-        for(int k = 0; k < values.length; ++k) {
+        for(var k = 0; k < values.length; ++k) {
             if(values[k].equals(value)) {
                 return k;
             }
@@ -25,7 +25,7 @@ public final class GeneralFunctions {
     }
     
     public static int indexOfInt(int value, int[] values) {
-        for(int k = 0; k < values.length; ++k) {
+        for(var k = 0; k < values.length; ++k) {
             if(values[k] == value) {
                 return k;
             }

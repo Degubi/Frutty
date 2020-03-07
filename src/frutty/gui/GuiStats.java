@@ -4,7 +4,7 @@ import static frutty.tools.GuiHelper.*;
 
 import frutty.*;
 import frutty.gui.components.*;
-import frutty.plugin.event.gui.*;
+import frutty.plugin.event.stats.*;
 import frutty.tools.*;
 import java.awt.*;
 import javax.swing.*;
@@ -44,8 +44,8 @@ public final class GuiStats extends DefaultTreeCellRenderer{
 		statTree.setOpaque(true);
 		statTree.setBounds(50, 50, 200, 400);
 		
-		if(!EventHandle.statInitEvents.isEmpty()) {
-			EventHandle.handleEvent(new GuiStatInitEvent(stats, basic, zones, enemies, top), EventHandle.statInitEvents);
+		if(Main.statInitEvents.length > 0) {
+			Main.invokeEvent(new StatsInitEvent(stats, basic, zones, enemies, top), Main.statInitEvents);
 		}
 		
 		panel.add(statTree);
@@ -68,7 +68,7 @@ public final class GuiStats extends DefaultTreeCellRenderer{
 		stats.setInt("enemyCount", enemyCount);
 		stats.setInt("zoneCount", zoneCount);
 		
-		if(!EventHandle.statSaveEvents.isEmpty()) EventHandle.handleEvent(new GuiStatSavedEvent(stats), EventHandle.statSaveEvents);
+		if(Main.statSaveEvents.length > 0) Main.invokeEvent(new StatsSavedEvent(stats), Main.statSaveEvents);
 		stats.save();
 	}
 	

@@ -27,16 +27,16 @@ public final class GuiMenu{
 		panel.add(newButton("Plugins", 20, 400, e -> GuiPlugins.showPlugins()));
 		panel.add(newButton("Stats", 700, 330, e -> GuiStats.showStatsGui()));
 		
-		var versionLabel = new JLabel("Version: " + Main.plugins.get(0).version);
+		var versionLabel = new JLabel("Version: " + Main.loadedPlugins[0].version);
 		versionLabel.setBounds(20, 600, 100, 30);
 		versionLabel.setForeground(Color.WHITE);
 		versionLabel.setFont(GuiHelper.thiccFont);
 		panel.add(versionLabel);
 		
-		if(!EventHandle.menuInitEvents.isEmpty()) {
-			var eventButtons = new ArrayList<JButton>(0);
-			EventHandle.handleEvent(new GuiMenuEvent(eventButtons), EventHandle.menuInitEvents);
-			for(var butt : eventButtons) panel.add(butt);
+		if(Main.menuInitEvents.length > 0) {
+			var eventComponents = new ArrayList<JComponent>(0);
+			Main.invokeEvent(new GuiMenuEvent(eventComponents), Main.menuInitEvents);
+			for(var comp : eventComponents) panel.add(comp);
 		}
 		
 		return panel;

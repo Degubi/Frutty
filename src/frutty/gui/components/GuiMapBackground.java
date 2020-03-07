@@ -24,7 +24,7 @@ public final class GuiMapBackground extends JPanel {
 			var textureCache = (String[]) input.readObject();
 			
 			input.readUTF(); //Sky texture
-			input.readShort(); input.readShort();  //Width height felesleges, 14x10 az összes
+			input.readShort(); input.readShort();  //Width height felesleges, 14x10 az ï¿½sszes
 			input.readUTF(); //Next map
 			
 			var materialRegistry = Material.materialRegistry;

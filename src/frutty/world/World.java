@@ -49,9 +49,9 @@ public final class World{
 		mapName = levelName;
 		nextMap = next;
 		
-		if(!EventHandle.mapLoadEvents.isEmpty()) EventHandle.handleEvent(new WorldInitEvent(w, h, textures, entities), EventHandle.mapLoadEvents);
+		if(Main.worldInitEvents.length > 0) Main.invokeEvent(new WorldInitEvent(w, h, textures, entities), Main.worldInitEvents);
 		
-		int zoneCount = (w / 64) * (h / 64);
+		var zoneCount = (w / 64) * (h / 64);
 		zones = new MapZoneBase[zoneCount];
 		width = w - 64;
 		height = h - 64;
@@ -151,7 +151,7 @@ public final class World{
 				for(var x = 0; x < loadedWidth; x += 64) {
 					var zone = MapZoneBase.getZoneFromName(zoneIDCache[input.readByte()]);
 					
-					zone.onZoneAddedInternal(isMultiplayer, x, y);  //Fentre így a player zónák jól müködnek majd elméletileg
+					zone.onZoneAddedInternal(isMultiplayer, x, y);  //Fentre ï¿½gy a player zï¿½nï¿½k jï¿½l mï¿½kï¿½dnek majd elmï¿½letileg
 					if(zone instanceof IInternalZone) {
 						zone = ((IInternalZone) zone).getReplacementZone();
 					}

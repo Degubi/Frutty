@@ -8,14 +8,14 @@ import javax.swing.*;
 /**Event is fired when the main menu is initialized, can add buttons to menu*/
 @FruttyEventMarker
 public final class GuiMenuEvent{
-	private final List<JButton> buttons;
+	private final List<JComponent> newComponents;
 	
-	public GuiMenuEvent(List<JButton> pass) {
-		buttons = pass;
+	public GuiMenuEvent(List<JComponent> pass) {
+	    newComponents = pass;
 	}
 	
-	public void addButton(JButton button) {
-		buttons.add(button);
+	public void addNewComponent(JComponent newComponent) {
+	    newComponents.add(newComponent);
 	}
 	
 	public static void closeMainMenu() {

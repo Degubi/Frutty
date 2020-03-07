@@ -84,9 +84,9 @@ public abstract class MapZoneBase implements Serializable{
 	}
 	
 	public final void onZoneAddedInternal(boolean isCoop, int x, int y) {
-		if(!EventHandle.zoneAddedEvents.isEmpty()) {
+		if(Main.zoneAddedEvents.length > 0) {
 			ZoneAddedEvent event = new ZoneAddedEvent(this, x, y);
-			EventHandle.handleEvent(event, EventHandle.zoneAddedEvents);
+			Main.invokeEvent(event, Main.zoneAddedEvents);
 			
 			if(!event.canceled) {
 				onZoneAdded(isCoop, x, y);

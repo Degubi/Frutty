@@ -13,6 +13,6 @@ public final class EditorMain{
 
 	@FruttyEvent
 	public static void menuInitEvent(GuiMenuEvent event) {
-		event.addButton(GuiHelper.newButton("Editor", 20, 475, e -> GuiEditor.openEmptyEditor()));
+		event.addNewComponent(GuiHelper.newButton("Editor", 20, 475, e -> GuiEditor.openEmptyEditor()));
 	}
 }

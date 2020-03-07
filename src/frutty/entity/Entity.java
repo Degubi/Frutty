@@ -2,6 +2,7 @@ package frutty.entity;
 
 import frutty.*;
 import frutty.gui.GuiSettings.*;
+import frutty.plugin.event.entity.*;
 import frutty.world.*;
 import java.awt.*;
 import java.io.*;
@@ -28,7 +29,13 @@ public abstract class Entity implements Serializable{
 	public abstract void updateServer();
 	public abstract int getClientUpdateRate();
 	public abstract int getServerUpdateRate();
-	public void onKilled(@SuppressWarnings("unused") Entity killer) {}
+	public void onKilled(Entity killer) {
+	    if(Main.entityKilledEvents.length > 0) {
+            var event = new EntityKilledEvent(this, killer);
+            
+            Main.invokeEvent(event, Main.entityKilledEvents);
+        }
+	}
 	
 	/**************************************************INTERNALS**************************************************/
 	

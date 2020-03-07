@@ -3,7 +3,6 @@ package frutty;
 public final class Plugin{
 	public final String description, name, pluginURL;
 	public final String version;
-	public boolean needsUpdate = false;
 	
 	public Plugin(String name, String description, String pluginURL, String version) {
 	    this.name = name;
