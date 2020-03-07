@@ -7,12 +7,12 @@ import frutty.tools.*;
 
 @FruttyPlugin(name = "Frutty Editor", version = "1.0.0", description = "Editor Plugin", pluginSiteURL = "https://github.com/Degubi/Frutty/tree/master/FruttyEditor")
 public final class EditorMain{
-	
-	@FruttyMain(eventClass = EditorMain.class)
-	public static void pluginMain() {}
+    
+    @FruttyMain(eventClass = EditorMain.class)
+    public static void pluginMain() {}
 
-	@FruttyEvent
-	public static void menuInitEvent(GuiMenuEvent event) {
-		event.addNewComponent(GuiHelper.newButton("Editor", 20, 475, e -> GuiEditor.openEmptyEditor()));
-	}
+    @FruttyEvent
+    public static void menuInitEvent(GuiMenuEvent event) {
+        event.addNewComponent(GuiHelper.newButton("Editor", 20, 475, e -> GuiEditor.openEmptyEditor()));
+    }
 }

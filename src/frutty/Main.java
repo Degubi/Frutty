@@ -19,23 +19,23 @@ import javax.swing.*;
 
 public final class Main {
     private static final EventHandle[] sharedEmptyEventArray = new EventHandle[0];
-	public static final Random rand = new Random();
-	public static final Plugin[] loadedPlugins;
-	
-	public static final EventHandle[] worldInitEvents;
+    public static final Random rand = new Random();
+    public static final Plugin[] loadedPlugins;
+    
+    public static final EventHandle[] worldInitEvents;
     public static final EventHandle[] menuInitEvents;
     public static final EventHandle[] statInitEvents;
     public static final EventHandle[] statSaveEvents;
     public static final EventHandle[] zoneAddedEvents;
     public static final EventHandle[] entityKilledEvents;
-	
-	static {
-	    createDirectory("plugins");
-	    
-	    var plugins = new ArrayList<Plugin>();
-	    plugins.add(new Plugin("Frutty", "Base module for the game.", "https://github.com/Degubi/Frutty", "1.5.0"));
-	    plugins.add(new Plugin("Frutty Plugin Loader", "Base module for the plugin loader", "", "1.0.0"));
-	    
+    
+    static {
+        createDirectory("plugins");
+        
+        var plugins = new ArrayList<Plugin>();
+        plugins.add(new Plugin("Frutty", "Base module for the game.", "https://github.com/Degubi/Frutty", "1.5.0"));
+        plugins.add(new Plugin("Frutty Plugin Loader", "Base module for the plugin loader", "", "1.0.0"));
+        
         var loadedEvents = loadPlugins(plugins);
         var byPriority = Comparator.comparingInt((EventHandle event) -> event.priority);
 
@@ -46,27 +46,27 @@ public final class Main {
         statSaveEvents = initEventsByType(StatsSavedEvent.class, loadedEvents, byPriority);
         zoneAddedEvents = initEventsByType(ZoneAddedEvent.class, loadedEvents, byPriority);
         entityKilledEvents = initEventsByType(EntityKilledEvent.class, loadedEvents, byPriority);
-	}
-	
-	public static void main(String[] args) throws Exception {
-		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		GuiMenu.createMainFrame();
-		createDirectory("saves");
-		createDirectory("screenshots");
-	}
-	
-	private static void createDirectory(String path) {
-		var filePath = Path.of(path);
-		
-		if(!Files.exists(filePath)) {
-		    try {
+    }
+    
+    public static void main(String[] args) throws Exception {
+        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        GuiMenu.createMainFrame();
+        createDirectory("saves");
+        createDirectory("screenshots");
+    }
+    
+    private static void createDirectory(String path) {
+        var filePath = Path.of(path);
+        
+        if(!Files.exists(filePath)) {
+            try {
                 Files.createDirectory(filePath);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-		}
-	}
-	
+        }
+    }
+    
     public static void invokeEvent(Object event, EventHandle[] methods) {
         for(var handles : methods) {
             try {
@@ -76,8 +76,8 @@ public final class Main {
             }
         }
     }
-	
-	private static String getMainClassNameFromJar(Path jarPath) {
+    
+    private static String getMainClassNameFromJar(Path jarPath) {
         try(var jar = new JarFile(jarPath.toFile())){
             var mani = jar.getManifest();
             

@@ -5,9 +5,9 @@ import frutty.tools.*;
 
 @FruttyEventMarker
 public final class StatsSavedEvent{
-	public final PropertyFile statsFile;
-	
-	public StatsSavedEvent(PropertyFile stats) {
-		statsFile = stats;
-	}
+    public final PropertyFile statsFile;
+    
+    public StatsSavedEvent(PropertyFile stats) {
+        statsFile = stats;
+    }
 }
