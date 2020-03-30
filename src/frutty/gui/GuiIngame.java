@@ -22,7 +22,6 @@ public final class GuiIngame extends JPanel implements KeyListener{
     private static ScheduledFuture<?> serverTask;
     
     static JFrame ingameFrame;
-    private static GuiIngame ingamePanel;
     private static LocalTime startTime;
     private static long renderLastUpdate;
     
@@ -157,10 +156,7 @@ public final class GuiIngame extends JPanel implements KeyListener{
     }
     
     public static void showMessageAndClose(String message) {
-        serverThread.shutdown();
-        renderThread.shutdown();
-        serverThread = null;
-        renderThread = null;
+        shutdown();
         
         JOptionPane.showMessageDialog(null, message, "Frutty", JOptionPane.PLAIN_MESSAGE);
         GuiMenu.createMainFrame();
@@ -175,11 +171,7 @@ public final class GuiIngame extends JPanel implements KeyListener{
     }
     
     public static void showSaveQuestion() {
-        serverThread.shutdown();
-        renderThread.shutdown();
-        serverThread = null;
-        renderThread = null;
-        serverTask = null;
+        shutdown();
         
         if(JOptionPane.showConfirmDialog(null, "Save current status?", "Save?", JOptionPane.YES_NO_OPTION, 1) == 0) {
             World.createSave(JOptionPane.showInputDialog("Enter save name!"));
@@ -187,14 +179,19 @@ public final class GuiIngame extends JPanel implements KeyListener{
     }
     
     public static void pause() {
+        System.out.println(Main.updateSystemLabel + "Pausing");
         serverTask.cancel(true);
     }
     
     public static void unpause() {
+        System.out.println(Main.updateSystemLabel + "Unpausing");
         serverTask = serverThread.scheduleAtFixedRate(GuiIngame::updateServer, 0, 20, TimeUnit.MILLISECONDS);
     }
     
     public static void shutdown() {
+        System.out.println(Main.updateSystemLabel + "Shutting down");
+        System.out.println(Main.renderSystemLabel + "Shutting down");
+        
         serverThread.shutdown();
         renderThread.shutdown();
         
@@ -204,32 +201,36 @@ public final class GuiIngame extends JPanel implements KeyListener{
     }
     
     public static void showIngame() {
-        EventQueue.invokeLater(() -> {
-            ingameFrame = new JFrame("Frutty");
-            ingamePanel = new GuiIngame();
-            
-            ingameFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-            ingameFrame.setResizable(false);
-            ingameFrame.setBounds(0, 0, World.width + 288, World.height + 100);
-            ingameFrame.setLocationRelativeTo(null);
-            ingameFrame.setContentPane(ingamePanel);
-            ingameFrame.addKeyListener(ingamePanel);
-            ingameFrame.setIconImage(GuiHelper.frameIcon);
-            ingameFrame.setFocusable(true);
-            
-            startTime = LocalTime.now();
-            renderLastUpdate = System.currentTimeMillis();
-            serverThread = Executors.newSingleThreadScheduledExecutor(task -> new Thread(task, "Server Thread"));
-            renderThread = Executors.newSingleThreadScheduledExecutor(task -> new Thread(task, "Render Thread"));
-            renderThread.scheduleAtFixedRate(ingamePanel::repaint, 0, 1000 / Settings.fps, TimeUnit.MILLISECONDS);
+        System.out.println(Main.guiSystemLabel + "Switching to ingame frame");
 
-            unpause();
-            
-            for(var players : World.players) {
-                ingameFrame.addKeyListener(players);
-            }
-            ingameFrame.setVisible(true);
-        });
+        ingameFrame = new JFrame("Frutty");
+        var ingamePanel = new GuiIngame();
+        
+        ingameFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        ingameFrame.setResizable(false);
+        ingameFrame.setBounds(0, 0, World.width + 288, World.height + 100);
+        ingameFrame.setLocationRelativeTo(null);
+        ingameFrame.setContentPane(ingamePanel);
+        ingameFrame.addKeyListener(ingamePanel);
+        ingameFrame.setIconImage(GuiHelper.frameIcon);
+        ingameFrame.setFocusable(true);
+        
+        startTime = LocalTime.now();
+        renderLastUpdate = System.currentTimeMillis();
+        
+        System.out.println(Main.updateSystemLabel + "Starting");
+        System.out.println(Main.renderSystemLabel + "Starting");
+        
+        serverThread = Executors.newSingleThreadScheduledExecutor(task -> new Thread(task, "Server Thread"));
+        renderThread = Executors.newSingleThreadScheduledExecutor(task -> new Thread(task, "Render Thread"));
+        renderThread.scheduleAtFixedRate(ingamePanel::repaint, 0, 1000 / Settings.fps, TimeUnit.MILLISECONDS);
+        
+        unpause();
+        
+        for(var players : World.players) {
+            ingameFrame.addKeyListener(players);
+        }
+        ingameFrame.setVisible(true);
     }
     
     @Override

@@ -65,7 +65,7 @@ public abstract class Entity implements Serializable{
     }
     
     protected final void checkPlayers() {
-        var godEnabled = Settings.enableGod;
+        var godEnabled = Settings.godMode;
         
         for(var player : World.players) {
             if(!player.hidden && doesCollide(player)) {

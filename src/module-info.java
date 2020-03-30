@@ -3,6 +3,7 @@ module frutty.api{
     requires transitive java.desktop;
     requires static java.compiler;
     
+    exports frutty.gui;
     exports frutty.gui.components;
     
     exports frutty.entity;
@@ -11,8 +12,10 @@ module frutty.api{
     
     exports frutty.plugin;
     exports frutty.plugin.event;
-    exports frutty.plugin.event.world;
+    exports frutty.plugin.event.entity;
     exports frutty.plugin.event.gui;
+    exports frutty.plugin.event.stats;
+    exports frutty.plugin.event.world;
     
     exports frutty.sound;
     exports frutty.tools;

@@ -33,6 +33,7 @@ public final class GuiMenu{
         versionLabel.setFont(GuiHelper.thiccFont);
         panel.add(versionLabel);
         
+        System.out.println(Main.eventSystemLabel + "Handling menuInit events");
         if(Main.menuInitEvents.length > 0) {
             var eventComponents = new ArrayList<JComponent>(0);
             Main.invokeEvent(new GuiMenuEvent(eventComponents), Main.menuInitEvents);
@@ -47,17 +48,17 @@ public final class GuiMenu{
     }
     
     public static void createMainFrame() {
-        EventQueue.invokeLater(() -> {
-            mainFrame = new JFrame("Frutty");
-            mainFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-            mainFrame.setResizable(false);
-            mainFrame.setIconImage(frameIcon);
-            mainFrame.setBounds(0, 0, 910, 675);
-            mainFrame.setLocationRelativeTo(null);
-            mainFrame.setContentPane(createMenuPanel());
-            mainFrame.setFocusable(true);
-            mainFrame.setVisible(true);
-        });
+        System.out.println(Main.guiSystemLabel + "Switching to menu frame");
+        
+        mainFrame = new JFrame("Frutty");
+        mainFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        mainFrame.setResizable(false);
+        mainFrame.setIconImage(frameIcon);
+        mainFrame.setBounds(0, 0, 910, 675);
+        mainFrame.setLocationRelativeTo(null);
+        mainFrame.setContentPane(createMenuPanel());
+        mainFrame.setFocusable(true);
+        mainFrame.setVisible(true);
     }
     
     public static void switchMenuGui(Container panel) {

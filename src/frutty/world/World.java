@@ -132,6 +132,8 @@ public final class World{
     }
     
     public static void loadMap(String name, boolean isMultiplayer) {
+        System.out.println(Main.worldLoadingSystemLabel + "Started loading world: " + name);
+        
         try(var input = new ObjectInputStream(Files.newInputStream(Path.of("./maps/" + name + ".fmap")))){
             int loadedWidth, loadedHeight, zoneIndex = 0;
             
@@ -151,7 +153,7 @@ public final class World{
                 for(var x = 0; x < loadedWidth; x += 64) {
                     var zone = MapZoneBase.getZoneFromName(zoneIDCache[input.readByte()]);
                     
-                    zone.onZoneAddedInternal(isMultiplayer, x, y);  //Fentre �gy a player z�n�k j�l m�k�dnek majd elm�letileg
+                    zone.onZoneAddedInternal(isMultiplayer, x, y);  //Fentre így a player zónák jól működnek majd elméletileg
                     if(zone instanceof IInternalZone) {
                         zone = ((IInternalZone) zone).getReplacementZone();
                     }
@@ -170,14 +172,17 @@ public final class World{
                 }
             }
             
+            System.out.println(Main.worldLoadingSystemLabel + "Finished loading world: " + name);
         }catch(IOException | ClassNotFoundException e){
-            System.err.println("Can't load invalid map: " + "./maps/" + name + ".fmap");
+            System.out.println(Main.worldLoadingSystemLabel + "Can't load corrupted map file: " + "./maps/" + name + ".fmap");
         }
         
         GuiHelper.mapSizeCheck(width / 64 + 1, height / 64 + 1);
     }
     
     public static void createSave(String fileName) {
+        System.out.println(Main.ioSystemLabel + "Creating save file: " + fileName);
+        
         if(fileName != null) {
             try(var output = new ObjectOutputStream(Files.newOutputStream(Path.of("./saves/" + fileName + ".sav"), CREATE, WRITE, TRUNCATE_EXISTING))){
                 output.writeObject(players);
@@ -220,6 +225,8 @@ public final class World{
     @SuppressWarnings("unchecked")
     public static boolean loadSave(String fileName) {
         if(fileName != null) {
+            System.out.println(Main.ioSystemLabel + "Loading save file: " + fileName);
+
             try(var input = new ObjectInputStream(Files.newInputStream(Path.of("./saves/" + fileName)))){
                 players = (EntityPlayer[]) input.readObject();
                 
@@ -302,17 +309,13 @@ public final class World{
     }
     
     public static int getEnemyCountBasedOnDifficulty(int zoneCount) {
-        if(!Settings.disableEnemies) {
-            if(Settings.difficulty == 0) {
-                return zoneCount < 70 ? 1 : zoneCount / 70;
-            }else if(Settings.difficulty == 1) {
-                return zoneCount / 50;
-            }else{
-                return zoneCount / 30;
-            }
+        if(Settings.difficulty == 0) {
+            return zoneCount < 70 ? 1 : zoneCount / 70;
         }
-        
-        return 0;
+        if(Settings.difficulty == 1) {
+            return zoneCount / 50;
+        }
+        return zoneCount / 30;
     }
     
     

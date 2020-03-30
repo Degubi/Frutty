@@ -1,5 +1,6 @@
 package frutty.tools;
 
+import frutty.*;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
@@ -9,6 +10,8 @@ public final class PropertyFile {
     private final Path path;
     
     public PropertyFile(String filePath, int estimatePropCount) {
+        System.out.println(Main.ioSystemLabel + "Initializing property file: " + filePath);
+
         path = Path.of(filePath);
         storage = new ArrayList<>(estimatePropCount);
         

@@ -34,7 +34,7 @@ public final class EntityEnemy extends Entity {
 
     @Override
     public void onKilled(Entity killer) {
-        if(killer instanceof EntityPlayer) {
+        if(killer instanceof EntityPlayer || killer instanceof EntityApple) {
             World.score += 100;
         }
         active = false;

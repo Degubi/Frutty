@@ -1,5 +1,6 @@
 package frutty.gui.components;
 
+import frutty.*;
 import frutty.gui.GuiSettings.*;
 import frutty.tools.*;
 import frutty.world.base.*;
@@ -14,11 +15,24 @@ public final class GuiMapBackground extends JPanel {
     private final Material[] materials;
     
     public GuiMapBackground(String mapName) {
-        var zones = new MapZoneBase[140];
-        var xCoords = new int[140];
-        var yCoords = new int[140];
-        var materials = new Material[140];
+        this.zones = new MapZoneBase[140];
+        this.xCoords = new int[140];
+        this.yCoords = new int[140];
+        this.materials = new Material[140];
         
+        loadBackgroundMap(mapName, zones, xCoords, yCoords, materials);
+    }
+    
+    public GuiMapBackground(MapZoneBase[] zones, int[] xCoords, int[] yCoords, Material[] materials) {
+        this.zones = zones;
+        this.xCoords = xCoords;
+        this.yCoords = yCoords;
+        this.materials = materials;
+    }
+    
+    public static void loadBackgroundMap(String mapName, MapZoneBase[] zones, int[] xCoords, int[] yCoords, Material[] materials) {
+        System.out.println(Main.worldLoadingSystemLabel + "Started loading background world: " + mapName);
+
         try(var input = new ObjectInputStream(Files.newInputStream(Path.of(mapName)))){
             var zoneIDCache = (String[]) input.readObject();
             var textureCache = (String[]) input.readObject();
@@ -46,10 +60,7 @@ public final class GuiMapBackground extends JPanel {
             }
         }catch(IOException | ClassNotFoundException e){}
         
-        this.materials = materials;
-        this.zones = zones;
-        this.xCoords = xCoords;
-        this.yCoords = yCoords;
+        System.out.println(Main.worldLoadingSystemLabel + "Finished loading background world: " + mapName);
     }
     
     @Override

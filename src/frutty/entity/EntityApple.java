@@ -38,7 +38,7 @@ public final class EntityApple extends EntityFalling{
             checkPlayers();
             
             for(var enemy : World.enemies) {
-                if(doesCollide(enemy)) {
+                if(enemy.active && doesCollide(enemy)) {
                     enemy.onKilled(this);
                 }
             }

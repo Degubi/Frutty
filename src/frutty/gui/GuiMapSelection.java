@@ -2,13 +2,13 @@ package frutty.gui;
 
 import static frutty.tools.GuiHelper.*;
 
+import frutty.*;
 import frutty.gui.components.*;
 import frutty.tools.*;
 import frutty.world.*;
 import java.awt.*;
 import java.io.*;
 import java.nio.file.*;
-import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
@@ -16,6 +16,8 @@ public final class GuiMapSelection{
     private GuiMapSelection() {}
     
     public static void showMapSelection() {
+        System.out.println(Main.guiSystemLabel + "Switching to map selection frame");
+
         var panel = new JPanel(null);
         panel.setBackground(Color.GRAY);
         
@@ -68,14 +70,20 @@ public final class GuiMapSelection{
     
     private static void updateModel(JList<String> mapList, JCheckBox devMode) {
         var model = new DefaultListModel<String>();
-        var files = Arrays.stream(new File("./maps").list()).filter(name -> name.endsWith(".fmap")).map(name -> name.substring(0, name.indexOf('.')));
         
-        if(devMode.isSelected()) {
-            files.forEach(map -> model.addElement(map));
-        }else{
-            files.filter(name -> !name.startsWith("background")).filter(name -> !name.startsWith("dev_")).forEach(map -> model.addElement(map));
-        }
+        try(var mapsFolder = Files.list(Path.of("./maps"))){
+            var mapFiles = mapsFolder.map(Path::getFileName)
+                                     .map(Path::toString)
+                                     .filter(name -> name.endsWith(".fmap"))
+                                     .map(name -> name.substring(0, name.indexOf('.')));
+            
+            var mapFilestoAdd = devMode.isSelected() ? mapFiles
+                                                     : mapFiles.filter(name -> !name.startsWith("background")).filter(name -> !name.startsWith("dev_"));
+            
+            mapFilestoAdd.forEach(model::addElement);
+        } catch (IOException e) {}
         
+        System.out.println(Main.guiSystemLabel + "Listed " + model.getSize() + " maps");
         model.addElement("Generate Map");
         
         mapList.setModel(model);

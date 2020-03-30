@@ -20,6 +20,8 @@ public final class GuiStats extends DefaultTreeCellRenderer{
     private GuiStats() {}
     
     public static void showStatsGui() {
+        System.out.println(Main.guiSystemLabel + "Switching to stats frame");
+
         var panel = new GuiMapBackground("./maps/dev_settings.fmap");
         panel.setLayout(null);
         
@@ -44,6 +46,7 @@ public final class GuiStats extends DefaultTreeCellRenderer{
         statTree.setOpaque(true);
         statTree.setBounds(50, 50, 200, 400);
         
+        System.out.println(Main.eventSystemLabel + "Handling stats events");
         if(Main.statInitEvents.length > 0) {
             Main.invokeEvent(new StatsInitEvent(stats, basic, zones, enemies, top), Main.statInitEvents);
         }
@@ -64,6 +67,8 @@ public final class GuiStats extends DefaultTreeCellRenderer{
     }
     
     public static void saveStats() {
+        System.out.println(Main.ioSystemLabel + "Saving stats");
+
         stats.setInt("topScore", topScore);
         stats.setInt("enemyCount", enemyCount);
         stats.setInt("zoneCount", zoneCount);
