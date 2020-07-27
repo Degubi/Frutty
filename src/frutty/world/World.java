@@ -134,7 +134,7 @@ public final class World{
     public static void loadMap(String name, boolean isMultiplayer) {
         System.out.println(Main.worldLoadingSystemLabel + "Started loading world: " + name);
         
-        try(var input = new ObjectInputStream(Files.newInputStream(Path.of("./maps/" + name + ".fmap")))){
+        try(var input = new ObjectInputStream(Files.newInputStream(Path.of(GeneralFunctions.executionDir + "maps/" + name + ".fmap")))){
             int loadedWidth, loadedHeight, zoneIndex = 0;
             
             var zoneIDCache = (String[]) input.readObject();
@@ -184,7 +184,7 @@ public final class World{
         System.out.println(Main.ioSystemLabel + "Creating save file: " + fileName);
         
         if(fileName != null) {
-            try(var output = new ObjectOutputStream(Files.newOutputStream(Path.of("./saves/" + fileName + ".sav"), CREATE, WRITE, TRUNCATE_EXISTING))){
+            try(var output = new ObjectOutputStream(Files.newOutputStream(Path.of(GeneralFunctions.executionDir + "saves/" + fileName + ".sav"), CREATE, WRITE, TRUNCATE_EXISTING))){
                 output.writeObject(players);
                 
                 output.writeShort(zones.length);
@@ -227,7 +227,7 @@ public final class World{
         if(fileName != null) {
             System.out.println(Main.ioSystemLabel + "Loading save file: " + fileName);
 
-            try(var input = new ObjectInputStream(Files.newInputStream(Path.of("./saves/" + fileName)))){
+            try(var input = new ObjectInputStream(Files.newInputStream(Path.of(GeneralFunctions.executionDir + "saves/" + fileName)))){
                 players = (EntityPlayer[]) input.readObject();
                 
                 zones = new MapZoneBase[input.readShort()];

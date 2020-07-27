@@ -11,8 +11,8 @@ public final class PropertyFile {
     
     public PropertyFile(String filePath, int estimatePropCount) {
         System.out.println(Main.ioSystemLabel + "Initializing property file: " + filePath);
-
-        path = Path.of(filePath);
+        
+        path = Path.of(GeneralFunctions.executionDir + filePath);
         storage = new ArrayList<>(estimatePropCount);
         
         try(var reader = Files.newBufferedReader(path)){
@@ -39,11 +39,9 @@ public final class PropertyFile {
                 }
             }
         } catch (IOException e) {
-            var file = Path.of(filePath);
-            
-            if(!Files.exists(file)) {
+            if(!Files.exists(path)) {
                 try {
-                    Files.createFile(file);
+                    Files.createFile(path);
                 } catch (IOException ex) {}
             }
         }

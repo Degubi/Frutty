@@ -1,25 +1,36 @@
-### Menü:
-  - Új játék kezdés
-  - Régi játék betöltés
-  - Statok és beállítások
+### Project:
+  - Originally made as a University project
+  - Could use some cleanup, but whatever
+  - Supports SinglePlayer games
+  - Has NPC-s
+  - Save files
+  - External plugin system
+  - Level editor
+  - Stats
 
-### Letöltés, futtatás:
-  - https://drive.google.com/uc?id=1n1y3h5OOTMKLNeTxZhhCq3PLYtu423t6&export=download
-  - Unzipelni (érdemes pl. Program Files-ba)
-  - Lekell futtatni a CreateShortcut.vbs-t
-  - Az Asztalon levő parancsikonnal kell futtatni a programot
+### Installation, running:
+  - Download 'FruttyInstaller' from 'Releases'.
+  - Run 'FruttyInstaller' (don't install to ProgramFiles).
+  - Start 'Frutty' from desktop.
 
-### Pályaszerkesztő plugin:
-  - https://drive.google.com/uc?id=1MZedVi3QZSZK8gDicZ6XWlkpKjPQi4o8&export=download
-  - A jar fájlt be kell tenni a játék mappájában levő plugins mappába
-  - Menüben megjelenik az Editor gomb
+### Level Editor plugin:
+  - Download FruttyEditor.jar from 'Releases'.
+  - Move the jar file to the 'plugins' folder inside Frutty's 'app/plugins' directory.
+  - The 'Editor' button should be visible inside the menu.
+  - For the map sources download the 'mapsrc' folder from Github.
+  - Move it to 'app/mapsrc'.
+  - Browse it from the editor.
 
-### Pluginíráshoz:
-  - Alap minta pl. A FruttyEditor plugin
-  - A frutty.plugin mappában levő classokból érdemes elindulni. Egész sok példa és dokumentáció van
-  - Generált plugin jar-ba kell egy MANIFEST.MF Plugin-Class attribútummal
+### Developer Console:
+  - Add '-console' to the end of the 'target' option of the shortcut.
+  - For available commands type 'list'.
 
-### Buildeléshez:
-  - Kell lennie Pythonnak telepítve és JDK-nak PATH-on
-  - Lekell futtatni a build.py-t
-  - A Frutty mappába kialakul a Google Drive-on található zip struktúrája
+### Building:
+  - Needs jdk14 installed (build file has hardcoded java path for the moment, it will be changed as soon as jdk15 is out)
+  - Needs Python installed
+  - Run the 'build.py' file
+
+### Plugin development:
+  - The FruttyEditor is in itself a plugin.
+  - The 'frutty.plugin' directory is a good starting point. It is well documented with lots of examples.
+  - Every plugin jar needs a MANIFEST.MF file with the Plugin-Class attribute.

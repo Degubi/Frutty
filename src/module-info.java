@@ -23,6 +23,4 @@ module frutty.api{
     exports frutty.world;
     exports frutty.world.zones;
     exports frutty.world.base;
-    
-    provides javax.annotation.processing.Processor with frutty.PluginAnnotationProcessor;
 }

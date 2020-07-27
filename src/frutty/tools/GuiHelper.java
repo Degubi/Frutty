@@ -13,7 +13,7 @@ public final class GuiHelper {
     private static final int recommendedMaxMapHeight = Toolkit.getDefaultToolkit().getScreenSize().height / 64 - 1;
     private static final int recommendedMaxMapWidth = Toolkit.getDefaultToolkit().getScreenSize().width / 64 - 1;
     public static final LineBorder menuBorder = new LineBorder(Color.DARK_GRAY, 2);
-    public static final Image frameIcon = Toolkit.getDefaultToolkit().createImage("./textures/player/side.png");
+    public static final Image frameIcon = Toolkit.getDefaultToolkit().createImage(GeneralFunctions.executionDir + "textures/player/side.png");
 
     private GuiHelper() {}
     

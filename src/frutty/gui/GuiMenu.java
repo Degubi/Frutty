@@ -17,7 +17,7 @@ public final class GuiMenu{
     private static JFrame mainFrame;
     
     public static JPanel createMenuPanel() {
-        var panel = new GuiMapBackground("./maps/background" + Main.rand.nextInt(4) + ".fmap");
+        var panel = new GuiMapBackground("maps/background" + Main.rand.nextInt(4) + ".fmap");
         panel.setLayout(null);
         
         panel.add(newButton("New Game", 700, 20, e -> GuiMapSelection.showMapSelection()));
@@ -69,7 +69,7 @@ public final class GuiMenu{
     }
     
     private static void handleSaveLoading(GuiMapBackground panel) {
-        try(var files = Files.list(Path.of("./saves"))){
+        try(var files = Files.list(Path.of(GeneralFunctions.executionDir + "saves"))){
             var saveFolderList = files.map(Path::getFileName).map(Path::toString).toArray(String[]::new);
                 
             if(saveFolderList.length > 0) {
