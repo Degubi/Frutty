@@ -74,24 +74,24 @@ public final class GuiEditorProperties extends DefaultTableCellRenderer {
             setLayout(null);
             
             var textures = buttons.stream()
-                                    .filter(button -> button.zoneTexture != null)
-                                    .map(button -> "./textures/map/" + button.zoneTexture + ".png")
-                                    .distinct()
-                                    .toArray(String[]::new);
+                                  .filter(button -> button.zoneTexture != null)
+                                  .map(button -> "./textures/map/" + button.zoneTexture + ".png")
+                                  .distinct()
+                                  .toArray(String[]::new);
 
             textureSize = "Texture size: " + Arrays.stream(textures).mapToInt(GuiEditorInfo::getFileSize).sum() + " bytes";
-             textureCount = "Texture Count: " + textures.length;
-             
-             var textureList = new JList<>(textures);
+            textureCount = "Texture Count: " + textures.length;
+            
+            var textureList = new JList<>(textures);
             textureList.setBounds(60, 150, 200, 120);
             textureList.setBorder(GuiHelper.menuBorder);
-             
-             add(textureList);
+            
+            add(textureList);
         }
         
         private static int getFileSize(String filePath) {
             try {
-                return (int) Files.size(Path.of(filePath));
+                return (int) Files.size(Path.of(GeneralFunctions.executionDir + filePath));
             } catch (IOException e) {
                 return -1;
             }

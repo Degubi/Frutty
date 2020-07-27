@@ -50,7 +50,7 @@ public final class GuiMapSelection{
     
     private static void handleMapListChange(ListSelectionEvent event, JList<String> mapList, JLabel mapImage) {
         if(!event.getValueIsAdjusting()){
-            var path = "./textures/gui/" + mapList.getSelectedValue() + ".jpg";
+            var path = GeneralFunctions.executionDir + "textures/gui/" + mapList.getSelectedValue() + ".jpg";
 
             if(Files.exists(Path.of(path))) {
                 var image = Material.loadTexture("gui", mapList.getSelectedValue() + ".jpg");
@@ -71,7 +71,7 @@ public final class GuiMapSelection{
     private static void updateModel(JList<String> mapList, JCheckBox devMode) {
         var model = new DefaultListModel<String>();
         
-        try(var mapsFolder = Files.list(Path.of("./maps"))){
+        try(var mapsFolder = Files.list(Path.of(GeneralFunctions.executionDir + "maps"))){
             var mapFiles = mapsFolder.map(Path::getFileName)
                                      .map(Path::toString)
                                      .filter(name -> name.endsWith(".fmap"))
@@ -101,7 +101,7 @@ public final class GuiMapSelection{
     }
     
     public static String loadMapSize(String fileName) {
-        try(var input = new ObjectInputStream(Files.newInputStream(Path.of("./maps/" + fileName + ".fmap")))){
+        try(var input = new ObjectInputStream(Files.newInputStream(Path.of(GeneralFunctions.executionDir + "maps/" + fileName + ".fmap")))){
             input.readObject(); input.readObject();
             input.readUTF();
             return input.readShort() + "x" + input.readShort();

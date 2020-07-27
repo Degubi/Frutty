@@ -54,13 +54,13 @@ public final class GuiEditor extends JPanel{
     }
     
     private void renderMap() {
-        try(var output = new ObjectOutputStream(Files.newOutputStream(Path.of("./maps/" + mapProperties.mapName + ".fmap"), WRITE, CREATE, TRUNCATE_EXISTING))){
+        try(var output = new ObjectOutputStream(Files.newOutputStream(Path.of(GeneralFunctions.executionDir + "maps/" + mapProperties.mapName + ".fmap"), WRITE, CREATE, TRUNCATE_EXISTING))){
              var zoneIDCache = zoneButtons.stream().map(button -> button.zoneID).distinct().toArray(String[]::new);
              var textureCache = zoneButtons.stream().map(button -> button.zoneTexture).filter(texture -> texture != null).distinct().toArray(String[]::new);
              
              output.writeObject(zoneIDCache);
              output.writeObject(textureCache);
-            output.writeUTF(mapProperties.skyName);
+             output.writeUTF(mapProperties.skyName);
              output.writeShort(mapProperties.width);
              output.writeShort(mapProperties.height);
              output.writeUTF(mapProperties.nextMap);
@@ -80,7 +80,7 @@ public final class GuiEditor extends JPanel{
     }
     
     private void saveMap() {
-        try(var output = Files.newBufferedWriter(Path.of("./mapsrc/" + mapProperties.mapName + ".fmf"), WRITE, CREATE, TRUNCATE_EXISTING)){
+        try(var output = Files.newBufferedWriter(Path.of(GeneralFunctions.executionDir + "mapsrc/" + mapProperties.mapName + ".fmf"), WRITE, CREATE, TRUNCATE_EXISTING)){
             output.write(Integer.toString(mapProperties.width) + '\n');
             output.write(Integer.toString(mapProperties.height) + '\n');
             output.write(mapProperties.skyName + '\n');
@@ -109,7 +109,7 @@ public final class GuiEditor extends JPanel{
     
     private static void loadMap(String fileName) {
         if(fileName != null && !fileName.isEmpty()) {
-            try(var input = Files.newBufferedReader(Path.of("./mapsrc/" + fileName))){
+            try(var input = Files.newBufferedReader(Path.of(GeneralFunctions.executionDir + "mapsrc/" + fileName))){
                 int mapWidth = Integer.parseInt(input.readLine());
                 int mapHeight = Integer.parseInt(input.readLine());
                 var editor = new GuiEditor(fileName.substring(0, fileName.indexOf('.')), mapWidth, mapHeight, input.readLine(), input.readLine());

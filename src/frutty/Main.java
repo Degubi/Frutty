@@ -6,6 +6,7 @@ import frutty.plugin.event.entity.*;
 import frutty.plugin.event.gui.*;
 import frutty.plugin.event.stats.*;
 import frutty.plugin.event.world.*;
+import frutty.tools.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -47,62 +48,66 @@ public final class Main extends KeyAdapter {
     public static final String renderSystemLabel       = "          Render System                 ;   ";
 
     public static void main(String[] args) throws Exception {
-        var outPipe = new PipedOutputStream();
-        var reader = new BufferedReader(new InputStreamReader(new ModifiedPipedInputStream(outPipe)));
-        System.setOut(new PrintStream(outPipe, true));
-            
-        new Thread(() -> {
-            try {
-                var threadOutputFormat = new SimpleAttributeSet();
-                var messageOutputFormat = new SimpleAttributeSet();
-                
-                threadOutputFormat.addAttribute(StyleConstants.Background, Color.BLACK);
-                threadOutputFormat.addAttribute(StyleConstants.Foreground, Color.WHITE);
-                messageOutputFormat.addAttribute(StyleConstants.Foreground, Color.WHITE);
-                
-                for(String line; (line = reader.readLine()) != null; ) {
-                    var doc = console.getStyledDocument();
-                    var separatorIndex = line.indexOf(';');
-                    
-                    if(separatorIndex != -1) {
-                        doc.insertString(doc.getLength(), line.substring(0, separatorIndex), threadOutputFormat);
-                        doc.insertString(doc.getLength(), line.substring(separatorIndex + 1) + '\n', messageOutputFormat);
-                    }else{
-                        doc.insertString(doc.getLength(), line, messageOutputFormat);
-                    }
-                }
-            } catch (IOException | BadLocationException e) {
-                e.printStackTrace();
-            }
-        }, "Console Thread").start();
-        
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        var consoleScrollPane = new JScrollPane(console);
         
-        var scrollBar = consoleScrollPane.getVerticalScrollBar();
-        scrollBar.addAdjustmentListener(new ScrollListener(scrollBar));
+        GeneralFunctions.executionDir = containsArg("-dev", args) ? "" : System.getProperty("user.dir") + "/app/";
         
-        consoleScrollPane.setBorder(null);
-        commandField.setPreferredSize(new Dimension(0, 25));
-        commandField.addKeyListener(new Main());
-        
-        var content = new JSplitPane(JSplitPane.VERTICAL_SPLIT, consoleScrollPane, commandField);
-        content.setDividerSize(0);
-        content.setResizeWeight(1D);
-        console.setBackground(Color.DARK_GRAY);
-        console.setEditable(false);
-        
-        var frame = new JFrame("Frutty Console");
-        frame.setContentPane(content);
-        frame.setSize(1024, 768);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+        if(containsArg("-console", args)) {
+            var outPipe = new PipedOutputStream();
+            var reader = new BufferedReader(new InputStreamReader(new ModifiedPipedInputStream(outPipe)));
+            System.setOut(new PrintStream(outPipe, true));
+                
+            new Thread(() -> {
+                try {
+                    var threadOutputFormat = new SimpleAttributeSet();
+                    var messageOutputFormat = new SimpleAttributeSet();
+                    
+                    threadOutputFormat.addAttribute(StyleConstants.Background, Color.BLACK);
+                    threadOutputFormat.addAttribute(StyleConstants.Foreground, Color.WHITE);
+                    messageOutputFormat.addAttribute(StyleConstants.Foreground, Color.WHITE);
+                    
+                    for(String line; (line = reader.readLine()) != null; ) {
+                        var doc = console.getStyledDocument();
+                        var separatorIndex = line.indexOf(';');
+                        
+                        if(separatorIndex != -1) {
+                            doc.insertString(doc.getLength(), line.substring(0, separatorIndex), threadOutputFormat);
+                            doc.insertString(doc.getLength(), line.substring(separatorIndex + 1) + '\n', messageOutputFormat);
+                        }else{
+                            doc.insertString(doc.getLength(), line, messageOutputFormat);
+                        }
+                    }
+                } catch (IOException | BadLocationException e) {
+                    e.printStackTrace();
+                }
+            }, "Console Thread").start();
+            
+            var consoleScrollPane = new JScrollPane(console);
+            var scrollBar = consoleScrollPane.getVerticalScrollBar();
+            scrollBar.addAdjustmentListener(new ScrollListener(scrollBar));
+            
+            consoleScrollPane.setBorder(null);
+            commandField.setPreferredSize(new Dimension(0, 25));
+            commandField.addKeyListener(new Main());
+            
+            var content = new JSplitPane(JSplitPane.VERTICAL_SPLIT, consoleScrollPane, commandField);
+            content.setDividerSize(0);
+            content.setResizeWeight(1D);
+            console.setBackground(Color.DARK_GRAY);
+            console.setEditable(false);
+            
+            var frame = new JFrame("Frutty Console");
+            frame.setContentPane(content);
+            frame.setSize(1024, 768);
+            frame.setLocationRelativeTo(null);
+            frame.setVisible(true);
+        }
         
         createDirectory("plugins");
         
         System.out.println(pluginSystemLabel + "Launching plugin system");
         var plugins = new ArrayList<Plugin>();
-        plugins.add(new Plugin("Frutty", "Base module for the game.", "https://github.com/Degubi/Frutty", "1.5.0"));
+        plugins.add(new Plugin("Frutty", "Base module for the game.", "https://github.com/Degubi/Frutty", "1.0.0"));
         plugins.add(new Plugin("Frutty Plugin Loader", "Base module for the plugin loader", "", "1.0.0"));
         
         var loadedEvents = loadPlugins(plugins);
@@ -120,6 +125,16 @@ public final class Main extends KeyAdapter {
         GuiMenu.createMainFrame();
         createDirectory("saves");
         createDirectory("screenshots");
+    }
+    
+    private static boolean containsArg(String arg, String[] args) {
+        for(var arrrg : args) {
+            if(arrrg.equals(arg)) {
+                return true;
+            }
+        }
+        
+        return false;
     }
     
     @Override
@@ -150,7 +165,7 @@ public final class Main extends KeyAdapter {
     }
     
     private static void createDirectory(String path) {
-        var filePath = Path.of(path);
+        var filePath = Path.of(GeneralFunctions.executionDir + path);
         
         if(!Files.exists(filePath)) {
             try {
@@ -205,7 +220,7 @@ public final class Main extends KeyAdapter {
         System.out.println(pluginSystemLabel + "Started loading plugins");
         var eventsToReturn = new HashMap<Class<?>, List<EventHandle>>();
         
-        try(var pluginFolder = Files.list(Path.of("plugins"))){
+        try(var pluginFolder = Files.list(Path.of(GeneralFunctions.executionDir + "plugins"))){
             var pluginJars = pluginFolder.filter(Files::isRegularFile)
                                          .filter(file -> file.toString().endsWith(".jar"))
                                          .toArray(Path[]::new);

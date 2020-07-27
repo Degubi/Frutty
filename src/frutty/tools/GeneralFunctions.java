@@ -3,6 +3,8 @@ package frutty.tools;
 import java.util.*;
 
 public final class GeneralFunctions {
+    public static String executionDir;
+
     private GeneralFunctions() {}
     
     @SafeVarargs

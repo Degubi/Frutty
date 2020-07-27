@@ -42,7 +42,7 @@ public final class GuiPlugins extends DefaultListCellRenderer implements Hyperli
         bottomPanel.setPreferredSize(new Dimension(Integer.MAX_VALUE, 100));
         bottomPanel.setOpaque(false);
         
-        var backgroundPanel = new GuiMapBackground("./maps/dev_settings.fmap");
+        var backgroundPanel = new GuiMapBackground("maps/dev_settings.fmap");
         backgroundPanel.setLayout(new BorderLayout());
         backgroundPanel.add(pluginPanel, BorderLayout.NORTH);
         backgroundPanel.add(bottomPanel, BorderLayout.SOUTH);
