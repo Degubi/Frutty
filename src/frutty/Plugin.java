@@ -1,14 +1,18 @@
 package frutty;
 
-public final class Plugin{
-    public final String description, name, pluginURL;
+public final class Plugin {
+    public final String description;
+    public final String name;
+    public final String pluginURL;
     public final String version;
+    public final String pluginJarName;
     
-    public Plugin(String name, String description, String pluginURL, String version) {
+    public Plugin(String name, String description, String pluginURL, String version, String pluginJarName) {
         this.name = name;
         this.description = description;
         this.pluginURL = pluginURL;
         this.version = version;
+        this.pluginJarName = pluginJarName == null ? null : pluginJarName.substring(0, pluginJarName.lastIndexOf('.'));
     }
         
     @Override

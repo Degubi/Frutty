@@ -54,7 +54,7 @@ public final class GuiEditor extends JPanel{
     }
     
     private void renderMap() {
-        try(var output = new ObjectOutputStream(Files.newOutputStream(Path.of(GeneralFunctions.executionDir + "maps/" + mapProperties.mapName + ".fmap"), WRITE, CREATE, TRUNCATE_EXISTING))){
+        try(var output = new ObjectOutputStream(Files.newOutputStream(Path.of(GeneralFunctions.getWorkdir() + "maps/" + mapProperties.mapName + ".fmap"), WRITE, CREATE, TRUNCATE_EXISTING))){
              var zoneIDCache = zoneButtons.stream().map(button -> button.zoneID).distinct().toArray(String[]::new);
              var textureCache = zoneButtons.stream().map(button -> button.zoneTexture).filter(texture -> texture != null).distinct().toArray(String[]::new);
              
@@ -80,7 +80,7 @@ public final class GuiEditor extends JPanel{
     }
     
     private void saveMap() {
-        try(var output = Files.newBufferedWriter(Path.of(GeneralFunctions.executionDir + "mapsrc/" + mapProperties.mapName + ".fmf"), WRITE, CREATE, TRUNCATE_EXISTING)){
+        try(var output = Files.newBufferedWriter(Path.of(GeneralFunctions.getWorkdir() + "mapsrc/" + mapProperties.mapName + ".fmf"), WRITE, CREATE, TRUNCATE_EXISTING)){
             output.write(mapProperties.width + "\n");
             output.write(mapProperties.height + "\n");
             output.write(mapProperties.skyName + "\n");
@@ -106,7 +106,7 @@ public final class GuiEditor extends JPanel{
     
     private static void loadMap(String fileName) {
         if(fileName != null && !fileName.isEmpty()) {
-            try(var input = Files.newBufferedReader(Path.of(GeneralFunctions.executionDir + "mapsrc/" + fileName))){
+            try(var input = Files.newBufferedReader(Path.of(GeneralFunctions.getWorkdir() + "mapsrc/" + fileName))){
                 var mapWidth = Integer.parseInt(input.readLine());
                 var mapHeight = Integer.parseInt(input.readLine());
                 var editor = new GuiEditor(fileName.substring(0, fileName.indexOf('.')), mapWidth, mapHeight, input.readLine(), input.readLine());

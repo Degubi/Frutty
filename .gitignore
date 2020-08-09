@@ -6,4 +6,5 @@
 editorhistory.txt
 stats.prop
 settings.prop
+/__pycache__/
 /.settings/

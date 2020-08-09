@@ -1,5 +1,6 @@
 package frutty.tools;
 
+import frutty.*;
 import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
@@ -41,7 +42,7 @@ public final class Material implements Serializable{
     }
     
     private static BufferedImage loadTexture(String path) {
-        try(var inputStream = Files.newInputStream(Path.of(GeneralFunctions.executionDir + path))){
+        try(var inputStream = Files.newInputStream(Path.of(Main.executionDir + path))){
             return ImageIO.read(inputStream);
         }catch(IOException e){
             e.printStackTrace();
@@ -70,7 +71,7 @@ public final class Material implements Serializable{
     }
     
     public static BufferedImage loadTexture(String prefix, String name) {
-        try(var inputStream = Files.newInputStream(Path.of(GeneralFunctions.executionDir + "textures/" + prefix + '/' + name))){
+        try(var inputStream = Files.newInputStream(Path.of(Main.executionDir + "textures/" + prefix + '/' + name))){
             return ImageIO.read(inputStream);
         }catch(IOException e){
             System.err.println("Can't find texture: " + prefix + '/' + name + " from class: " + StackWalker.getInstance(Option.RETAIN_CLASS_REFERENCE).getCallerClass().getName());

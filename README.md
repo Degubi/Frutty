@@ -14,8 +14,10 @@
   - Start 'Frutty' from desktop.
 
 ### Level Editor plugin:
-  - Download FruttyLevelEditor.jar from 'Releases'.
-  - Move the jar file to the 'plugins' folder inside Frutty's 'app/plugins' directory.
+  - Download LevelEditor.zip from 'Releases'.
+  - Open up the game, go to 'Plugins'
+  - Press 'Install Plugins from Zip', browse for the plugin zip
+  - Restart the game
   - The 'Level Editor' button should be visible inside the menu.
   - For the map sources download the 'mapsrc' folder from Github.
   - Move it to 'app/mapsrc'.

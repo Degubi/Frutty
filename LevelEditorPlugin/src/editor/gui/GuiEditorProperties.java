@@ -91,7 +91,7 @@ public final class GuiEditorProperties extends DefaultTableCellRenderer {
         
         private static int getFileSize(String filePath) {
             try {
-                return (int) Files.size(Path.of(GeneralFunctions.executionDir + filePath));
+                return (int) Files.size(Path.of(GeneralFunctions.getWorkdir() + filePath));
             } catch (IOException e) {
                 return -1;
             }

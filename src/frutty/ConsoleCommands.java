@@ -16,9 +16,6 @@ public final class ConsoleCommands {
                                                                           "list", ConsoleCommands::handleCommandListing,
                                                                           "commands", ConsoleCommands::handleCommandListing,
                                                                           "quit", e -> System.exit(0));
-    
-    
-    
     private static void handleDebugRenderLevel(String[] args) {
         var newLevel = Integer.parseInt(args[1]);
         

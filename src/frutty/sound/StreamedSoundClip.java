@@ -1,7 +1,7 @@
 package frutty.sound;
 
+import frutty.*;
 import frutty.gui.GuiSettings.*;
-import frutty.tools.*;
 import java.io.*;
 import javax.sound.sampled.*;
 import javax.sound.sampled.DataLine.*;
@@ -12,7 +12,7 @@ public final class StreamedSoundClip{
     private volatile boolean shouldPlay = true;
     
     public StreamedSoundClip(String fileName) {
-        soundFile = new File(GeneralFunctions.executionDir + "sounds/" + fileName);
+        soundFile = new File(Main.executionDir + "sounds/" + fileName);
     }
     
     public void start() {

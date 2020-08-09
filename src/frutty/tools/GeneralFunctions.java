@@ -1,9 +1,9 @@
 package frutty.tools;
 
+import frutty.*;
 import java.util.*;
 
 public final class GeneralFunctions {
-    public static String executionDir;
 
     private GeneralFunctions() {}
     
@@ -26,6 +26,16 @@ public final class GeneralFunctions {
         throw new IllegalArgumentException("Should not get there...");
     }
     
+    public static<T> boolean contains(T element, T[] elements) {
+        for(var arrrg : elements) {
+            if(arrrg.equals(element)) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
     public static int indexOfInt(int value, int[] values) {
         for(var k = 0; k < values.length; ++k) {
             if(values[k] == value) {
@@ -33,5 +43,9 @@ public final class GeneralFunctions {
             }
         }
         throw new IllegalArgumentException("Should not get there...");
+    }
+    
+    public static String getWorkdir() {
+        return Main.executionDir;
     }
 }

@@ -17,8 +17,10 @@ import java.net.*;
 import java.nio.file.*;
 import java.util.*;
 import java.util.List;
+import java.util.function.*;
 import java.util.jar.*;
 import java.util.stream.*;
+import java.util.zip.*;
 import javax.swing.*;
 import javax.swing.text.*;
 
@@ -27,6 +29,7 @@ public final class Main extends KeyAdapter {
     private static final EventHandle[] sharedEmptyEventArray = new EventHandle[0];
     public static final Random rand = new Random();
     public static Plugin[] loadedPlugins;
+    public static String executionDir;
     
     public static EventHandle[] worldInitEvents;
     public static EventHandle[] menuInitEvents;
@@ -51,37 +54,16 @@ public final class Main extends KeyAdapter {
     public static void main(String[] args) throws Exception {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         
-        GeneralFunctions.executionDir = containsArg("-dev", args) ? "" : System.getProperty("user.dir") + "/app/";
+        executionDir = GeneralFunctions.contains("-dev", args) ? "" : System.getProperty("user.dir") + "/app/";
         
-        if(containsArg("-console", args)) {
+        if(GeneralFunctions.contains("-console", args)) {
+            System.out.println(guiSystemLabel + "Initializing console window");
+            
             var outPipe = new PipedOutputStream();
             var reader = new BufferedReader(new InputStreamReader(new ModifiedPipedInputStream(outPipe)));
             System.setOut(new PrintStream(outPipe, true));
-                
-            new Thread(() -> {
-                try {
-                    var threadOutputFormat = new SimpleAttributeSet();
-                    var messageOutputFormat = new SimpleAttributeSet();
-                    
-                    threadOutputFormat.addAttribute(StyleConstants.Background, Color.BLACK);
-                    threadOutputFormat.addAttribute(StyleConstants.Foreground, Color.WHITE);
-                    messageOutputFormat.addAttribute(StyleConstants.Foreground, Color.WHITE);
-                    
-                    for(String line; (line = reader.readLine()) != null; ) {
-                        var doc = console.getStyledDocument();
-                        var separatorIndex = line.indexOf(';');
-                        
-                        if(separatorIndex != -1) {
-                            doc.insertString(doc.getLength(), line.substring(0, separatorIndex), threadOutputFormat);
-                            doc.insertString(doc.getLength(), line.substring(separatorIndex + 1) + '\n', messageOutputFormat);
-                        }else{
-                            doc.insertString(doc.getLength(), line, messageOutputFormat);
-                        }
-                    }
-                } catch (IOException | BadLocationException e) {
-                    e.printStackTrace();
-                }
-            }, "Console Thread").start();
+            
+            new Thread(() -> launchConsoleOutputThread(reader), "Console Thread").start();
             
             var consoleScrollPane = new JScrollPane(console);
             var scrollBar = consoleScrollPane.getVerticalScrollBar();
@@ -105,11 +87,28 @@ public final class Main extends KeyAdapter {
         }
         
         createDirectory("plugins");
-        
+        createDirectory("plugins_meta");
+
         System.out.println(pluginSystemLabel + "Launching plugin system");
         var plugins = new ArrayList<Plugin>();
-        plugins.add(new Plugin("Frutty", "Base module for the game.", "https://github.com/Degubi/Frutty", "1.0.0"));
-        plugins.add(new Plugin("Frutty Plugin Loader", "Base module for the plugin loader", "", "1.0.0"));
+        plugins.add(new Plugin("Frutty", "Base module for the game.", "https://github.com/Degubi/Frutty", "1.0.0", null));
+        plugins.add(new Plugin("Frutty Plugin Loader", "Base module for the plugin loader", "", "1.0.0", null));
+        
+        var pluginManagementFile = Path.of(executionDir + "pluginManagement.txt");
+        if(Files.exists(pluginManagementFile)) {
+            var managementFileLines = Files.readAllLines(pluginManagementFile);
+            var resourceFolderNames = new String[] { "textures", "maps", "sounds" };
+            
+            System.out.println(pluginSystemLabel + "Found management file with " + managementFileLines.size() + " entries");
+            
+            managementFileLines.stream()
+                               .distinct()
+                               .forEach(t -> handlePluginManagementLine(t, resourceFolderNames));
+            
+            Files.delete(pluginManagementFile);
+        }else{
+            System.out.println(pluginSystemLabel + "No management file found, nothing to do here");
+        }
         
         var loadedEvents = loadPlugins(plugins);
         var byPriority = Comparator.comparingInt((EventHandle event) -> event.priority);
@@ -127,15 +126,120 @@ public final class Main extends KeyAdapter {
         createDirectory("saves");
         createDirectory("screenshots");
     }
-    
-    private static boolean containsArg(String arg, String[] args) {
-        for(var arrrg : args) {
-            if(arrrg.equals(arg)) {
-                return true;
+
+    private static void handlePluginManagementLine(String line, String[] resourceFolderNames) {
+        var payload = line.substring(2);
+        
+        if(line.charAt(0) == 'I') {
+            var zipPath = Path.of(payload);
+            
+            try(var selectedZip = new ZipFile(zipPath.toFile())) {
+                var pluginJarEntry = selectedZip.getEntry("Plugin.jar");
+                
+                if(pluginJarEntry != null) {
+                    var zipFileName = zipPath.getFileName().toString();
+                    var pluginZipName = zipFileName.substring(0, zipFileName.lastIndexOf('.'));
+                    var pluginJarPath = "plugins/" + pluginZipName + ".jar";
+                    
+                    extractFileFromZip(pluginJarEntry, selectedZip, e -> pluginJarPath);
+                    
+                    var resourceFiles = selectedZip.stream()
+                                                   .filter(t -> !t.isDirectory())
+                                                   .filter(k -> !k.getName().equals("Plugin.jar"))
+                                                   .filter(k -> filterResourceType(resourceFolderNames, k))
+                                                   .collect(Collectors.toList());
+                    
+                    resourceFiles.forEach(e -> extractFileFromZip(e, selectedZip, ZipEntry::getName));
+                    
+                    var resourcesList = Stream.concat(Stream.of(pluginJarPath), resourceFiles.stream().map(ZipEntry::getName))
+                                              .collect(Collectors.toList());
+                    
+                    Files.write(Path.of(executionDir + "plugins_meta/" + pluginZipName + ".list"), resourcesList);
+                    System.out.println(pluginSystemLabel + pluginZipName + " got installed successfully!");
+                }else {
+                    System.out.println(pluginSystemLabel + zipPath + " didn't have a Plugin.jar file in it! Skipping");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+        }else{
+            var pluginMetaFile = Path.of(executionDir + "plugins_meta/" + payload + ".list");
+            
+            try(var filesToDelete = Files.lines(pluginMetaFile)) {
+                filesToDelete.map(Path::of).forEach(Main::deleteFile);
+            }catch (IOException e) {
+                e.printStackTrace();
+            }
+            
+            deleteFile(pluginMetaFile);
+            System.out.println(pluginSystemLabel + payload + " got uninstalled successfully!");
+        }
+    }
+
+    private static void deleteFile(Path file) {
+        try {
+             Files.delete(file);
+         } catch (IOException e) {
+             e.printStackTrace();
+         }
+    }
+
+    private static boolean filterResourceType(String[] resourceFolderNames, ZipEntry entry){
+        var entryName = entry.getName();
+        var typeSeparatorIndex = entryName.indexOf('/');
+        
+        if(typeSeparatorIndex == -1) {
+            System.out.println(pluginSystemLabel + "Ignoring resource entry without type: " + entryName);
+            return false;
         }
         
-        return false;
+        var entryType = entryName.substring(0, typeSeparatorIndex);
+        
+        if(!GeneralFunctions.contains(entryType, resourceFolderNames)) {
+            System.out.println(pluginSystemLabel + "Ignoring resource entry with unknown type: " + entryName);
+            return false;
+        }
+        
+        return true;
+    }
+    
+    private static void extractFileFromZip(ZipEntry entry, ZipFile zipFile, Function<ZipEntry, String> namingFunction) {
+        var outputPath = Path.of(executionDir + namingFunction.apply(entry));
+        
+        if(!Files.exists(outputPath)) {
+            try(var input = zipFile.getInputStream(entry)) {
+                Files.copy(input, outputPath);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }else {
+            System.out.println(pluginSystemLabel + "Ignoring already existing resource entry: " + outputPath);
+        }
+    }
+
+    private static void launchConsoleOutputThread(BufferedReader reader) {
+        try {
+            var threadOutputFormat = new SimpleAttributeSet();
+            var messageOutputFormat = new SimpleAttributeSet();
+            
+            threadOutputFormat.addAttribute(StyleConstants.Background, Color.BLACK);
+            threadOutputFormat.addAttribute(StyleConstants.Foreground, Color.WHITE);
+            messageOutputFormat.addAttribute(StyleConstants.Foreground, Color.WHITE);
+            
+            for(String line; (line = reader.readLine()) != null; ) {
+                var doc = console.getStyledDocument();
+                var separatorIndex = line.indexOf(';');
+                
+                if(separatorIndex != -1) {
+                    doc.insertString(doc.getLength(), line.substring(0, separatorIndex), threadOutputFormat);
+                    doc.insertString(doc.getLength(), line.substring(separatorIndex + 1) + '\n', messageOutputFormat);
+                }else{
+                    doc.insertString(doc.getLength(), line, messageOutputFormat);
+                }
+            }
+        } catch (IOException | BadLocationException e) {
+            e.printStackTrace();
+        }
     }
     
     @Override
@@ -166,7 +270,7 @@ public final class Main extends KeyAdapter {
     }
     
     private static void createDirectory(String path) {
-        var filePath = Path.of(GeneralFunctions.executionDir + path);
+        var filePath = Path.of(executionDir + path);
         
         if(!Files.exists(filePath)) {
             try {
@@ -221,7 +325,7 @@ public final class Main extends KeyAdapter {
         System.out.println(pluginSystemLabel + "Started loading plugins");
         var eventsToReturn = new HashMap<Class<?>, List<EventHandle>>();
         
-        try(var pluginFolder = Files.list(Path.of(GeneralFunctions.executionDir + "plugins"))){
+        try(var pluginFolder = Files.list(Path.of(executionDir + "plugins"))){
             var pluginJars = pluginFolder.filter(Files::isRegularFile)
                                          .filter(file -> file.toString().endsWith(".jar"))
                                          .toArray(Path[]::new);
@@ -230,34 +334,38 @@ public final class Main extends KeyAdapter {
             
             if(pluginJars.length > 0) {
                 var mainClasses = Arrays.stream(pluginJars).map(Main::getMainClassNameFromJar).toArray(String[]::new);
-                var classLoader = new URLClassLoader(Arrays.stream(pluginJars).map(Main::convertToURL).toArray(URL[]::new), Main.class.getClassLoader()); //Dont close this or shit breaks
+                var pluginJarURLs = Arrays.stream(pluginJars).map(Main::convertToURL).toArray(URL[]::new);
+                var classLoader = new URLClassLoader(pluginJarURLs, Main.class.getClassLoader()); //Dont close this or shit breaks
                 var lookup = MethodHandles.publicLookup();
 
                 for(var k = 0; k < mainClasses.length; ++k) {
-                    if(mainClasses[k] == null) {
-                        System.out.println(pluginSystemLabel + "Can't load main class from plugin: " + pluginJars[k]);
+                    var pluginJarPath = pluginJars[k];
+                    var pluginMainClassName = mainClasses[k];
+                    
+                    if(pluginMainClassName == null) {
+                        System.out.println(pluginSystemLabel + "Can't load main class from plugin: " + pluginJarPath);
                         continue;
                     }
 
-                    var loadedMainClass = classLoader.loadClass(mainClasses[k]);
-                    if(!loadedMainClass.isAnnotationPresent(FruttyPlugin.class)) {
-                        System.out.println(pluginSystemLabel + "Main class from plugin: " + pluginJars[k] + " is not annotated with @FruttyPlugin");
+                    var pluginMainClass = classLoader.loadClass(pluginMainClassName);
+                    if(!pluginMainClass.isAnnotationPresent(FruttyPlugin.class)) {
+                        System.out.println(pluginSystemLabel + "Main class from plugin: " + pluginJarPath + " is not annotated with @FruttyPlugin");
                         continue;
                     }
 
-                    var pluginAnnotation = loadedMainClass.getDeclaredAnnotation(FruttyPlugin.class);
+                    var pluginAnnotation = pluginMainClass.getDeclaredAnnotation(FruttyPlugin.class);
                     System.out.println(pluginSystemLabel + "Started loading plugin: '" + pluginAnnotation.name() + "'");
                     
-                    outPlugins.add(new Plugin(pluginAnnotation.name(), pluginAnnotation.description(), pluginAnnotation.pluginSiteURL(), pluginAnnotation.version()));
+                    outPlugins.add(new Plugin(pluginAnnotation.name(), pluginAnnotation.description(), pluginAnnotation.pluginSiteURL(), pluginAnnotation.version(), pluginJarPath.getFileName().toString()));
 
-                    var pluginMainFunctions = Arrays.stream(loadedMainClass.getDeclaredMethods())
+                    var pluginMainFunctions = Arrays.stream(pluginMainClass.getDeclaredMethods())
                                                     .filter(method -> method.isAnnotationPresent(FruttyMain.class))
                                                     .toArray(Method[]::new);
 
                     if(pluginMainFunctions.length == 0) {
-                        System.out.println(pluginSystemLabel + "Can't find main method annotated with @FruttyPluginMain from plugin: " + pluginJars[k] + ", ignoring");
+                        System.out.println(pluginSystemLabel + "Can't find main method annotated with @FruttyPluginMain from plugin: " + pluginJarPath + ", ignoring");
                     }else if(pluginMainFunctions.length > 1) {
-                        System.out.println(pluginSystemLabel + "Found more than one main methods from plugin: " + pluginJars[k]);
+                        System.out.println(pluginSystemLabel + "Found more than one main methods from plugin: " + pluginJarPath);
                     }else{
                         lookup.unreflect(pluginMainFunctions[0]).invokeExact();
 
