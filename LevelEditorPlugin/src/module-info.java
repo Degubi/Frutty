@@ -1,4 +1,4 @@
-module frutty.editor {
+module frutty.leveleditor {
     requires frutty.api;
     requires static java.compiler;
     

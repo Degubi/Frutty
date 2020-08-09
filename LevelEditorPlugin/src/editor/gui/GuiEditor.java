@@ -81,10 +81,10 @@ public final class GuiEditor extends JPanel{
     
     private void saveMap() {
         try(var output = Files.newBufferedWriter(Path.of(GeneralFunctions.executionDir + "mapsrc/" + mapProperties.mapName + ".fmf"), WRITE, CREATE, TRUNCATE_EXISTING)){
-            output.write(Integer.toString(mapProperties.width) + '\n');
-            output.write(Integer.toString(mapProperties.height) + '\n');
-            output.write(mapProperties.skyName + '\n');
-            output.write(mapProperties.nextMap + '\n');
+            output.write(mapProperties.width + "\n");
+            output.write(mapProperties.height + "\n");
+            output.write(mapProperties.skyName + "\n");
+            output.write(mapProperties.nextMap + "\n");
             
             var textures = zoneButtons.stream()
                                       .map(button -> button.zoneTexture)
@@ -92,10 +92,7 @@ public final class GuiEditor extends JPanel{
                                       .distinct()
                                       .toArray(String[]::new);
             
-            for(var texture : textures) {
-                output.write(texture + ' ');
-            }
-            output.write("\n");
+            output.write(String.join(" ", textures) + "\n");
             
             for(var button : zoneButtons) {
                 output.write(button.zoneID + (button.zoneTexture != null ? (" " + GeneralFunctions.indexOf(button.zoneTexture, textures)) : "") + '\n');
@@ -110,19 +107,19 @@ public final class GuiEditor extends JPanel{
     private static void loadMap(String fileName) {
         if(fileName != null && !fileName.isEmpty()) {
             try(var input = Files.newBufferedReader(Path.of(GeneralFunctions.executionDir + "mapsrc/" + fileName))){
-                int mapWidth = Integer.parseInt(input.readLine());
-                int mapHeight = Integer.parseInt(input.readLine());
+                var mapWidth = Integer.parseInt(input.readLine());
+                var mapHeight = Integer.parseInt(input.readLine());
                 var editor = new GuiEditor(fileName.substring(0, fileName.indexOf('.')), mapWidth, mapHeight, input.readLine(), input.readLine());
                 var textureCache = input.readLine().split(" ");
                 
-                for(int y = 0; y < mapHeight; ++y) {
-                    for(int x = 0; x < mapWidth; ++x) {
+                for(var y = 0; y < mapHeight; ++y) {
+                    for(var x = 0; x < mapWidth; ++x) {
                         var zoneData = input.readLine().split(" ");
                         var zoneFromName = MapZoneBase.getZoneFromName(zoneData[0]);
                         var button = new EditorZoneButton(zoneFromName.editorTexture.get(), zoneData[0], x * 64, y * 64, editor);
                         
                         if(zoneData.length == 2) {
-                            int textureIndexFromCache = Integer.parseInt(zoneData[1]);
+                            var textureIndexFromCache = Integer.parseInt(zoneData[1]);
                             button.zoneTexture = textureCache[textureIndexFromCache];
                             button.guiButton.setIcon(((MapZoneTexturable)zoneFromName).textureVariants.get()[Material.materialRegistry.get(textureCache[textureIndexFromCache]).index]);
                         }
@@ -140,18 +137,20 @@ public final class GuiEditor extends JPanel{
     }
     
     private static void newMap(GuiEditor editor) {
-        String[] types = {"Normal", "Background"};
+        var types = new String[]{"Normal", "Background"};
         var input = JOptionPane.showOptionDialog(null, "Make Normal or Background map?", "Map Type Chooser", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, types, types[0]);
         var mapSizeString = (input == 0 ? JOptionPane.showInputDialog("Enter map size!", "10x10") : "14x10").split("x");
-        int mapWidth = Integer.parseInt(mapSizeString[0]), bigWidth = mapWidth * 64;
-        int mapHeight = Integer.parseInt(mapSizeString[1]), bigHeight = mapHeight * 64;
+        var mapWidth = Integer.parseInt(mapSizeString[0]);
+        var mapHeight = Integer.parseInt(mapSizeString[1]);
+        var bigWidth = mapWidth * 64;
+        var bigHeight = mapHeight * 64;
         var mapName = JOptionPane.showInputDialog("Enter map name!", "mapname");
         var newEditor = new GuiEditor(mapName, mapWidth, mapHeight, "null", "null");
         
         if(mapName != null) {
-            for(int yPos = 0; yPos < bigHeight; yPos += 64) {
-                for(int xPos = 0; xPos < bigWidth; xPos += 64) {
-                    EditorZoneButton button = new EditorZoneButton(MapZoneBase.normalZone.editorTexture.get(), "normalZone", xPos, yPos, newEditor);
+            for(var yPos = 0; yPos < bigHeight; yPos += 64) {
+                for(var xPos = 0; xPos < bigWidth; xPos += 64) {
+                    var button = new EditorZoneButton(MapZoneBase.normalZone.editorTexture.get(), "normalZone", xPos, yPos, newEditor);
                     button.zoneTexture = "normal";
                     newEditor.zoneButtons.add(button);
                     newEditor.add(button.guiButton);
@@ -210,7 +209,7 @@ public final class GuiEditor extends JPanel{
     
     private static void showNewGui(Container panel, String name, int width, int height) {
         EventQueue.invokeLater(() -> {
-            JFrame frame = new JFrame(name);
+            var frame = new JFrame(name);
             frame.setContentPane(panel);
             frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
             frame.setResizable(false);
@@ -224,9 +223,11 @@ public final class GuiEditor extends JPanel{
     
     private static JMenuItem newMenuItem(String text, char shortcut, boolean setEnabled, ActionListener listener) {
         var item = new JMenuItem(text);
+        
         if(shortcut != '0') {
             item.setAccelerator(KeyStroke.getKeyStroke(shortcut, Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
         }
+        
         item.setEnabled(setEnabled);
         item.addActionListener(listener);
         return item;

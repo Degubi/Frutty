@@ -5,7 +5,6 @@ import frutty.gui.GuiSettings.*;
 import frutty.tools.*;
 import frutty.world.*;
 import frutty.world.base.*;
-import frutty.world.zones.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -24,6 +23,9 @@ public final class GuiIngame extends JPanel implements KeyListener{
     static JFrame ingameFrame;
     private static LocalTime startTime;
     private static long renderLastUpdate;
+    
+    private static boolean animatedTextureSwitch = false;
+    public static int animatedTextureY = 0;
     
     @Override
     protected void paintComponent(Graphics graphics) {
@@ -121,7 +123,20 @@ public final class GuiIngame extends JPanel implements KeyListener{
             
         for(var entities : World.entities) entities.updateInternal(ticks);
             
-        if(ticks % 4 == 0) MapZoneWater.updateWaterUV();
+        if(ticks % 4 == 0) {
+            if(animatedTextureSwitch) {
+                animatedTextureY -= 16;
+            }else{
+                animatedTextureY += 16;
+            }
+            
+            if(animatedTextureY == 0) {
+                animatedTextureSwitch = false;
+            }
+            if(animatedTextureY == 448) {
+                animatedTextureSwitch = true;
+            }
+        }
             
         if(ticks % 2 == 0) {
             for(var iterator = World.particles.iterator(); iterator.hasNext();) {

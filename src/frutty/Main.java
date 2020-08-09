@@ -2,6 +2,7 @@ package frutty;
 
 import frutty.gui.*;
 import frutty.plugin.*;
+import frutty.plugin.event.*;
 import frutty.plugin.event.entity.*;
 import frutty.plugin.event.gui.*;
 import frutty.plugin.event.stats.*;

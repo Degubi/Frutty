@@ -72,7 +72,7 @@ public final class GuiMapBackground extends JPanel {
         var yCoordsLocal = yCoords;
         var materialsLocal = materials;
 
-        for(int k = 0; k < zonesLocal.length; ++k) {
+        for(var k = 0; k < zonesLocal.length; ++k) {
             var zone = zonesLocal[k];
             
             if(Settings.renderDebugLevel < 2) {

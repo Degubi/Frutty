@@ -14,9 +14,9 @@
   - Start 'Frutty' from desktop.
 
 ### Level Editor plugin:
-  - Download FruttyEditor.jar from 'Releases'.
+  - Download FruttyLevelEditor.jar from 'Releases'.
   - Move the jar file to the 'plugins' folder inside Frutty's 'app/plugins' directory.
-  - The 'Editor' button should be visible inside the menu.
+  - The 'Level Editor' button should be visible inside the menu.
   - For the map sources download the 'mapsrc' folder from Github.
   - Move it to 'app/mapsrc'.
   - Browse it from the editor.
@@ -28,9 +28,10 @@
 ### Building:
   - Needs jdk14 installed (build file has hardcoded java path for the moment, it will be changed as soon as jdk15 is out)
   - Needs Python installed
-  - Run the 'build.py' file
+  - Run the 'build_installer.py' file
 
 ### Plugin development:
-  - The FruttyEditor is in itself a plugin.
+  - The LevelEditorPlugin is an example.
   - The 'frutty.plugin' directory is a good starting point. It is well documented with lots of examples.
   - Every plugin jar needs a MANIFEST.MF file with the Plugin-Class attribute.
+  - Run the 'build_jar.py' file to build only the game jar (add it to the classPath in the IDE)

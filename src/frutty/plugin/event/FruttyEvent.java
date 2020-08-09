@@ -1,6 +1,5 @@
-package frutty.plugin;
+package frutty.plugin.event;
 
-import frutty.plugin.event.*;
 import java.lang.annotation.*;
 
 /**Mark any methods with this annotation to register it as an event method. (Method must be static and must contain a class from the frutty.plugin.event* package. See them in the plugin.event package). See an example down below. <pre><code>

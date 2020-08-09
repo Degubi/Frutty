@@ -19,8 +19,8 @@ public final class SettingButtonSlider extends JComponent implements ActionListe
         titleText = displayText;
         counter = index;
         
-        for(int k = 1; k < 11; ++k) {
-            JButton kek = new JButton(k - 1 < index ? RED_ICON : TRANSPARENT_ICON);
+        for(var k = 1; k < 11; ++k) {
+            var kek = new JButton(k - 1 < index ? RED_ICON : TRANSPARENT_ICON);
             kek.setBounds(385 + k * 20, 24, 16, 16);
             kek.setMnemonic(k);
             kek.addActionListener(this);
@@ -34,10 +34,10 @@ public final class SettingButtonSlider extends JComponent implements ActionListe
     
     private static ImageIcon getColoredImage(Color color) {
         var img = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+        var rgb = color.getRGB();
         
-        int rgb = color.getRGB();
-        for(int x = 0; x < 16; ++x) {
-            for(int y = 0; y < 16; ++y) {
+        for(var x = 0; x < 16; ++x) {
+            for(var y = 0; y < 16; ++y) {
                 img.setRGB(x, y, rgb);
             }
         }
@@ -73,7 +73,7 @@ public final class SettingButtonSlider extends JComponent implements ActionListe
             counter = ((JButton)event.getSource()).getMnemonic();
         }
         
-        for(int k = 0; k < 10; ++k) {
+        for(var k = 0; k < 10; ++k) {
             butts[k].setIcon(k < counter ? RED_ICON : TRANSPARENT_ICON);
         }
     }

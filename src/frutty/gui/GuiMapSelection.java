@@ -112,17 +112,16 @@ public final class GuiMapSelection{
     }
     
     private static JPanel createGenerateMapPanel() {
-        var sizeField = new JTextField("10x10");
-        var panel = new JPanel(null);
+        var backgroundPanel = new GuiMapBackground("maps/dev_settings.fmap");
+        backgroundPanel.setLayout(null);
+
+        var sizeField = new SettingButtonField("10x10", "Map Size", 50, 20);
+        backgroundPanel.add(sizeField);
+        backgroundPanel.add(new SettingButton(false, "Enable Water", 50, 100));
+        backgroundPanel.add(newButton("Menu", 725, 475, e -> GuiMenu.switchMenuGui(GuiMenu.createMenuPanel())));
+        backgroundPanel.add(newButton("Play", 725, 550, e -> handleGeneratePlayButtonPress(sizeField.dataField)));
         
-        sizeField.setBounds(50, 50, 120, 40);
-        panel.add(sizeField);
-        
-        panel.add(new SettingButton(false, "Enable Water", 50, 80));
-        panel.add(newButton("Menu", 725, 475, e -> GuiMenu.switchMenuGui(GuiMenu.createMenuPanel())));
-        panel.add(newButton("Play", 725, 550, e -> handleGeneratePlayButtonPress(sizeField)));
-        
-        return panel;
+        return backgroundPanel;
     }
     
     private static void handleGeneratePlayButtonPress(JTextField sizeField) {

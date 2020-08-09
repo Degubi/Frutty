@@ -4,6 +4,7 @@ import static javax.lang.model.element.Modifier.*;
 import static javax.tools.Diagnostic.Kind.*;
 
 import frutty.plugin.*;
+import frutty.plugin.event.*;
 import java.util.*;
 import javax.annotation.processing.*;
 import javax.lang.model.element.*;

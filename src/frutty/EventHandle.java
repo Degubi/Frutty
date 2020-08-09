@@ -1,6 +1,6 @@
 package frutty;
 
-import frutty.plugin.*;
+import frutty.plugin.event.*;
 import java.lang.invoke.*;
 import java.lang.invoke.MethodHandles.*;
 import java.lang.reflect.*;

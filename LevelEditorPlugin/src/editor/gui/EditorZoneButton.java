@@ -24,7 +24,7 @@ public final class EditorZoneButton extends MouseAdapter{
     
     @Override
     public void mousePressed(MouseEvent event) {
-        int pressedButton = event.getButton();
+        var pressedButton = event.getButton();
         
         if(pressedButton == MouseEvent.BUTTON1) {
             var activeZoneName = (String) editorInstance.zoneList.getSelectedItem();

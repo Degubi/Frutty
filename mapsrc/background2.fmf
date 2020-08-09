@@ -2,7 +2,7 @@
 10
 null
 null
-brick 
+brick
 chestZone 0
 normalZone 0
 normalZone 0
@@ -32,8 +32,8 @@ emptyZone
 emptyZone
 normalZone 0
 normalZone 0
-player2Zone
-player1Zone
+emptyZone
+emptyZone
 spawnerZone
 normalZone 0
 appleZone 0
@@ -56,8 +56,8 @@ emptyZone
 emptyZone
 cherryZone 0
 emptyZone
-emptyZone
-emptyZone
+player1Zone
+player2Zone
 normalZone 0
 normalZone 0
 emptyZone

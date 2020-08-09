@@ -14,7 +14,7 @@ public final class SettingButtonField extends JComponent{
         titleText = displayText;
         
         dataField = new JTextField(selectedData);
-        dataField.setBounds(550, 8, 80, 50);
+        dataField.setBounds(550, 8, 100, 50);
         dataField.setOpaque(false);
         dataField.setForeground(Color.WHITE);
         dataField.setFont(GuiHelper.bigFont);
@@ -22,6 +22,7 @@ public final class SettingButtonField extends JComponent{
         add(dataField);
     }
     
+    // Constructor used in keybind selection setting
     public SettingButtonField(int characterData, String displayText, int x, int y) {
         this(Character.toString((char)characterData), displayText, x, y);
         
