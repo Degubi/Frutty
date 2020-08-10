@@ -58,6 +58,9 @@ public final class Material implements Serializable{
     
     @Override
     public boolean equals(Object obj) {
+        if(obj == this) {
+            return true;
+        }
         if(obj instanceof Material) {
             var mat = (Material) obj;
             return mat.index == index && mat.name.equals(name);

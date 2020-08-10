@@ -2,7 +2,7 @@ package frutty.entity;
 
 import frutty.world.*;
 
-public abstract class EntityFalling extends Entity{
+public abstract class EntityFalling extends Entity {
     private int sleepCounter = 0;
     private boolean fireStopFall = false;
 
@@ -11,14 +11,14 @@ public abstract class EntityFalling extends Entity{
     }
 
     @Override
-    public int getClientUpdateRate() { return 1; }
+    public final int getClientUpdateRate() { return 1; }
     @Override
-    public int getServerUpdateRate() { return 8; }
+    public final int getServerUpdateRate() { return 8; }
     
     public void onFallStopped() {}
     
     @Override
-    public void updateServer() {
+    public final void updateServer() {
         if(World.isEmptyAt(renderPosX, serverPosY + 64)) {
             fireStopFall = false;
             

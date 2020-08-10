@@ -19,8 +19,9 @@ public final class PropertyFile {
             for(var line = reader.readLine(); line != null; line = reader.readLine()) {
                 var strBytes = line.getBytes();
                 
-                int typeIndex = 0, equalsIndex = 0;
-                for(int index = 0; index < strBytes.length; ++index) {
+                var typeIndex = 0;
+                var equalsIndex = 0;
+                for(var index = 0; index < strBytes.length; ++index) {
                     if(typeIndex == 0 && strBytes[index] == ':') {
                         typeIndex = index;
                         continue;
@@ -52,7 +53,7 @@ public final class PropertyFile {
     }
     
     public String getString(String key, String defaultValue) {
-        for(Prop prop : storage) {
+        for(var prop : storage) {
             if(prop.key.equals(key) && prop instanceof GenericProperty) {
                 return ((GenericProperty)prop).value;
             }
@@ -63,7 +64,7 @@ public final class PropertyFile {
     }
     
     public boolean getBoolean(String key, boolean defaultValue){
-        for(Prop prop : storage) {
+        for(var prop : storage) {
             if(prop.key.equals(key) && prop instanceof PrimitiveProperty) {
                 return ((PrimitiveProperty)prop).value == 1;
             }
@@ -74,7 +75,7 @@ public final class PropertyFile {
     }
     
     public int getInt(String key, int defaultValue){
-        for(Prop prop : storage) {
+        for(var prop : storage) {
             if(prop.key.equals(key) && prop instanceof PrimitiveProperty) {
                 return ((PrimitiveProperty)prop).value;
             }
@@ -85,7 +86,7 @@ public final class PropertyFile {
     }
     
     public boolean containsKey(String key) {
-        for(Prop prop : storage) {
+        for(var prop : storage) {
             if(prop.key.equals(key)) {
                 return true;
             }
@@ -94,7 +95,7 @@ public final class PropertyFile {
     }
     
     public void setInt(String key, int value) {
-        for(Prop props : storage) {
+        for(var props : storage) {
             if(props.key.equals(key) && props instanceof PrimitiveProperty) {
                 ((PrimitiveProperty)props).value = value;
             }
@@ -102,7 +103,7 @@ public final class PropertyFile {
     }
     
     public void setBoolean(String key, boolean value) {
-        for(Prop props : storage) {
+        for(var props : storage) {
             if(props.key.equals(key) && props instanceof PrimitiveProperty) {
                 ((PrimitiveProperty)props).value = value ? 1 : 0;
             }
@@ -110,7 +111,7 @@ public final class PropertyFile {
     }
     
     public void setString(String key, String value) {
-        for(Prop props : storage) {
+        for(var props : storage) {
             if(props.key.equals(key) && props instanceof GenericProperty) {
                 ((GenericProperty)props).value = value;
             }
@@ -119,7 +120,7 @@ public final class PropertyFile {
     
     public void save() {
         try(var output = Files.newBufferedWriter(path)){
-            for(Prop props : storage) {
+            for(var props : storage) {
                 output.write(props.toString() + '\n');
             }
         } catch (IOException e) {}

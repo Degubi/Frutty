@@ -37,10 +37,11 @@ public final class Main extends KeyAdapter {
     public static EventHandle[] statSaveEvents;
     public static EventHandle[] zoneAddedEvents;
     public static EventHandle[] entityKilledEvents;
+    public static EventHandle[] screenOverlayEvents;
     
     private static final ArrayList<String> commandHistory = new ArrayList<>();
     private static final JTextField commandField = new JTextField();
-    private static final JTextPane console = new JTextPane();
+    static final JTextPane console = new JTextPane();
     
     public static final String pluginSystemLabel       = "          Plugin System                  ;   ";
     public static final String userConLabel            = "          User Console System    ;   ";
@@ -57,8 +58,6 @@ public final class Main extends KeyAdapter {
         executionDir = GeneralFunctions.contains("-dev", args) ? "" : System.getProperty("user.dir") + "/app/";
         
         if(GeneralFunctions.contains("-console", args)) {
-            System.out.println(guiSystemLabel + "Initializing console window");
-            
             var outPipe = new PipedOutputStream();
             var reader = new BufferedReader(new InputStreamReader(new ModifiedPipedInputStream(outPipe)));
             System.setOut(new PrintStream(outPipe, true));
@@ -82,8 +81,11 @@ public final class Main extends KeyAdapter {
             var frame = new JFrame("Frutty Console");
             frame.setContentPane(content);
             frame.setSize(1024, 768);
+            frame.setIconImage(GuiHelper.frameIcon);
             frame.setLocationRelativeTo(null);
             frame.setVisible(true);
+            
+            System.out.println(guiSystemLabel + "Console window initialized");
         }
         
         createDirectory("plugins");
@@ -120,6 +122,7 @@ public final class Main extends KeyAdapter {
         Main.statSaveEvents = initEventsByType(StatsSavedEvent.class, loadedEvents, byPriority);
         Main.zoneAddedEvents = initEventsByType(ZoneAddedEvent.class, loadedEvents, byPriority);
         Main.entityKilledEvents = initEventsByType(EntityKilledEvent.class, loadedEvents, byPriority);
+        Main.screenOverlayEvents = initEventsByType(ScreenOverlayEvent.class, loadedEvents, byPriority);
         System.out.println(pluginSystemLabel + "Finished loading, loaded " + (plugins.size() - 2) + " external plugins");
         
         GuiMenu.createMainFrame();
@@ -284,6 +287,8 @@ public final class Main extends KeyAdapter {
     }
     
     public static void invokeEvent(Object event, EventHandle[] methods) {
+        System.out.println(eventSystemLabel + "Firing " + event.getClass().getSimpleName() + " event");
+        
         for(var handles : methods) {
             try {
                 handles.handle.bindTo(event).invokeExact();

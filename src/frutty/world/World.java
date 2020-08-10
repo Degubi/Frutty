@@ -17,7 +17,7 @@ public final class World{
     public static EntityPlayer[] players;
     public static MapZoneBase[] zones;
     public static ArrayList<Entity> entities = new ArrayList<>(10);
-    public static ArrayList<Particle> particles = new ArrayList<>(10);
+    public static ArrayList<Particle> particles = new ArrayList<>(20);
     public static EntityEnemy[] enemies;
     public static int width, height, pickCount, score, ticks;
     public static int[] xCoords, yCoords;
@@ -70,7 +70,9 @@ public final class World{
     
     public static void generateMap(int genWidth, int genHeight, boolean isMultiplayer) {
         var rand = Main.rand;
-        int bigWidth = genWidth * 64, bigHeight = genHeight * 64, zoneIndex = 0;
+        var bigWidth = genWidth * 64;
+        var bigHeight = genHeight * 64;
+        var zoneIndex = 0;
         
         init(new String[] {"normal"}, isMultiplayer, "null", "generated: " + genWidth + "x" + genHeight, bigWidth, bigHeight, null);
         
@@ -106,7 +108,7 @@ public final class World{
                     zones[randIndex] = MapZoneBase.spawnerZone;
                     loopState = 1;
                     
-                    for(int l = 0; l < enemies.length; ++l) {
+                    for(var l = 0; l < enemies.length; ++l) {
                         enemies[l] = new EntityEnemy(xCoords[randIndex], yCoords[randIndex]);
                     }
                     
@@ -125,8 +127,6 @@ public final class World{
                 }
             }
         }
-        
-        GuiHelper.mapSizeCheck(genWidth / 64 + 1, genHeight / 64 + 1);
     }
     
     public static void loadMap(String name, boolean isMultiplayer) {
@@ -174,8 +174,6 @@ public final class World{
         }catch(IOException | ClassNotFoundException e){
             System.out.println(Main.worldLoadingSystemLabel + "Can't load corrupted map file: " + "./maps/" + name + ".fmap");
         }
-        
-        GuiHelper.mapSizeCheck(width / 64 + 1, height / 64 + 1);
     }
     
     public static void createSave(String fileName) {
@@ -186,7 +184,7 @@ public final class World{
                 output.writeObject(players);
                 
                 output.writeShort(zones.length);
-                for(int k = 0; k < zones.length; ++k) {
+                for(var k = 0; k < zones.length; ++k) {
                     output.writeUTF(zones[k].zoneName);
                 }
                 
@@ -201,10 +199,10 @@ public final class World{
                 output.writeObject(xCoords);
                 output.writeObject(yCoords);
                 
-                int materialCount = materials.length;
+                var materialCount = materials.length;
                 output.writeInt(materials.length);
                 
-                for(int x = 0; x < materialCount; ++x) {
+                for(var x = 0; x < materialCount; ++x) {
                     var currentMat = materials[x];
                     output.writeUTF(currentMat == null ? "null" : currentMat.name);
                 }
@@ -229,7 +227,7 @@ public final class World{
                 players = (EntityPlayer[]) input.readObject();
                 
                 zones = new MapZoneBase[input.readShort()];
-                for(int k = 0; k < zones.length; ++k) {
+                for(var k = 0; k < zones.length; ++k) {
                     zones[k] = MapZoneBase.getZoneFromName(input.readUTF());
                 }
                 
@@ -244,10 +242,10 @@ public final class World{
                 xCoords = (int[]) input.readObject();
                 yCoords = (int[]) input.readObject();
                 
-                int materialCount = input.readInt();
+                var materialCount = input.readInt();
                 materials = new Material[materialCount];
                 
-                for(int x = 0; x < materialCount; ++x) {
+                for(var x = 0; x < materialCount; ++x) {
                     var currentReadName = input.readUTF();
                     materials[x] = currentReadName.equals("null") ? null : Material.materialRegistry.get(currentReadName);
                 }
@@ -275,7 +273,6 @@ public final class World{
     
     public static boolean isEmptyAt(int x, int y) {
         var zone = World.getZoneAt(x, y);
-        
         return zone != null && zone == MapZoneBase.emptyZone;
     }
     
@@ -328,7 +325,7 @@ public final class World{
             }
         }
     }
-        
+    
     public static void spawnRandomParticles(int count, int x, int y, Color color) {
         if(Settings.graphicsLevel == 2) {
             var particles = World.particles;

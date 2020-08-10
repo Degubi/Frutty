@@ -11,18 +11,10 @@ public final class GuiHelper {
     public static final Font thiccFont = new Font("TimeRoman", Font.BOLD, 14);
     public static final Font bigFont = new Font("TimesRoman", Font.BOLD, 28);
     public static final Color color_128Black = new Color(0, 0, 0, 128), color_84Black = new Color(0, 0, 0, 84), color_192Black = new Color(0, 0, 0, 192);
-    private static final int recommendedMaxMapHeight = Toolkit.getDefaultToolkit().getScreenSize().height / 64 - 1;
-    private static final int recommendedMaxMapWidth = Toolkit.getDefaultToolkit().getScreenSize().width / 64 - 1;
     public static final LineBorder menuBorder = new LineBorder(Color.DARK_GRAY, 2);
     public static final Image frameIcon = Toolkit.getDefaultToolkit().createImage(Main.executionDir + "textures/player/side.png");
 
     private GuiHelper() {}
-    
-    public static void mapSizeCheck(int width, int height) {
-        if(width > GuiHelper.recommendedMaxMapWidth || height > GuiHelper.recommendedMaxMapHeight) {
-            JOptionPane.showMessageDialog(null, "Warning: map size is bigger than the recommended max map size!");
-        }
-    }
     
     public static JCheckBox newCheckBox(String text, int x, int y, Color foreground, boolean setSelected) {
         var box = new JCheckBox(text, setSelected);
@@ -40,5 +32,12 @@ public final class GuiHelper {
         butt.setMnemonic(100);
         butt.addActionListener(listener);
         return butt;
+    }
+    
+    public static JLabel newLabel(String text, int x, int y) {
+        var label = new JLabel(text);
+        label.setBounds(x, y, text.length() * 12, 30);
+        label.setFont(ingameFont);
+        return label;
     }
 }

@@ -14,6 +14,8 @@ public final class GuiPauseMenu extends WindowAdapter implements ActionListener,
         panel.add(GuiHelper.newButton("Save", 220, 260, this));
         panel.add(GuiHelper.newButton("Menu", 220, 340, this));
         panel.add(GuiHelper.newButton("Exit", 220, 420, this));
+        panel.add(GuiHelper.newLabel("Score: " + World.score, 220, 20));
+        panel.add(GuiHelper.newLabel("Top score: " + GuiStats.topScore, 220, 80));
     }
 
     @Override

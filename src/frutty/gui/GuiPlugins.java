@@ -46,7 +46,6 @@ public final class GuiPlugins extends DefaultListCellRenderer implements Hyperli
         pluginPanel.setPreferredSize(new Dimension(Integer.MAX_VALUE, 430));
 
         var bottomPanel = new JPanel(null);
-        
         bottomPanel.setPreferredSize(new Dimension(Integer.MAX_VALUE, 200));
         bottomPanel.setOpaque(false);
         bottomPanel.add(GuiHelper.newButton("Menu", 370, 114, e -> GuiMenu.switchMenuGui(GuiMenu.createMenuPanel())));

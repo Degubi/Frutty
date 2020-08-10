@@ -2,6 +2,7 @@ package frutty.gui;
 
 import frutty.*;
 import frutty.gui.GuiSettings.*;
+import frutty.plugin.event.gui.*;
 import frutty.tools.*;
 import frutty.world.*;
 import frutty.world.base.*;
@@ -15,7 +16,7 @@ import java.util.concurrent.*;
 import javax.imageio.*;
 import javax.swing.*;
 
-public final class GuiIngame extends JPanel implements KeyListener{
+public final class GuiIngame extends JPanel implements KeyListener {
     private static ScheduledExecutorService serverThread;
     private static ScheduledExecutorService renderThread;
     private static ScheduledFuture<?> serverTask;
@@ -27,8 +28,27 @@ public final class GuiIngame extends JPanel implements KeyListener{
     private static boolean animatedTextureSwitch = false;
     public static int animatedTextureY = 0;
     
+    private static final int VIEWPORT_WIDTH = 960;
+    private static final int VIEWPORT_HEIGHT = 704;
+    
     @Override
-    protected void paintComponent(Graphics graphics) {
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
+        var graphics = (Graphics2D) g;
+        var oldTransform = graphics.getTransform();
+        var player = World.players[0];
+        
+        var camX = player.serverPosX - (VIEWPORT_WIDTH / 2);
+        camX = Math.min(camX, World.width - VIEWPORT_WIDTH);
+        camX = Math.max(camX, 0);
+        
+        var camY = player.serverPosY - (VIEWPORT_HEIGHT / 2);
+        camY = Math.min(camY, World.height - VIEWPORT_HEIGHT);
+        camY = Math.max(camY, 0);
+        
+        graphics.translate(-camX, -camY);
+        
         var zones = World.zones;
         var xCoords = World.xCoords;
         var yCoords = World.yCoords;
@@ -72,45 +92,41 @@ public final class GuiIngame extends JPanel implements KeyListener{
             }
         }
         
-        var worldWidth = World.width;
-        var worldHeight = World.height;
-        
-        graphics.setColor(Color.BLACK);
-        graphics.setFont(GuiHelper.ingameFont);
-        graphics.drawString("Score: " + World.score, worldWidth + 90, 20);
-        graphics.drawString("Top score: " + GuiStats.topScore, worldWidth + 90, 80);
-        
         if(Settings.enableMapDebug) {
+            graphics.setTransform(oldTransform);
             graphics.setFont(GuiHelper.thiccFont);
             graphics.setColor(Color.WHITE);
             
             //Left
             graphics.drawString("zonecount: " + zones.length, 2, 20);
             graphics.drawString("entities: " + (World.enemies.length + World.players.length + World.entities.size() + World.particles.size()), 2, 40);
-            graphics.drawString("map_width: " + (worldWidth + 64), 2, 60);
-            graphics.drawString("map_height: " + (worldHeight + 64), 2, 80);
+            graphics.drawString("map_width: " + (World.width + 64), 2, 60);
+            graphics.drawString("map_height: " + (World.height + 64), 2, 80);
             graphics.drawString("playerpos_x: " + World.players[0].serverPosX, 2, 100);
             graphics.drawString("playerpos_y: " + World.players[0].serverPosY, 2, 120);
         }
         
         if(Settings.renderDebugLevel == 1 || Settings.renderDebugLevel == 3) {
+            graphics.setTransform(oldTransform);
             graphics.setFont(GuiHelper.thiccFont);
             graphics.setColor(Color.WHITE);
             
             //Right
             var currentMilis = System.currentTimeMillis();
             var renderDelay = currentMilis - renderLastUpdate;
+            var rightSideDebugPosition = ingameFrame.getWidth() - 390;
             
-            graphics.drawString("current map: " + World.mapName, worldWidth - 100, 20);
-            graphics.drawString("render delay: " + renderDelay + " ms", worldWidth - 100, 40);
-            graphics.drawString("fps: " + (1000 / renderDelay), worldWidth - 100, 60);
+            graphics.drawString("current map: " + World.mapName, rightSideDebugPosition, 20);
+            graphics.drawString("render delay: " + renderDelay + " ms", rightSideDebugPosition, 40);
+            graphics.drawString("fps: " + (1000 / renderDelay), rightSideDebugPosition, 60);
             
             renderLastUpdate = System.currentTimeMillis();
         }
+        
+        if(Main.screenOverlayEvents.length > 0) Main.invokeEvent(new ScreenOverlayEvent(graphics, ingameFrame), Main.screenOverlayEvents);
     }
     
     private static void updateServer() {
-        ++World.ticks;
         var ticks = World.ticks;
             
         for(var entity : World.players) entity.updateInternal(ticks);
@@ -168,6 +184,8 @@ public final class GuiIngame extends JPanel implements KeyListener{
                 }
             }
         }
+        
+        ++World.ticks;
     }
     
     public static void showMessageAndClose(String message) {
@@ -217,25 +235,23 @@ public final class GuiIngame extends JPanel implements KeyListener{
     
     public static void showIngame() {
         System.out.println(Main.guiSystemLabel + "Switching to ingame frame");
+        startTime = LocalTime.now();
 
-        ingameFrame = new JFrame("Frutty");
         var ingamePanel = new GuiIngame();
-        
+        ingameFrame = new JFrame("Frutty");
         ingameFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         ingameFrame.setResizable(false);
-        ingameFrame.setBounds(0, 0, World.width + 288, World.height + 100);
+        ingameFrame.setBounds(0, 0, Math.min(VIEWPORT_WIDTH, World.width) + 80, Math.min(VIEWPORT_HEIGHT, World.height) + 103);
         ingameFrame.setLocationRelativeTo(null);
         ingameFrame.setContentPane(ingamePanel);
         ingameFrame.addKeyListener(ingamePanel);
         ingameFrame.setIconImage(GuiHelper.frameIcon);
         ingameFrame.setFocusable(true);
         
-        startTime = LocalTime.now();
-        renderLastUpdate = System.currentTimeMillis();
-        
         System.out.println(Main.updateSystemLabel + "Starting");
         System.out.println(Main.renderSystemLabel + "Starting");
         
+        renderLastUpdate = System.currentTimeMillis();
         serverThread = Executors.newSingleThreadScheduledExecutor(task -> new Thread(task, "Server Thread"));
         renderThread = Executors.newSingleThreadScheduledExecutor(task -> new Thread(task, "Render Thread"));
         renderThread.scheduleAtFixedRate(ingamePanel::repaint, 0, 1000 / Settings.fps, TimeUnit.MILLISECONDS);
@@ -271,9 +287,11 @@ public final class GuiIngame extends JPanel implements KeyListener{
             });
         }else if(keyCode == KeyEvent.VK_F12) {
             try {
-                var window = ((JFrame)getTopLevelAncestor()).getLocationOnScreen();
-                ImageIO.write(new Robot().createScreenCapture(new Rectangle(window.x + 7, window.y + 30, World.width + 64, World.height + 64)), Settings.screenshotFormat, 
-                                                                            new File("./screenshots/" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd_kk_HH_ss")) +"." + Settings.screenshotFormat.toLowerCase()));
+                var window = ((JFrame) getTopLevelAncestor()).getLocationOnScreen();
+                var outputFile = new File("./screenshots/" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy_MM_dd_kk_HH_ss")) +"." + Settings.screenshotFormat.toLowerCase());
+                var screenshotArea = new Rectangle(window.x + 7, window.y + 30, World.width + 64, World.height + 64);
+                
+                ImageIO.write(new Robot().createScreenCapture(screenshotArea), Settings.screenshotFormat, outputFile);
             } catch (Exception e1) {
                 e1.printStackTrace();
             }

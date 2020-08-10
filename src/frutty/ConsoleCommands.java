@@ -15,13 +15,18 @@ public final class ConsoleCommands {
                                                                           "debug_entity_collision", ConsoleCommands::handleDebugEntityCollision,
                                                                           "list", ConsoleCommands::handleCommandListing,
                                                                           "commands", ConsoleCommands::handleCommandListing,
+                                                                          "clear", ConsoleCommands::handleClearConsole,
                                                                           "quit", e -> System.exit(0));
     private static void handleDebugRenderLevel(String[] args) {
-        var newLevel = Integer.parseInt(args[1]);
-        
-        if(rangeCheck(newLevel, 0, 3)){
-            Settings.renderDebugLevel = newLevel;
-            System.out.println(userConLabel + "Render debug level set to " + renderLevelToString(newLevel));
+        if(args.length == 1) {
+            System.out.println(userConLabel + "No render level was given as an argument (0-3)");
+        }else {
+            var newLevel = Integer.parseInt(args[1]);
+            
+            if(rangeCheck(newLevel, 0, 3)){
+                Settings.renderDebugLevel = newLevel;
+                System.out.println(userConLabel + "Render debug level set to " + renderLevelToString(newLevel));
+            }
         }
     }
     
@@ -43,6 +48,9 @@ public final class ConsoleCommands {
     }
     
     
+    private static void handleClearConsole(@SuppressWarnings("unused") String[] args) {
+        Main.console.setText(null);
+    }
     
     private static void handleCommandListing(@SuppressWarnings("unused") String[] args) {
         var commandsFormatted = commands.keySet().stream()

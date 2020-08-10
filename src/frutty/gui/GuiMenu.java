@@ -33,7 +33,6 @@ public final class GuiMenu{
         versionLabel.setFont(GuiHelper.thiccFont);
         panel.add(versionLabel);
         
-        System.out.println(Main.eventSystemLabel + "Handling menuInit events");
         if(Main.menuInitEvents.length > 0) {
             var eventComponents = new ArrayList<JComponent>(0);
             Main.invokeEvent(new GuiMenuEvent(eventComponents), Main.menuInitEvents);
