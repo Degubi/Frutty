@@ -28,8 +28,9 @@
   - For available commands type 'list'.
 
 ### Building:
-  - Needs jdk14 installed (build file has hardcoded java path for the moment, it will be changed as soon as jdk15 is out)
-  - Needs Python installed
+  - Needs at least java 14 installed
+  - Needs Python installed (for running the installer)
+  - Needs WiX Toolsed installed (for creating the installer)
   - Run the 'build_installer.py' file
 
 ### Plugin development:
