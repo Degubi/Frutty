@@ -9,8 +9,8 @@
   - Stats
 
 ### Installation, running:
-  - Download 'FruttyInstaller' from 'Releases'.
-  - Run 'FruttyInstaller' (don't install to ProgramFiles).
+  - Download 'Frutty' from 'Releases'.
+  - Run it (don't install to ProgramFiles).
   - Start 'Frutty' from desktop.
 
 ### Level Editor plugin:
@@ -27,6 +27,9 @@
   - Add '-console' to the end of the 'target' option of the shortcut.
   - For available commands type 'list'.
 
+### Running from IDE:
+  - Add the '-dev' flag to the cmd arguments (this is needed for path handling)
+
 ### Building:
   - Needs at least java 14 installed
   - Needs Python installed (for running the installer)
@@ -34,7 +37,7 @@
   - Run the 'build_installer.py' file
 
 ### Plugin development:
-  - The LevelEditorPlugin is an example.
+  - The LevelEditorPlugin & LavaZonePlugin plugins are examples.
   - The 'frutty.plugin' directory is a good starting point. It is well documented with lots of examples.
   - Every plugin jar needs a MANIFEST.MF file with the Plugin-Class attribute.
   - Run the 'build_jar.py' file to build only the game jar (add it to the classPath in the IDE)

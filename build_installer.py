@@ -11,11 +11,11 @@ copytree('textures', 'resources/textures')
 call(['python', 'build_jar.py'], shell = True)
 
 print('Creating installer file')
-call((r'jpackage --module-path Frutty.jar --module frutty.api/frutty.Main --input resources '
-      r'--name Frutty --vendor Degubi --description Frutty --icon icon.ico '
-      r'--win-per-user-install --win-dir-chooser --win-shortcut'))
+call(('jpackage --module-path Frutty.jar --module frutty.api/frutty.Main --input resources '
+      '--name Frutty --vendor Degubi --description Frutty --icon icon.ico '
+      '--win-per-user-install --win-dir-chooser --win-shortcut'))
 
-rename('Frutty-1.0.exe', 'FruttyInstaller.exe')
+rename('Frutty-1.0.exe', 'Frutty.exe')
 remove('Frutty.jar')
 rmtree('resources')
 
