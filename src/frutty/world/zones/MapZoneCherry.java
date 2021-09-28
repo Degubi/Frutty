@@ -1,17 +1,16 @@
 package frutty.world.zones;
 
-import frutty.entity.*;
+import frutty.entity.living.*;
 import frutty.gui.*;
 import frutty.tools.*;
 import frutty.world.*;
-import frutty.world.base.*;
 import java.awt.*;
 import java.awt.image.*;
 import javax.swing.*;
 
-public final class MapZoneCherry extends MapZoneTexturable{
+public final class MapZoneCherry extends MapZoneTexturable {
     public static final BufferedImage cherryTexture = Material.loadTexture("fruit", "cherry.png");
-    
+
     public MapZoneCherry() {
         super("cherryZone");
     }
@@ -19,19 +18,19 @@ public final class MapZoneCherry extends MapZoneTexturable{
     @Override
     public void onZoneEntered(int x, int y, Material material, EntityPlayer player) {
         super.onZoneEntered(x, y, material, player);
-        
+
         World.score += 50;
         if(--World.pickCount == 0) {
             GuiIngame.showMessageAndClose("You won!");
         }
     }
-    
+
     @Override
     public void render(int x, int y, Material material, Graphics graphics) {
         graphics.drawImage(material.texture, x, y, 64, 64, null);
         graphics.drawImage(cherryTexture, x, y, null);
     }
-    
+
     @Override
     public void onZoneAdded(boolean isCoop, int x, int y) {
         ++World.pickCount;

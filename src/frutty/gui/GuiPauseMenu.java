@@ -5,9 +5,9 @@ import frutty.world.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-public final class GuiPauseMenu extends WindowAdapter implements ActionListener, KeyListener{
+public final class GuiPauseMenu extends WindowAdapter implements ActionListener, KeyListener {
     public final JPanel panel = new JPanel(null);
-    
+
     public GuiPauseMenu() {
         panel.setBackground(GuiHelper.color_84Black);
         panel.add(GuiHelper.newButton("Resume", 220, 180, this));
@@ -21,7 +21,7 @@ public final class GuiPauseMenu extends WindowAdapter implements ActionListener,
     @Override
     public void actionPerformed(ActionEvent event) {
         var cmd = event.getActionCommand();
-        
+
         if(cmd.equals("Resume")) {
             GuiIngame.unpause();
         }else if(cmd.equals("Exit")) {
@@ -42,7 +42,7 @@ public final class GuiPauseMenu extends WindowAdapter implements ActionListener,
         }
         ((JFrame)panel.getTopLevelAncestor()).dispose();
     }
-    
+
     @Override
     public void keyPressed(KeyEvent event) {
         if(event.getKeyCode() == KeyEvent.VK_ESCAPE) {
@@ -50,7 +50,7 @@ public final class GuiPauseMenu extends WindowAdapter implements ActionListener,
             GuiIngame.unpause();
         }
     }
-    
+
     @Override
     public void windowClosing(WindowEvent event) {
         GuiIngame.unpause();

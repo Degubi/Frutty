@@ -1,33 +1,33 @@
 package frutty.world.zones;
 
-import frutty.entity.*;
 import frutty.entity.effects.*;
+import frutty.entity.living.*;
 import frutty.tools.*;
-import frutty.world.base.*;
+import frutty.world.*;
 import java.awt.*;
 import java.awt.image.*;
 import javax.swing.*;
 
-public final class MapZoneChest extends MapZoneTexturable{
+public final class MapZoneChest extends MapZoneTexturable {
     public static final BufferedImage chestTexture = Material.loadTexture("map/special", "chest.png");
-    
+
     public MapZoneChest() {
         super("chestZone");
     }
-    
+
     @Override
     public void render(int x, int y, Material material, Graphics graphics) {
         graphics.drawImage(material.texture, x, y, 64, 64, null);
         graphics.drawImage(chestTexture, x, y, 64, 64, null);
     }
-    
+
     @Override
     public void onZoneEntered(int x, int y, Material material, EntityPlayer player) {
         player.entityEffects.add(new EntityEffectInvisible());
-        
+
         super.onZoneEntered(x, y, material, player);
     }
-    
+
     @Override
     protected ImageIcon getEditorIcon() {
         var toReturn = new BufferedImage(64, 64, BufferedImage.TYPE_INT_RGB);

@@ -1,4 +1,4 @@
-package frutty.world.base;
+package frutty.world;
 
 import frutty.tools.*;
 import java.awt.*;

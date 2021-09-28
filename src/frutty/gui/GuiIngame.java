@@ -5,7 +5,6 @@ import frutty.gui.GuiSettings.*;
 import frutty.plugin.event.gui.*;
 import frutty.tools.*;
 import frutty.world.*;
-import frutty.world.base.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;

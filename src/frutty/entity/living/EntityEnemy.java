@@ -1,12 +1,13 @@
-package frutty.entity.enemy;
+package frutty.entity.living;
 
 import frutty.*;
 import frutty.entity.*;
+import frutty.entity.zone.*;
 import frutty.world.*;
 import java.awt.*;
 import java.awt.image.*;
 
-public abstract class EntityEnemy extends Entity {
+public abstract class EntityEnemy extends EntityBase {
 
     protected int textureIndex;
     private boolean animSwitch;
@@ -20,7 +21,10 @@ public abstract class EntityEnemy extends Entity {
     }
 
     public static EntityEnemy create(int x, int y) {
-        return Main.rand.nextBoolean() ? new EntityFastEnemy(x, y) : new EntityNormalEnemy(x, y);
+        var rng = Main.rand.nextInt(4);
+
+        return rng > 1 ? new EntityFastEnemy(x, y)
+                       : new EntityNormalEnemy(x, y);
     }
 
     @Override
@@ -37,7 +41,7 @@ public abstract class EntityEnemy extends Entity {
     }
 
     @Override
-    public void onKilled(Entity killer) {
+    public void onKilled(EntityBase killer) {
         if(killer instanceof EntityPlayer || killer instanceof EntityApple) {
             World.score += 100;
         }

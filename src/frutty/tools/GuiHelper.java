@@ -15,7 +15,7 @@ public final class GuiHelper {
     public static final Image frameIcon = Toolkit.getDefaultToolkit().createImage(Main.executionDir + "textures/player/side.png");
 
     private GuiHelper() {}
-    
+
     public static JCheckBox newCheckBox(String text, int x, int y, Color foreground, boolean setSelected) {
         var box = new JCheckBox(text, setSelected);
         box.setBounds(x, y, 150, 30);
@@ -23,7 +23,7 @@ public final class GuiHelper {
         box.setOpaque(false);
         return box;
     }
-    
+
     public static JButton newButton(String text, int x, int y, ActionListener listener) {
         var butt = new JButton(text);
         butt.setBounds(x, y, 160, 60);
@@ -33,7 +33,7 @@ public final class GuiHelper {
         butt.addActionListener(listener);
         return butt;
     }
-    
+
     public static JLabel newLabel(String text, int x, int y) {
         var label = new JLabel(text);
         label.setBounds(x, y, text.length() * 12, 30);

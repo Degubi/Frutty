@@ -1,5 +1,5 @@
 /**Module used for plugin development*/
-module frutty.api{
+module frutty.api {
     requires transitive java.desktop;
     requires static java.compiler;
 
@@ -8,7 +8,7 @@ module frutty.api{
 
     exports frutty.entity;
     exports frutty.entity.effects;
-    exports frutty.entity.enemy;
+    exports frutty.entity.living;
     exports frutty.entity.zone;
 
     exports frutty.plugin;
@@ -23,5 +23,4 @@ module frutty.api{
 
     exports frutty.world;
     exports frutty.world.zones;
-    exports frutty.world.base;
 }

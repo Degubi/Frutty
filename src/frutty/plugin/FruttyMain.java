@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface FruttyMain {
-    
+
     /**The class object to read events from*/
     Class<?> eventClass() default void.class;
 }

@@ -3,11 +3,11 @@ package frutty;
 import java.io.*;
 
 public final class ModifiedPipedInputStream extends PipedInputStream {
-    
+
     public ModifiedPipedInputStream(PipedOutputStream src) throws IOException {
         super(src);
     }
-    
+
     //Need to modify this method, because PipedInputStream keeps throwing exceptions because the main thread terminates after initialization
     @Override
     public synchronized int read() throws IOException {

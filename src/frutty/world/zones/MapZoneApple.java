@@ -1,32 +1,31 @@
 package frutty.world.zones;
 
-import frutty.entity.*;
+import frutty.entity.living.*;
 import frutty.entity.zone.*;
 import frutty.gui.*;
 import frutty.tools.*;
 import frutty.world.*;
-import frutty.world.base.*;
 import java.awt.*;
 import java.awt.image.*;
 import javax.swing.*;
 
-public final class MapZoneApple extends MapZoneTexturable implements IZoneEntityProvider{
+public final class MapZoneApple extends MapZoneTexturable implements IZoneEntityProvider {
     public static final BufferedImage appleTexture = Material.loadTexture("fruit", "apple.png");
 
     public MapZoneApple() {
         super("appleZone");
     }
-    
+
     @Override
     public void onZoneEntered(int x, int y, Material material, EntityPlayer player) {
         super.onZoneEntered(x, y, material, player);
-        
+
         World.score += 50;
         if(--World.pickCount == 0) {
             GuiIngame.showMessageAndClose("You won!");
         }
     }
-    
+
     @Override
     public void render(int x, int y, Material material, Graphics graphics) {
         graphics.drawImage(material.texture, x, y, 64, 64, null);
@@ -37,12 +36,12 @@ public final class MapZoneApple extends MapZoneTexturable implements IZoneEntity
     public EntityZone getZoneEntity() {
         return new EntityAppleZone();
     }
-    
+
     @Override
     public boolean isBreakable(int x, int y) {
         return false;
     }
-    
+
     @Override
     public boolean canPlayerPass(int x, int y) {
         return false;

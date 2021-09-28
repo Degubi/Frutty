@@ -3,7 +3,7 @@ package frutty.gui.components;
 import frutty.*;
 import frutty.gui.GuiSettings.*;
 import frutty.tools.*;
-import frutty.world.base.*;
+import frutty.world.*;
 import java.awt.*;
 import java.io.*;
 import java.nio.file.*;

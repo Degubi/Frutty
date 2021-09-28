@@ -1,13 +1,12 @@
 package frutty.world.zones;
 
-import frutty.entity.enemy.*;
+import frutty.entity.living.*;
 import frutty.tools.*;
 import frutty.world.*;
-import frutty.world.base.*;
 import java.awt.*;
 import javax.swing.*;
 
-public final class MapZoneSpawner extends MapZoneBase{
+public final class MapZoneSpawner extends MapZoneBase {
     private static final Color[] colorCache = createColorCache();
     private boolean decrease = false;
     private int colorIndexer = 0;

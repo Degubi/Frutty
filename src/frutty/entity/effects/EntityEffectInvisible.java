@@ -1,15 +1,15 @@
 package frutty.entity.effects;
 
-import frutty.entity.*;
+import frutty.entity.living.*;
 import java.awt.*;
 
 public final class EntityEffectInvisible extends EntityEffect {
     private boolean animSwitch = false;
-    
+
     public EntityEffectInvisible() {
         super(20);
     }
-    
+
     @Override
     public void renderEffect(EntityPlayer player, Graphics graphics) {
         if(animSwitch) {

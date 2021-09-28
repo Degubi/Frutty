@@ -1,13 +1,12 @@
-package frutty.world.base;
+package frutty.world;
 
 import frutty.*;
-import frutty.entity.*;
+import frutty.entity.living.*;
 import frutty.gui.*;
 import frutty.gui.GuiSettings.*;
 import frutty.plugin.event.world.*;
 import frutty.sound.*;
 import frutty.tools.*;
-import frutty.world.*;
 import frutty.world.zones.*;
 import java.awt.*;
 import java.io.*;
@@ -15,7 +14,7 @@ import java.util.List;
 import javax.swing.*;
 
 @SuppressWarnings("unused")
-public abstract class MapZoneBase implements Serializable{
+public abstract class MapZoneBase implements Serializable {
     private static final long serialVersionUID = 392316063689927131L;
     public transient final Lazy<ImageIcon> editorTexture = new Lazy<>(this::getEditorIconInternal);
 

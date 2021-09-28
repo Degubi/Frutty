@@ -1,5 +1,6 @@
-package frutty.entity;
+package frutty.entity.living;
 
+import frutty.entity.*;
 import frutty.entity.effects.*;
 import frutty.gui.*;
 import frutty.gui.GuiSettings.*;
@@ -10,19 +11,19 @@ import java.awt.event.*;
 import java.awt.image.*;
 import java.util.*;
 
-public final class EntityPlayer extends Entity implements KeyListener{
+public final class EntityPlayer extends EntityBase implements KeyListener {
     private static final BufferedImage[] textures = Material.loadTextures("player", "side.png", "front.png", "back.png");
     public final ArrayList<EntityEffect> entityEffects = new ArrayList<>();
-    
+
     private int textureIndex;
     private long lastPressTime;
     public boolean hidden = false;
-    
+
     private final int leftKey, rightKey, upKey, downKey;
-    
+
     public EntityPlayer(int x, int y, boolean isFirst) {
         super(x, y);
-        
+
         if(isFirst){
             leftKey = KeyEvent.VK_LEFT;
             rightKey = KeyEvent.VK_RIGHT;
@@ -40,33 +41,33 @@ public final class EntityPlayer extends Entity implements KeyListener{
         if(!World.getZoneAt(x, y).canPlayerPass(x, y)) {
             return false;
         }
-        
-        for(Entity entities : World.entities) {
+
+        for(EntityBase entities : World.entities) {
             if(entities.renderPosX == x && entities.renderPosY == y) {
                 return false;
             }
         }
         return true;
     }
-    
+
     @Override
-    public void onKilled(Entity killer) {
+    public void onKilled(EntityBase killer) {
         GuiIngame.showMessageAndClose("Game over!");
         super.onKilled(killer);
     }
-    
+
     private void setFacing(EnumFacing facing) {
         renderPosX += facing.xOffset;
         renderPosY += facing.yOffset;
         serverPosX += facing.xOffset;
         serverPosY += facing.yOffset;
         textureIndex = facing.textureIndex;
-        
+
         var zoneIndex = World.worldCoordsToZoneIndex(renderPosX, renderPosY);
         World.getZoneAt(renderPosX, renderPosY).onZoneEntered(renderPosX, renderPosY, World.materials[zoneIndex], this);
         lastPressTime = System.currentTimeMillis();
     }
-    
+
     @Override
     public void keyPressed(KeyEvent event) {
         if(System.currentTimeMillis() - lastPressTime > 100L) {
@@ -81,7 +82,7 @@ public final class EntityPlayer extends Entity implements KeyListener{
             }
         }
     }
-    
+
     @Override
     public void render(Graphics graphics) {
         if(textureIndex == 3) {
@@ -89,12 +90,12 @@ public final class EntityPlayer extends Entity implements KeyListener{
         }else{
             graphics.drawImage(textures[textureIndex], renderPosX, renderPosY, null);
         }
-        
+
         for(var effects : entityEffects) {
             effects.renderEffect(this, graphics);
         }
     }
-    
+
     public boolean isInvicible() {
         for(var effects : entityEffects) {
             if(effects instanceof EntityEffectInvisible) {
@@ -115,7 +116,7 @@ public final class EntityPlayer extends Entity implements KeyListener{
             if(--iterator.next().ticks == 0) {
                 iterator.remove();
             }
-        }        
+        }
     }
 
     @Override

@@ -1,4 +1,4 @@
-package frutty.entity.enemy;
+package frutty.entity.living;
 
 import frutty.tools.*;
 import frutty.world.*;
@@ -6,7 +6,7 @@ import java.awt.image.*;
 import java.util.*;
 
 public final class EntityNormalEnemy extends EntityEnemy {
-    private static final BufferedImage[] textures = Material.loadTextures("enemy", "side.png", "front.png", "back.png");
+    private static final BufferedImage[] textures = Material.loadTextures("enemy/normal", "side.png", "front.png", "back.png");
 
     public EntityNormalEnemy(int x, int y) {
         super(x, y, textures);

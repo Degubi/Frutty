@@ -6,15 +6,15 @@ import java.awt.event.*;
 import java.awt.image.*;
 import javax.swing.*;
 
-public final class SettingButton extends JComponent implements ActionListener{
+public final class SettingButton extends JComponent implements ActionListener {
     private static final String[] ON_OFF = {"Off", "On"};
     private static final ImageIcon leftIcon = getIcon(true);
     private static final ImageIcon rightIcon = getIcon(false);
-    
+
     private final String titleText;
     private final String[] options;
     public int optionIndex;
-    
+
     public SettingButton(int selectedIndex, String displayText, int x, int y, String... options) {
         setBounds(x, y, 700, 64);
         titleText = displayText;
@@ -23,24 +23,24 @@ public final class SettingButton extends JComponent implements ActionListener{
         add(newArrowButton(false, 340, 8, this));
         add(newArrowButton(true, 620, 8, this));
     }
-    
+
     public SettingButton(boolean isOn, String displayText, int x, int y) {
         this(isOn ? 1 : 0, displayText, x, y, ON_OFF);
     }
-    
+
     public SettingButton(String data, String displayText, int x, int y, String... options) {
         this(GeneralFunctions.indexOf(data, options), displayText, x, y, options);
     }
-    
+
     @Override
     public void paintComponent(Graphics graphics) {
         graphics.setColor(GuiHelper.color_192Black);
         graphics.fillRect(4, 4, 692, 58);
-        
+
         graphics.setColor(Color.WHITE);
         graphics.drawRect(0, 0, 695, 62);
         graphics.drawRect(1, 1, 695, 62);
-        
+
         graphics.setFont(GuiHelper.bigFont);
         graphics.drawString(titleText, 10, 40);
         graphics.drawString(options[optionIndex], 500 - options[optionIndex].length() * 8, 40);
@@ -49,7 +49,7 @@ public final class SettingButton extends JComponent implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent event) {
         var command = event.getActionCommand();
-        
+
         if(command.equals("leftButton")) {
             if(optionIndex > 0) {
                 --optionIndex;
@@ -65,7 +65,7 @@ public final class SettingButton extends JComponent implements ActionListener{
         }
         repaint();
     }
-    
+
     static JButton newArrowButton(boolean isRight, int x, int y, ActionListener listener) {
         var toReturn = new JButton(isRight ? rightIcon : leftIcon);
         toReturn.addActionListener(listener);
@@ -74,11 +74,11 @@ public final class SettingButton extends JComponent implements ActionListener{
         toReturn.setBounds(x, y, 48, 48);
         return toReturn;
     }
-    
+
     private static ImageIcon getIcon(boolean isRight) {
         var img = new BufferedImage(48, 48, BufferedImage.TYPE_INT_ARGB);
         var paint = img.createGraphics();
-        
+
         if(isRight) {
             for(int x = 34, y = 2; x > 12; --x, ++y) {
                 paint.drawLine(x, y, x, 47 - y);
@@ -88,7 +88,7 @@ public final class SettingButton extends JComponent implements ActionListener{
                 paint.drawLine(x, y, x, 47 - y);
             }
         }
-        
+
         paint.dispose();
         return new ImageIcon(img);
     }

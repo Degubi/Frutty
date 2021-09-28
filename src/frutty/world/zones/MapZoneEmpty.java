@@ -1,12 +1,13 @@
 package frutty.world.zones;
 
 import frutty.tools.*;
-import frutty.world.base.*;
+import frutty.world.*;
 import java.awt.*;
 import java.awt.image.*;
 import javax.swing.*;
 
-public final class MapZoneEmpty extends MapZoneBase{
+public final class MapZoneEmpty extends MapZoneBase {
+
     public MapZoneEmpty() {
         super("emptyZone", false, false);
     }
@@ -21,7 +22,7 @@ public final class MapZoneEmpty extends MapZoneBase{
     public boolean isBreakable(int x, int y) {
         return false;
     }
-    
+
     @Override
     public boolean canNPCPass(int x, int y) {
         return true;

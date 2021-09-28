@@ -7,7 +7,7 @@ import javax.sound.sampled.*;
 
 public final class CachedSoundClip {
     private final Clip soundClip = createClip();
-    
+
     public CachedSoundClip(String filePath) {
         if(Settings.enableSound) {
             try(var audioInputStream = AudioSystem.getAudioInputStream(new File(Main.executionDir + "sounds/" + filePath))){
@@ -18,7 +18,7 @@ public final class CachedSoundClip {
             }
         }
     }
-    
+
     private static Clip createClip() {
         if(Settings.enableSound) {
             try {
@@ -27,14 +27,14 @@ public final class CachedSoundClip {
         }
         return null;
     }
-    
+
     public void start() {
         if(Settings.enableSound) {
             soundClip.setMicrosecondPosition(0);
             soundClip.start();
         }
     }
-    
+
     public void stop() {
         if(Settings.enableSound) {
             soundClip.stop();

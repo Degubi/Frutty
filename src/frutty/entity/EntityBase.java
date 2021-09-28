@@ -1,22 +1,24 @@
 package frutty.entity;
 
 import frutty.*;
+import frutty.entity.zone.*;
 import frutty.gui.GuiSettings.*;
 import frutty.plugin.event.entity.*;
 import frutty.world.*;
 import java.awt.*;
 import java.io.*;
 
-public abstract class Entity implements Serializable{
+public abstract class EntityBase implements Serializable {
     private static final long serialVersionUID = 2876462867774051456L;
 
     public int renderPosX, renderPosY, serverPosX, serverPosY, motionX, motionY;
     public final int moveRate;
 
-    public Entity() {
+    public EntityBase() {
         moveRate = 0;
     }
-    public Entity(int x, int y) {
+
+    public EntityBase(int x, int y) {
         renderPosX = x;
         renderPosY = y;
         serverPosX = x;
@@ -29,7 +31,7 @@ public abstract class Entity implements Serializable{
     public abstract void updateServer();
     public abstract int getClientUpdateRate();
     public abstract int getServerUpdateRate();
-    public void onKilled(Entity killer) {
+    public void onKilled(EntityBase killer) {
         if(Main.entityKilledEvents.length > 0) {
             var event = new EntityKilledEvent(this, killer);
 
@@ -52,7 +54,7 @@ public abstract class Entity implements Serializable{
         }
     }
 
-    protected final boolean doesCollide(Entity other) {
+    protected final boolean doesCollide(EntityBase other) {
         var posX = renderPosX;
         var posY = renderPosY;
         var otherPosX = other.renderPosX;

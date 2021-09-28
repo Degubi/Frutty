@@ -30,7 +30,7 @@ public final class Main extends KeyAdapter {
     public static final Random rand = new Random();
     public static Plugin[] loadedPlugins;
     public static String executionDir;
-    
+
     public static EventHandle[] worldInitEvents;
     public static EventHandle[] menuInitEvents;
     public static EventHandle[] statInitEvents;
@@ -38,11 +38,11 @@ public final class Main extends KeyAdapter {
     public static EventHandle[] zoneAddedEvents;
     public static EventHandle[] entityKilledEvents;
     public static EventHandle[] screenOverlayEvents;
-    
+
     private static final ArrayList<String> commandHistory = new ArrayList<>();
     private static final JTextField commandField = new JTextField();
     static final JTextPane console = new JTextPane();
-    
+
     public static final String pluginSystemLabel       = "          Plugin System                  ;   ";
     public static final String userConLabel            = "          User Console System    ;   ";
     public static final String guiSystemLabel          = "          GUI System                       ;   ";
@@ -54,40 +54,40 @@ public final class Main extends KeyAdapter {
 
     public static void main(String[] args) throws Exception {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        
+
         executionDir = GeneralFunctions.contains("-dev", args) ? "" : System.getProperty("user.dir") + "/app/";
-        
+
         if(GeneralFunctions.contains("-console", args)) {
             var outPipe = new PipedOutputStream();
             var reader = new BufferedReader(new InputStreamReader(new ModifiedPipedInputStream(outPipe)));
             System.setOut(new PrintStream(outPipe, true));
-            
+
             new Thread(() -> launchConsoleOutputThread(reader), "Console Thread").start();
-            
+
             var consoleScrollPane = new JScrollPane(console);
             var scrollBar = consoleScrollPane.getVerticalScrollBar();
             scrollBar.addAdjustmentListener(new ScrollListener(scrollBar));
-            
+
             consoleScrollPane.setBorder(null);
             commandField.setPreferredSize(new Dimension(0, 25));
             commandField.addKeyListener(new Main());
-            
+
             var content = new JSplitPane(JSplitPane.VERTICAL_SPLIT, consoleScrollPane, commandField);
             content.setDividerSize(0);
             content.setResizeWeight(1D);
             console.setBackground(Color.DARK_GRAY);
             console.setEditable(false);
-            
+
             var frame = new JFrame("Frutty Console");
             frame.setContentPane(content);
             frame.setSize(1024, 768);
             frame.setIconImage(GuiHelper.frameIcon);
             frame.setLocationRelativeTo(null);
             frame.setVisible(true);
-            
+
             System.out.println(guiSystemLabel + "Console window initialized");
         }
-        
+
         createDirectory("plugins");
         createDirectory("plugins_meta");
 
@@ -95,23 +95,23 @@ public final class Main extends KeyAdapter {
         var plugins = new ArrayList<Plugin>();
         plugins.add(new Plugin("Frutty", "Base module for the game.", "https://github.com/Degubi/Frutty", "1.0.0", null));
         plugins.add(new Plugin("Frutty Plugin Loader", "Base module for the plugin loader", "", "1.0.0", null));
-        
+
         var pluginManagementFile = Path.of(executionDir + "pluginManagement.txt");
         if(Files.exists(pluginManagementFile)) {
             var managementFileLines = Files.readAllLines(pluginManagementFile);
             var resourceFolderNames = new String[] { "textures", "maps", "sounds" };
-            
+
             System.out.println(pluginSystemLabel + "Found management file with " + managementFileLines.size() + " entries");
-            
+
             managementFileLines.stream()
                                .distinct()
                                .forEach(t -> handlePluginManagementLine(t, resourceFolderNames));
-            
+
             Files.delete(pluginManagementFile);
         }else{
             System.out.println(pluginSystemLabel + "No management file found, nothing to do here");
         }
-        
+
         var loadedEvents = loadPlugins(plugins);
         var byPriority = Comparator.comparingInt((EventHandle event) -> event.priority);
 
@@ -124,7 +124,7 @@ public final class Main extends KeyAdapter {
         Main.entityKilledEvents = initEventsByType(EntityKilledEvent.class, loadedEvents, byPriority);
         Main.screenOverlayEvents = initEventsByType(ScreenOverlayEvent.class, loadedEvents, byPriority);
         System.out.println(pluginSystemLabel + "Finished loading, loaded " + (plugins.size() - 2) + " external plugins");
-        
+
         GuiMenu.createMainFrame();
         createDirectory("saves");
         createDirectory("screenshots");
@@ -132,31 +132,31 @@ public final class Main extends KeyAdapter {
 
     private static void handlePluginManagementLine(String line, String[] resourceFolderNames) {
         var payload = line.substring(2);
-        
+
         if(line.charAt(0) == 'I') {
             var zipPath = Path.of(payload);
-            
+
             try(var selectedZip = new ZipFile(zipPath.toFile())) {
                 var pluginJarEntry = selectedZip.getEntry("Plugin.jar");
-                
+
                 if(pluginJarEntry != null) {
                     var zipFileName = zipPath.getFileName().toString();
                     var pluginZipName = zipFileName.substring(0, zipFileName.lastIndexOf('.'));
                     var pluginJarPath = "plugins/" + pluginZipName + ".jar";
-                    
+
                     extractFileFromZip(pluginJarEntry, selectedZip, e -> pluginJarPath);
-                    
+
                     var resourceFiles = selectedZip.stream()
                                                    .filter(t -> !t.isDirectory())
                                                    .filter(k -> !k.getName().equals("Plugin.jar"))
                                                    .filter(k -> filterResourceType(resourceFolderNames, k))
                                                    .collect(Collectors.toList());
-                    
+
                     resourceFiles.forEach(e -> extractFileFromZip(e, selectedZip, ZipEntry::getName));
-                    
+
                     var resourcesList = Stream.concat(Stream.of(pluginJarPath), resourceFiles.stream().map(ZipEntry::getName))
                                               .collect(Collectors.toList());
-                    
+
                     Files.write(Path.of(executionDir + "plugins_meta/" + pluginZipName + ".list"), resourcesList);
                     System.out.println(pluginSystemLabel + pluginZipName + " got installed successfully!");
                 }else {
@@ -167,13 +167,13 @@ public final class Main extends KeyAdapter {
             }
         }else{
             var pluginMetaFile = Path.of(executionDir + "plugins_meta/" + payload + ".list");
-            
+
             try(var filesToDelete = Files.lines(pluginMetaFile)) {
                 filesToDelete.map(Path::of).forEach(Main::deleteFile);
             }catch (IOException e) {
                 e.printStackTrace();
             }
-            
+
             deleteFile(pluginMetaFile);
             System.out.println(pluginSystemLabel + payload + " got uninstalled successfully!");
         }
@@ -190,25 +190,25 @@ public final class Main extends KeyAdapter {
     private static boolean filterResourceType(String[] resourceFolderNames, ZipEntry entry){
         var entryName = entry.getName();
         var typeSeparatorIndex = entryName.indexOf('/');
-        
+
         if(typeSeparatorIndex == -1) {
             System.out.println(pluginSystemLabel + "Ignoring resource entry without type: " + entryName);
             return false;
         }
-        
+
         var entryType = entryName.substring(0, typeSeparatorIndex);
-        
+
         if(!GeneralFunctions.contains(entryType, resourceFolderNames)) {
             System.out.println(pluginSystemLabel + "Ignoring resource entry with unknown type: " + entryName);
             return false;
         }
-        
+
         return true;
     }
-    
+
     private static void extractFileFromZip(ZipEntry entry, ZipFile zipFile, Function<ZipEntry, String> namingFunction) {
         var outputPath = Path.of(executionDir + namingFunction.apply(entry));
-        
+
         if(!Files.exists(outputPath)) {
             try(var input = zipFile.getInputStream(entry)) {
                 Files.copy(input, outputPath);
@@ -224,15 +224,15 @@ public final class Main extends KeyAdapter {
         try {
             var threadOutputFormat = new SimpleAttributeSet();
             var messageOutputFormat = new SimpleAttributeSet();
-            
+
             threadOutputFormat.addAttribute(StyleConstants.Background, Color.BLACK);
             threadOutputFormat.addAttribute(StyleConstants.Foreground, Color.WHITE);
             messageOutputFormat.addAttribute(StyleConstants.Foreground, Color.WHITE);
-            
+
             for(String line; (line = reader.readLine()) != null; ) {
                 var doc = console.getStyledDocument();
                 var separatorIndex = line.indexOf(';');
-                
+
                 if(separatorIndex != -1) {
                     doc.insertString(doc.getLength(), line.substring(0, separatorIndex), threadOutputFormat);
                     doc.insertString(doc.getLength(), line.substring(separatorIndex + 1) + '\n', messageOutputFormat);
@@ -244,24 +244,24 @@ public final class Main extends KeyAdapter {
             e.printStackTrace();
         }
     }
-    
+
     @Override
     public void keyPressed(KeyEvent event) {
         var pressedKey = event.getKeyCode();
-        
+
         if(pressedKey == KeyEvent.VK_ENTER) {
             var command = commandField.getText();
-            
+
             if(!command.isBlank()) {
                 var args = command.split(" ");
                 var maybeCommand = ConsoleCommands.commands.get(args[0]);
-                        
+
                 if(maybeCommand != null) {
                     maybeCommand.accept(args);
                 }else{
                     System.out.println(userConLabel + "Unknown command: " + args[0]);
                 }
-                
+
                 commandHistory.add(command);
                 commandField.setText(null);
             }
@@ -271,10 +271,10 @@ public final class Main extends KeyAdapter {
             commandField.setText(textToSet);
         }
     }
-    
+
     private static void createDirectory(String path) {
         var filePath = Path.of(executionDir + path);
-        
+
         if(!Files.exists(filePath)) {
             try {
                 System.out.println(ioSystemLabel + "Creating " + path + " directory");
@@ -285,10 +285,10 @@ public final class Main extends KeyAdapter {
             }
         }
     }
-    
+
     public static void invokeEvent(Object event, EventHandle[] methods) {
         System.out.println(eventSystemLabel + "Firing " + event.getClass().getSimpleName() + " event");
-        
+
         for(var handles : methods) {
             try {
                 handles.handle.bindTo(event).invokeExact();
@@ -297,16 +297,16 @@ public final class Main extends KeyAdapter {
             }
         }
     }
-    
+
     private static String getMainClassNameFromJar(Path jarPath) {
         try(var jar = new JarFile(jarPath.toFile())){
             var mani = jar.getManifest();
-            
+
             if(mani == null) {
                 System.out.println(pluginSystemLabel + "Can't find manifest file from plugin: " + jarPath);
             }else{
                 var pluginClass = mani.getMainAttributes().getValue("Plugin-Class");
-                
+
                 if(pluginClass == null) {
                     System.out.println(pluginSystemLabel + "Can't find \"Plugin-Class\" attribute from plugin: " + jarPath);
                 }
@@ -317,7 +317,7 @@ public final class Main extends KeyAdapter {
         }
         return null;
     }
-    
+
     private static URL convertToURL(Path file) {
         try {
             return file.toUri().toURL();
@@ -325,18 +325,18 @@ public final class Main extends KeyAdapter {
             throw new IllegalStateException();
         }
     }
-    
+
     private static Map<Class<?>, List<EventHandle>> loadPlugins(ArrayList<Plugin> outPlugins) {
         System.out.println(pluginSystemLabel + "Started loading plugins");
         var eventsToReturn = new HashMap<Class<?>, List<EventHandle>>();
-        
+
         try(var pluginFolder = Files.list(Path.of(executionDir + "plugins"))){
             var pluginJars = pluginFolder.filter(Files::isRegularFile)
                                          .filter(file -> file.toString().endsWith(".jar"))
                                          .toArray(Path[]::new);
-            
+
             System.out.println(pluginSystemLabel + "Found " + pluginJars.length + " potential plugins in plugins folder");
-            
+
             if(pluginJars.length > 0) {
                 var mainClasses = Arrays.stream(pluginJars).map(Main::getMainClassNameFromJar).toArray(String[]::new);
                 var pluginJarURLs = Arrays.stream(pluginJars).map(Main::convertToURL).toArray(URL[]::new);
@@ -346,7 +346,7 @@ public final class Main extends KeyAdapter {
                 for(var k = 0; k < mainClasses.length; ++k) {
                     var pluginJarPath = pluginJars[k];
                     var pluginMainClassName = mainClasses[k];
-                    
+
                     if(pluginMainClassName == null) {
                         System.out.println(pluginSystemLabel + "Can't load main class from plugin: " + pluginJarPath);
                         continue;
@@ -360,7 +360,7 @@ public final class Main extends KeyAdapter {
 
                     var pluginAnnotation = pluginMainClass.getDeclaredAnnotation(FruttyPlugin.class);
                     System.out.println(pluginSystemLabel + "Started loading plugin: '" + pluginAnnotation.name() + "'");
-                    
+
                     outPlugins.add(new Plugin(pluginAnnotation.name(), pluginAnnotation.description(), pluginAnnotation.pluginSiteURL(), pluginAnnotation.version(), pluginJarPath.getFileName().toString()));
 
                     var pluginMainFunctions = Arrays.stream(pluginMainClass.getDeclaredMethods())
@@ -381,9 +381,9 @@ public final class Main extends KeyAdapter {
                                                .filter(eventMethod -> eventMethod.getParameterTypes()[0].isAnnotationPresent(FruttyEventMarker.class))
                                                .collect(Collectors.groupingBy(eventMethod -> eventMethod.getParameterTypes()[0],
                                                                               Collectors.mapping(eventMethod -> new EventHandle(lookup, eventMethod), Collectors.toList())));
-                            
+
                             eventsToReturn.putAll(events);
-                            
+
                             System.out.println(pluginSystemLabel + "Loaded plugin with " + events.size() + " registered events");
                         }else{
                             System.out.println(pluginSystemLabel + "Loaded plugin with 0 registered events");
@@ -396,20 +396,20 @@ public final class Main extends KeyAdapter {
         } catch (Throwable e) {
             throw new IllegalStateException("Something is fucked in plugin loading again...");
         }
-        
+
         return eventsToReturn;
     }
-    
+
     private static EventHandle[] initEventsByType(Class<?> eventClass, Map<Class<?>, List<EventHandle>> loadedEvents, Comparator<EventHandle> byPriority) {
         var rawEvents = loadedEvents.get(eventClass);
-        
+
         if(rawEvents != null) {
             rawEvents.sort(byPriority);
             return rawEvents.toArray(EventHandle[]::new);
         }
-        
+
         return sharedEmptyEventArray;
     }
-    
+
     private Main() {}
 }

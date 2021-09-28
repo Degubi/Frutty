@@ -1,18 +1,18 @@
 package frutty.world.zones;
 
 import frutty.tools.*;
-import frutty.world.base.*;
+import frutty.world.*;
 import java.awt.*;
 import java.awt.image.*;
 import javax.swing.*;
 
-public final class MapZoneBush extends MapZoneBase implements ITransparentZone{
+public final class MapZoneBush extends MapZoneBase implements ITransparentZone {
     public static final BufferedImage texture = Material.loadTexture("map/special", "bush.png");
-    
+
     public MapZoneBush() {
         super("bushZone", true, false);
     }
-    
+
     @Override
     public void drawAfter(int x, int y, Material material, Graphics graphics) {
         graphics.drawImage(texture, x, y, 64, 64, null);
@@ -34,17 +34,17 @@ public final class MapZoneBush extends MapZoneBase implements ITransparentZone{
         graphics.dispose();
         return new ImageIcon(toReturn);
     }
-    
+
     @Override
     public boolean canNPCPass(int x, int y) {
         return true;
     }
-    
+
     @Override
     public boolean isBreakable(int x, int y) {
         return false;
     }
-    
+
     @Override
     public boolean doesHidePlayer(int x, int y) {
         return true;

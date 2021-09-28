@@ -1,4 +1,4 @@
-package frutty.world.base;
+package frutty.world;
 
 /**Interface for internal zones. When an internal zone is processed it is replaced with the zone returned by the getReplacementZone() method*/
 public interface IInternalZone {

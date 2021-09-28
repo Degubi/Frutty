@@ -7,16 +7,16 @@ import java.lang.annotation.*;
     {@literal @}FruttyPlugin(name = "test", version = "1.0.0")
     public final class TestMain{
           public static final MapZoneBase bedrockZone = new TestPluginZone();
-    
+
         {@literal @}FruttyPluginMain(eventClass = TestMain.class)
         public static void pluginMain() {
             MapZoneBase.registerZone("test:bedrock", bedrockZone);
         }
-    
+
         {@literal @}FruttyEvent
         public static void mapLoadEvent(MapInitEvent event) {
             System.out.println(event.mapHeight);
-        
+
             event.mapTextureCache[0] = "stone";
             event.mapEntities.add(new EntityApple(0, 0));
         }
@@ -25,7 +25,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface FruttyPlugin {
-    
+
     /**The name of the plugin*/
     String name();
     /**Current version of the plugin*/

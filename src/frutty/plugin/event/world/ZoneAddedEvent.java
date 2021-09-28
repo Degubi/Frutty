@@ -1,14 +1,15 @@
 package frutty.plugin.event.world;
 
 import frutty.*;
-import frutty.world.base.*;
+import frutty.world.*;
 
+/**Event is fired when a zone gets added to the world*/
 @FruttyEventMarker
-public final class ZoneAddedEvent{
+public final class ZoneAddedEvent {
     public final MapZoneBase zone;
     public final int x, y;
     public boolean canceled = false;
-    
+
     public ZoneAddedEvent(MapZoneBase mapZoneBase, int x, int y) {
         zone = mapZoneBase;
         this.x = x;

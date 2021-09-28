@@ -16,9 +16,9 @@ import javax.swing.event.*;
 import javax.swing.event.HyperlinkEvent.*;
 import javax.swing.filechooser.*;
 
-public final class GuiPlugins extends DefaultListCellRenderer implements HyperlinkListener{
+public final class GuiPlugins extends DefaultListCellRenderer implements HyperlinkListener {
     private GuiPlugins() {}
-    
+
     public static void showPlugins() {
         var plugs = new GuiPlugins();
         var description = new JTextPane();
@@ -36,7 +36,7 @@ public final class GuiPlugins extends DefaultListCellRenderer implements Hyperli
         description.setContentType("text/html");
         description.setOpaque(false);
         pluginList.setSelectedIndex(0);
-        
+
         var pluginPanel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, pluginList, description);
         pluginPanel.setResizeWeight(0.5D);
         pluginPanel.setOpaque(false);
@@ -62,7 +62,7 @@ public final class GuiPlugins extends DefaultListCellRenderer implements Hyperli
     private static void onPluginListSelectionChange(JTextPane description, JList<Plugin> pluginList, JButton uninstallPluginButton) {
         var selectedPlugins = pluginList.getSelectedValuesList();
         var uninstallButtonVisible = selectedPlugins.stream().noneMatch(k -> k.name.equals("Frutty") || k.name.equals("Frutty Plugin Loader"));
-        
+
         description.setText(selectedPlugins.size() == 1 ? selectedPlugins.get(0).getInfo() : null);
         uninstallPluginButton.setVisible(uninstallButtonVisible);
     }
@@ -71,27 +71,27 @@ public final class GuiPlugins extends DefaultListCellRenderer implements Hyperli
         var fileChooser = new JFileChooser(".");
         fileChooser.setMultiSelectionEnabled(true);
         fileChooser.setFileFilter(new FileNameExtensionFilter("Zip files", "zip"));
-        
+
         if(fileChooser.showOpenDialog(parent) == JFileChooser.APPROVE_OPTION) {
             var contentToWrite = Arrays.stream(fileChooser.getSelectedFiles())
                                        .map(File::getAbsolutePath)
                                        .map(k -> "I " + k)
                                        .collect(Collectors.joining("\n"));
-            
+
             updatePluginManagementFile(contentToWrite);
             JOptionPane.showMessageDialog(parent, "Plugins will get installed only at next startup!\nNote: Don't change the path of the plugin zip file!");
         }
     }
-    
+
     private static void handleUninstallPluginButtonPress(JList<Plugin> pluginList, JPanel parent) {
         var contentToWrite = pluginList.getSelectedValuesList().stream()
                                        .map(k -> "U " + k.pluginJarName)
                                        .collect(Collectors.joining("\n"));
-        
+
         updatePluginManagementFile(contentToWrite);
         JOptionPane.showMessageDialog(parent, "Plugins will get uninstalled only at next startup!");
     }
-    
+
     private static void updatePluginManagementFile(String content) {
         try {
             Files.writeString(Path.of(Main.executionDir + "pluginManagement.txt"), content + '\n' , WRITE, CREATE, APPEND);
@@ -99,7 +99,7 @@ public final class GuiPlugins extends DefaultListCellRenderer implements Hyperli
             e.printStackTrace();
         }
     }
-    
+
     @Override
     public void hyperlinkUpdate(HyperlinkEvent event) {
         if(event.getEventType() == EventType.ACTIVATED) {

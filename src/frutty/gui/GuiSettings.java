@@ -3,7 +3,7 @@ package frutty.gui;
 import frutty.*;
 import frutty.gui.components.*;
 import frutty.tools.*;
-import frutty.world.base.*;
+import frutty.world.*;
 import javax.swing.*;
 
 public final class GuiSettings {

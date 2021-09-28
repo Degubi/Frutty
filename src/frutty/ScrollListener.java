@@ -20,7 +20,7 @@ public final class ScrollListener implements AdjustmentListener {
         var value = listModel.getValue();
         var extent = listModel.getExtent();
         var maximum = listModel.getMaximum();
-        
+
         if (previousValue != value && previousMaximum == maximum){
             adjustScrollBar = value + extent >= maximum;
         }

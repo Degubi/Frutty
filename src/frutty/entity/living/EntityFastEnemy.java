@@ -1,4 +1,4 @@
-package frutty.entity.enemy;
+package frutty.entity.living;
 
 import frutty.tools.*;
 import frutty.world.*;
@@ -6,7 +6,7 @@ import java.awt.image.*;
 import java.util.*;
 
 public final class EntityFastEnemy extends EntityEnemy {
-    private static final BufferedImage[] textures = Material.loadTextures("enemy", "fast_side.png", "fast_front.png", "fast_back.png");
+    private static final BufferedImage[] textures = Material.loadTextures("enemy/fast", "side.png", "front.png", "back.png");
 
     public EntityFastEnemy(int x, int y) {
         super(x, y, textures);

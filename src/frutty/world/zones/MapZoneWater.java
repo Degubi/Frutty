@@ -1,7 +1,7 @@
 package frutty.world.zones;
 
 import frutty.tools.*;
-import frutty.world.base.*;
+import frutty.world.*;
 
 public final class MapZoneWater extends MapZoneFluid {
     

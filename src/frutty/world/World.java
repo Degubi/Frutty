@@ -2,22 +2,21 @@ package frutty.world;
 
 import frutty.*;
 import frutty.entity.*;
-import frutty.entity.enemy.*;
+import frutty.entity.living.*;
 import frutty.entity.zone.*;
 import frutty.gui.GuiSettings.*;
 import frutty.plugin.event.world.*;
 import frutty.tools.*;
-import frutty.world.base.*;
 import frutty.world.zones.*;
 import java.awt.*;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 
-public final class World{
+public final class World {
     public static EntityPlayer[] players;
     public static MapZoneBase[] zones;
-    public static ArrayList<Entity> entities = new ArrayList<>(10);
+    public static ArrayList<EntityBase> entities = new ArrayList<>(10);
     public static ArrayList<Particle> particles = new ArrayList<>(20);
     public static EntityEnemy[] enemies;
     public static int width, height, pickCount, score, ticks;
@@ -235,7 +234,7 @@ public final class World{
                     zones[k] = MapZoneBase.getZoneFromName(input.readUTF());
                 }
 
-                entities = (ArrayList<Entity>) input.readObject();
+                entities = (ArrayList<EntityBase>) input.readObject();
                 particles = (ArrayList<Particle>) input.readObject();
                 enemies = (EntityEnemy[]) input.readObject();
                 width = input.readShort();
