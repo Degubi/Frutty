@@ -1,10 +1,7 @@
+/app/
 /bin/
-/saves/
+/.settings/
 .classpath
-/plugins/
-/screenshots/
 editorhistory.txt
 stats.prop
 settings.prop
-/__pycache__/
-/.settings/

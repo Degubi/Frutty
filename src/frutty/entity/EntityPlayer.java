@@ -62,7 +62,7 @@ public final class EntityPlayer extends Entity implements KeyListener{
         serverPosY += facing.yOffset;
         textureIndex = facing.textureIndex;
         
-        var zoneIndex = World.coordsToIndex(renderPosX, renderPosY);
+        var zoneIndex = World.worldCoordsToZoneIndex(renderPosX, renderPosY);
         World.getZoneAt(renderPosX, renderPosY).onZoneEntered(renderPosX, renderPosY, World.materials[zoneIndex], this);
         lastPressTime = System.currentTimeMillis();
     }
