@@ -1,8 +1,8 @@
 package lavazone.zones;
 
-import frutty.entity.*;
+import frutty.entity.living.*;
 import frutty.tools.*;
-import frutty.world.base.*;
+import frutty.world.*;
 
 public final class MapZoneLava extends MapZoneFluid {
     

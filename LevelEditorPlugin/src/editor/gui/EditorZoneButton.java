@@ -1,6 +1,6 @@
 package editor.gui;
 
-import frutty.world.base.*;
+import frutty.world.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;

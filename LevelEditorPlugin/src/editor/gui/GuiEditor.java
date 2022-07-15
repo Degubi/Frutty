@@ -6,7 +6,7 @@ import editor.gui.GuiEditorProperties.*;
 import editor.gui.GuiTextureSelector.*;
 import frutty.plugin.event.gui.*;
 import frutty.tools.*;
-import frutty.world.base.*;
+import frutty.world.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
