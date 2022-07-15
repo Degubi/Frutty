@@ -29,7 +29,7 @@ public final class Main extends KeyAdapter {
     private static final EventHandle[] sharedEmptyEventArray = new EventHandle[0];
     public static final Random rand = new Random();
     public static Plugin[] loadedPlugins;
-    public static String executionDir;
+    public static final String executionDir = Files.exists(Path.of("app")) ? "app/" : "";
 
     public static EventHandle[] worldInitEvents;
     public static EventHandle[] menuInitEvents;
@@ -54,8 +54,6 @@ public final class Main extends KeyAdapter {
 
     public static void main(String[] args) throws Exception {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-
-        executionDir = GeneralFunctions.contains("-dev", args) ? "" : System.getProperty("user.dir") + "/app/";
 
         if(GeneralFunctions.contains("-console", args)) {
             var outPipe = new PipedOutputStream();

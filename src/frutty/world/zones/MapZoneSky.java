@@ -29,6 +29,6 @@ public final class MapZoneSky extends MapZoneBase {
 
     @Override
     protected ImageIcon getEditorIcon() {
-        return new ImageIcon("./textures/dev/sky.png");
+        return new ImageIcon(Material.loadTexture("dev", "sky.png"));
     }
 }

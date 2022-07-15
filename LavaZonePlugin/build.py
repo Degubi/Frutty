@@ -1,24 +1,23 @@
-import zipfile
-import sys
-import os
-import subprocess
-import shutil
+from zipfile import ZipFile, ZIP_DEFLATED
+from os import remove, walk
+from subprocess import call
+from shutil import rmtree
 
 def zipdir(path, zipFile):
-    for root, dirs, files in os.walk(path):
+    for root, _, files in walk(path):
         for file in files:
-            zipFile.write(os.path.join(root, file))
+            zipFile.write(root + '/' + file)
 
 print('Creating jar file')
-subprocess.call('javac -d compile --module-path ../bin -proc:none src/lavazone/*.java src/lavazone/zones/*.java src/module-info.java')
-subprocess.call('jar cfm Plugin.jar META-INF/MANIFEST.MF -C compile lavazone -C . META-INF -C compile module-info.class')
+call('javac -d compile --module-path ../bin -proc:none src/lavazone/*.java src/lavazone/zones/*.java src/module-info.java')
+call('jar cfm Plugin.jar META-INF/MANIFEST.MF -C compile lavazone -C . META-INF -C compile module-info.class')
 
 print('Creating zip file')
-with zipfile.ZipFile('LavaZone.zip', 'w', zipfile.ZIP_DEFLATED) as output:
+with ZipFile('LavaZone.zip', 'w', ZIP_DEFLATED) as output:
     output.write('Plugin.jar')
     zipdir('textures', output)
 
-shutil.rmtree('compile')
-os.remove('Plugin.jar')
+rmtree('compile')
+remove('Plugin.jar')
 
 print('Done')

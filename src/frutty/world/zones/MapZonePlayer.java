@@ -16,7 +16,7 @@ public final class MapZonePlayer extends MapZoneBase implements IInternalZone {
 
     @Override
     protected ImageIcon getEditorIcon() {
-        return new ImageIcon("./textures/dev/player" + playerID + ".png");
+        return new ImageIcon(Material.loadTexture("dev", "player" + playerID + ".png"));
     }
 
     @Override

@@ -1,5 +1,7 @@
 /app/
 /bin/
+/plugins/
+/plugins_meta/
 /.settings/
 .classpath
 editorhistory.txt

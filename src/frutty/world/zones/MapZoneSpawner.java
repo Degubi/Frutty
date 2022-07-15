@@ -45,7 +45,7 @@ public final class MapZoneSpawner extends MapZoneBase {
 
     @Override
     protected ImageIcon getEditorIcon() {
-        return new ImageIcon("./textures/dev/spawner.png");
+        return new ImageIcon(Material.loadTexture("dev", "spawner.png"));
     }
 
     private static Color[] createColorCache() {

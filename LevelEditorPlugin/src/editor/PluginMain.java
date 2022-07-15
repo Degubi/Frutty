@@ -8,7 +8,7 @@ import frutty.tools.*;
 
 @FruttyPlugin(name = "Frutty Level Editor", version = "1.0.0", description = "Level Editor Plugin", pluginSiteURL = "https://github.com/Degubi/Frutty/tree/master/LevelEditorPlugin")
 public final class PluginMain {
-    
+
     @FruttyMain(eventClass = PluginMain.class)
     public static void pluginMain() {}
 

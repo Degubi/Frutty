@@ -58,7 +58,10 @@ public final class GuiMapBackground extends JPanel {
                     zones[zoneIndex++] = zone;
                 }
             }
-        }catch(IOException | ClassNotFoundException e){}
+        }catch(IOException | ClassNotFoundException e){
+            System.out.println(Main.worldLoadingSystemLabel + "Failed to load background world: " + mapName);
+            e.printStackTrace();
+        }
 
         System.out.println(Main.worldLoadingSystemLabel + "Finished loading background world: " + mapName);
     }

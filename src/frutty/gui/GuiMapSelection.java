@@ -63,7 +63,7 @@ public final class GuiMapSelection {
                 graph.dispose();
                 mapImage.setIcon(new ImageIcon(image));
             }else{
-                mapImage.setIcon(new ImageIcon("./textures/gui/dev.jpg"));
+                mapImage.setIcon(new ImageIcon(Main.executionDir + "/textures/gui/dev.jpg"));
             }
         }
     }
