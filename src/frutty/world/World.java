@@ -22,7 +22,7 @@ public final class World {
     public static int width, height, pickCount, score, ticks;
     public static int[] xCoords, yCoords;
     public static EntityZone[] zoneEntities;
-    public static String skyTextureName, mapName, nextMap;
+    public static String skyTextureName, name, nextWorldName;
     public static String[] textures;
     public static Material[] materials;
     public static boolean[] isActivePathfindingZone;
@@ -45,9 +45,9 @@ public final class World {
         isActivePathfindingZone = null;
     }
 
-    private static void init(String[] textures, boolean isMultiplayer, String skyName, String levelName, int w, int h, String next) {
-        mapName = levelName;
-        nextMap = next;
+    private static void init(String[] textures, boolean isMultiplayer, String skyName, String worldName, int w, int h, String next) {
+        name = worldName;
+        nextWorldName = next;
 
         if(Main.worldInitEvents.length > 0) Main.invokeEvent(new WorldInitEvent(w, h, textures, entities), Main.worldInitEvents);
 
@@ -71,7 +71,7 @@ public final class World {
         MapZoneSky.loadSkyTexture(skyTextureName = skyName);
     }
 
-    public static void generateMap(int genWidth, int genHeight, boolean isMultiplayer) {
+    public static void generate(int genWidth, int genHeight, boolean isMultiplayer) {
         var rand = Main.rand;
         var bigWidth = genWidth * 64;
         var bigHeight = genHeight * 64;
@@ -132,10 +132,10 @@ public final class World {
         }
     }
 
-    public static void loadMap(String name, boolean isMultiplayer) {
+    public static void load(String name, boolean isMultiplayer) {
         System.out.println(Main.worldLoadingSystemLabel + "Started loading world: " + name);
 
-        try(var input = new ObjectInputStream(Files.newInputStream(Path.of(Main.executionDir + "maps/" + name + ".fmap")))){
+        try(var input = new ObjectInputStream(Files.newInputStream(Path.of(GeneralFunctions.WORK_DIR + "maps/" + name + ".fmap")))){
             int loadedWidth, loadedHeight, zoneIndex = 0;
 
             var zoneIDCache = (String[]) input.readObject();
@@ -183,7 +183,7 @@ public final class World {
         System.out.println(Main.ioSystemLabel + "Creating save file: " + fileName);
 
         if(fileName != null) {
-            try(var output = new ObjectOutputStream(Files.newOutputStream(Path.of(Main.executionDir + "saves/" + fileName + ".sav")))){
+            try(var output = new ObjectOutputStream(Files.newOutputStream(Path.of(GeneralFunctions.WORK_DIR + "saves/" + fileName + ".sav")))){
                 output.writeObject(players);
 
                 output.writeShort(zones.length);
@@ -212,8 +212,8 @@ public final class World {
 
                 output.writeObject(zoneEntities);
                 output.writeUTF(skyTextureName);
-                output.writeUTF(mapName);
-                output.writeUTF(nextMap);
+                output.writeUTF(name);
+                output.writeUTF(nextWorldName);
                 output.writeObject(textures);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -226,7 +226,7 @@ public final class World {
         if(fileName != null) {
             System.out.println(Main.ioSystemLabel + "Loading save file: " + fileName);
 
-            try(var input = new ObjectInputStream(Files.newInputStream(Path.of(Main.executionDir + "saves/" + fileName)))){
+            try(var input = new ObjectInputStream(Files.newInputStream(Path.of(GeneralFunctions.WORK_DIR + "saves/" + fileName)))){
                 players = (EntityPlayer[]) input.readObject();
 
                 zones = new MapZoneBase[input.readShort()];
@@ -255,8 +255,8 @@ public final class World {
 
                 zoneEntities = (EntityZone[]) input.readObject();
                 MapZoneSky.loadSkyTexture(skyTextureName = input.readUTF());
-                mapName = input.readUTF();
-                nextMap = input.readUTF();
+                name = input.readUTF();
+                nextWorldName = input.readUTF();
                 return true;
             } catch (ClassNotFoundException | IOException e) {
                 e.printStackTrace();

@@ -119,7 +119,7 @@ public final class GuiIngame extends JPanel implements KeyListener {
             var renderDelay = currentMilis - renderLastUpdate;
             var rightSideDebugPosition = ingameFrame.getWidth() - 390;
 
-            graphics.drawString("current map: " + World.mapName, rightSideDebugPosition, 20);
+            graphics.drawString("current world: " + World.name, rightSideDebugPosition, 20);
             graphics.drawString("render delay: " + renderDelay + " ms", rightSideDebugPosition, 40);
             graphics.drawString("fps: " + (1000 / renderDelay), rightSideDebugPosition, 60);
 

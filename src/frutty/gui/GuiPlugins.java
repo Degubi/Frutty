@@ -94,7 +94,7 @@ public final class GuiPlugins extends DefaultListCellRenderer implements Hyperli
 
     private static void updatePluginManagementFile(String content) {
         try {
-            Files.writeString(Path.of(Main.executionDir + "pluginManagement.txt"), content + '\n' , WRITE, CREATE, APPEND);
+            Files.writeString(Path.of(GeneralFunctions.WORK_DIR + "pluginManagement.txt"), content + '\n' , WRITE, CREATE, APPEND);
         } catch (IOException e) {
             e.printStackTrace();
         }

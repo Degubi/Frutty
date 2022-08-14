@@ -61,6 +61,15 @@ public final class GuiSettings {
         GuiMenu.switchMenuGui(tabbed);
     }
 
+    private static int indexOfInt(int value, int[] values) {
+        for(var k = 0; k < values.length; ++k) {
+            if(values[k] == value) {
+                return k;
+            }
+        }
+        throw new IllegalArgumentException("Should not get there...");
+    }
+
     private static final SettingButton difficultyButton = new SettingButton(Settings.difficulty, "Difficulty", 100, 20, "Easy", "Normal", "Hard");
     private static final SettingButtonField upKeyButtonField = new SettingButtonField(Settings.upKey, "Second Player Upwards Key", 100, 100);
     private static final SettingButtonField downKeyButtonField = new SettingButtonField(Settings.downKey, "Second Player Downwards Key", 100, 180);
@@ -69,8 +78,8 @@ public final class GuiSettings {
 
     private static final SettingButton graphicsLevelButton = new SettingButton(Settings.graphicsLevel, "Graphics Level", 100, 20, "Low", "Medium", "High");
     private static final int[] tenToHundred = {10, 20, 30, 40, 50, 60, 70, 80, 90, 100};
-    private static final SettingButtonSlider fpsSlider = new SettingButtonSlider(GeneralFunctions.indexOfInt(Settings.fps, tenToHundred) + 1, "FPS", 100, 100);
-    private static final String[] screenshotFormats = {"JPG", "PNG"};
+    private static final SettingButtonSlider fpsSlider = new SettingButtonSlider(indexOfInt(Settings.fps, tenToHundred) + 1, "FPS", 100, 100);
+    private static final String[] screenshotFormats = { "JPG", "PNG" };
     private static final SettingButton screenshotFormatButton = new SettingButton(Settings.screenshotFormat, "Screenshot Format", 100, 180, screenshotFormats);
 
     private static final SettingButton collisionBoxButton = new SettingButton(Settings.enableCollisionDebug, "Draw Collision Boxes", 100, 260);

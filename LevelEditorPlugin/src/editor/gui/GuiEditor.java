@@ -54,7 +54,7 @@ public final class GuiEditor extends JPanel {
     }
 
     private void renderMap() {
-        try(var output = new ObjectOutputStream(Files.newOutputStream(Path.of(GeneralFunctions.getWorkdir() + "maps/" + mapProperties.mapName + ".fmap"), WRITE, CREATE, TRUNCATE_EXISTING))){
+        try(var output = new ObjectOutputStream(Files.newOutputStream(Path.of(GeneralFunctions.WORK_DIR + "maps/" + mapProperties.mapName + ".fmap"), WRITE, CREATE, TRUNCATE_EXISTING))){
              var zoneIDCache = zoneButtons.stream().map(button -> button.zoneID).distinct().toArray(String[]::new);
              var textureCache = zoneButtons.stream().map(button -> button.zoneTexture).filter(texture -> texture != null).distinct().toArray(String[]::new);
 
@@ -66,10 +66,10 @@ public final class GuiEditor extends JPanel {
              output.writeUTF(mapProperties.nextMap);
 
              for(var writeButton : zoneButtons) {
-                 output.writeByte(GeneralFunctions.indexOf(writeButton.zoneID, zoneIDCache));
+                 output.writeByte(indexOf(writeButton.zoneID, zoneIDCache));
 
                  if(MapZoneBase.getZoneFromName(writeButton.zoneID) instanceof MapZoneTexturable) {
-                     output.writeByte(GeneralFunctions.indexOf(writeButton.zoneTexture, textureCache));
+                     output.writeByte(indexOf(writeButton.zoneTexture, textureCache));
                  }
              }
         } catch (IOException e) {
@@ -80,7 +80,7 @@ public final class GuiEditor extends JPanel {
     }
 
     private void saveMap() {
-        try(var output = Files.newBufferedWriter(Path.of(GeneralFunctions.getWorkdir() + "mapsrc/" + mapProperties.mapName + ".fmf"), WRITE, CREATE, TRUNCATE_EXISTING)){
+        try(var output = Files.newBufferedWriter(Path.of(GeneralFunctions.WORK_DIR + "mapsrc/" + mapProperties.mapName + ".fmf"), WRITE, CREATE, TRUNCATE_EXISTING)){
             output.write(mapProperties.width + "\n");
             output.write(mapProperties.height + "\n");
             output.write(mapProperties.skyName + "\n");
@@ -95,7 +95,7 @@ public final class GuiEditor extends JPanel {
             output.write(String.join(" ", textures) + "\n");
 
             for(var button : zoneButtons) {
-                output.write(button.zoneID + (button.zoneTexture != null ? (" " + GeneralFunctions.indexOf(button.zoneTexture, textures)) : "") + '\n');
+                output.write(button.zoneID + (button.zoneTexture != null ? (" " + indexOf(button.zoneTexture, textures)) : "") + '\n');
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -106,7 +106,7 @@ public final class GuiEditor extends JPanel {
 
     private static void loadMap(String fileName) {
         if(fileName != null && !fileName.isEmpty()) {
-            try(var input = Files.newBufferedReader(Path.of(GeneralFunctions.getWorkdir() + "mapsrc/" + fileName))){
+            try(var input = Files.newBufferedReader(Path.of(GeneralFunctions.WORK_DIR + "mapsrc/" + fileName))){
                 var mapWidth = Integer.parseInt(input.readLine());
                 var mapHeight = Integer.parseInt(input.readLine());
                 var editor = new GuiEditor(fileName.substring(0, fileName.indexOf('.')), mapWidth, mapHeight, input.readLine(), input.readLine());
@@ -137,9 +137,9 @@ public final class GuiEditor extends JPanel {
     }
 
     private static void newMap(GuiEditor editor) {
-        var types = new String[]{"Normal", "Background"};
-        var input = JOptionPane.showOptionDialog(null, "Make Normal or Background map?", "Map Type Chooser", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, types, types[0]);
-        var mapSizeString = (input == 0 ? JOptionPane.showInputDialog("Enter map size!", "10x10") : "14x10").split("x");
+        var mapTypes = new String[]{ "Normal", "Background" };
+        var mapTypeIndex = JOptionPane.showOptionDialog(null, "Make Normal or Background map?", "Map Type Chooser", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, mapTypes, mapTypes[0]);
+        var mapSizeString = (mapTypeIndex == 0 ? JOptionPane.showInputDialog("Enter map size!", "10x10") : "14x10").split("x");
         var mapWidth = Integer.parseInt(mapSizeString[0]);
         var mapHeight = Integer.parseInt(mapSizeString[1]);
         var bigWidth = mapWidth * 64;
@@ -157,6 +157,7 @@ public final class GuiEditor extends JPanel {
                 }
             }
         }
+
         showEditorFrame(newEditor, mapName, bigWidth, bigHeight);
         ((JFrame)editor.getTopLevelAncestor()).dispose();
     }
@@ -179,7 +180,7 @@ public final class GuiEditor extends JPanel {
 
             fileMenu.add(newMenuItem("New map", 'N', true, event -> newMap(editor)));
             fileMenu.add(newMenuItem("Load map", 'L', true, event -> {
-                var fileChooser = new JFileChooser(GeneralFunctions.getWorkdir() + "/mapsrc");
+                var fileChooser = new JFileChooser(GeneralFunctions.WORK_DIR + "mapsrc");
 
                 if(fileChooser.showOpenDialog(null) == 0) {
                     loadMap(fileChooser.getSelectedFile().getName());
@@ -231,5 +232,14 @@ public final class GuiEditor extends JPanel {
         item.setEnabled(setEnabled);
         item.addActionListener(listener);
         return item;
+    }
+
+    private static<T> int indexOf(T value, T[] values) {
+        for(var k = 0; k < values.length; ++k) {
+            if(values[k].equals(value)) {
+                return k;
+            }
+        }
+        throw new IllegalArgumentException("Should not get there...");
     }
 }

@@ -68,7 +68,7 @@ public final class GuiMenu {
     }
 
     private static void handleSaveLoading(GuiMapBackground panel) {
-        try(var files = Files.list(Path.of(Main.executionDir + "saves"))){
+        try(var files = Files.list(Path.of(GeneralFunctions.WORK_DIR + "saves"))){
             var saveFolderList = files.map(Path::getFileName).map(Path::toString).toArray(String[]::new);
 
             if(saveFolderList.length > 0) {

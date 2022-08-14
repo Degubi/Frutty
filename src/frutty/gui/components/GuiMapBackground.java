@@ -33,7 +33,7 @@ public final class GuiMapBackground extends JPanel {
     public static void loadBackgroundMap(String mapName, MapZoneBase[] zones, int[] xCoords, int[] yCoords, Material[] materials) {
         System.out.println(Main.worldLoadingSystemLabel + "Started loading background world: " + mapName);
 
-        try(var input = new ObjectInputStream(Files.newInputStream(Path.of(Main.executionDir + mapName)))){
+        try(var input = new ObjectInputStream(Files.newInputStream(Path.of(GeneralFunctions.WORK_DIR + mapName)))){
             var zoneIDCache = (String[]) input.readObject();
             var textureCache = (String[]) input.readObject();
 

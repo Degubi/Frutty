@@ -1,12 +1,12 @@
 ### Project:
-  - Originally made as a University project
-  - Could use some cleanup, but whatever
+  - Originally made as a University project (meaning it doesn't use Maven or Gradle or any external dependencies)
   - Supports SinglePlayer games & local Co-Op games
   - Has NPC-s
   - Save files
   - External plugin system
   - Level editor
   - Stats
+  - Could use some cleanup, but whatever
 
 ![image](https://user-images.githubusercontent.com/13366932/179262945-a89cc1f1-f20b-4742-9efb-7928cb20a503.png)
 ![image](https://user-images.githubusercontent.com/13366932/179263103-df48e5fc-4d3c-4631-ae7e-2d576bc584b4.png)

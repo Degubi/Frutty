@@ -1,7 +1,7 @@
 package frutty.sound;
 
-import frutty.*;
 import frutty.gui.GuiSettings.*;
+import frutty.tools.*;
 import java.io.*;
 import javax.sound.sampled.*;
 
@@ -10,7 +10,7 @@ public final class CachedSoundClip {
 
     public CachedSoundClip(String filePath) {
         if(Settings.enableSound) {
-            try(var audioInputStream = AudioSystem.getAudioInputStream(new File(Main.executionDir + "sounds/" + filePath))){
+            try(var audioInputStream = AudioSystem.getAudioInputStream(new File(GeneralFunctions.WORK_DIR + "sounds/" + filePath))){
                 soundClip.open(audioInputStream);
                 ((FloatControl) soundClip.getControl(FloatControl.Type.MASTER_GAIN)).setValue(-20);
             } catch (IOException | UnsupportedAudioFileException | LineUnavailableException e) {

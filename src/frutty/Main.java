@@ -29,7 +29,6 @@ public final class Main extends KeyAdapter {
     private static final EventHandle[] sharedEmptyEventArray = new EventHandle[0];
     public static final Random rand = new Random();
     public static Plugin[] loadedPlugins;
-    public static final String executionDir = Files.exists(Path.of("app")) ? "app/" : "";
 
     public static EventHandle[] worldInitEvents;
     public static EventHandle[] menuInitEvents;
@@ -55,7 +54,7 @@ public final class Main extends KeyAdapter {
     public static void main(String[] args) throws Exception {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 
-        if(GeneralFunctions.contains("-console", args)) {
+        if(arrayContains("-console", args)) {
             var outPipe = new PipedOutputStream();
             var reader = new BufferedReader(new InputStreamReader(new ModifiedPipedInputStream(outPipe)));
             System.setOut(new PrintStream(outPipe, true));
@@ -94,7 +93,7 @@ public final class Main extends KeyAdapter {
         plugins.add(new Plugin("Frutty", "Base module for the game.", "https://github.com/Degubi/Frutty", "1.0.0", null));
         plugins.add(new Plugin("Frutty Plugin Loader", "Base module for the plugin loader", "", "1.0.0", null));
 
-        var pluginManagementFile = Path.of(executionDir + "pluginManagement.txt");
+        var pluginManagementFile = Path.of(GeneralFunctions.WORK_DIR + "pluginManagement.txt");
         if(Files.exists(pluginManagementFile)) {
             var managementFileLines = Files.readAllLines(pluginManagementFile);
             var resourceFolderNames = new String[] { "textures", "maps", "sounds" };
@@ -155,7 +154,7 @@ public final class Main extends KeyAdapter {
                     var resourcesList = Stream.concat(Stream.of(pluginJarPath), resourceFiles.stream().map(ZipEntry::getName))
                                               .collect(Collectors.toList());
 
-                    Files.write(Path.of(executionDir + "plugins_meta/" + pluginZipName + ".list"), resourcesList);
+                    Files.write(Path.of(GeneralFunctions.WORK_DIR + "plugins_meta/" + pluginZipName + ".list"), resourcesList);
                     System.out.println(pluginSystemLabel + pluginZipName + " got installed successfully!");
                 }else {
                     System.out.println(pluginSystemLabel + zipPath + " didn't have a Plugin.jar file in it! Skipping");
@@ -164,7 +163,7 @@ public final class Main extends KeyAdapter {
                 e.printStackTrace();
             }
         }else{
-            var pluginMetaFile = Path.of(executionDir + "plugins_meta/" + payload + ".list");
+            var pluginMetaFile = Path.of(GeneralFunctions.WORK_DIR + "plugins_meta/" + payload + ".list");
 
             try(var filesToDelete = Files.lines(pluginMetaFile)) {
                 filesToDelete.map(Path::of).forEach(Main::deleteFile);
@@ -196,7 +195,7 @@ public final class Main extends KeyAdapter {
 
         var entryType = entryName.substring(0, typeSeparatorIndex);
 
-        if(!GeneralFunctions.contains(entryType, resourceFolderNames)) {
+        if(!arrayContains(entryType, resourceFolderNames)) {
             System.out.println(pluginSystemLabel + "Ignoring resource entry with unknown type: " + entryName);
             return false;
         }
@@ -205,7 +204,7 @@ public final class Main extends KeyAdapter {
     }
 
     private static void extractFileFromZip(ZipEntry entry, ZipFile zipFile, Function<ZipEntry, String> namingFunction) {
-        var outputPath = Path.of(executionDir + namingFunction.apply(entry));
+        var outputPath = Path.of(GeneralFunctions.WORK_DIR + namingFunction.apply(entry));
 
         if(!Files.exists(outputPath)) {
             try(var input = zipFile.getInputStream(entry)) {
@@ -271,7 +270,7 @@ public final class Main extends KeyAdapter {
     }
 
     private static void createDirectory(String path) {
-        var filePath = Path.of(executionDir + path);
+        var filePath = Path.of(GeneralFunctions.WORK_DIR + path);
 
         if(!Files.exists(filePath)) {
             try {
@@ -298,12 +297,12 @@ public final class Main extends KeyAdapter {
 
     private static String getMainClassNameFromJar(Path jarPath) {
         try(var jar = new JarFile(jarPath.toFile())){
-            var mani = jar.getManifest();
+            var manifest = jar.getManifest();
 
-            if(mani == null) {
+            if(manifest == null) {
                 System.out.println(pluginSystemLabel + "Can't find manifest file from plugin: " + jarPath);
             }else{
-                var pluginClass = mani.getMainAttributes().getValue("Plugin-Class");
+                var pluginClass = manifest.getMainAttributes().getValue("Plugin-Class");
 
                 if(pluginClass == null) {
                     System.out.println(pluginSystemLabel + "Can't find \"Plugin-Class\" attribute from plugin: " + jarPath);
@@ -328,7 +327,7 @@ public final class Main extends KeyAdapter {
         System.out.println(pluginSystemLabel + "Started loading plugins");
         var eventsToReturn = new HashMap<Class<?>, List<EventHandle>>();
 
-        try(var pluginFolder = Files.list(Path.of(executionDir + "plugins"))){
+        try(var pluginFolder = Files.list(Path.of(GeneralFunctions.WORK_DIR + "plugins"))){
             var pluginJars = pluginFolder.filter(Files::isRegularFile)
                                          .filter(file -> file.toString().endsWith(".jar"))
                                          .toArray(Path[]::new);
@@ -407,6 +406,16 @@ public final class Main extends KeyAdapter {
         }
 
         return sharedEmptyEventArray;
+    }
+
+    private static<T> boolean arrayContains(T element, T[] elements) {
+        for(var arrrg : elements) {
+            if(arrrg.equals(element)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private Main() {}

@@ -10,6 +10,7 @@ import frutty.tools.*;
 import frutty.world.zones.*;
 import java.awt.*;
 import java.io.*;
+import java.util.*;
 import java.util.List;
 import javax.swing.*;
 
@@ -123,7 +124,7 @@ public abstract class MapZoneBase implements Serializable {
     public static final MapZoneBush bushZone = new MapZoneBush();
     public static final MapZonePortal portalZone = new MapZonePortal();
 
-    private static final List<MapZoneBase> zoneRegistry = GeneralFunctions.toMutableList(normalZone, emptyZone, appleZone, player1Zone, player2Zone, cherryZone, spawnerZone, chestZone, waterZone, skyZone, bushZone, portalZone);
+    private static final List<MapZoneBase> zoneRegistry = toMutableList(normalZone, emptyZone, appleZone, player1Zone, player2Zone, cherryZone, spawnerZone, chestZone, waterZone, skyZone, bushZone, portalZone);
 
     /**
      * Register zone
@@ -153,5 +154,15 @@ public abstract class MapZoneBase implements Serializable {
 
     public static String[] zoneNames() {
         return zoneRegistry.stream().map(zone -> zone.zoneName).toArray(String[]::new);
+    }
+
+    @SafeVarargs
+    private static<T> List<T> toMutableList(T... objs){
+        var list = new ArrayList<T>(objs.length);
+
+        for(var obj : objs) {
+            list.add(obj);
+        }
+        return list;
     }
 }

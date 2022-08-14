@@ -50,7 +50,7 @@ public final class GuiMapSelection {
 
     private static void handleMapListChange(ListSelectionEvent event, JList<String> mapList, JLabel mapImage) {
         if(!event.getValueIsAdjusting()){
-            var path = Main.executionDir + "textures/gui/" + mapList.getSelectedValue() + ".jpg";
+            var path = GeneralFunctions.WORK_DIR + "textures/gui/" + mapList.getSelectedValue() + ".jpg";
 
             if(Files.exists(Path.of(path))) {
                 var image = Material.loadTexture("gui", mapList.getSelectedValue() + ".jpg");
@@ -63,7 +63,7 @@ public final class GuiMapSelection {
                 graph.dispose();
                 mapImage.setIcon(new ImageIcon(image));
             }else{
-                mapImage.setIcon(new ImageIcon(Main.executionDir + "/textures/gui/dev.jpg"));
+                mapImage.setIcon(new ImageIcon(GeneralFunctions.WORK_DIR + "/textures/gui/dev.jpg"));
             }
         }
     }
@@ -71,7 +71,7 @@ public final class GuiMapSelection {
     private static void updateModel(JList<String> mapList, JCheckBox devMode) {
         var model = new DefaultListModel<String>();
 
-        try(var mapsFolder = Files.list(Path.of(Main.executionDir + "maps"))){
+        try(var mapsFolder = Files.list(Path.of(GeneralFunctions.WORK_DIR + "maps"))){
             var mapFiles = mapsFolder.map(Path::getFileName)
                                      .map(Path::toString)
                                      .filter(name -> name.endsWith(".fmap"))
@@ -94,14 +94,14 @@ public final class GuiMapSelection {
         if(mapList.getSelectedValue().equals("Generate Map")) {
             GuiMenu.switchMenuGui(createGenerateMapPanel());
         }else{
-            World.loadMap(mapList.getSelectedValue(), coopBox.isSelected());
+            World.load(mapList.getSelectedValue(), coopBox.isSelected());
             GuiIngame.showIngame();
             GuiMenu.closeMainFrame();
         }
     }
 
     public static String loadMapSize(String fileName) {
-        try(var input = new ObjectInputStream(Files.newInputStream(Path.of(Main.executionDir + "maps/" + fileName + ".fmap")))){
+        try(var input = new ObjectInputStream(Files.newInputStream(Path.of(GeneralFunctions.WORK_DIR + "maps/" + fileName + ".fmap")))){
             input.readObject(); input.readObject();
             input.readUTF();
             return input.readShort() + "x" + input.readShort();
@@ -127,7 +127,7 @@ public final class GuiMapSelection {
     private static void handleGeneratePlayButtonPress(JTextField sizeField) {
         var mapSize = sizeField.getText().split("x");
 
-        World.generateMap(Integer.parseInt(mapSize[0]), Integer.parseInt(mapSize[1]), false);
+        World.generate(Integer.parseInt(mapSize[0]), Integer.parseInt(mapSize[1]), false);
         GuiIngame.showIngame();
         GuiMenu.closeMainFrame();
     }

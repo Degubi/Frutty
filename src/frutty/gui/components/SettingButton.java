@@ -29,7 +29,7 @@ public final class SettingButton extends JComponent implements ActionListener {
     }
 
     public SettingButton(String data, String displayText, int x, int y, String... options) {
-        this(GeneralFunctions.indexOf(data, options), displayText, x, y, options);
+        this(indexOf(data, options), displayText, x, y, options);
     }
 
     @Override
@@ -91,5 +91,14 @@ public final class SettingButton extends JComponent implements ActionListener {
 
         paint.dispose();
         return new ImageIcon(img);
+    }
+
+    private static<T> int indexOf(T value, T[] values) {
+        for(var k = 0; k < values.length; ++k) {
+            if(values[k].equals(value)) {
+                return k;
+            }
+        }
+        throw new IllegalArgumentException("Should not get there...");
     }
 }
