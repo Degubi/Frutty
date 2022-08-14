@@ -52,16 +52,18 @@ public final class GuiWorldSelection {
 
     private static void handleWorldListChange(ListSelectionEvent event, JList<String> worldList, JLabel worldPreviewImage) {
         if(!event.getValueIsAdjusting()){
-            var path = GamePaths.TEXTURES_DIR + "gui/" + worldList.getSelectedValue() + ".jpg";
+            var previewImagePath = GamePaths.TEXTURES_DIR + "gui/" + worldList.getSelectedValue() + ".jpg";
 
-            if(Files.exists(Path.of(path))) {
+            if(Files.exists(Path.of(previewImagePath))) {
+                var world = new WorldData(worldList.getSelectedValue(), false, false);
                 var image = Material.loadTexture("gui", worldList.getSelectedValue() + ".jpg");
                 var graph = image.createGraphics();
+
                 graph.setColor(Color.BLACK);
                 graph.fillRect(380, 420, 100, 60);
                 graph.setColor(Color.WHITE);
                 graph.setFont(GuiHelper.bigFont);
-                graph.drawString(loadWorldSize(worldList.getSelectedValue()), 390, 460);
+                graph.drawString((world.width / 64) + "x" + (world.height / 64), 390, 460);
                 graph.dispose();
                 worldPreviewImage.setIcon(new ImageIcon(image));
             }else{
@@ -102,19 +104,8 @@ public final class GuiWorldSelection {
         }
     }
 
-    public static String loadWorldSize(String fileName) {
-        try(var input = new ObjectInputStream(Files.newInputStream(Path.of(GamePaths.WORLDS_DIR + fileName + GamePaths.WORLD_FILE_EXTENSION)))){
-            input.readObject(); input.readObject();
-            input.readUTF();
-            return input.readShort() + "x" + input.readShort();
-
-        } catch (IOException | ClassNotFoundException e) {
-            return "Can't determine world size!";
-        }
-    }
-
     private static JPanel createGenerateWorldPanel() {
-        var backgroundPanel = new GuiWorldBackground("dev_settings" + GamePaths.WORLD_FILE_EXTENSION);
+        var backgroundPanel = new GuiWorldBackground("dev_settings");
         backgroundPanel.setLayout(null);
 
         var sizeField = new SettingButtonField("10x10", "World Size", 50, 20);

@@ -32,7 +32,7 @@ public final class WorldZoneCherry extends WorldZoneTexturable {
     }
 
     @Override
-    public void onZoneAdded(boolean isCoop, int x, int y) {
+    public void onZoneAdded(boolean isCoop, int zoneCount, int x, int y) {
         ++World.pickCount;
     }
 

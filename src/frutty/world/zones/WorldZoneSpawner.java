@@ -29,8 +29,9 @@ public final class WorldZoneSpawner extends WorldZone {
     }
 
     @Override
-    public void onZoneAdded(boolean isCoop, int x, int y) {
-        var enemyCount = World.getEnemyCountBasedOnDifficulty(World.zones.length);
+    public void onZoneAdded(boolean isCoop, int zoneCount, int x, int y) {
+        var enemyCount = World.getEnemyCountBasedOnDifficulty(zoneCount);
+
         World.enemies = new EntityEnemy[enemyCount];
 
         for(var k = 0; k < enemyCount; ++k) {

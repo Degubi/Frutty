@@ -40,7 +40,7 @@ public abstract class WorldZone implements Serializable {
     public boolean isBreakable(int x, int y) {return canPlayerPass(x, y);}
     public boolean canPlayerPass(int x, int y) {return true;}
     public boolean canNPCPass(int x, int y) {return false;}
-    protected void onZoneAdded(boolean isCoop, int x, int y) {}
+    protected void onZoneAdded(boolean isCoop, int zoneCount, int x, int y) {}
 
     public void onZoneEntered(int x, int y, Material material, EntityPlayer player) {
         player.hidden = doesHidePlayer(x, y);
@@ -93,16 +93,16 @@ public abstract class WorldZone implements Serializable {
         }
     }
 
-    public final void onZoneAddedInternal(boolean isCoop, int x, int y) {
+    public final void onZoneAddedInternal(boolean isCoop, int zoneCount, int x, int y) {
         if(Main.zoneAddedEvents.length > 0) {
             ZoneAddedEvent event = new ZoneAddedEvent(this, x, y);
             Main.invokeEvent(event, Main.zoneAddedEvents);
 
             if(!event.canceled) {
-                onZoneAdded(isCoop, x, y);
+                onZoneAdded(isCoop, zoneCount, x, y);
             }
         }else{
-            onZoneAdded(isCoop, x, y);
+            onZoneAdded(isCoop, zoneCount, x, y);
         }
     }
 
@@ -149,7 +149,8 @@ public abstract class WorldZone implements Serializable {
                 return zone;
             }
         }
-        return null;
+
+        throw new IllegalArgumentException("Unable to find zone by name '" + name + "'");
     }
 
     public static String[] zoneNames() {

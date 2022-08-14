@@ -22,7 +22,7 @@ public final class GuiStats extends DefaultTreeCellRenderer {
     public static void showStatsGui() {
         System.out.println(Main.guiSystemLabel + "Switching to stats frame");
 
-        var panel = new GuiWorldBackground("dev_settings" + GamePaths.WORLD_FILE_EXTENSION);
+        var panel = new GuiWorldBackground("dev_settings");
         panel.setLayout(null);
 
         var top = new DefaultMutableTreeNode("Frutty Stats");

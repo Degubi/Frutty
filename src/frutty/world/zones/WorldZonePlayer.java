@@ -11,7 +11,8 @@ public final class WorldZonePlayer extends WorldZone implements InternalZone {
 
     public WorldZonePlayer(int id) {
         super(id == 1 ? "player1Zone" : "player2Zone");
-        playerID = id;
+
+        this.playerID = id;
     }
 
     @Override
@@ -23,17 +24,13 @@ public final class WorldZonePlayer extends WorldZone implements InternalZone {
     public void render(int x, int y, Material material, Graphics graphics) {}
 
     @Override
-    public void onZoneAdded(boolean isCoop, int x, int y) {
-        if(isCoop) {
-            if(playerID == 1) {
-                World.players[0] = new EntityPlayer(x, y, true);
-            }else{
-                World.players[1] = new EntityPlayer(x, y, false);
-            }
-        }else{
-            if(playerID == 1) {
-                World.players[0] = new EntityPlayer(x, y, true);
-            }
+    public void onZoneAdded(boolean isCoop, int zoneCount, int x, int y) {
+        if(playerID == 1) {
+            World.players[0] = new EntityPlayer(x, y, true);
+        }
+
+        if(isCoop && playerID == 2) {
+            World.players[1] = new EntityPlayer(x, y, false);
         }
     }
 

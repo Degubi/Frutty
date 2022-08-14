@@ -23,7 +23,7 @@ public final class GuiPlugins extends DefaultListCellRenderer implements Hyperli
         var plugs = new GuiPlugins();
         var description = new JTextPane();
         var pluginList = new JList<>(Main.loadedPlugins);
-        var backgroundPanel = new GuiWorldBackground("dev_settings" + GamePaths.WORLD_FILE_EXTENSION);
+        var backgroundPanel = new GuiWorldBackground("dev_settings");
         var uninstallPluginButton = GuiHelper.newButton("Uninstall Selected Plugins", 700, 120, e -> handleUninstallPluginButtonPress(pluginList, backgroundPanel));
 
         pluginList.addListSelectionListener(e -> onPluginListSelectionChange(description, pluginList, uninstallPluginButton));

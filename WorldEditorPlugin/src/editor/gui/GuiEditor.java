@@ -82,7 +82,7 @@ public final class GuiEditor extends JPanel {
          JOptionPane.showMessageDialog(null, "World rendered as: " + worldProperties.worldName + GamePaths.WORLD_FILE_EXTENSION);
     }
 
-    private void saveWorld() {
+    private void saveWorldSource() {
         try(var output = Files.newBufferedWriter(Path.of(WORLD_SRC_DIR + worldProperties.worldName + WORLD_SRC_FILE_EXTENSION), WRITE, CREATE, TRUNCATE_EXISTING)) {
             output.write(worldProperties.worldWidth + "\n");
             output.write(worldProperties.worldHeight + "\n");
@@ -107,9 +107,9 @@ public final class GuiEditor extends JPanel {
         JOptionPane.showMessageDialog(null, "World saved as: " + worldProperties.worldName + WORLD_SRC_FILE_EXTENSION);
     }
 
-    private static void loadWorld(String fileName) {
+    private static void loadWorldSource(String fileName) {
         if(fileName != null && !fileName.isEmpty()) {
-            try(var input = Files.newBufferedReader(Path.of(WORLD_SRC_DIR + fileName))){
+            try(var input = Files.newBufferedReader(Path.of(WORLD_SRC_DIR + fileName))) {
                 var worldWidth = Integer.parseInt(input.readLine());
                 var worldHeight = Integer.parseInt(input.readLine());
                 var editor = new GuiEditor(fileName.substring(0, fileName.indexOf('.')), worldWidth, worldHeight, input.readLine(), input.readLine());
@@ -186,13 +186,13 @@ public final class GuiEditor extends JPanel {
                 var fileChooser = new JFileChooser(WORLD_SRC_DIR);
 
                 if(fileChooser.showOpenDialog(null) == 0) {
-                    loadWorld(fileChooser.getSelectedFile().getName());
+                    loadWorldSource(fileChooser.getSelectedFile().getName());
                     ((JFrame) editor.getTopLevelAncestor()).dispose();
                 }
             }));
 
             fileMenu.addSeparator();
-            fileMenu.add(newMenuItem("Save World", 'S', !editor.zoneButtons.isEmpty(), event -> editor.saveWorld()));
+            fileMenu.add(newMenuItem("Save World", 'S', !editor.zoneButtons.isEmpty(), event -> editor.saveWorldSource()));
             fileMenu.add(newMenuItem("Render World", 'R', !editor.zoneButtons.isEmpty(), event -> editor.renderWorld()));
 
             fileMenu.addSeparator();

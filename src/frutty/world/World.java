@@ -23,7 +23,6 @@ public final class World {
     public static int[] xCoords, yCoords;
     public static EntityZone[] zoneEntities;
     public static String skyTextureName, name, nextWorldName;
-    public static String[] textures;
     public static Material[] materials;
     public static boolean[] isActivePathfindingZone;
 
@@ -41,137 +40,99 @@ public final class World {
         xCoords = null;
         yCoords = null;
         materials = null;
-        textures = null;
         isActivePathfindingZone = null;
     }
 
-    private static void init(String[] textures, boolean isMultiplayer, String skyName, String worldName, int w, int h, String nextWorldName) {
-        World.name = worldName;
-        World.nextWorldName = nextWorldName;
+    public static void load(String name, boolean isCoop) {
+        World.name = name;
+        World.players = new EntityPlayer[isCoop ? 2 : 1];
 
-        if(Main.worldInitEvents.length > 0) Main.invokeEvent(new WorldInitEvent(w, h, textures, entities), Main.worldInitEvents);
+        var worldData = new WorldData(name, isCoop, true);
 
-        var zoneCount = (w / 64) * (h / 64);
+        World.nextWorldName = worldData.nextWorldName;
+        World.zones = worldData.zones;
+        World.width = worldData.width - 64;
+        World.height = worldData.height - 64;
+        World.xCoords = worldData.xCoords;
+        World.yCoords = worldData.yCoords;
+        World.materials = worldData.materials;
+        World.zoneEntities = worldData.zoneEntities;
+        World.isActivePathfindingZone = new boolean[worldData.zones.length];
+        World.skyTextureName = worldData.skyTextureName;
+
+        WorldZoneSky.loadSkyTexture(worldData.skyTextureName);
+
+        if(Main.worldInitEvents.length > 0) Main.invokeEvent(new WorldInitEvent(worldData.width / 64, worldData.height / 64, entities), Main.worldInitEvents);
+    }
+
+    public static void generate(int width, int height, boolean isCoop) {
+        var bigWidth = width * 64;
+        var bigHeight = height * 64;
+        var zoneCount = width * height;
+
+        World.name = "generated: " + width + "x" + height;
+        World.nextWorldName = null;
         World.zones = new WorldZone[zoneCount];
-        World.width = w - 64;
-        World.height = h - 64;
-
+        World.width = bigWidth - 64;
+        World.height = bigHeight - 64;
         World.xCoords = new int[zoneCount];
         World.yCoords = new int[zoneCount];
         World.materials = new Material[zoneCount];
         World.zoneEntities = new EntityZone[zoneCount];
         World.isActivePathfindingZone = new boolean[zoneCount];
-        World.players = new EntityPlayer[isMultiplayer ? 2 : 1];
+        World.players = new EntityPlayer[isCoop ? 2 : 1];
+        World.skyTextureName = "null";
 
-        WorldZoneSky.loadSkyTexture(skyTextureName = skyName);
-    }
-
-    public static void generate(int width, int height, boolean isMultiplayer) {
         var rand = Main.rand;
-        var bigWidth = width * 64;
-        var bigHeight = height * 64;
         var zoneIndex = 0;
 
-        init(new String[] { "normal" }, isMultiplayer, "null", "generated: " + width + "x" + height, bigWidth, bigHeight, null);
+        for(var y = 0; y < bigHeight; y += 64) {
+            for(var x = 0; x < bigWidth; x += 64) {
+                var rng = rand.nextInt(10);
 
-        for(int y = 0; y < bigHeight; y += 64) {
-            for(int x = 0, rng = rand.nextInt(10); x < bigWidth; x += 64, rng = rand.nextInt(10)) {
                 xCoords[zoneIndex] = x;
                 yCoords[zoneIndex] = y;
 
                 if(rng < 6) {
                     zones[zoneIndex] = WorldZone.normalZone;
-                    materials[zoneIndex++] = Material.NORMAL;
+                    materials[zoneIndex] = Material.NORMAL;
                 }else if(rng >= 6 && rng < 9) {
-                    zones[zoneIndex++] = WorldZone.emptyZone;
+                    zones[zoneIndex] = WorldZone.emptyZone;
                 }else if(rng == 9) {
-                    if(rand.nextBoolean()) {   //isApple
-                        zoneEntities[zoneIndex] = new EntityAppleZone();
+                    if(rand.nextBoolean()) {
                         zones[zoneIndex] = WorldZone.appleZone;
                     }else {
                         zones[zoneIndex] = WorldZone.cherryZone;
                         ++pickCount;
                     }
 
-                    materials[zoneIndex++] = Material.NORMAL;
+                    materials[zoneIndex] = Material.NORMAL;
                 }
+
+                if(zones[zoneIndex] instanceof ZoneEntityProvider) {
+                    zoneEntities[zoneIndex] = ((ZoneEntityProvider) zones[zoneIndex]).getZoneEntity();
+                }
+
+                ++zoneIndex;
             }
         }
 
-        enemies = new EntityEnemy[0];
+        var spawnerZoneIndex = findEmptyZone(rand, zoneCount);
+        zones[spawnerZoneIndex] = WorldZone.spawnerZone;
+        WorldZone.spawnerZone.onZoneAddedInternal(isCoop, zoneCount, xCoords[spawnerZoneIndex], yCoords[spawnerZoneIndex]);
 
-        for(int randIndex = rand.nextInt(zoneIndex), loopState = 0; ; randIndex = rand.nextInt(zoneIndex)) {
-            if(zones[randIndex] == WorldZone.emptyZone) {
-                if(loopState == 0) {
-                    zones[randIndex] = WorldZone.spawnerZone;
-                    loopState = 1;
+        var player1ZoneIndex = findEmptyZone(rand, zoneCount);
+        players[0] = new EntityPlayer(xCoords[player1ZoneIndex], yCoords[player1ZoneIndex], true);
 
-                    for(var l = 0; l < enemies.length; ++l) {
-                        enemies[l] = EntityEnemy.create(xCoords[randIndex], yCoords[randIndex]);
-                    }
+        if(isCoop) {
+            var player2ZoneIndex = findEmptyZone(rand, zoneCount);
 
-                    continue;
-                }else if(loopState == 1) {
-                    players[0] = new EntityPlayer(xCoords[randIndex], yCoords[randIndex], true);
-
-                    loopState = 2;
-
-                    if(isMultiplayer) continue;
-                    break;
-                }else{
-                    players[1] = new EntityPlayer(xCoords[randIndex], yCoords[randIndex], false);
-
-                    break;
-                }
-            }
+            players[1] = new EntityPlayer(xCoords[player2ZoneIndex], yCoords[player2ZoneIndex], false);
         }
-    }
 
-    public static void load(String name, boolean isMultiplayer) {
-        System.out.println(Main.worldLoadingSystemLabel + "Started loading world: " + name);
+        WorldZoneSky.loadSkyTexture("null");
 
-        try(var input = new ObjectInputStream(Files.newInputStream(Path.of(GamePaths.WORLDS_DIR + name + GamePaths.WORLD_FILE_EXTENSION)))){
-            int loadedWidth, loadedHeight, zoneIndex = 0;
-
-            var zoneIDCache = (String[]) input.readObject();
-            var textureCache = (String[]) input.readObject();
-
-            init(textureCache, isMultiplayer, input.readUTF(), name, loadedWidth = input.readShort() * 64, loadedHeight = input.readShort() * 64, input.readUTF());
-
-            var materials = World.materials;
-            var xCoords = World.xCoords;
-            var yCoords = World.yCoords;
-            var zoneEntities = World.zoneEntities;
-            var zones = World.zones;
-            var materialRegistry = Material.materialRegistry;
-
-            for(var y = 0; y < loadedHeight; y += 64) {
-                for(var x = 0; x < loadedWidth; x += 64) {
-                    var zone = WorldZone.getZoneFromName(zoneIDCache[input.readByte()]);
-
-                    zone.onZoneAddedInternal(isMultiplayer, x, y);  //Fentre így a player zónák jól működnek majd elméletileg
-                    if(zone instanceof InternalZone) {
-                        zone = ((InternalZone) zone).getReplacementZone();
-                    }
-
-                    if(zone instanceof WorldZoneTexturable) {
-                        materials[zoneIndex] = materialRegistry.get(textureCache[input.readByte()]);
-                    }
-
-                    xCoords[zoneIndex] = x;
-                    yCoords[zoneIndex] = y;
-
-                    if(zone instanceof ZoneEntityProvider) {
-                        zoneEntities[zoneIndex] = ((ZoneEntityProvider) zone).getZoneEntity();
-                    }
-                    zones[zoneIndex++] = zone;
-                }
-            }
-
-            System.out.println(Main.worldLoadingSystemLabel + "Finished loading world: " + name);
-        }catch(IOException | ClassNotFoundException e){
-            System.out.println(Main.worldLoadingSystemLabel + "Can't load corrupted or missing world file: " + GamePaths.WORLDS_DIR + name + GamePaths.WORLD_FILE_EXTENSION);
-        }
+        if(Main.worldInitEvents.length > 0) Main.invokeEvent(new WorldInitEvent(width, height, entities), Main.worldInitEvents);
     }
 
     public static void createSave(String fileName) {
@@ -209,7 +170,6 @@ public final class World {
                 output.writeUTF(skyTextureName);
                 output.writeUTF(name);
                 output.writeUTF(nextWorldName);
-                output.writeObject(textures);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -263,14 +223,12 @@ public final class World {
     public static WorldZone getZoneAt(int x, int y) {
         var index = worldCoordsToZoneIndex(x, y);
 
-        if(index < 0 || index > World.zones.length - 1) {
-            return null;
-        }
-        return World.zones[index];
+        return index < 0 || index > World.zones.length - 1 ? null : World.zones[index];
     }
 
     public static boolean isEmptyAt(int x, int y) {
         var zone = World.getZoneAt(x, y);
+
         return zone != null && zone == WorldZone.emptyZone;
     }
 
@@ -291,10 +249,7 @@ public final class World {
     }
 
     public static WorldZone getZoneAtIndex(int index) {
-        if(index < 0 || index > World.zones.length - 1) {
-            return null;
-        }
-        return World.zones[index];
+        return index < 0 || index > World.zones.length - 1 ? null : World.zones[index];
     }
 
     public static int worldCoordsToZoneIndex(int x, int y) {
@@ -331,6 +286,14 @@ public final class World {
 
             for(var k = 0; k < count; ++k) {
                 particles.add(new Particle(x + 32, y + 60, -2 + rand.nextInt(5), -2 + rand.nextInt(2), color));
+            }
+        }
+    }
+
+    private static int findEmptyZone(Random rand, int zoneCount) {
+        for(int randIndex = rand.nextInt(zoneCount); ; randIndex = rand.nextInt(zoneCount)) {
+            if(zones[randIndex] == WorldZone.emptyZone) {
+                return randIndex;
             }
         }
     }

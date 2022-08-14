@@ -17,7 +17,7 @@ public final class GuiMenu {
     private static JFrame mainFrame;
 
     public static JPanel createMenuPanel() {
-        var panel = new GuiWorldBackground("background" + Main.rand.nextInt(4) + GamePaths.WORLD_FILE_EXTENSION);
+        var panel = new GuiWorldBackground("background" + Main.rand.nextInt(4));
         panel.setLayout(null);
 
         panel.add(newButton("New Game", 700, 20, e -> GuiWorldSelection.showWorldSelection()));

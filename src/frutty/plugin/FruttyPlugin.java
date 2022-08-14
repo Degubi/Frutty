@@ -17,8 +17,7 @@ import java.lang.annotation.*;
         public static void worldLoadEvent(WorldInitEvent event) {
             System.out.println(event.worldHeight);
 
-            event.worldTextures[0] = "stone";
-            event.worldEntities.add(new EntityApple(0, 0));
+            event.entities.add(new EntityApple(0, 0));
         }
     }
 </code> </pre>*/

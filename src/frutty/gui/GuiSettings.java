@@ -9,8 +9,8 @@ import javax.swing.*;
 public final class GuiSettings {
     private GuiSettings() {}
 
-    private static GuiWorldBackground createPanel(WorldZone[] zones, int[] xCoords, int[] yCoords, Material[] materials, JComponent...components) {
-        var panel = new GuiWorldBackground(zones, xCoords, yCoords, materials);
+    private static GuiWorldBackground createPanel(WorldData settingsWorldData, JComponent...components) {
+        var panel = new GuiWorldBackground(settingsWorldData);
         panel.setLayout(null);
 
         for(var comp : components) panel.add(comp);
@@ -41,16 +41,12 @@ public final class GuiSettings {
     public static void showGuiSettings() {
         System.out.println(Main.guiSystemLabel + "Switching to settings frame");
 
-        var zones = new WorldZone[140];
-        var xCoords = new int[140];
-        var yCoords = new int[140];
-        var materials = new Material[140];
-        GuiWorldBackground.loadBackgroundWorld("dev_settings" + GamePaths.WORLD_FILE_EXTENSION, zones, xCoords, yCoords, materials);
+        var settingsWorldData = new WorldData("dev_settings", false, false);
 
         var tabbed = new JTabbedPane();
-        tabbed.addTab("Gameplay", createPanel(zones, xCoords, yCoords, materials, difficultyButton, upKeyButtonField, downKeyButtonField, leftKeyButtonField, rightKeyButtonField));
-        tabbed.addTab("Graphics", createPanel(zones, xCoords, yCoords, materials, graphicsLevelButton, fpsSlider, screenshotFormatButton));
-        tabbed.addTab("Sound", createPanel(zones, xCoords, yCoords, materials, enableSoundButton, volumeSlider));
+        tabbed.addTab("Gameplay", createPanel(settingsWorldData, difficultyButton, upKeyButtonField, downKeyButtonField, leftKeyButtonField, rightKeyButtonField));
+        tabbed.addTab("Graphics", createPanel(settingsWorldData, graphicsLevelButton, fpsSlider, screenshotFormatButton));
+        tabbed.addTab("Sound", createPanel(settingsWorldData, enableSoundButton, volumeSlider));
 
         var insets = UIManager.getInsets("TabbedPane.contentBorderInsets");
         insets.left = -1;

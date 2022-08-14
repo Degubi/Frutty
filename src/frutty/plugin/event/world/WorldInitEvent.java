@@ -4,17 +4,15 @@ import frutty.*;
 import frutty.entity.*;
 import java.util.*;
 
-/**Event is fired when a world is initialized, can add entities, or overwrite textures*/
+/**Event is fired when a world is initialized, can add entities*/
 @FruttyEventMarker
 public final class WorldInitEvent {
     public final int worldWidth, worldHeight;
-    public final String[] worldTextures;
-    public final List<EntityBase> worldEntities;
+    public final List<EntityBase> entities;
 
-    public WorldInitEvent(int width, int height, String[] textures, List<EntityBase> entities) {
+    public WorldInitEvent(int width, int height, List<EntityBase> entities) {
         this.worldWidth = width;
         this.worldHeight = height;
-        this.worldTextures = textures;
-        this.worldEntities = entities;
+        this.entities = entities;
     }
 }
