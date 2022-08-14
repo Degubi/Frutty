@@ -10,7 +10,7 @@ public final class CachedSoundClip {
 
     public CachedSoundClip(String filePath) {
         if(Settings.enableSound) {
-            try(var audioInputStream = AudioSystem.getAudioInputStream(new File(GeneralFunctions.WORK_DIR + "sounds/" + filePath))){
+            try(var audioInputStream = AudioSystem.getAudioInputStream(new File(GamePaths.SOUNDS_DIR + filePath))){
                 soundClip.open(audioInputStream);
                 ((FloatControl) soundClip.getControl(FloatControl.Type.MASTER_GAIN)).setValue(-20);
             } catch (IOException | UnsupportedAudioFileException | LineUnavailableException e) {

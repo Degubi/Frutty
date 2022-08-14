@@ -15,7 +15,7 @@ import java.util.*;
 
 public final class World {
     public static EntityPlayer[] players;
-    public static MapZoneBase[] zones;
+    public static WorldZone[] zones;
     public static ArrayList<EntityBase> entities = new ArrayList<>(10);
     public static ArrayList<Particle> particles = new ArrayList<>(20);
     public static EntityEnemy[] enemies;
@@ -45,39 +45,34 @@ public final class World {
         isActivePathfindingZone = null;
     }
 
-    private static void init(String[] textures, boolean isMultiplayer, String skyName, String worldName, int w, int h, String next) {
-        name = worldName;
-        nextWorldName = next;
+    private static void init(String[] textures, boolean isMultiplayer, String skyName, String worldName, int w, int h, String nextWorldName) {
+        World.name = worldName;
+        World.nextWorldName = nextWorldName;
 
         if(Main.worldInitEvents.length > 0) Main.invokeEvent(new WorldInitEvent(w, h, textures, entities), Main.worldInitEvents);
 
         var zoneCount = (w / 64) * (h / 64);
-        zones = new MapZoneBase[zoneCount];
-        width = w - 64;
-        height = h - 64;
+        World.zones = new WorldZone[zoneCount];
+        World.width = w - 64;
+        World.height = h - 64;
 
-        xCoords = new int[zoneCount];
-        yCoords = new int[zoneCount];
-        materials = new Material[zoneCount];
-        zoneEntities = new EntityZone[zoneCount];
-        isActivePathfindingZone = new boolean[zoneCount];
+        World.xCoords = new int[zoneCount];
+        World.yCoords = new int[zoneCount];
+        World.materials = new Material[zoneCount];
+        World.zoneEntities = new EntityZone[zoneCount];
+        World.isActivePathfindingZone = new boolean[zoneCount];
+        World.players = new EntityPlayer[isMultiplayer ? 2 : 1];
 
-        if(isMultiplayer) {
-            players = new EntityPlayer[2];
-        }else {
-            players = new EntityPlayer[1];
-        }
-
-        MapZoneSky.loadSkyTexture(skyTextureName = skyName);
+        WorldZoneSky.loadSkyTexture(skyTextureName = skyName);
     }
 
-    public static void generate(int genWidth, int genHeight, boolean isMultiplayer) {
+    public static void generate(int width, int height, boolean isMultiplayer) {
         var rand = Main.rand;
-        var bigWidth = genWidth * 64;
-        var bigHeight = genHeight * 64;
+        var bigWidth = width * 64;
+        var bigHeight = height * 64;
         var zoneIndex = 0;
 
-        init(new String[] {"normal"}, isMultiplayer, "null", "generated: " + genWidth + "x" + genHeight, bigWidth, bigHeight, null);
+        init(new String[] { "normal" }, isMultiplayer, "null", "generated: " + width + "x" + height, bigWidth, bigHeight, null);
 
         for(int y = 0; y < bigHeight; y += 64) {
             for(int x = 0, rng = rand.nextInt(10); x < bigWidth; x += 64, rng = rand.nextInt(10)) {
@@ -85,16 +80,16 @@ public final class World {
                 yCoords[zoneIndex] = y;
 
                 if(rng < 6) {
-                    zones[zoneIndex] = MapZoneBase.normalZone;
+                    zones[zoneIndex] = WorldZone.normalZone;
                     materials[zoneIndex++] = Material.NORMAL;
                 }else if(rng >= 6 && rng < 9) {
-                    zones[zoneIndex++] = MapZoneBase.emptyZone;
+                    zones[zoneIndex++] = WorldZone.emptyZone;
                 }else if(rng == 9) {
                     if(rand.nextBoolean()) {   //isApple
                         zoneEntities[zoneIndex] = new EntityAppleZone();
-                        zones[zoneIndex] = MapZoneBase.appleZone;
+                        zones[zoneIndex] = WorldZone.appleZone;
                     }else {
-                        zones[zoneIndex] = MapZoneBase.cherryZone;
+                        zones[zoneIndex] = WorldZone.cherryZone;
                         ++pickCount;
                     }
 
@@ -106,9 +101,9 @@ public final class World {
         enemies = new EntityEnemy[0];
 
         for(int randIndex = rand.nextInt(zoneIndex), loopState = 0; ; randIndex = rand.nextInt(zoneIndex)) {
-            if(zones[randIndex] == MapZoneBase.emptyZone) {
+            if(zones[randIndex] == WorldZone.emptyZone) {
                 if(loopState == 0) {
-                    zones[randIndex] = MapZoneBase.spawnerZone;
+                    zones[randIndex] = WorldZone.spawnerZone;
                     loopState = 1;
 
                     for(var l = 0; l < enemies.length; ++l) {
@@ -135,7 +130,7 @@ public final class World {
     public static void load(String name, boolean isMultiplayer) {
         System.out.println(Main.worldLoadingSystemLabel + "Started loading world: " + name);
 
-        try(var input = new ObjectInputStream(Files.newInputStream(Path.of(GeneralFunctions.WORK_DIR + "maps/" + name + ".fmap")))){
+        try(var input = new ObjectInputStream(Files.newInputStream(Path.of(GamePaths.WORLDS_DIR + name + GamePaths.WORLD_FILE_EXTENSION)))){
             int loadedWidth, loadedHeight, zoneIndex = 0;
 
             var zoneIDCache = (String[]) input.readObject();
@@ -152,22 +147,22 @@ public final class World {
 
             for(var y = 0; y < loadedHeight; y += 64) {
                 for(var x = 0; x < loadedWidth; x += 64) {
-                    var zone = MapZoneBase.getZoneFromName(zoneIDCache[input.readByte()]);
+                    var zone = WorldZone.getZoneFromName(zoneIDCache[input.readByte()]);
 
                     zone.onZoneAddedInternal(isMultiplayer, x, y);  //Fentre így a player zónák jól működnek majd elméletileg
-                    if(zone instanceof IInternalZone) {
-                        zone = ((IInternalZone) zone).getReplacementZone();
+                    if(zone instanceof InternalZone) {
+                        zone = ((InternalZone) zone).getReplacementZone();
                     }
 
-                    if(zone instanceof MapZoneTexturable) {
+                    if(zone instanceof WorldZoneTexturable) {
                         materials[zoneIndex] = materialRegistry.get(textureCache[input.readByte()]);
                     }
 
                     xCoords[zoneIndex] = x;
                     yCoords[zoneIndex] = y;
 
-                    if(zone instanceof IZoneEntityProvider) {
-                        zoneEntities[zoneIndex] = ((IZoneEntityProvider) zone).getZoneEntity();
+                    if(zone instanceof ZoneEntityProvider) {
+                        zoneEntities[zoneIndex] = ((ZoneEntityProvider) zone).getZoneEntity();
                     }
                     zones[zoneIndex++] = zone;
                 }
@@ -175,7 +170,7 @@ public final class World {
 
             System.out.println(Main.worldLoadingSystemLabel + "Finished loading world: " + name);
         }catch(IOException | ClassNotFoundException e){
-            System.out.println(Main.worldLoadingSystemLabel + "Can't load corrupted map file: " + "./maps/" + name + ".fmap");
+            System.out.println(Main.worldLoadingSystemLabel + "Can't load corrupted or missing world file: " + GamePaths.WORLDS_DIR + name + GamePaths.WORLD_FILE_EXTENSION);
         }
     }
 
@@ -183,7 +178,7 @@ public final class World {
         System.out.println(Main.ioSystemLabel + "Creating save file: " + fileName);
 
         if(fileName != null) {
-            try(var output = new ObjectOutputStream(Files.newOutputStream(Path.of(GeneralFunctions.WORK_DIR + "saves/" + fileName + ".sav")))){
+            try(var output = new ObjectOutputStream(Files.newOutputStream(Path.of(GamePaths.SAVES_DIR + fileName + ".sav")))){
                 output.writeObject(players);
 
                 output.writeShort(zones.length);
@@ -226,12 +221,12 @@ public final class World {
         if(fileName != null) {
             System.out.println(Main.ioSystemLabel + "Loading save file: " + fileName);
 
-            try(var input = new ObjectInputStream(Files.newInputStream(Path.of(GeneralFunctions.WORK_DIR + "saves/" + fileName)))){
+            try(var input = new ObjectInputStream(Files.newInputStream(Path.of(GamePaths.SAVES_DIR + fileName)))){
                 players = (EntityPlayer[]) input.readObject();
 
-                zones = new MapZoneBase[input.readShort()];
+                zones = new WorldZone[input.readShort()];
                 for(var k = 0; k < zones.length; ++k) {
-                    zones[k] = MapZoneBase.getZoneFromName(input.readUTF());
+                    zones[k] = WorldZone.getZoneFromName(input.readUTF());
                 }
 
                 entities = (ArrayList<EntityBase>) input.readObject();
@@ -254,7 +249,7 @@ public final class World {
                 }
 
                 zoneEntities = (EntityZone[]) input.readObject();
-                MapZoneSky.loadSkyTexture(skyTextureName = input.readUTF());
+                WorldZoneSky.loadSkyTexture(skyTextureName = input.readUTF());
                 name = input.readUTF();
                 nextWorldName = input.readUTF();
                 return true;
@@ -265,7 +260,7 @@ public final class World {
         return false;
     }
 
-    public static MapZoneBase getZoneAt(int x, int y) {
+    public static WorldZone getZoneAt(int x, int y) {
         var index = worldCoordsToZoneIndex(x, y);
 
         if(index < 0 || index > World.zones.length - 1) {
@@ -276,7 +271,7 @@ public final class World {
 
     public static boolean isEmptyAt(int x, int y) {
         var zone = World.getZoneAt(x, y);
-        return zone != null && zone == MapZoneBase.emptyZone;
+        return zone != null && zone == WorldZone.emptyZone;
     }
 
     public static boolean isPositionFree(int x, int y) {
@@ -291,11 +286,11 @@ public final class World {
     public static void setZoneEmptyAt(int x, int y) {
         var index = worldCoordsToZoneIndex(x, y);
 
-        zones[index] = MapZoneBase.emptyZone;
+        zones[index] = WorldZone.emptyZone;
         zoneEntities[index] = null;
     }
 
-    public static MapZoneBase getZoneAtIndex(int index) {
+    public static WorldZone getZoneAtIndex(int index) {
         if(index < 0 || index > World.zones.length - 1) {
             return null;
         }

@@ -12,7 +12,7 @@ public final class StreamedSoundClip {
     private volatile boolean shouldPlay = true;
 
     public StreamedSoundClip(String fileName) {
-        soundFile = new File(GeneralFunctions.WORK_DIR + "sounds/" + fileName);
+        soundFile = new File(GamePaths.SOUNDS_DIR + fileName);
     }
 
     public void start() {

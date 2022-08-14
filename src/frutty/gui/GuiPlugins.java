@@ -23,7 +23,7 @@ public final class GuiPlugins extends DefaultListCellRenderer implements Hyperli
         var plugs = new GuiPlugins();
         var description = new JTextPane();
         var pluginList = new JList<>(Main.loadedPlugins);
-        var backgroundPanel = new GuiMapBackground("maps/dev_settings.fmap");
+        var backgroundPanel = new GuiWorldBackground("dev_settings" + GamePaths.WORLD_FILE_EXTENSION);
         var uninstallPluginButton = GuiHelper.newButton("Uninstall Selected Plugins", 700, 120, e -> handleUninstallPluginButtonPress(pluginList, backgroundPanel));
 
         pluginList.addListSelectionListener(e -> onPluginListSelectionChange(description, pluginList, uninstallPluginButton));
@@ -94,7 +94,7 @@ public final class GuiPlugins extends DefaultListCellRenderer implements Hyperli
 
     private static void updatePluginManagementFile(String content) {
         try {
-            Files.writeString(Path.of(GeneralFunctions.WORK_DIR + "pluginManagement.txt"), content + '\n' , WRITE, CREATE, APPEND);
+            Files.writeString(Path.of(GamePaths.WORK_DIR + "pluginManagement.txt"), content + '\n' , WRITE, CREATE, APPEND);
         } catch (IOException e) {
             e.printStackTrace();
         }

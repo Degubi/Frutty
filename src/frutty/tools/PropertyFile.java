@@ -12,7 +12,7 @@ public final class PropertyFile {
     public PropertyFile(String filePath, int estimatePropCount) {
         System.out.println(Main.ioSystemLabel + "Initializing property file: " + filePath);
 
-        path = Path.of(GeneralFunctions.WORK_DIR + filePath);
+        path = Path.of(GamePaths.WORK_DIR + filePath);
         storage = new ArrayList<>(estimatePropCount);
 
         try(var reader = Files.newBufferedReader(path)){

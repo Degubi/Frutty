@@ -17,10 +17,10 @@ public final class GuiMenu {
     private static JFrame mainFrame;
 
     public static JPanel createMenuPanel() {
-        var panel = new GuiMapBackground("maps/background" + Main.rand.nextInt(4) + ".fmap");
+        var panel = new GuiWorldBackground("background" + Main.rand.nextInt(4) + GamePaths.WORLD_FILE_EXTENSION);
         panel.setLayout(null);
 
-        panel.add(newButton("New Game", 700, 20, e -> GuiMapSelection.showMapSelection()));
+        panel.add(newButton("New Game", 700, 20, e -> GuiWorldSelection.showWorldSelection()));
         panel.add(newButton("Exit", 370, 550, e -> System.exit(0)));
         panel.add(newButton("Settings", 700, 250, e -> GuiSettings.showGuiSettings()));
         panel.add(newButton("Load Save", 700, 100, e -> handleSaveLoading(panel)));
@@ -67,12 +67,12 @@ public final class GuiMenu {
         });
     }
 
-    private static void handleSaveLoading(GuiMapBackground panel) {
-        try(var files = Files.list(Path.of(GeneralFunctions.WORK_DIR + "saves"))){
+    private static void handleSaveLoading(GuiWorldBackground panel) {
+        try(var files = Files.list(Path.of(GamePaths.SAVES_DIR))){
             var saveFolderList = files.map(Path::getFileName).map(Path::toString).toArray(String[]::new);
 
             if(saveFolderList.length > 0) {
-                var saveName = (String) JOptionPane.showInputDialog(panel, "Chose map file!", "Saves", JOptionPane.QUESTION_MESSAGE, null, saveFolderList, saveFolderList[0]);
+                var saveName = (String) JOptionPane.showInputDialog(panel, "Choose world file!", "Saves", JOptionPane.QUESTION_MESSAGE, null, saveFolderList, saveFolderList[0]);
 
                 if(World.loadSave(saveName)) {
                     GuiIngame.showIngame();

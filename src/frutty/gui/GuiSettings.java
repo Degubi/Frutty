@@ -9,8 +9,8 @@ import javax.swing.*;
 public final class GuiSettings {
     private GuiSettings() {}
 
-    private static GuiMapBackground createPanel(MapZoneBase[] zones, int[] xCoords, int[] yCoords, Material[] materials, JComponent...components) {
-        var panel = new GuiMapBackground(zones, xCoords, yCoords, materials);
+    private static GuiWorldBackground createPanel(WorldZone[] zones, int[] xCoords, int[] yCoords, Material[] materials, JComponent...components) {
+        var panel = new GuiWorldBackground(zones, xCoords, yCoords, materials);
         panel.setLayout(null);
 
         for(var comp : components) panel.add(comp);
@@ -41,11 +41,11 @@ public final class GuiSettings {
     public static void showGuiSettings() {
         System.out.println(Main.guiSystemLabel + "Switching to settings frame");
 
-        var zones = new MapZoneBase[140];
+        var zones = new WorldZone[140];
         var xCoords = new int[140];
         var yCoords = new int[140];
         var materials = new Material[140];
-        GuiMapBackground.loadBackgroundMap("./maps/dev_settings.fmap", zones, xCoords, yCoords, materials);
+        GuiWorldBackground.loadBackgroundWorld("dev_settings" + GamePaths.WORLD_FILE_EXTENSION, zones, xCoords, yCoords, materials);
 
         var tabbed = new JTabbedPane();
         tabbed.addTab("Gameplay", createPanel(zones, xCoords, yCoords, materials, difficultyButton, upKeyButtonField, downKeyButtonField, leftKeyButtonField, rightKeyButtonField));
@@ -87,7 +87,7 @@ public final class GuiSettings {
     private static final SettingButton enableSoundButton = new SettingButton(Settings.enableSound, "Enable Sound", 100, 20);
     private static final SettingButtonSlider volumeSlider = new SettingButtonSlider(Settings.volume, "Volume", 100, 100);
 
-    //Separate class to avoid loading settings background map and loads of Button objects
+    //Separate class to avoid loading settings background world and loads of Button objects
     public static final class Settings{
         static final PropertyFile settingProperties = new PropertyFile("settings.prop", 14);
 
@@ -102,7 +102,7 @@ public final class GuiSettings {
         public static boolean godMode = false;
         public static boolean enableCollisionDebug = false;
         public static boolean enablePathfindingDebug = false;
-        public static boolean enableMapDebug = false;
+        public static boolean enableWorldDebug = false;
         public static boolean enableSound = settingProperties.getBoolean("enableSound", true);
         public static int volume = settingProperties.getInt("volume", 6);
         public static String screenshotFormat = settingProperties.getString("screenshotFormat", "JPG");

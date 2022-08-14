@@ -22,7 +22,7 @@ public final class GuiStats extends DefaultTreeCellRenderer {
     public static void showStatsGui() {
         System.out.println(Main.guiSystemLabel + "Switching to stats frame");
 
-        var panel = new GuiMapBackground("maps/dev_settings.fmap");
+        var panel = new GuiWorldBackground("dev_settings" + GamePaths.WORLD_FILE_EXTENSION);
         panel.setLayout(null);
 
         var top = new DefaultMutableTreeNode("Frutty Stats");
@@ -57,7 +57,7 @@ public final class GuiStats extends DefaultTreeCellRenderer {
         GuiMenu.switchMenuGui(panel);
     }
 
-    private static void handleResetButtonPress(GuiMapBackground panel) {
+    private static void handleResetButtonPress(GuiWorldBackground panel) {
         topScore = 0;
         enemyCount = 0;
         zoneCount = 0;

@@ -9,6 +9,6 @@ public final class PluginMain {
 
     @FruttyMain(eventClass = PluginMain.class)
     public static void pluginMain() {
-        MapZoneBase.registerZone(new MapZoneLava());
+        WorldZone.registerZone(new WorldZoneLava());
     }
 }

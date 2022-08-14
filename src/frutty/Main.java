@@ -90,13 +90,15 @@ public final class Main extends KeyAdapter {
 
         System.out.println(pluginSystemLabel + "Launching plugin system");
         var plugins = new ArrayList<Plugin>();
-        plugins.add(new Plugin("Frutty", "Base module for the game.", "https://github.com/Degubi/Frutty", "1.0.0", null));
+        plugins.add(new Plugin("Frutty", "Base module for the game.", "https://github.com/Degubi/Frutty", "1.1.0", null));
         plugins.add(new Plugin("Frutty Plugin Loader", "Base module for the plugin loader", "", "1.0.0", null));
 
-        var pluginManagementFile = Path.of(GeneralFunctions.WORK_DIR + "pluginManagement.txt");
+        var pluginManagementFile = Path.of(GamePaths.WORK_DIR + "pluginManagement.txt");
         if(Files.exists(pluginManagementFile)) {
+            createDirectory("worldsrcs");  // Might be missing without plugins
+
             var managementFileLines = Files.readAllLines(pluginManagementFile);
-            var resourceFolderNames = new String[] { "textures", "maps", "sounds" };
+            var resourceFolderNames = new String[] { "textures", "worlds", "worldsrcs", "sounds" };
 
             System.out.println(pluginSystemLabel + "Found management file with " + managementFileLines.size() + " entries");
 
@@ -154,7 +156,7 @@ public final class Main extends KeyAdapter {
                     var resourcesList = Stream.concat(Stream.of(pluginJarPath), resourceFiles.stream().map(ZipEntry::getName))
                                               .collect(Collectors.toList());
 
-                    Files.write(Path.of(GeneralFunctions.WORK_DIR + "plugins_meta/" + pluginZipName + ".list"), resourcesList);
+                    Files.write(Path.of(GamePaths.WORK_DIR + "plugins_meta/" + pluginZipName + ".list"), resourcesList);
                     System.out.println(pluginSystemLabel + pluginZipName + " got installed successfully!");
                 }else {
                     System.out.println(pluginSystemLabel + zipPath + " didn't have a Plugin.jar file in it! Skipping");
@@ -163,7 +165,7 @@ public final class Main extends KeyAdapter {
                 e.printStackTrace();
             }
         }else{
-            var pluginMetaFile = Path.of(GeneralFunctions.WORK_DIR + "plugins_meta/" + payload + ".list");
+            var pluginMetaFile = Path.of(GamePaths.WORK_DIR + "plugins_meta/" + payload + ".list");
 
             try(var filesToDelete = Files.lines(pluginMetaFile)) {
                 filesToDelete.map(Path::of).forEach(Main::deleteFile);
@@ -204,7 +206,7 @@ public final class Main extends KeyAdapter {
     }
 
     private static void extractFileFromZip(ZipEntry entry, ZipFile zipFile, Function<ZipEntry, String> namingFunction) {
-        var outputPath = Path.of(GeneralFunctions.WORK_DIR + namingFunction.apply(entry));
+        var outputPath = Path.of(GamePaths.WORK_DIR + namingFunction.apply(entry));
 
         if(!Files.exists(outputPath)) {
             try(var input = zipFile.getInputStream(entry)) {
@@ -270,7 +272,7 @@ public final class Main extends KeyAdapter {
     }
 
     private static void createDirectory(String path) {
-        var filePath = Path.of(GeneralFunctions.WORK_DIR + path);
+        var filePath = Path.of(GamePaths.WORK_DIR + path);
 
         if(!Files.exists(filePath)) {
             try {
@@ -327,7 +329,7 @@ public final class Main extends KeyAdapter {
         System.out.println(pluginSystemLabel + "Started loading plugins");
         var eventsToReturn = new HashMap<Class<?>, List<EventHandle>>();
 
-        try(var pluginFolder = Files.list(Path.of(GeneralFunctions.WORK_DIR + "plugins"))){
+        try(var pluginFolder = Files.list(Path.of(GamePaths.WORK_DIR + "plugins"))){
             var pluginJars = pluginFolder.filter(Files::isRegularFile)
                                          .filter(file -> file.toString().endsWith(".jar"))
                                          .toArray(Path[]::new);

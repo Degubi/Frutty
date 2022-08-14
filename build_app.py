@@ -5,7 +5,7 @@ from stat import S_IWRITE
 
 print('Creating resources folder')
 mkdir('resources')
-copytree('maps', 'resources/maps')
+copytree('worlds', 'resources/worlds')
 copytree('sounds', 'resources/sounds')
 copytree('textures', 'resources/textures')
 
@@ -20,7 +20,7 @@ make_archive(base_name = 'Frutty', format = 'zip', base_dir = 'Frutty')
 remove('Frutty.jar')
 rmtree('resources')
 
-def del_rw(_, name, __):
+def del_rw(_, name: str, __):
     chmod(name, S_IWRITE)
     remove(name)
 

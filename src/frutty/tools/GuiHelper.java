@@ -11,7 +11,7 @@ public final class GuiHelper {
     public static final Font bigFont = new Font("TimesRoman", Font.BOLD, 28);
     public static final Color color_128Black = new Color(0, 0, 0, 128), color_84Black = new Color(0, 0, 0, 84), color_192Black = new Color(0, 0, 0, 192);
     public static final LineBorder menuBorder = new LineBorder(Color.DARK_GRAY, 2);
-    public static final Image frameIcon = Toolkit.getDefaultToolkit().createImage(GeneralFunctions.WORK_DIR + "textures/player/side.png");
+    public static final Image frameIcon = Toolkit.getDefaultToolkit().createImage(GamePaths.TEXTURES_DIR + "player/side.png");
 
     private GuiHelper() {}
 

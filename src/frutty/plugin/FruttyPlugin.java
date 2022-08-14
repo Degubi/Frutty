@@ -6,19 +6,19 @@ import java.lang.annotation.*;
     //Loads of optional parameters for the FruttyPlugin annotation
     {@literal @}FruttyPlugin(name = "test", version = "1.0.0")
     public final class TestMain{
-          public static final MapZoneBase bedrockZone = new TestPluginZone();
+          public static final WorldZone bedrockZone = new TestPluginZone();
 
         {@literal @}FruttyPluginMain(eventClass = TestMain.class)
         public static void pluginMain() {
-            MapZoneBase.registerZone("test:bedrock", bedrockZone);
+            WorldZone.registerZone("test:bedrock", bedrockZone);
         }
 
         {@literal @}FruttyEvent
-        public static void mapLoadEvent(MapInitEvent event) {
-            System.out.println(event.mapHeight);
+        public static void worldLoadEvent(WorldInitEvent event) {
+            System.out.println(event.worldHeight);
 
-            event.mapTextureCache[0] = "stone";
-            event.mapEntities.add(new EntityApple(0, 0));
+            event.worldTextures[0] = "stone";
+            event.worldEntities.add(new EntityApple(0, 0));
         }
     }
 </code> </pre>*/

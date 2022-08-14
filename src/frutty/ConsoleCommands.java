@@ -11,7 +11,7 @@ public final class ConsoleCommands {
 
     public static final Map<String, Consumer<String[]>> commands = Map.of("god", ConsoleCommands::handleGodMode,
                                                                           "set_debug_render_level", ConsoleCommands::handleDebugRenderLevel,
-                                                                          "toggle_debug_map_info", ConsoleCommands::handleDebugMapInfo,
+                                                                          "toggle_debug_world_info", ConsoleCommands::handleDebugWorldInfo,
                                                                           "toggle_debug_entity_collision", ConsoleCommands::handleDebugEntityCollision,
                                                                           "toggle_debug_entity_pathfinding", ConsoleCommands::handleDebugEntityPathfinding,
                                                                           "list", ConsoleCommands::handleCommandListing,
@@ -31,9 +31,9 @@ public final class ConsoleCommands {
         }
     }
 
-    private static void handleDebugMapInfo(@SuppressWarnings("unused") String[] args) {
-        Settings.enableMapDebug = !Settings.enableMapDebug;
-        System.out.println(userConLabel + "Map info debug " + flagToString(Settings.enableMapDebug));
+    private static void handleDebugWorldInfo(@SuppressWarnings("unused") String[] args) {
+        Settings.enableWorldDebug = !Settings.enableWorldDebug;
+        System.out.println(userConLabel + "World info debug " + flagToString(Settings.enableWorldDebug));
     }
 
     private static void handleDebugEntityCollision(@SuppressWarnings("unused") String[] args) {

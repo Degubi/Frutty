@@ -11,7 +11,7 @@ import javax.swing.*;
 
 public final class Material implements Serializable {
     public static final LinkedHashMap<String, Material> materialRegistry = new LinkedHashMap<>(4);
-    public static final BufferedImage missingTexture = loadTexture("./textures/missing.png");
+    public static final BufferedImage missingTexture = loadTexture("missing.png");
 
     private static int indexer = 0;
 
@@ -28,7 +28,7 @@ public final class Material implements Serializable {
 
     Material(String texturePath) {
         name = texturePath;
-        texture = loadTexture("textures/map/" + texturePath + ".png");
+        texture = loadTexture("world/" + texturePath + ".png");
         particleColor = new Color(texture.getRGB(2, 2));
 
         editorTexture = new Lazy<>(() -> new ImageIcon(texture.getScaledInstance(64, 64, Image.SCALE_DEFAULT)));
@@ -41,7 +41,7 @@ public final class Material implements Serializable {
     }
 
     private static BufferedImage loadTexture(String path) {
-        try(var inputStream = Files.newInputStream(Path.of(GeneralFunctions.WORK_DIR + path))){
+        try(var inputStream = Files.newInputStream(Path.of(GamePaths.TEXTURES_DIR + path))){
             return ImageIO.read(inputStream);
         }catch(IOException e){
             e.printStackTrace();
@@ -73,7 +73,7 @@ public final class Material implements Serializable {
     }
 
     public static BufferedImage loadTexture(String prefix, String name) {
-        try(var inputStream = Files.newInputStream(Path.of(GeneralFunctions.WORK_DIR + "textures/" + prefix + '/' + name))){
+        try(var inputStream = Files.newInputStream(Path.of(GamePaths.TEXTURES_DIR + prefix + '/' + name))){
             return ImageIO.read(inputStream);
         }catch(IOException e){
             System.err.println("Can't find texture: " + prefix + '/' + name + " from class: " + StackWalker.getInstance(Option.RETAIN_CLASS_REFERENCE).getCallerClass().getName());

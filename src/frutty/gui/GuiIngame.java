@@ -90,12 +90,12 @@ public final class GuiIngame extends JPanel implements KeyListener {
         for(var k = 0; k < zones.length; ++k) {
             var zone = zones[k];
 
-            if(zone instanceof ITransparentZone) {
-                ((ITransparentZone)zone).drawAfter(xCoords[k], yCoords[k], materials[k], graphics);
+            if(zone instanceof TransparentZone) {
+                ((TransparentZone)zone).drawAfter(xCoords[k], yCoords[k], materials[k], graphics);
             }
         }
 
-        if(Settings.enableMapDebug) {
+        if(Settings.enableWorldDebug) {
             graphics.setTransform(oldTransform);
             graphics.setFont(GuiHelper.thiccFont);
             graphics.setColor(Color.WHITE);
@@ -103,8 +103,8 @@ public final class GuiIngame extends JPanel implements KeyListener {
             //Left
             graphics.drawString("zonecount: " + zones.length, 2, 20);
             graphics.drawString("entities: " + (World.enemies.length + World.players.length + World.entities.size() + World.particles.size()), 2, 40);
-            graphics.drawString("map_width: " + (World.width + 64), 2, 60);
-            graphics.drawString("map_height: " + (World.height + 64), 2, 80);
+            graphics.drawString("world_width: " + (World.width + 64), 2, 60);
+            graphics.drawString("world_height: " + (World.height + 64), 2, 80);
             graphics.drawString("playerpos_x: " + World.players[0].serverPosX, 2, 100);
             graphics.drawString("playerpos_y: " + World.players[0].serverPosY, 2, 120);
         }
@@ -178,7 +178,7 @@ public final class GuiIngame extends JPanel implements KeyListener {
                     World.spawnFallingParticles(3 + Main.rand.nextInt(6), xCoord, yCoord, materials[k]);
                 }
 
-                if(zone instanceof IZoneEntityProvider) {
+                if(zone instanceof ZoneEntityProvider) {
                     var entity = World.zoneEntities[k];
 
                     if(entity.needsUpdates) {

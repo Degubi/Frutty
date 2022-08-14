@@ -23,7 +23,7 @@ public final class EntityApple extends EntityFalling {
 
     @Override
     public void render(Graphics graphics) {
-        graphics.drawImage(MapZoneApple.appleTexture, renderPosX, renderPosY, null);
+        graphics.drawImage(WorldZoneApple.appleTexture, renderPosX, renderPosY, null);
     }
 
     @Override

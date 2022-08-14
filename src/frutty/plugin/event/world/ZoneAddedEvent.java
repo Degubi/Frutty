@@ -6,12 +6,12 @@ import frutty.world.*;
 /**Event is fired when a zone gets added to the world*/
 @FruttyEventMarker
 public final class ZoneAddedEvent {
-    public final MapZoneBase zone;
+    public final WorldZone zone;
     public final int x, y;
     public boolean canceled = false;
 
-    public ZoneAddedEvent(MapZoneBase mapZoneBase, int x, int y) {
-        zone = mapZoneBase;
+    public ZoneAddedEvent(WorldZone zone, int x, int y) {
+        this.zone = zone;
         this.x = x;
         this.y = y;
     }

@@ -3,7 +3,7 @@ from os import remove, walk
 from subprocess import call
 from shutil import rmtree
 
-def zipdir(path, zipFile):
+def zipdir(path: str, zipFile: ZipFile):
     for root, _, files in walk(path):
         for file in files:
             zipFile.write(root + '/' + file)

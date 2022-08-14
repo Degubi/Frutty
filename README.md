@@ -4,7 +4,7 @@
   - Has NPC-s
   - Save files
   - External plugin system
-  - Level editor
+  - World editor
   - Stats
   - Could use some cleanup, but whatever
 
@@ -16,15 +16,12 @@
   - Unzip it somewhere
   - Start 'Frutty.exe'
 
-### Level Editor plugin:
-  - Download LevelEditor.zip from 'Releases'
-  - Open up the game, go to 'Plugins'
+### World Editor plugin:
+  - Download WorldEditor.zip from 'Releases'
+  - Open the game, go to 'Plugins'
   - Press 'Install Plugins from Zip', browse for the plugin zip
   - Restart the game
-  - The 'Level Editor' button should be visible inside the menu
-  - For the map sources download the 'mapsrc' folder from Github
-  - Move it to 'app/mapsrc'
-  - Browse it from the editor
+  - The 'World Editor' button should be visible inside the menu
 
 ![image](https://user-images.githubusercontent.com/13366932/179267340-235e7b63-779e-4269-b6f5-27d7c4bf9d22.png)
 
@@ -41,7 +38,7 @@
   - Run the 'build_app.py' file
 
 ### Plugin development:
-  - The LevelEditorPlugin & LavaZonePlugin plugins are examples
+  - The WorldEditorPlugin & LavaZonePlugin plugins are examples
   - The 'frutty.plugin' directory is a good starting point. It is well documented with lots of examples
   - Every plugin jar needs a MANIFEST.MF file with the Plugin-Class attribute
   - Run the 'build_jar.py' file to build only the game jar so you can add it as a library in the IDE

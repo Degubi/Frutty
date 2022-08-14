@@ -4,17 +4,17 @@ import frutty.*;
 import frutty.entity.*;
 import java.util.*;
 
-/**Event is fired when a map is initialized, can add entities, or change textures*/
+/**Event is fired when a world is initialized, can add entities, or overwrite textures*/
 @FruttyEventMarker
 public final class WorldInitEvent {
-    public final int mapWidth, mapHeight;
-    public final String[] mapTextureCache;
-    public final List<EntityBase> mapEntities;
+    public final int worldWidth, worldHeight;
+    public final String[] worldTextures;
+    public final List<EntityBase> worldEntities;
 
-    public WorldInitEvent(int w, int h, String[] textures, List<EntityBase> ents) {
-        mapWidth = w;
-        mapHeight = h;
-        mapTextureCache = textures;
-        mapEntities = ents;
+    public WorldInitEvent(int width, int height, String[] textures, List<EntityBase> entities) {
+        this.worldWidth = width;
+        this.worldHeight = height;
+        this.worldTextures = textures;
+        this.worldEntities = entities;
     }
 }
