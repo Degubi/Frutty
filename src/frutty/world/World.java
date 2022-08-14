@@ -109,8 +109,8 @@ public final class World {
                     materials[zoneIndex] = Material.NORMAL;
                 }
 
-                if(zones[zoneIndex] instanceof ZoneEntityProvider) {
-                    zoneEntities[zoneIndex] = ((ZoneEntityProvider) zones[zoneIndex]).getZoneEntity();
+                if(zones[zoneIndex] instanceof ZoneEntityProvider providerZone) {
+                    zoneEntities[zoneIndex] = providerZone.getZoneEntity();
                 }
 
                 ++zoneIndex;

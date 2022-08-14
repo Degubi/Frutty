@@ -48,8 +48,8 @@ public final class WorldData {
                         zone.onZoneAddedInternal(isCoop, zoneCount, x, y);
                     }
 
-                    if(zone instanceof InternalZone) {
-                        zone = ((InternalZone) zone).getReplacementZone();
+                    if(zone instanceof InternalZone internalZone) {
+                        zone = internalZone.getReplacementZone();
                     }
 
                     if(zone instanceof WorldZoneTexturable) {
@@ -59,8 +59,8 @@ public final class WorldData {
                     xCoords[zoneIndex] = x;
                     yCoords[zoneIndex] = y;
 
-                    if(zone instanceof ZoneEntityProvider) {
-                        zoneEntities[zoneIndex] = ((ZoneEntityProvider) zone).getZoneEntity();
+                    if(zone instanceof ZoneEntityProvider entityProviderZone) {
+                        zoneEntities[zoneIndex] = entityProviderZone.getZoneEntity();
                     }
                     zones[zoneIndex++] = zone;
                 }

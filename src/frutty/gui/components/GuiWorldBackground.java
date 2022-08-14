@@ -40,8 +40,8 @@ public final class GuiWorldBackground extends JPanel {
                 zone.renderDebug(xCoords[k], yCoords[k], materials[k], graphics);
             }
 
-            if(zone instanceof TransparentZone) {
-                ((TransparentZone) zone).drawAfter(xCoords[k], yCoords[k], materials[k], graphics);
+            if(zone instanceof TransparentZone transparentZone) {
+                transparentZone.drawAfter(xCoords[k], yCoords[k], materials[k], graphics);
             }
         }
     }

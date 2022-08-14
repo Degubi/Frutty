@@ -74,8 +74,8 @@ public abstract class EntityBase implements Serializable {
                 if(godEnabled || player.isInvicible()) {
                     onKilled(player);
                 }else{
-                    if(this instanceof EntityFalling) {
-                        ((EntityFalling)this).onFallStopped();
+                    if(this instanceof EntityFalling fallingEntity) {
+                        fallingEntity.onFallStopped();
                     }
                     player.onKilled(this);
                 }

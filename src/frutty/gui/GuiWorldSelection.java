@@ -7,6 +7,7 @@ import frutty.gui.components.*;
 import frutty.tools.*;
 import frutty.world.*;
 import java.awt.*;
+import java.awt.image.*;
 import java.io.*;
 import java.nio.file.*;
 import javax.swing.*;
@@ -50,24 +51,49 @@ public final class GuiWorldSelection {
         GuiMenu.switchMenuGui(panel);
     }
 
-    private static void handleWorldListChange(ListSelectionEvent event, JList<String> worldList, JLabel worldPreviewImage) {
+    private static void handleWorldListChange(ListSelectionEvent event, JList<String> worldList, JLabel worldPreviewImageLabel) {
         if(!event.getValueIsAdjusting()){
-            var previewImagePath = GamePaths.TEXTURES_DIR + "gui/" + worldList.getSelectedValue() + ".jpg";
+            var selectedWorldName = worldList.getSelectedValue();
 
-            if(Files.exists(Path.of(previewImagePath))) {
-                var world = new WorldData(worldList.getSelectedValue(), false, false);
-                var image = Material.loadTexture("gui", worldList.getSelectedValue() + ".jpg");
-                var graph = image.createGraphics();
+            if(selectedWorldName != null) {
+                if(!selectedWorldName.equals(GENERATE_WORLD_LABEL)) {
+                    var world = new WorldData(worldList.getSelectedValue(), false, false);
+                    var rawPreviewImage = new BufferedImage(world.width, world.height, BufferedImage.TYPE_INT_RGB);
+                    var rawPreviewGraphics = rawPreviewImage.createGraphics();
 
-                graph.setColor(Color.BLACK);
-                graph.fillRect(380, 420, 100, 60);
-                graph.setColor(Color.WHITE);
-                graph.setFont(GuiHelper.bigFont);
-                graph.drawString((world.width / 64) + "x" + (world.height / 64), 390, 460);
-                graph.dispose();
-                worldPreviewImage.setIcon(new ImageIcon(image));
-            }else{
-                worldPreviewImage.setIcon(new ImageIcon(GamePaths.TEXTURES_DIR + "gui/dev.jpg"));
+                    var zones = world.zones;
+                    var xCoords = world.xCoords;
+                    var yCoords = world.yCoords;
+                    var materials = world.materials;
+
+                    for(var k = 0; k < zones.length; ++k) zones[k].renderInternal(xCoords[k], yCoords[k], materials[k], rawPreviewGraphics);
+
+                    for(var k = 0; k < zones.length; ++k) {
+                        var zone = zones[k];
+
+                        if(zone instanceof TransparentZone transparentZone) {
+                            transparentZone.drawAfter(xCoords[k], yCoords[k], materials[k], rawPreviewGraphics);
+                        }
+                    }
+
+                    rawPreviewGraphics.dispose();
+
+                    var widthHeightMin = Math.min(world.width, world.height);
+                    var scaledPreviewImage = rawPreviewImage.getSubimage(0, 0, widthHeightMin, widthHeightMin).getScaledInstance(480, 480, Image.SCALE_SMOOTH);
+                    var worldPreviewImage = new BufferedImage(480, 480, BufferedImage.TYPE_INT_RGB);
+                    var worldPreviewGraphics = worldPreviewImage.getGraphics();
+
+                    worldPreviewGraphics.drawImage(scaledPreviewImage, 0, 0, null);
+                    worldPreviewGraphics.setColor(Color.BLACK);
+                    worldPreviewGraphics.fillRect(380, 420, 100, 60);
+                    worldPreviewGraphics.setColor(Color.WHITE);
+                    worldPreviewGraphics.setFont(GuiHelper.bigFont);
+                    worldPreviewGraphics.drawString((world.width / 64) + "x" + (world.height / 64), 390, 460);
+                    worldPreviewGraphics.dispose();
+                    worldPreviewImageLabel.setIcon(new ImageIcon(worldPreviewImage));
+                }else{
+                    worldPreviewImageLabel.setIcon(new ImageIcon(GamePaths.TEXTURES_DIR + "gui/devWorld.jpg"));
+                }
             }
         }
     }

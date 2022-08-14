@@ -90,8 +90,8 @@ public final class GuiIngame extends JPanel implements KeyListener {
         for(var k = 0; k < zones.length; ++k) {
             var zone = zones[k];
 
-            if(zone instanceof TransparentZone) {
-                ((TransparentZone)zone).drawAfter(xCoords[k], yCoords[k], materials[k], graphics);
+            if(zone instanceof TransparentZone transparentZone) {
+                transparentZone.drawAfter(xCoords[k], yCoords[k], materials[k], graphics);
             }
         }
 

@@ -126,7 +126,7 @@ public final class PropertyFile {
         } catch (IOException e) {}
     }
 
-    protected static abstract class Prop{
+    protected static abstract class Prop {
         public final String key;
 
         public Prop(String key) {
@@ -134,7 +134,7 @@ public final class PropertyFile {
         }
     }
 
-    protected static final class PrimitiveProperty extends Prop{
+    protected static final class PrimitiveProperty extends Prop {
         public int value;
 
         public PrimitiveProperty(String key, int val) {
@@ -148,7 +148,7 @@ public final class PropertyFile {
         }
     }
 
-    protected static final class GenericProperty extends Prop{
+    protected static final class GenericProperty extends Prop {
         public String value;
 
         public GenericProperty(String key, String val) {
