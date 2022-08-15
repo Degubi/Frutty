@@ -134,19 +134,22 @@ public final class GuiWorldSelection {
         var backgroundPanel = new GuiWorldBackground("dev_settings");
         backgroundPanel.setLayout(null);
 
-        var sizeField = new SettingButtonField("10x10", "World Size", 50, 20);
+        var sizeField = new SettingFieldInput("10x10", "World Size", 50, 20, 150);
+        var seedField = new SettingFieldInput(String.valueOf(Main.rand.nextLong()), "World Seed", 50, 100, 400);
+        var isCoopField = new SettingOptionInput(false, "Coop", 50, 200);
         backgroundPanel.add(sizeField);
-        backgroundPanel.add(new SettingButton(false, "Enable Water", 50, 100));
+        backgroundPanel.add(seedField);
+        backgroundPanel.add(isCoopField);
         backgroundPanel.add(newButton("Menu", 725, 475, e -> GuiMenu.switchMenuGui(GuiMenu.createMenuPanel())));
-        backgroundPanel.add(newButton("Play", 725, 550, e -> handleGeneratePlayButtonPress(sizeField.dataField)));
+        backgroundPanel.add(newButton("Play", 725, 550, e -> handleGeneratePlayButtonPress(sizeField.dataField.getText(), seedField.dataField.getText(), isCoopField.optionIndex == 1)));
 
         return backgroundPanel;
     }
 
-    private static void handleGeneratePlayButtonPress(JTextField sizeField) {
-        var worldSize = sizeField.getText().split("x");
+    private static void handleGeneratePlayButtonPress(String worldSizeText, String seedText, boolean isCoop) {
+        var worldSize = worldSizeText.split("x");
 
-        World.generate(Integer.parseInt(worldSize[0]), Integer.parseInt(worldSize[1]), false);
+        World.generate(Integer.parseInt(worldSize[0]), Integer.parseInt(worldSize[1]), isCoop, Long.parseLong(seedText));
         GuiIngame.showIngame();
         GuiMenu.closeMainFrame();
     }

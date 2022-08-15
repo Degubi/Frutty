@@ -120,12 +120,12 @@ public abstract class EntityBase implements Serializable {
         }
 
         public static EnumFacing randomFacing() {
-            switch(Main.rand.nextInt(4)) {
-                case 0: return UP;
-                case 1: return DOWN;
-                case 2: return LEFT;
-                default: return RIGHT;
-            }
+            return switch(Main.rand.nextInt(4)) {
+                case 0  -> UP;
+                case 1  -> DOWN;
+                case 2  -> LEFT;
+                default -> RIGHT;
+            };
         }
     }
 }

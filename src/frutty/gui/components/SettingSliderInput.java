@@ -6,7 +6,7 @@ import java.awt.event.*;
 import java.awt.image.*;
 import javax.swing.*;
 
-public final class SettingButtonSlider extends JComponent implements ActionListener {
+public final class SettingSliderInput extends JComponent implements ActionListener {
     private static final ImageIcon RED_ICON = getColoredImage(Color.RED);
     private static final ImageIcon TRANSPARENT_ICON = getColoredImage(GuiHelper.color_128Black);
 
@@ -14,7 +14,7 @@ public final class SettingButtonSlider extends JComponent implements ActionListe
     private final String titleText;
     private final JButton[] butts = new JButton[10];
 
-    public SettingButtonSlider(int index, String displayText, int x, int y) {
+    public SettingSliderInput(int index, String displayText, int x, int y) {
         setBounds(x, y, 700, 64);
         titleText = displayText;
         counter = index;
@@ -28,8 +28,8 @@ public final class SettingButtonSlider extends JComponent implements ActionListe
             add(kek);
         }
 
-        add(SettingButton.newArrowButton(false, 340, 8, this));
-        add(SettingButton.newArrowButton(true, 620, 8, this));
+        add(SettingOptionInput.newArrowButton(false, 340, 8, this));
+        add(SettingOptionInput.newArrowButton(true, 620, 8, this));
     }
 
     private static ImageIcon getColoredImage(Color color) {

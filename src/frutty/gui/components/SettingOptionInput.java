@@ -6,8 +6,8 @@ import java.awt.event.*;
 import java.awt.image.*;
 import javax.swing.*;
 
-public final class SettingButton extends JComponent implements ActionListener {
-    private static final String[] ON_OFF = {"Off", "On"};
+public final class SettingOptionInput extends JComponent implements ActionListener {
+    private static final String[] ON_OFF = { "Off", "On" };
     private static final ImageIcon leftIcon = getIcon(true);
     private static final ImageIcon rightIcon = getIcon(false);
 
@@ -15,7 +15,7 @@ public final class SettingButton extends JComponent implements ActionListener {
     private final String[] options;
     public int optionIndex;
 
-    public SettingButton(int selectedIndex, String displayText, int x, int y, String... options) {
+    public SettingOptionInput(int selectedIndex, String displayText, int x, int y, String... options) {
         setBounds(x, y, 700, 64);
         titleText = displayText;
         this.options = options;
@@ -24,11 +24,11 @@ public final class SettingButton extends JComponent implements ActionListener {
         add(newArrowButton(true, 620, 8, this));
     }
 
-    public SettingButton(boolean isOn, String displayText, int x, int y) {
+    public SettingOptionInput(boolean isOn, String displayText, int x, int y) {
         this(isOn ? 1 : 0, displayText, x, y, ON_OFF);
     }
 
-    public SettingButton(String data, String displayText, int x, int y, String... options) {
+    public SettingOptionInput(String data, String displayText, int x, int y, String... options) {
         this(indexOf(data, options), displayText, x, y, options);
     }
 

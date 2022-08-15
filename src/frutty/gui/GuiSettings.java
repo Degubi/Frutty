@@ -66,22 +66,22 @@ public final class GuiSettings {
         throw new IllegalArgumentException("Should not get there...");
     }
 
-    private static final SettingButton difficultyButton = new SettingButton(Settings.difficulty, "Difficulty", 100, 20, "Easy", "Normal", "Hard");
-    private static final SettingButtonField upKeyButtonField = new SettingButtonField(Settings.upKey, "Second Player Upwards Key", 100, 100);
-    private static final SettingButtonField downKeyButtonField = new SettingButtonField(Settings.downKey, "Second Player Downwards Key", 100, 180);
-    private static final SettingButtonField leftKeyButtonField = new SettingButtonField(Settings.leftKey, "Second Player Left Key", 100, 260);
-    private static final SettingButtonField rightKeyButtonField = new SettingButtonField(Settings.rightKey, "Second Player Right Key", 100, 340);
+    private static final SettingOptionInput difficultyButton = new SettingOptionInput(Settings.difficulty, "Difficulty", 100, 20, "Easy", "Normal", "Hard");
+    private static final SettingFieldInput upKeyButtonField = new SettingFieldInput(Settings.upKey, "Second Player Upwards Key", 100, 100);
+    private static final SettingFieldInput downKeyButtonField = new SettingFieldInput(Settings.downKey, "Second Player Downwards Key", 100, 180);
+    private static final SettingFieldInput leftKeyButtonField = new SettingFieldInput(Settings.leftKey, "Second Player Left Key", 100, 260);
+    private static final SettingFieldInput rightKeyButtonField = new SettingFieldInput(Settings.rightKey, "Second Player Right Key", 100, 340);
 
-    private static final SettingButton graphicsLevelButton = new SettingButton(Settings.graphicsLevel, "Graphics Level", 100, 20, "Low", "Medium", "High");
-    private static final int[] tenToHundred = {10, 20, 30, 40, 50, 60, 70, 80, 90, 100};
-    private static final SettingButtonSlider fpsSlider = new SettingButtonSlider(indexOfInt(Settings.fps, tenToHundred) + 1, "FPS", 100, 100);
+    private static final SettingOptionInput graphicsLevelButton = new SettingOptionInput(Settings.graphicsLevel, "Graphics Level", 100, 20, "Low", "Medium", "High");
+    private static final int[] tenToHundred = { 10, 20, 30, 40, 50, 60, 70, 80, 90, 100 };
+    private static final SettingSliderInput fpsSlider = new SettingSliderInput(indexOfInt(Settings.fps, tenToHundred) + 1, "FPS", 100, 100);
     private static final String[] screenshotFormats = { "JPG", "PNG" };
-    private static final SettingButton screenshotFormatButton = new SettingButton(Settings.screenshotFormat, "Screenshot Format", 100, 180, screenshotFormats);
+    private static final SettingOptionInput screenshotFormatButton = new SettingOptionInput(Settings.screenshotFormat, "Screenshot Format", 100, 180, screenshotFormats);
 
-    private static final SettingButton collisionBoxButton = new SettingButton(Settings.enableCollisionDebug, "Draw Collision Boxes", 100, 260);
+    private static final SettingOptionInput collisionBoxButton = new SettingOptionInput(Settings.enableCollisionDebug, "Draw Collision Boxes", 100, 260);
 
-    private static final SettingButton enableSoundButton = new SettingButton(Settings.enableSound, "Enable Sound", 100, 20);
-    private static final SettingButtonSlider volumeSlider = new SettingButtonSlider(Settings.volume, "Volume", 100, 100);
+    private static final SettingOptionInput enableSoundButton = new SettingOptionInput(Settings.enableSound, "Enable Sound", 100, 20);
+    private static final SettingSliderInput volumeSlider = new SettingSliderInput(Settings.volume, "Volume", 100, 100);
 
     //Separate class to avoid loading settings background world and loads of Button objects
     public static final class Settings{

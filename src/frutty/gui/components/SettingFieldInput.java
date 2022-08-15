@@ -5,26 +5,27 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.text.*;
 
-public final class SettingButtonField extends JComponent {
+public final class SettingFieldInput extends JComponent {
     public final JTextField dataField;
     private final String titleText;
 
-    public SettingButtonField(String selectedData, String displayText, int x, int y) {
+    public SettingFieldInput(String selectedData, String displayText, int x, int y, int width) {
         setBounds(x, y, 700, 64);
         titleText = displayText;
 
         dataField = new JTextField(selectedData);
-        dataField.setBounds(550, 8, 100, 50);
+        dataField.setBounds(650 - width, 8, width, 50);
         dataField.setOpaque(false);
         dataField.setForeground(Color.WHITE);
         dataField.setFont(GuiHelper.bigFont);
         dataField.setHorizontalAlignment(SwingConstants.CENTER);
+        dataField.setCaretColor(Color.WHITE);
         add(dataField);
     }
 
     // Constructor used in keybind selection setting
-    public SettingButtonField(int characterData, String displayText, int x, int y) {
-        this(Character.toString((char)characterData), displayText, x, y);
+    public SettingFieldInput(int characterData, String displayText, int x, int y) {
+        this(Character.toString((char)characterData), displayText, x, y, 100);
 
         ((AbstractDocument) dataField.getDocument()).setDocumentFilter(TextFilter.filter);
     }

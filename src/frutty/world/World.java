@@ -65,7 +65,7 @@ public final class World {
         if(Main.worldInitEvents.length > 0) Main.invokeEvent(new WorldInitEvent(worldData.width / 64, worldData.height / 64, entities), Main.worldInitEvents);
     }
 
-    public static void generate(int width, int height, boolean isCoop) {
+    public static void generate(int width, int height, boolean isCoop, long worldSeed) {
         var bigWidth = width * 64;
         var bigHeight = height * 64;
         var zoneCount = width * height;
@@ -83,30 +83,25 @@ public final class World {
         World.players = new EntityPlayer[isCoop ? 2 : 1];
         World.skyTextureName = "null";
 
-        var rand = Main.rand;
         var zoneIndex = 0;
+        var resolution = 0.2;
+        var rand = new Random(worldSeed);
+        var permutation = PerlinNoise.generatePermutation(rand);
 
-        for(var y = 0; y < bigHeight; y += 64) {
-            for(var x = 0; x < bigWidth; x += 64) {
-                var rng = rand.nextInt(10);
+        for(var y = 0; y < height; ++y) {
+            for(var x = 0; x < width; ++x) {
+                var noise = PerlinNoise.generateNoise(x * resolution, y * resolution, permutation);
 
-                xCoords[zoneIndex] = x;
-                yCoords[zoneIndex] = y;
+                xCoords[zoneIndex] = x * 64;
+                yCoords[zoneIndex] = y * 64;
 
-                if(rng < 6) {
-                    zones[zoneIndex] = WorldZone.normalZone;
-                    materials[zoneIndex] = Material.NORMAL;
-                }else if(rng >= 6 && rng < 9) {
+                if(noise < 0.45) {
                     zones[zoneIndex] = WorldZone.emptyZone;
-                }else if(rng == 9) {
-                    if(rand.nextBoolean()) {
-                        zones[zoneIndex] = WorldZone.appleZone;
-                    }else {
-                        zones[zoneIndex] = WorldZone.cherryZone;
-                        ++pickCount;
-                    }
+                }else{
+                    var specialZoneRng = rand.nextInt(25);
 
-                    materials[zoneIndex] = Material.NORMAL;
+                    zones[zoneIndex] = specialZoneRng == 7 ? WorldZone.appleZone : specialZoneRng == 9 ? WorldZone.cherryZone : WorldZone.normalZone;
+                    materials[zoneIndex] = noise > 0.6 ? Material.STONE : Material.DIRT;
                 }
 
                 if(zones[zoneIndex] instanceof ZoneEntityProvider providerZone) {
@@ -116,6 +111,15 @@ public final class World {
                 ++zoneIndex;
             }
         }
+
+        var expectedPickCount = 0;
+        for(var zone : zones) {
+            if(zone == WorldZone.cherryZone) {
+                ++expectedPickCount;
+            }
+        }
+
+        pickCount = expectedPickCount;
 
         var spawnerZoneIndex = findEmptyZone(rand, zoneCount);
         zones[spawnerZoneIndex] = WorldZone.spawnerZone;
