@@ -3,7 +3,6 @@ package frutty.tools;
 import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
-import java.lang.StackWalker.*;
 import java.nio.file.*;
 import java.util.*;
 import javax.imageio.*;
@@ -28,7 +27,7 @@ public final class Material implements Serializable {
 
     Material(String texturePath) {
         name = texturePath;
-        texture = loadTexture("world/" + texturePath + ".png");
+        texture = loadTexture("world/material/" + texturePath + ".png");
         particleColor = new Color(texture.getRGB(2, 2));
 
         editorTexture = new Lazy<>(() -> new ImageIcon(texture.getScaledInstance(64, 64, Image.SCALE_DEFAULT)));
@@ -38,15 +37,6 @@ public final class Material implements Serializable {
 
     public static String[] getMaterialNames() {
         return materialRegistry.keySet().toArray(String[]::new);
-    }
-
-    private static BufferedImage loadTexture(String path) {
-        try(var inputStream = Files.newInputStream(Path.of(GamePaths.TEXTURES_DIR + path))){
-            return ImageIO.read(inputStream);
-        }catch(IOException e){
-            e.printStackTrace();
-            return Material.missingTexture;
-        }
     }
 
     @SuppressWarnings("boxing")
@@ -65,12 +55,13 @@ public final class Material implements Serializable {
         return name;
     }
 
-    public static BufferedImage loadTexture(String prefix, String name) {
-        try(var inputStream = Files.newInputStream(Path.of(GamePaths.TEXTURES_DIR + prefix + '/' + name))){
+    public static BufferedImage loadTexture(String path) {
+        try(var inputStream = Files.newInputStream(Path.of(GamePaths.TEXTURES_DIR + path))){
             return ImageIO.read(inputStream);
         }catch(IOException e){
-            System.err.println("Can't find texture: " + prefix + '/' + name + " from class: " + StackWalker.getInstance(Option.RETAIN_CLASS_REFERENCE).getCallerClass().getName());
-            return null;
+            System.err.println("Unable to load texture: " + path);
+            e.printStackTrace();
+            return Material.missingTexture;
         }
     }
 
@@ -78,7 +69,7 @@ public final class Material implements Serializable {
         var textures = new BufferedImage[names.length];
 
         for(var x = 0; x < names.length; ++x) {
-            textures[x] = loadTexture(prefix, names[x]);
+            textures[x] = loadTexture(prefix + '/' + names[x]);
         }
 
         return textures;

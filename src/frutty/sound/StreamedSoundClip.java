@@ -1,6 +1,5 @@
 package frutty.sound;
 
-import frutty.gui.GuiSettings.*;
 import frutty.tools.*;
 import java.io.*;
 import javax.sound.sampled.*;

@@ -3,7 +3,6 @@ package frutty.entity.living;
 import frutty.entity.*;
 import frutty.entity.effects.*;
 import frutty.gui.*;
-import frutty.gui.GuiSettings.*;
 import frutty.tools.*;
 import frutty.world.*;
 import java.awt.*;

@@ -43,7 +43,7 @@ public final class SettingFieldInput extends JComponent {
         graphics.drawString(titleText, 10, 40);
     }
 
-    protected static final class TextFilter extends DocumentFilter{
+    protected static final class TextFilter extends DocumentFilter {
         public static final TextFilter filter = new TextFilter();
 
         @Override

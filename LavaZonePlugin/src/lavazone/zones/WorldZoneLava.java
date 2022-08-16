@@ -7,7 +7,7 @@ import frutty.world.*;
 public final class WorldZoneLava extends WorldZoneFluid {
 
     public WorldZoneLava() {
-        super("lava:lavaZone", Material.loadTexture("world/special", "lava.png"));
+        super("lava:lavaZone", Material.loadTexture("world/special/lava.png"));
     }
 
     @Override

@@ -56,44 +56,42 @@ public final class GuiWorldSelection {
             var selectedWorldName = worldList.getSelectedValue();
 
             if(selectedWorldName != null) {
-                if(!selectedWorldName.equals(GENERATE_WORLD_LABEL)) {
-                    var world = new WorldData(worldList.getSelectedValue(), false, false);
-                    var rawPreviewImage = new BufferedImage(world.width, world.height, BufferedImage.TYPE_INT_RGB);
-                    var rawPreviewGraphics = rawPreviewImage.createGraphics();
+                var worldData = selectedWorldName.equals(GENERATE_WORLD_LABEL) ? WorldData.generate(12, 12, false, Main.rand.nextLong(), 0.2, false)
+                                                                               : WorldData.load(worldList.getSelectedValue(), false, false);
 
-                    var zones = world.zones;
-                    var xCoords = world.xCoords;
-                    var yCoords = world.yCoords;
-                    var materials = world.materials;
+                var rawPreviewImage = new BufferedImage(worldData.width, worldData.height, BufferedImage.TYPE_INT_RGB);
+                var rawPreviewGraphics = rawPreviewImage.createGraphics();
 
-                    for(var k = 0; k < zones.length; ++k) zones[k].renderInternal(xCoords[k], yCoords[k], materials[k], rawPreviewGraphics);
+                var zones = worldData.zones;
+                var xCoords = worldData.xCoords;
+                var yCoords = worldData.yCoords;
+                var materials = worldData.materials;
 
-                    for(var k = 0; k < zones.length; ++k) {
-                        var zone = zones[k];
+                for(var k = 0; k < zones.length; ++k) zones[k].renderInternal(xCoords[k], yCoords[k], materials[k], rawPreviewGraphics);
 
-                        if(zone instanceof TransparentZone transparentZone) {
-                            transparentZone.drawAfter(xCoords[k], yCoords[k], materials[k], rawPreviewGraphics);
-                        }
+                for(var k = 0; k < zones.length; ++k) {
+                    var zone = zones[k];
+
+                    if(zone instanceof TransparentZone transparentZone) {
+                        transparentZone.drawAfter(xCoords[k], yCoords[k], materials[k], rawPreviewGraphics);
                     }
-
-                    rawPreviewGraphics.dispose();
-
-                    var widthHeightMin = Math.min(world.width, world.height);
-                    var scaledPreviewImage = rawPreviewImage.getSubimage(0, 0, widthHeightMin, widthHeightMin).getScaledInstance(480, 480, Image.SCALE_SMOOTH);
-                    var worldPreviewImage = new BufferedImage(480, 480, BufferedImage.TYPE_INT_RGB);
-                    var worldPreviewGraphics = worldPreviewImage.getGraphics();
-
-                    worldPreviewGraphics.drawImage(scaledPreviewImage, 0, 0, null);
-                    worldPreviewGraphics.setColor(Color.BLACK);
-                    worldPreviewGraphics.fillRect(380, 420, 100, 60);
-                    worldPreviewGraphics.setColor(Color.WHITE);
-                    worldPreviewGraphics.setFont(GuiHelper.bigFont);
-                    worldPreviewGraphics.drawString((world.width / 64) + "x" + (world.height / 64), 390, 460);
-                    worldPreviewGraphics.dispose();
-                    worldPreviewImageLabel.setIcon(new ImageIcon(worldPreviewImage));
-                }else{
-                    worldPreviewImageLabel.setIcon(new ImageIcon(GamePaths.TEXTURES_DIR + "gui/devWorld.jpg"));
                 }
+
+                rawPreviewGraphics.dispose();
+
+                var widthHeightMin = Math.min(worldData.width, worldData.height);
+                var scaledPreviewImage = rawPreviewImage.getSubimage(0, 0, widthHeightMin, widthHeightMin).getScaledInstance(480, 480, Image.SCALE_SMOOTH);
+                var worldPreviewImage = new BufferedImage(480, 480, BufferedImage.TYPE_INT_RGB);
+                var worldPreviewGraphics = worldPreviewImage.getGraphics();
+
+                worldPreviewGraphics.drawImage(scaledPreviewImage, 0, 0, null);
+                worldPreviewGraphics.setColor(Color.BLACK);
+                worldPreviewGraphics.fillRect(380, 420, 100, 60);
+                worldPreviewGraphics.setColor(Color.WHITE);
+                worldPreviewGraphics.setFont(GuiHelper.bigFont);
+                worldPreviewGraphics.drawString((worldData.width / 64) + "x" + (worldData.height / 64), 390, 460);
+                worldPreviewGraphics.dispose();
+                worldPreviewImageLabel.setIcon(new ImageIcon(worldPreviewImage));
             }
         }
     }
@@ -130,27 +128,53 @@ public final class GuiWorldSelection {
         }
     }
 
-    private static JPanel createGenerateWorldPanel() {
-        var backgroundPanel = new GuiWorldBackground("dev_settings");
-        backgroundPanel.setLayout(null);
+    private static JTabbedPane createGenerateWorldPanel() {
+        var backgroundWorldData = WorldData.load("dev_settings", false, false);
 
-        var sizeField = new SettingFieldInput("10x10", "World Size", 50, 20, 150);
-        var seedField = new SettingFieldInput(String.valueOf(Main.rand.nextLong()), "World Seed", 50, 100, 400);
-        var isCoopField = new SettingOptionInput(false, "Coop", 50, 200);
-        backgroundPanel.add(sizeField);
-        backgroundPanel.add(seedField);
-        backgroundPanel.add(isCoopField);
-        backgroundPanel.add(newButton("Menu", 725, 475, e -> GuiMenu.switchMenuGui(GuiMenu.createMenuPanel())));
-        backgroundPanel.add(newButton("Play", 725, 550, e -> handleGeneratePlayButtonPress(sizeField.dataField.getText(), seedField.dataField.getText(), isCoopField.optionIndex == 1)));
+        var worldSizeField = new SettingFieldInput("10x10", "World Size", 50, 20, 150);
+        var worldSeedField = new SettingFieldInput(String.valueOf(Main.rand.nextLong()), "World Seed", 50, 100, 400);
+        var isCoopField = new SettingOptionInput(false, "Coop Mode", 50, 20);
+        var fields = new WorldgenFields(worldSizeField, worldSeedField, isCoopField);
 
-        return backgroundPanel;
+        var settingsTabs = new JTabbedPane();
+        settingsTabs.addTab("World", createWorldgenSettingsPanel(backgroundWorldData, fields, worldSizeField, worldSeedField));
+        settingsTabs.addTab("Gameplay", createWorldgenSettingsPanel(backgroundWorldData, fields, isCoopField));
+
+        var insets = UIManager.getInsets("TabbedPane.contentBorderInsets");
+        insets.left = -1;
+        insets.right = -1;
+        insets.bottom = -1;
+        insets.top = -1;
+        UIManager.put("TabbedPane.contentBorderInsets", insets);
+
+        return settingsTabs;
     }
 
-    private static void handleGeneratePlayButtonPress(String worldSizeText, String seedText, boolean isCoop) {
-        var worldSize = worldSizeText.split("x");
+    private static GuiWorldBackground createWorldgenSettingsPanel(WorldData settingsWorldData, WorldgenFields fields, JComponent...components) {
+        var panel = new GuiWorldBackground(settingsWorldData);
+        panel.setLayout(null);
 
-        World.generate(Integer.parseInt(worldSize[0]), Integer.parseInt(worldSize[1]), isCoop, Long.parseLong(seedText));
+        for(var comp : components) panel.add(comp);
+
+        panel.add(newButton("Menu", 725, 475, e -> GuiMenu.switchMenuGui(GuiMenu.createMenuPanel())));
+        panel.add(newButton("Play", 725, 550, e -> handleGeneratePlayButtonPress(fields)));
+
+        return panel;
+    }
+
+    private static void handleGeneratePlayButtonPress(WorldgenFields fields) {
+        var worldSize = fields.worldSizeField.dataField.getText().split("x");
+
+        World.generate(
+            Integer.parseInt(worldSize[0]), Integer.parseInt(worldSize[1]),
+            fields.isCoopField.optionIndex == 1,
+            Long.parseLong(fields.worldSeedField.dataField.getText()),
+            0.2
+        );
+
         GuiIngame.showIngame();
         GuiMenu.closeMainFrame();
     }
+
+    private record WorldgenFields(SettingFieldInput worldSizeField, SettingFieldInput worldSeedField, SettingOptionInput isCoopField) {}
 }

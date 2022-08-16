@@ -9,13 +9,13 @@ import javax.swing.*;
 public final class GuiSettings {
     private GuiSettings() {}
 
-    private static GuiWorldBackground createPanel(WorldData settingsWorldData, JComponent...components) {
+    private static GuiWorldBackground createSettingPanel(WorldData settingsWorldData, JComponent...components) {
         var panel = new GuiWorldBackground(settingsWorldData);
         panel.setLayout(null);
 
         for(var comp : components) panel.add(comp);
 
-        panel.add(GuiHelper.newButton("Save", 371, 525, e -> saveSettings()));
+        panel.add(GuiHelper.newButton("Save", 371, 528, e -> saveSettings()));
 
         return panel;
     }
@@ -41,20 +41,21 @@ public final class GuiSettings {
     public static void showGuiSettings() {
         System.out.println(Main.guiSystemLabel + "Switching to settings frame");
 
-        var settingsWorldData = new WorldData("dev_settings", false, false);
+        var settingsWorldData = WorldData.load("dev_settings", false, false);
 
-        var tabbed = new JTabbedPane();
-        tabbed.addTab("Gameplay", createPanel(settingsWorldData, difficultyButton, upKeyButtonField, downKeyButtonField, leftKeyButtonField, rightKeyButtonField));
-        tabbed.addTab("Graphics", createPanel(settingsWorldData, graphicsLevelButton, fpsSlider, screenshotFormatButton));
-        tabbed.addTab("Sound", createPanel(settingsWorldData, enableSoundButton, volumeSlider));
+        var settingsTabs = new JTabbedPane();
+        settingsTabs.addTab("Gameplay", createSettingPanel(settingsWorldData, difficultyButton, upKeyButtonField, downKeyButtonField, leftKeyButtonField, rightKeyButtonField));
+        settingsTabs.addTab("Graphics", createSettingPanel(settingsWorldData, graphicsLevelButton, fpsSlider, screenshotFormatButton));
+        settingsTabs.addTab("Sound", createSettingPanel(settingsWorldData, enableSoundButton, volumeSlider));
 
         var insets = UIManager.getInsets("TabbedPane.contentBorderInsets");
         insets.left = -1;
         insets.right = -1;
         insets.bottom = -1;
+        insets.top = -1;
         UIManager.put("TabbedPane.contentBorderInsets", insets);
 
-        GuiMenu.switchMenuGui(tabbed);
+        GuiMenu.switchMenuGui(settingsTabs);
     }
 
     private static int indexOfInt(int value, int[] values) {
@@ -82,25 +83,4 @@ public final class GuiSettings {
 
     private static final SettingOptionInput enableSoundButton = new SettingOptionInput(Settings.enableSound, "Enable Sound", 100, 20);
     private static final SettingSliderInput volumeSlider = new SettingSliderInput(Settings.volume, "Volume", 100, 100);
-
-    //Separate class to avoid loading settings background world and loads of Button objects
-    public static final class Settings{
-        static final PropertyFile settingProperties = new PropertyFile("settings.prop", 14);
-
-        public static int fps = settingProperties.getInt("fps", 50);
-        public static int difficulty = settingProperties.getInt("difficulty", 0);
-        public static int graphicsLevel = settingProperties.getInt("graphics", 2);
-        public static int renderDebugLevel = 0;
-        public static int upKey = settingProperties.getInt("upKey", 'W');
-        public static int downKey = settingProperties.getInt("downKey", 'S');
-        public static int leftKey = settingProperties.getInt("leftKey", 'A');
-        public static int rightKey = settingProperties.getInt("rightKey", 'D');
-        public static boolean godMode = false;
-        public static boolean enableCollisionDebug = false;
-        public static boolean enablePathfindingDebug = false;
-        public static boolean enableWorldDebug = false;
-        public static boolean enableSound = settingProperties.getBoolean("enableSound", true);
-        public static int volume = settingProperties.getInt("volume", 6);
-        public static String screenshotFormat = settingProperties.getString("screenshotFormat", "JPG");
-    }
 }

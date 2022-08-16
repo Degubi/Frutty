@@ -1,7 +1,6 @@
 package frutty.gui;
 
 import frutty.*;
-import frutty.gui.GuiSettings.*;
 import frutty.plugin.event.gui.*;
 import frutty.tools.*;
 import frutty.world.*;

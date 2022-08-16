@@ -1,6 +1,5 @@
 package frutty.gui.components;
 
-import frutty.gui.GuiSettings.*;
 import frutty.tools.*;
 import frutty.world.*;
 import java.awt.*;
@@ -19,7 +18,7 @@ public final class GuiWorldBackground extends JPanel {
     }
 
     public GuiWorldBackground(String worldName) {
-        this(new WorldData(worldName, false, false));
+        this(WorldData.load(worldName, false, false));
     }
 
     @Override

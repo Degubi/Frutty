@@ -4,7 +4,6 @@ import frutty.*;
 import frutty.entity.*;
 import frutty.entity.living.*;
 import frutty.entity.zone.*;
-import frutty.gui.GuiSettings.*;
 import frutty.plugin.event.world.*;
 import frutty.tools.*;
 import frutty.world.zones.*;
@@ -47,96 +46,44 @@ public final class World {
         World.name = name;
         World.players = new EntityPlayer[isCoop ? 2 : 1];
 
-        var worldData = new WorldData(name, isCoop, true);
+        var worldData = WorldData.load(name, isCoop, true);
 
-        World.nextWorldName = worldData.nextWorldName;
-        World.zones = worldData.zones;
         World.width = worldData.width - 64;
         World.height = worldData.height - 64;
         World.xCoords = worldData.xCoords;
         World.yCoords = worldData.yCoords;
+        World.zones = worldData.zones;
         World.materials = worldData.materials;
         World.zoneEntities = worldData.zoneEntities;
         World.isActivePathfindingZone = new boolean[worldData.zones.length];
         World.skyTextureName = worldData.skyTextureName;
+        World.nextWorldName = worldData.nextWorldName;
 
         WorldZoneSky.loadSkyTexture(worldData.skyTextureName);
 
         if(Main.worldInitEvents.length > 0) Main.invokeEvent(new WorldInitEvent(worldData.width / 64, worldData.height / 64, entities), Main.worldInitEvents);
     }
 
-    public static void generate(int width, int height, boolean isCoop, long worldSeed) {
-        var bigWidth = width * 64;
-        var bigHeight = height * 64;
-        var zoneCount = width * height;
-
+    public static void generate(int width, int height, boolean isCoop, long worldSeed, double noiseResolution) {
         World.name = "generated: " + width + "x" + height;
-        World.nextWorldName = null;
-        World.zones = new WorldZone[zoneCount];
-        World.width = bigWidth - 64;
-        World.height = bigHeight - 64;
-        World.xCoords = new int[zoneCount];
-        World.yCoords = new int[zoneCount];
-        World.materials = new Material[zoneCount];
-        World.zoneEntities = new EntityZone[zoneCount];
-        World.isActivePathfindingZone = new boolean[zoneCount];
         World.players = new EntityPlayer[isCoop ? 2 : 1];
-        World.skyTextureName = "null";
 
-        var zoneIndex = 0;
-        var resolution = 0.2;
-        var rand = new Random(worldSeed);
-        var permutation = PerlinNoise.generatePermutation(rand);
+        var worldData = WorldData.generate(width, height, isCoop, worldSeed, noiseResolution, true);
 
-        for(var y = 0; y < height; ++y) {
-            for(var x = 0; x < width; ++x) {
-                var noise = PerlinNoise.generateNoise(x * resolution, y * resolution, permutation);
+        World.width = worldData.width - 64;
+        World.height = worldData.height - 64;
+        World.xCoords = worldData.xCoords;
+        World.yCoords = worldData.yCoords;
+        World.zones = worldData.zones;
+        World.materials = worldData.materials;
+        World.zoneEntities = worldData.zoneEntities;
+        World.isActivePathfindingZone = new boolean[worldData.zones.length];
+        World.skyTextureName = worldData.skyTextureName;
+        World.nextWorldName = worldData.nextWorldName;
 
-                xCoords[zoneIndex] = x * 64;
-                yCoords[zoneIndex] = y * 64;
+        WorldZoneSky.loadSkyTexture(worldData.skyTextureName);
 
-                if(noise < 0.45) {
-                    zones[zoneIndex] = WorldZone.emptyZone;
-                }else{
-                    var specialZoneRng = rand.nextInt(25);
-
-                    zones[zoneIndex] = specialZoneRng == 7 ? WorldZone.appleZone : specialZoneRng == 9 ? WorldZone.cherryZone : WorldZone.normalZone;
-                    materials[zoneIndex] = noise > 0.6 ? Material.STONE : Material.DIRT;
-                }
-
-                if(zones[zoneIndex] instanceof ZoneEntityProvider providerZone) {
-                    zoneEntities[zoneIndex] = providerZone.getZoneEntity();
-                }
-
-                ++zoneIndex;
-            }
-        }
-
-        var expectedPickCount = 0;
-        for(var zone : zones) {
-            if(zone == WorldZone.cherryZone) {
-                ++expectedPickCount;
-            }
-        }
-
-        pickCount = expectedPickCount;
-
-        var spawnerZoneIndex = findEmptyZone(rand, zoneCount);
-        zones[spawnerZoneIndex] = WorldZone.spawnerZone;
-        WorldZone.spawnerZone.onZoneAddedInternal(isCoop, zoneCount, xCoords[spawnerZoneIndex], yCoords[spawnerZoneIndex]);
-
-        var player1ZoneIndex = findEmptyZone(rand, zoneCount);
-        players[0] = new EntityPlayer(xCoords[player1ZoneIndex], yCoords[player1ZoneIndex], true);
-
-        if(isCoop) {
-            var player2ZoneIndex = findEmptyZone(rand, zoneCount);
-
-            players[1] = new EntityPlayer(xCoords[player2ZoneIndex], yCoords[player2ZoneIndex], false);
-        }
-
-        WorldZoneSky.loadSkyTexture("null");
-
-        if(Main.worldInitEvents.length > 0) Main.invokeEvent(new WorldInitEvent(width, height, entities), Main.worldInitEvents);
+        if(Main.worldInitEvents.length > 0) Main.invokeEvent(new WorldInitEvent(worldData.width / 64, worldData.height / 64, entities), Main.worldInitEvents);
     }
 
     public static void createSave(String fileName) {
@@ -290,14 +237,6 @@ public final class World {
 
             for(var k = 0; k < count; ++k) {
                 particles.add(new Particle(x + 32, y + 60, -2 + rand.nextInt(5), -2 + rand.nextInt(2), color));
-            }
-        }
-    }
-
-    private static int findEmptyZone(Random rand, int zoneCount) {
-        for(int randIndex = rand.nextInt(zoneCount); ; randIndex = rand.nextInt(zoneCount)) {
-            if(zones[randIndex] == WorldZone.emptyZone) {
-                return randIndex;
             }
         }
     }

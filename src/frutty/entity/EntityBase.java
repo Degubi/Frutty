@@ -2,8 +2,8 @@ package frutty.entity;
 
 import frutty.*;
 import frutty.entity.zone.*;
-import frutty.gui.GuiSettings.*;
 import frutty.plugin.event.entity.*;
+import frutty.tools.*;
 import frutty.world.*;
 import java.awt.*;
 import java.io.*;

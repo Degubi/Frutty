@@ -17,7 +17,7 @@ public final class WorldZonePlayer extends WorldZone implements InternalZone {
 
     @Override
     protected ImageIcon getEditorIcon() {
-        return new ImageIcon(Material.loadTexture("dev", "player" + playerID + ".png"));
+        return new ImageIcon(Material.loadTexture("dev/player" + playerID + ".png"));
     }
 
     @Override

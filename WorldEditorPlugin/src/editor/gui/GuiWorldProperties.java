@@ -75,7 +75,7 @@ public final class GuiWorldProperties extends DefaultTableCellRenderer {
 
             var textures = buttons.stream()
                                   .filter(button -> button.zoneTexture != null)
-                                  .map(button -> GamePaths.TEXTURES_DIR + "world/" + button.zoneTexture + ".png")
+                                  .map(button -> GamePaths.TEXTURES_DIR + "world/material/" + button.zoneTexture + ".png")
                                   .distinct()
                                   .toArray(String[]::new);
 

@@ -8,7 +8,7 @@ import java.awt.image.*;
 import javax.swing.*;
 
 public final class WorldZonePortal extends WorldZone {
-    public static final BufferedImage portalTexture = Material.loadTexture("world/special", "portal.png");
+    public static final BufferedImage portalTexture = Material.loadTexture("world/special/portal.png");
 
     public WorldZonePortal() {
         super("portalZone", true, false);

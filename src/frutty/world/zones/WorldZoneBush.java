@@ -7,7 +7,7 @@ import java.awt.image.*;
 import javax.swing.*;
 
 public final class WorldZoneBush extends WorldZone implements TransparentZone {
-    public static final BufferedImage texture = Material.loadTexture("world/special", "bush.png");
+    public static final BufferedImage texture = Material.loadTexture("world/special/bush.png");
 
     public WorldZoneBush() {
         super("bushZone", true, false);

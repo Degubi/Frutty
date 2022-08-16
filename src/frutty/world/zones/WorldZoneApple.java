@@ -10,7 +10,7 @@ import java.awt.image.*;
 import javax.swing.*;
 
 public final class WorldZoneApple extends WorldZoneTexturable implements ZoneEntityProvider {
-    public static final BufferedImage appleTexture = Material.loadTexture("fruit", "apple.png");
+    public static final BufferedImage appleTexture = Material.loadTexture("world/special/apple.png");
 
     public WorldZoneApple() {
         super("appleZone");

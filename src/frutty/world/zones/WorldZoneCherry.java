@@ -9,7 +9,7 @@ import java.awt.image.*;
 import javax.swing.*;
 
 public final class WorldZoneCherry extends WorldZoneTexturable {
-    public static final BufferedImage cherryTexture = Material.loadTexture("fruit", "cherry.png");
+    public static final BufferedImage cherryTexture = Material.loadTexture("world/special/cherry.png");
 
     public WorldZoneCherry() {
         super("cherryZone");

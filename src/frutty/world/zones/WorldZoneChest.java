@@ -9,7 +9,7 @@ import java.awt.image.*;
 import javax.swing.*;
 
 public final class WorldZoneChest extends WorldZoneTexturable {
-    public static final BufferedImage chestTexture = Material.loadTexture("world/special", "chest.png");
+    public static final BufferedImage chestTexture = Material.loadTexture("world/special/chest.png");
 
     public WorldZoneChest() {
         super("chestZone");

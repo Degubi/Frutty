@@ -1,7 +1,6 @@
 package frutty.world;
 
 import frutty.gui.*;
-import frutty.gui.GuiSettings.*;
 import frutty.tools.*;
 import java.awt.*;
 import java.awt.image.*;

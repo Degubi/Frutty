@@ -46,7 +46,7 @@ public final class WorldZoneSpawner extends WorldZone {
 
     @Override
     protected ImageIcon getEditorIcon() {
-        return new ImageIcon(Material.loadTexture("dev", "spawner.png"));
+        return new ImageIcon(Material.loadTexture("dev/spawner.png"));
     }
 
     private static Color[] createColorCache() {

@@ -24,11 +24,11 @@ public final class WorldZoneSky extends WorldZone {
     }
 
     public static void loadSkyTexture(String textureName) {
-        skyTexture = !textureName.equals("null") ? Material.loadTexture("world/skybox", textureName + ".png") : null;
+        skyTexture = !textureName.equals("null") ? Material.loadTexture("world/skybox/" + textureName + ".png") : null;
     }
 
     @Override
     protected ImageIcon getEditorIcon() {
-        return new ImageIcon(Material.loadTexture("dev", "sky.png"));
+        return new ImageIcon(Material.loadTexture("dev/sky.png"));
     }
 }

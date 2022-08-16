@@ -2,7 +2,7 @@ package frutty;
 
 import static frutty.Main.*;
 
-import frutty.gui.GuiSettings.*;
+import frutty.tools.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
