@@ -1,33 +1,39 @@
 package frutty;
 
 import static frutty.Main.*;
+import static java.util.Map.*;
 
+import frutty.gui.*;
 import frutty.tools.*;
+import frutty.world.*;
+import java.io.*;
+import java.nio.file.*;
 import java.util.*;
 import java.util.function.*;
-import java.util.stream.*;
 
 public final class ConsoleCommands {
 
-    public static final Map<String, Consumer<String[]>> commands = Map.of("god", ConsoleCommands::handleGodMode,
-                                                                          "set_debug_render_level", ConsoleCommands::handleDebugRenderLevel,
-                                                                          "toggle_debug_world_info", ConsoleCommands::handleDebugWorldInfo,
-                                                                          "toggle_debug_entity_collision", ConsoleCommands::handleDebugEntityCollision,
-                                                                          "toggle_debug_entity_pathfinding", ConsoleCommands::handleDebugEntityPathfinding,
-                                                                          "list", ConsoleCommands::handleCommandListing,
-                                                                          "commands", ConsoleCommands::handleCommandListing,
-                                                                          "clear", ConsoleCommands::handleClearConsole,
-                                                                          "quit", e -> System.exit(0));
+    public static final Map<String, Consumer<String[]>> commands = Map.ofEntries(entry("god", ConsoleCommands::handleGodMode),
+                                                                                 entry("set_debug_render_level", ConsoleCommands::handleDebugRenderLevel),
+                                                                                 entry("toggle_debug_world_info", ConsoleCommands::handleDebugWorldInfo),
+                                                                                 entry("toggle_debug_entity_collision", ConsoleCommands::handleDebugEntityCollision),
+                                                                                 entry("toggle_debug_entity_pathfinding", ConsoleCommands::handleDebugEntityPathfinding),
+                                                                                 entry("commands", ConsoleCommands::handleCommandListing),
+                                                                                 entry("clear", ConsoleCommands::handleClearConsole),
+                                                                                 entry("quit", e -> System.exit(0)),
+                                                                                 entry("world", ConsoleCommands::handleWorldSwitch),
+                                                                                 entry("worlds", ConsoleCommands::handleWorldListing));
     private static void handleDebugRenderLevel(String[] args) {
         if(args.length == 1) {
             System.out.println(userConLabel + "No render level was given as an argument (0-3)");
-        }else {
-            var newLevel = Integer.parseInt(args[1]);
+            return;
+        }
 
-            if(rangeCheck(newLevel, 0, 3)){
-                Settings.renderDebugLevel = newLevel;
-                System.out.println(userConLabel + "Render debug level set to " + renderLevelToString(newLevel));
-            }
+        var newLevel = Integer.parseInt(args[1]);
+
+        if(rangeCheck(newLevel, 0, 3)) {
+            Settings.renderDebugLevel = newLevel;
+            System.out.println(userConLabel + "Render debug level set to " + renderDebugLevelToString(newLevel));
         }
     }
 
@@ -59,15 +65,45 @@ public final class ConsoleCommands {
     }
 
     private static void handleCommandListing(@SuppressWarnings("unused") String[] args) {
-        var commandsFormatted = commands.keySet().stream()
-                                        .collect(chunking(10))
-                                        .stream()
-                                        .map(k -> String.join(", ", k) + ",\n")
-                                        .collect(Collectors.joining());
-
-        System.out.println(userConLabel + "Commands: " + commandsFormatted);
+        commands.keySet().stream()
+                .sorted()
+                .forEach(k -> System.out.println(userConLabel + "    " + k));
     }
 
+    private static void handleWorldSwitch(String[] args) {
+        if(args.length == 1) {
+            System.out.println(userConLabel + "No world name was given as an argument");
+            return;
+        }
+
+        var worldName = args[1];
+
+        if(!Files.exists(Path.of(GamePaths.WORLDS_DIR + worldName + GamePaths.WORLD_FILE_EXTENSION))) {
+            System.out.println(userConLabel + "Unable to find world named '" + worldName + "'");
+            return;
+        }
+
+        if(GuiIngame.ingameFrame == null) {
+            GuiMainMenu.closeMainFrame();
+        }else{
+            GuiIngame.shutdown();
+            GuiIngame.ingameFrame.dispose();
+            World.cleanUp();
+        }
+
+        World.load(worldName, false);
+        GuiIngame.showIngame();
+    }
+
+    private static void handleWorldListing(@SuppressWarnings("unused") String[] args) {
+        try(var worldFiles = Files.list(Path.of(GamePaths.WORLDS_DIR))) {
+            worldFiles.map(k -> k.toString())
+                      .filter(k -> k.endsWith(GamePaths.WORLD_FILE_EXTENSION))
+                      .forEach(k -> System.out.println(userConLabel + "    " + k.replace('\\', '/')));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 
 
@@ -85,30 +121,8 @@ public final class ConsoleCommands {
         return flag ? "enabled" : "disabled";
     }
 
-    private static String renderLevelToString(int level) {
+    private static String renderDebugLevelToString(int level) {
         return level == 0 ? "None" : level == 1 ? "FPS Debug" : level == 2 ? "Zone Bounds" : "All";
-    }
-
-    private static<T> Collector<T, ?, ArrayList<ArrayList<T>>> chunking(int chunkSize) {
-        return Collector.of(() -> {
-            var empty = new ArrayList<ArrayList<T>>();
-            empty.add(new ArrayList<>(chunkSize));
-            return empty;
-        }, (global, next) -> {
-            var lastList = global.get(global.size() - 1);
-
-            if(lastList.size() == chunkSize) {
-                var newList = new ArrayList<T>(chunkSize);
-
-                newList.add(next);
-                global.add(newList);
-            }else{
-                lastList.add(next);
-            }
-        }, (l, r) -> {
-            l.addAll(r);
-            return l;
-        },  Collector.Characteristics.UNORDERED);
     }
 
     private ConsoleCommands() {}

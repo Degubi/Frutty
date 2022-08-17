@@ -9,11 +9,11 @@ public final class PropertyFile {
     private final ArrayList<Prop> storage;
     private final Path path;
 
-    public PropertyFile(String filePath, int estimatePropCount) {
+    public PropertyFile(String filePath) {
         System.out.println(Main.ioSystemLabel + "Initializing property file: " + filePath);
 
         path = Path.of(GamePaths.WORK_DIR + filePath);
-        storage = new ArrayList<>(estimatePropCount);
+        storage = new ArrayList<>();
 
         try(var reader = Files.newBufferedReader(path)){
             for(var line = reader.readLine(); line != null; line = reader.readLine()) {
@@ -46,10 +46,6 @@ public final class PropertyFile {
                 } catch (IOException ex) {}
             }
         }
-    }
-
-    public PropertyFile(String filePath) {
-        this(filePath, 10);
     }
 
     public String getString(String key, String defaultValue) {

@@ -6,7 +6,6 @@
   - External plugin system
   - World editor
   - Stats
-  - Could use some cleanup, but whatever
 
 ![image](https://user-images.githubusercontent.com/13366932/179262945-a89cc1f1-f20b-4742-9efb-7928cb20a503.png)
 ![image](https://user-images.githubusercontent.com/13366932/179263103-df48e5fc-4d3c-4631-ae7e-2d576bc584b4.png)
@@ -33,8 +32,7 @@
 
 ### Building:
   - Needs Java installed
-  - Needs Python installed (for creating the application .zip)
-  - Needs WiX Toolset installed (for creating the application .exe)
+  - Needs Python installed (for running the build file)
   - Run the 'build_app.py' file
 
 ### Plugin development:

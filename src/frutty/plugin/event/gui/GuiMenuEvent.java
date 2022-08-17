@@ -19,10 +19,10 @@ public final class GuiMenuEvent {
     }
 
     public static void closeMainMenu() {
-        GuiMenu.closeMainFrame();
+        GuiMainMenu.closeMainFrame();
     }
 
     public static void openMainMenu() {
-        GuiMenu.createMainFrame();
+        GuiMainMenu.createMainFrame();
     }
 }

@@ -90,8 +90,8 @@ public final class Main extends KeyAdapter {
 
         System.out.println(pluginSystemLabel + "Launching plugin system");
         var plugins = new ArrayList<Plugin>();
-        plugins.add(new Plugin("Frutty", "Base module for the game.", "https://github.com/Degubi/Frutty", "1.1.0", null));
-        plugins.add(new Plugin("Frutty Plugin Loader", "Base module for the plugin loader", "", "1.0.0", null));
+        plugins.add(new Plugin("Frutty", "Base module for the game.", "https://github.com/Degubi/Frutty", "1.2.0", null));
+        plugins.add(new Plugin("Frutty Plugin Loader", "Base module for the plugin loader", "", "1.2.0", null));
 
         var pluginManagementFile = Path.of(GamePaths.WORK_DIR + "pluginManagement.txt");
         if(Files.exists(pluginManagementFile)) {
@@ -124,7 +124,7 @@ public final class Main extends KeyAdapter {
         Main.screenOverlayEvents = initEventsByType(ScreenOverlayEvent.class, loadedEvents, byPriority);
         System.out.println(pluginSystemLabel + "Finished loading, loaded " + (plugins.size() - 2) + " external plugins");
 
-        GuiMenu.createMainFrame();
+        GuiMainMenu.createMainFrame();
         createDirectory("saves");
         createDirectory("screenshots");
     }

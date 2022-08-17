@@ -31,7 +31,7 @@ public final class GuiPauseMenu extends WindowAdapter implements ActionListener,
         }else if(cmd.equals("Menu")) {
             GuiIngame.showSaveQuestion();
             GuiIngame.ingameFrame.dispose();
-            GuiMenu.createMainFrame();
+            GuiMainMenu.createMainFrame();
             GuiStats.saveStats();
             World.cleanUp();
         }else if(cmd.equals("Save")){
@@ -40,13 +40,13 @@ public final class GuiPauseMenu extends WindowAdapter implements ActionListener,
             GuiIngame.unpause();
             GuiStats.saveStats();
         }
-        ((JFrame)panel.getTopLevelAncestor()).dispose();
+        ((JFrame) panel.getTopLevelAncestor()).dispose();
     }
 
     @Override
     public void keyPressed(KeyEvent event) {
         if(event.getKeyCode() == KeyEvent.VK_ESCAPE) {
-            ((JFrame)panel.getTopLevelAncestor()).dispose();
+            ((JFrame) panel.getTopLevelAncestor()).dispose();
             GuiIngame.unpause();
         }
     }

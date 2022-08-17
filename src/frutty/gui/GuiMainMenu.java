@@ -13,7 +13,7 @@ import java.nio.file.*;
 import java.util.*;
 import javax.swing.*;
 
-public final class GuiMenu {
+public final class GuiMainMenu {
     private static JFrame mainFrame;
 
     public static JPanel createMenuPanel() {
@@ -62,8 +62,8 @@ public final class GuiMenu {
 
     public static void switchMenuGui(Container panel) {
         EventQueue.invokeLater(() -> {
-            GuiMenu.mainFrame.setContentPane(panel);
-            GuiMenu.mainFrame.revalidate();
+            GuiMainMenu.mainFrame.setContentPane(panel);
+            GuiMainMenu.mainFrame.revalidate();
         });
     }
 

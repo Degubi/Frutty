@@ -6,6 +6,7 @@ import frutty.*;
 import frutty.gui.components.*;
 import frutty.tools.*;
 import frutty.world.*;
+import frutty.world.zones.*;
 import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
@@ -45,10 +46,10 @@ public final class GuiWorldSelection {
         panel.add(devMode);
         panel.add(coopBox);
         panel.add(pane);
-        panel.add(newButton("Menu", 725, 475, e -> GuiMenu.switchMenuGui(GuiMenu.createMenuPanel())));
+        panel.add(newButton("Menu", 725, 475, e -> GuiMainMenu.switchMenuGui(GuiMainMenu.createMenuPanel())));
         panel.add(newButton("Play", 725, 550, e -> handlePlayButtonPress(worldList, coopBox)));
 
-        GuiMenu.switchMenuGui(panel);
+        GuiMainMenu.switchMenuGui(panel);
     }
 
     private static void handleWorldListChange(ListSelectionEvent event, JList<String> worldList, JLabel worldPreviewImageLabel) {
@@ -56,8 +57,11 @@ public final class GuiWorldSelection {
             var selectedWorldName = worldList.getSelectedValue();
 
             if(selectedWorldName != null) {
-                var worldData = selectedWorldName.equals(GENERATE_WORLD_LABEL) ? WorldData.generate(12, 12, false, Main.rand.nextLong(), 0.2, false)
-                                                                               : WorldData.load(worldList.getSelectedValue(), false, false);
+                var isGeneratedWorld = selectedWorldName.equals(GENERATE_WORLD_LABEL);
+                var worldData = isGeneratedWorld ? WorldData.generate(12, 12, false, Main.rand.nextLong(), 0.2, false)
+                                                 : WorldData.load(worldList.getSelectedValue(), false, false);
+
+                WorldZoneSky.loadSkyTexture(worldData.skyTextureName);
 
                 var rawPreviewImage = new BufferedImage(worldData.width, worldData.height, BufferedImage.TYPE_INT_RGB);
                 var rawPreviewGraphics = rawPreviewImage.createGraphics();
@@ -86,10 +90,10 @@ public final class GuiWorldSelection {
 
                 worldPreviewGraphics.drawImage(scaledPreviewImage, 0, 0, null);
                 worldPreviewGraphics.setColor(Color.BLACK);
-                worldPreviewGraphics.fillRect(380, 420, 100, 60);
+                worldPreviewGraphics.fillRect(360, 420, 120, 60);
                 worldPreviewGraphics.setColor(Color.WHITE);
                 worldPreviewGraphics.setFont(GuiHelper.bigFont);
-                worldPreviewGraphics.drawString((worldData.width / 64) + "x" + (worldData.height / 64), 390, 460);
+                worldPreviewGraphics.drawString(isGeneratedWorld ? "Custom" : (worldData.width / 64) + "x" + (worldData.height / 64), 370, 460);
                 worldPreviewGraphics.dispose();
                 worldPreviewImageLabel.setIcon(new ImageIcon(worldPreviewImage));
             }
@@ -120,25 +124,23 @@ public final class GuiWorldSelection {
 
     private static void handlePlayButtonPress(JList<String> worldList, JCheckBox coopBox) {
         if(worldList.getSelectedValue().equals(GENERATE_WORLD_LABEL)) {
-            GuiMenu.switchMenuGui(createGenerateWorldPanel());
+            GuiMainMenu.switchMenuGui(createGenerateWorldPanel(coopBox.isSelected()));
         }else{
             World.load(worldList.getSelectedValue(), coopBox.isSelected());
             GuiIngame.showIngame();
-            GuiMenu.closeMainFrame();
+            GuiMainMenu.closeMainFrame();
         }
     }
 
-    private static JTabbedPane createGenerateWorldPanel() {
+    private static JTabbedPane createGenerateWorldPanel(boolean isCoop) {
         var backgroundWorldData = WorldData.load("dev_settings", false, false);
 
-        var worldSizeField = new SettingFieldInput("10x10", "World Size", 50, 20, 150);
-        var worldSeedField = new SettingFieldInput(String.valueOf(Main.rand.nextLong()), "World Seed", 50, 100, 400);
-        var isCoopField = new SettingOptionInput(false, "Coop Mode", 50, 20);
-        var fields = new WorldgenFields(worldSizeField, worldSeedField, isCoopField);
+        var worldSizeField = new SettingFieldInput("10x10", "World Size", 50, 20, 150, "\\d+x\\d+");
+        var worldSeedField = new SettingFieldInput(String.valueOf(Main.rand.nextLong()), "World Seed", 50, 100, 400, "-?\\d+");
+        var fields = new WorldgenFields(worldSizeField, worldSeedField);
 
         var settingsTabs = new JTabbedPane();
-        settingsTabs.addTab("World", createWorldgenSettingsPanel(backgroundWorldData, fields, worldSizeField, worldSeedField));
-        settingsTabs.addTab("Gameplay", createWorldgenSettingsPanel(backgroundWorldData, fields, isCoopField));
+        settingsTabs.addTab("World", createWorldgenSettingsPanel(backgroundWorldData, fields, isCoop, worldSizeField, worldSeedField));
 
         var insets = UIManager.getInsets("TabbedPane.contentBorderInsets");
         insets.left = -1;
@@ -150,31 +152,31 @@ public final class GuiWorldSelection {
         return settingsTabs;
     }
 
-    private static GuiWorldBackground createWorldgenSettingsPanel(WorldData settingsWorldData, WorldgenFields fields, JComponent...components) {
+    private static GuiWorldBackground createWorldgenSettingsPanel(WorldData settingsWorldData, WorldgenFields fields, boolean isCoop, JComponent...components) {
         var panel = new GuiWorldBackground(settingsWorldData);
         panel.setLayout(null);
 
         for(var comp : components) panel.add(comp);
 
-        panel.add(newButton("Menu", 725, 475, e -> GuiMenu.switchMenuGui(GuiMenu.createMenuPanel())));
-        panel.add(newButton("Play", 725, 550, e -> handleGeneratePlayButtonPress(fields)));
+        panel.add(newButton("Menu", 725, 475, e -> GuiMainMenu.switchMenuGui(GuiMainMenu.createMenuPanel())));
+        panel.add(newButton("Play", 725, 550, e -> handleGeneratePlayButtonPress(fields, isCoop)));
 
         return panel;
     }
 
-    private static void handleGeneratePlayButtonPress(WorldgenFields fields) {
-        var worldSize = fields.worldSizeField.dataField.getText().split("x");
+    private static void handleGeneratePlayButtonPress(WorldgenFields fields, boolean isCoop) {
+        var worldSize = fields.worldSizeField.getValue().split("x");
 
         World.generate(
             Integer.parseInt(worldSize[0]), Integer.parseInt(worldSize[1]),
-            fields.isCoopField.optionIndex == 1,
-            Long.parseLong(fields.worldSeedField.dataField.getText()),
+            isCoop,
+            Long.parseLong(fields.worldSeedField.getValue()),
             0.2
         );
 
         GuiIngame.showIngame();
-        GuiMenu.closeMainFrame();
+        GuiMainMenu.closeMainFrame();
     }
 
-    private record WorldgenFields(SettingFieldInput worldSizeField, SettingFieldInput worldSeedField, SettingOptionInput isCoopField) {}
+    private record WorldgenFields(SettingFieldInput worldSizeField, SettingFieldInput worldSeedField) {}
 }

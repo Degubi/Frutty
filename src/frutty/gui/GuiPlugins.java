@@ -48,7 +48,7 @@ public final class GuiPlugins extends DefaultListCellRenderer implements Hyperli
         var bottomPanel = new JPanel(null);
         bottomPanel.setPreferredSize(new Dimension(Integer.MAX_VALUE, 200));
         bottomPanel.setOpaque(false);
-        bottomPanel.add(GuiHelper.newButton("Menu", 370, 114, e -> GuiMenu.switchMenuGui(GuiMenu.createMenuPanel())));
+        bottomPanel.add(GuiHelper.newButton("Menu", 370, 114, e -> GuiMainMenu.switchMenuGui(GuiMainMenu.createMenuPanel())));
         bottomPanel.add(GuiHelper.newButton("Install Plugins from Zip", 700, 40, e -> handleInstallPluginButtonPress(backgroundPanel)));
         bottomPanel.add(uninstallPluginButton);
 
@@ -56,7 +56,7 @@ public final class GuiPlugins extends DefaultListCellRenderer implements Hyperli
         backgroundPanel.add(pluginPanel, BorderLayout.NORTH);
         backgroundPanel.add(bottomPanel, BorderLayout.SOUTH);
 
-        GuiMenu.switchMenuGui(backgroundPanel);
+        GuiMainMenu.switchMenuGui(backgroundPanel);
     }
 
     private static void onPluginListSelectionChange(JTextPane description, JList<Plugin> pluginList, JButton uninstallPluginButton) {

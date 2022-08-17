@@ -11,7 +11,7 @@ import javax.swing.*;
 import javax.swing.tree.*;
 
 public final class GuiStats extends DefaultTreeCellRenderer {
-    private static final PropertyFile stats = new PropertyFile("stats.prop", 4);
+    private static final PropertyFile stats = new PropertyFile("stats.prop");
     public static int topScore = stats.getInt("topScore", 0);
     public static int enemyCount = stats.getInt("enemyCount", 0);
     public static int zoneCount = stats.getInt("zoneCount", 0);
@@ -52,9 +52,9 @@ public final class GuiStats extends DefaultTreeCellRenderer {
 
         panel.add(statTree);
         panel.add(newButton("Reset", 100, 550, e -> handleResetButtonPress(panel)));
-        panel.add(newButton("Menu", 370, 550, e -> GuiMenu.switchMenuGui(GuiMenu.createMenuPanel())));
+        panel.add(newButton("Menu", 370, 550, e -> GuiMainMenu.switchMenuGui(GuiMainMenu.createMenuPanel())));
 
-        GuiMenu.switchMenuGui(panel);
+        GuiMainMenu.switchMenuGui(panel);
     }
 
     private static void handleResetButtonPress(GuiWorldBackground panel) {

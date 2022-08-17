@@ -35,7 +35,7 @@ public final class SettingOptionInput extends JComponent implements ActionListen
     @Override
     public void paintComponent(Graphics graphics) {
         graphics.setColor(GuiHelper.color_192Black);
-        graphics.fillRect(4, 4, 692, 58);
+        graphics.fillRect(2, 2, 694, 60);
 
         graphics.setColor(Color.WHITE);
         graphics.drawRect(0, 0, 695, 62);

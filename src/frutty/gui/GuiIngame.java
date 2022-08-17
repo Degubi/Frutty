@@ -19,7 +19,7 @@ public final class GuiIngame extends JPanel implements KeyListener {
     private static ScheduledExecutorService renderThread;
     private static ScheduledFuture<?> serverTask;
 
-    static JFrame ingameFrame;
+    public static JFrame ingameFrame;
     private static LocalTime startTime;
     private static long renderLastUpdate;
 
@@ -194,7 +194,7 @@ public final class GuiIngame extends JPanel implements KeyListener {
         shutdown();
 
         JOptionPane.showMessageDialog(null, message, "Frutty", JOptionPane.PLAIN_MESSAGE);
-        GuiMenu.createMainFrame();
+        GuiMainMenu.createMainFrame();
         ingameFrame.dispose();
         if(GuiStats.topScore < World.score) {
             GuiStats.topScore = World.score;

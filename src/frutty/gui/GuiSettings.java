@@ -9,7 +9,7 @@ import javax.swing.*;
 public final class GuiSettings {
     private GuiSettings() {}
 
-    private static GuiWorldBackground createSettingPanel(WorldData settingsWorldData, JComponent...components) {
+    private static GuiWorldBackground createSettingPanel(WorldData settingsWorldData, JComponent... components) {
         var panel = new GuiWorldBackground(settingsWorldData);
         panel.setLayout(null);
 
@@ -25,17 +25,17 @@ public final class GuiSettings {
 
         Settings.settingProperties.setBoolean("enableCollisionDebug", Settings.enableCollisionDebug = collisionBoxButton.optionIndex == 1);
         Settings.settingProperties.setInt("graphics", Settings.graphicsLevel = graphicsLevelButton.optionIndex);
-        Settings.settingProperties.setInt("fps", Settings.fps = tenToHundred[fpsSlider.counter - 1]);
+        Settings.settingProperties.setInt("fps", Settings.fps = tenToHundred[fpsSlider.getValue() - 1]);
         Settings.settingProperties.setInt("difficulty", Settings.difficulty = difficultyButton.optionIndex);
-        Settings.settingProperties.setInt("upKey", Settings.upKey = upKeyButtonField.dataField.getText().charAt(0));
-        Settings.settingProperties.setInt("downKey", Settings.downKey = downKeyButtonField.dataField.getText().charAt(0));
-        Settings.settingProperties.setInt("leftKey", Settings.leftKey = leftKeyButtonField.dataField.getText().charAt(0));
-        Settings.settingProperties.setInt("rightKey", Settings.rightKey = rightKeyButtonField.dataField.getText().charAt(0));
+        Settings.settingProperties.setInt("upKey", Settings.upKey = upKeyButtonField.getValue().charAt(0));
+        Settings.settingProperties.setInt("downKey", Settings.downKey = downKeyButtonField.getValue().charAt(0));
+        Settings.settingProperties.setInt("leftKey", Settings.leftKey = leftKeyButtonField.getValue().charAt(0));
+        Settings.settingProperties.setInt("rightKey", Settings.rightKey = rightKeyButtonField.getValue().charAt(0));
         Settings.settingProperties.setBoolean("enableSound", Settings.enableSound = enableSoundButton.optionIndex == 1);
-        Settings.settingProperties.setInt("volume", Settings.volume = volumeSlider.counter);
+        Settings.settingProperties.setInt("volume", Settings.volume = volumeSlider.getValue());
         Settings.settingProperties.setString("screenshotFormat", Settings.screenshotFormat = screenshotFormats[screenshotFormatButton.optionIndex]);
         Settings.settingProperties.save();
-        GuiMenu.switchMenuGui(GuiMenu.createMenuPanel());
+        GuiMainMenu.switchMenuGui(GuiMainMenu.createMenuPanel());
     }
 
     public static void showGuiSettings() {
@@ -55,7 +55,7 @@ public final class GuiSettings {
         insets.top = -1;
         UIManager.put("TabbedPane.contentBorderInsets", insets);
 
-        GuiMenu.switchMenuGui(settingsTabs);
+        GuiMainMenu.switchMenuGui(settingsTabs);
     }
 
     private static int indexOfInt(int value, int[] values) {

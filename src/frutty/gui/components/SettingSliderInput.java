@@ -10,7 +10,7 @@ public final class SettingSliderInput extends JComponent implements ActionListen
     private static final ImageIcon RED_ICON = getColoredImage(Color.RED);
     private static final ImageIcon TRANSPARENT_ICON = getColoredImage(GuiHelper.color_128Black);
 
-    public int counter;
+    private int counter;
     private final String titleText;
     private final JButton[] butts = new JButton[10];
 
@@ -32,6 +32,10 @@ public final class SettingSliderInput extends JComponent implements ActionListen
         add(SettingOptionInput.newArrowButton(true, 620, 8, this));
     }
 
+    public int getValue() {
+        return counter;
+    }
+
     private static ImageIcon getColoredImage(Color color) {
         var img = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
         var rgb = color.getRGB();
@@ -47,7 +51,7 @@ public final class SettingSliderInput extends JComponent implements ActionListen
     @Override
     public void paintComponent(Graphics graphics) {
         graphics.setColor(GuiHelper.color_192Black);
-        graphics.fillRect(4, 4, 692, 58);
+        graphics.fillRect(2, 2, 694, 60);
 
         graphics.setColor(Color.WHITE);
         graphics.drawRect(0, 0, 695, 62);

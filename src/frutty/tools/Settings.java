@@ -1,7 +1,7 @@
 package frutty.tools;
 
 public final class Settings {
-    public static final PropertyFile settingProperties = new PropertyFile("settings.prop", 14);
+    public static final PropertyFile settingProperties = new PropertyFile("settings.prop");
 
     public static int fps = settingProperties.getInt("fps", 50);
     public static int difficulty = settingProperties.getInt("difficulty", 0);
